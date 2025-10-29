@@ -1,0 +1,228 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Harbor Generic Oracle Deployment Script v2
+# Deploys 3 implementation contracts and 10 proxies
+
+RPC_URL=${RPC_URL:-http://127.0.0.1:8545}
+PRIVATE_KEY=${PRIVATE_KEY:-0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80}
+OWNER=${OWNER:-0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266}
+
+# Contract addresses
+WSTETH=${WSTETH:-0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0}
+FXSAVE=${FXSAVE:-0x7743e50f534a7f9f1791dde7dcd89f7783eefc39}
+
+# Chainlink feeds
+USDC_USD_FEED=${USDC_USD_FEED:-0x8fFfFfd4AfB6115b954Bd326cbe7B4BA576818f6}
+ETH_USD_FEED=${ETH_USD_FEED:-0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419}
+BTC_USD_FEED=${BTC_USD_FEED:-0xF4030086522a5bEEa4988F8cA5B36dbC97BeE88c}
+EUR_USD_FEED=${EUR_USD_FEED:-0xb49f677943BC038e9857d61E7d053CaA2C1734C1}
+XAU_USD_FEED=${XAU_USD_FEED:-0x214eD9Da11D2fbe465a6fc601a91E62EbEc1a0D6}
+MCAP_USD_FEED=${MCAP_USD_FEED:-0xEC8761a0A73c34329CA5B1D3Dc7eD07F30e836e2}
+STETH_ETH_FEED=${STETH_ETH_FEED:-0x86392dC19c0b719886221c78AB11eb8Cf5c52812}
+
+# Library
+PRICE_ORACLE_LIB=${PRICE_ORACLE_LIB:-0xe0fa670bb2e77a14d64945acae9c09f1bd268b39}
+
+# Constraints
+MAX_AGE=${MAX_AGE:-604800}
+MAX_DEV=${MAX_DEV:-50000000000000000}
+
+echo "=== Deploying 2 Implementation Contracts ==="
+echo "Note: MCAP oracles now use Double Feed with divisor=1e12 (1T)"
+
+# 1. Deploy Single Feed Implementation
+echo "Deploying HarborSingleFeedAndRateAggregator_v1..."
+SINGLE_IMPL_OUT=$(forge create src/price/HarborSingleFeedAndRateAggregator_v1.sol:HarborSingleFeedAndRateAggregator_v1 \
+  --rpc-url "$RPC_URL" \
+  --private-key "$PRIVATE_KEY" \
+  --libraries src/price/PriceOracle_v1.sol:PriceOracle_v1:$PRICE_ORACLE_LIB \
+  --broadcast \
+  --constructor-args "$WSTETH" "$FXSAVE")
+SINGLE_IMPL=$(grep -Eo "Deployed to: 0x[0-9a-fA-F]{40}" <<<"$SINGLE_IMPL_OUT" | awk '{print $3}')
+echo "  Single Feed Implementation: $SINGLE_IMPL"
+
+# 2. Deploy Double Feed Implementation
+echo "Deploying HarborDoubleFeedAndRateAggregator_v1..."
+DOUBLE_IMPL_OUT=$(forge create src/price/HarborDoubleFeedAndRateAggregator_v1.sol:HarborDoubleFeedAndRateAggregator_v1 \
+  --rpc-url "$RPC_URL" \
+  --private-key "$PRIVATE_KEY" \
+  --libraries src/price/PriceOracle_v1.sol:PriceOracle_v1:$PRICE_ORACLE_LIB \
+  --broadcast \
+  --constructor-args "$WSTETH" "$FXSAVE")
+DOUBLE_IMPL=$(grep -Eo "Deployed to: 0x[0-9a-fA-F]{40}" <<<"$DOUBLE_IMPL_OUT" | awk '{print $3}')
+echo "  Double Feed Implementation: $DOUBLE_IMPL"
+
+# MCAP oracles now use Double Feed implementation with divisor=1e12
+
+echo ""
+echo "=== Deploying 10 Proxy Contracts ==="
+
+# Helper function to deploy proxy
+deploy_proxy() {
+  local impl=$1
+  local init_data=$2
+  
+  PROXY_OUT=$(forge create lib/openzeppelin-contracts-upgradeable/lib/openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Proxy.sol:ERC1967Proxy \
+    --rpc-url "$RPC_URL" \
+    --private-key "$PRIVATE_KEY" \
+    --broadcast \
+    --constructor-args "$impl" "$init_data")
+  PROXY=$(grep -Eo "Deployed to: 0x[0-9a-fA-F]{40}" <<<"$PROXY_OUT" | awk '{print $3}')
+  echo "$PROXY"
+}
+
+# FxSAVE Oracles
+echo "--- FxSAVE Oracles ---"
+
+# fxsave→ETH (Double Feed: USDC/USD + ETH/USD, RateSource=FXSAVE=1, divisor=1)
+INIT_DATA=$(cast calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256)" \
+  "$OWNER" "FxSAVEToETH" 1 "$USDC_USD_FEED" "$ETH_USD_FEED" 1 "$MAX_AGE" "$MAX_DEV" "$MAX_AGE" "$MAX_DEV")
+FXSAVE_ETH=$(deploy_proxy "$DOUBLE_IMPL" "$INIT_DATA")
+
+# fxsave→BTC (Double Feed: USDC/USD + BTC/USD, RateSource=FXSAVE=1, divisor=1)
+INIT_DATA=$(cast calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256)" \
+  "$OWNER" "FxSAVEToBTC" 1 "$USDC_USD_FEED" "$BTC_USD_FEED" 1 "$MAX_AGE" "$MAX_DEV" "$MAX_AGE" "$MAX_DEV")
+FXSAVE_BTC=$(deploy_proxy "$DOUBLE_IMPL" "$INIT_DATA")
+
+# fxsave→EUR (Double Feed: USDC/USD + EUR/USD, RateSource=FXSAVE=1, divisor=1)
+INIT_DATA=$(cast calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256)" \
+  "$OWNER" "FxSAVEToEUR" 1 "$USDC_USD_FEED" "$EUR_USD_FEED" 1 "$MAX_AGE" "$MAX_DEV" "$MAX_AGE" "$MAX_DEV")
+FXSAVE_EUR=$(deploy_proxy "$DOUBLE_IMPL" "$INIT_DATA")
+
+# fxsave→XAU (Double Feed: USDC/USD + XAU/USD, RateSource=FXSAVE=1, divisor=1)
+INIT_DATA=$(cast calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256)" \
+  "$OWNER" "FxSAVEToXAU" 1 "$USDC_USD_FEED" "$XAU_USD_FEED" 1 "$MAX_AGE" "$MAX_DEV" "$MAX_AGE" "$MAX_DEV")
+FXSAVE_XAU=$(deploy_proxy "$DOUBLE_IMPL" "$INIT_DATA")
+
+# fxsave→MCAP (Double Feed: USDC/USD + MCAP/USD, RateSource=FXSAVE=1, divisor=1e12)
+INIT_DATA=$(cast calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256)" \
+  "$OWNER" "FxSAVEToMCAP" 1 "$USDC_USD_FEED" "$MCAP_USD_FEED" 1000000000000 "$MAX_AGE" "$MAX_DEV" "$MAX_AGE" "$MAX_DEV")
+FXSAVE_MCAP=$(deploy_proxy "$DOUBLE_IMPL" "$INIT_DATA")
+
+# WstETH Oracles
+echo "--- WstETH Oracles ---"
+
+# wstETH→ETH (Single Feed: STETH/ETH, RateSource=WSTETH=0, divisor=1)
+# Note: WstETH rate source will now get wstETH→stETH conversion via getStETHByWstETH()
+INIT_DATA=$(cast calldata "initialize(address,string,uint8,address,uint256,uint64,uint256)" \
+  "$OWNER" "WstETHToETH" 0 "$STETH_ETH_FEED" 1 "$MAX_AGE" "$MAX_DEV")
+WSTETH_ETH=$(deploy_proxy "$SINGLE_IMPL" "$INIT_DATA")
+
+# wstETH→BTC (Double Feed: ETH/USD + BTC/USD, RateSource=WSTETH=0, divisor=1)
+INIT_DATA=$(cast calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256)" \
+  "$OWNER" "WstETHToBTC" 0 "$ETH_USD_FEED" "$BTC_USD_FEED" 1 "$MAX_AGE" "$MAX_DEV" "$MAX_AGE" "$MAX_DEV")
+WSTETH_BTC=$(deploy_proxy "$DOUBLE_IMPL" "$INIT_DATA")
+
+# wstETH→EUR (Double Feed: ETH/USD + EUR/USD, RateSource=WSTETH=0, divisor=1)
+INIT_DATA=$(cast calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256)" \
+  "$OWNER" "WstETHToEUR" 0 "$ETH_USD_FEED" "$EUR_USD_FEED" 1 "$MAX_AGE" "$MAX_DEV" "$MAX_AGE" "$MAX_DEV")
+WSTETH_EUR=$(deploy_proxy "$DOUBLE_IMPL" "$INIT_DATA")
+
+# wstETH→XAU (Double Feed: ETH/USD + XAU/USD, RateSource=WSTETH=0, divisor=1)
+INIT_DATA=$(cast calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256)" \
+  "$OWNER" "WstETHToXAU" 0 "$ETH_USD_FEED" "$XAU_USD_FEED" 1 "$MAX_AGE" "$MAX_DEV" "$MAX_AGE" "$MAX_DEV")
+WSTETH_XAU=$(deploy_proxy "$DOUBLE_IMPL" "$INIT_DATA")
+
+# wstETH→MCAP (Double Feed: ETH/USD + MCAP/USD, RateSource=WSTETH=0, divisor=1e12)
+INIT_DATA=$(cast calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256)" \
+  "$OWNER" "WstETHToMCAP" 0 "$ETH_USD_FEED" "$MCAP_USD_FEED" 1000000000000 "$MAX_AGE" "$MAX_DEV" "$MAX_AGE" "$MAX_DEV")
+WSTETH_MCAP=$(deploy_proxy "$DOUBLE_IMPL" "$INIT_DATA")
+
+echo ""
+echo "=== DEPLOYMENT SUMMARY ==="
+echo ""
+echo "IMPLEMENTATIONS (2 contracts for 10 oracles):"
+echo "  Single Feed: $SINGLE_IMPL"
+echo "  Double Feed: $DOUBLE_IMPL"
+echo "  Note: MCAP oracles use Double Feed with divisor=1e12 (1T)"
+echo ""
+echo "FXSAVE ORACLES (5):"
+echo "  fxsave→ETH:  $FXSAVE_ETH"
+echo "  fxsave→BTC:  $FXSAVE_BTC"
+echo "  fxsave→EUR:  $FXSAVE_EUR"
+echo "  fxsave→XAU:  $FXSAVE_XAU"
+echo "  fxsave→MCAP: $FXSAVE_MCAP"
+echo ""
+echo "WSTETH ORACLES (5):"
+echo "  wstETH→ETH:  $WSTETH_ETH"
+echo "  wstETH→BTC:  $WSTETH_BTC"
+echo "  wstETH→EUR:  $WSTETH_EUR"
+echo "  wstETH→XAU:  $WSTETH_XAU"
+echo "  wstETH→MCAP: $WSTETH_MCAP"
+
+# Test price readouts
+echo ""
+echo "=== PRICE READOUTS ==="
+echo "FXSAVE:"
+echo -n "  fxsave→ETH:  "
+cast call "$FXSAVE_ETH" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null
+echo -n "  fxsave→BTC:  "
+cast call "$FXSAVE_BTC" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null
+echo -n "  fxsave→EUR:  "
+cast call "$FXSAVE_EUR" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null
+echo -n "  fxsave→XAU:  "
+cast call "$FXSAVE_XAU" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null
+echo -n "  fxsave→MCAP: "
+cast call "$FXSAVE_MCAP" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null
+
+echo ""
+echo "WSTETH:"
+echo -n "  wstETH→ETH:  "
+cast call "$WSTETH_ETH" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null
+echo -n "  wstETH→BTC:  "
+cast call "$WSTETH_BTC" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null
+echo -n "  wstETH→EUR:  "
+cast call "$WSTETH_EUR" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null
+echo -n "  wstETH→XAU:  "
+cast call "$WSTETH_XAU" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null
+echo -n "  wstETH→MCAP: "
+cast call "$WSTETH_MCAP" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null
+
+echo ""
+echo "=== ORACLE NAMES ==="
+echo "FXSAVE:"
+echo -n "  fxsave→ETH:  "
+cast call "$FXSAVE_ETH" "oracleName()(string)" --rpc-url "$RPC_URL" 2>/dev/null
+echo -n "  fxsave→MCAP: "
+cast call "$FXSAVE_MCAP" "oracleName()(string)" --rpc-url "$RPC_URL" 2>/dev/null
+
+echo ""
+echo "WSTETH:"
+echo -n "  wstETH→ETH:  "
+cast call "$WSTETH_ETH" "oracleName()(string)" --rpc-url "$RPC_URL" 2>/dev/null
+echo -n "  wstETH→MCAP: "
+cast call "$WSTETH_MCAP" "oracleName()(string)" --rpc-url "$RPC_URL" 2>/dev/null
+
+echo ""
+echo "=== RATE READOUTS ==="
+echo "Format: (minPrice, maxPrice, minRate, maxRate)"
+echo ""
+echo "FXSAVE:"
+echo -n "  fxsave→ETH:  "
+cast call "$FXSAVE_ETH" "latestAnswer()(uint256,uint256,uint256,uint256)" --rpc-url "$RPC_URL" 2>/dev/null
+echo -n "  fxsave→BTC:  "
+cast call "$FXSAVE_BTC" "latestAnswer()(uint256,uint256,uint256,uint256)" --rpc-url "$RPC_URL" 2>/dev/null
+echo -n "  fxsave→EUR:  "
+cast call "$FXSAVE_EUR" "latestAnswer()(uint256,uint256,uint256,uint256)" --rpc-url "$RPC_URL" 2>/dev/null
+echo -n "  fxsave→XAU:  "
+cast call "$FXSAVE_XAU" "latestAnswer()(uint256,uint256,uint256,uint256)" --rpc-url "$RPC_URL" 2>/dev/null
+echo -n "  fxsave→MCAP: "
+cast call "$FXSAVE_MCAP" "latestAnswer()(uint256,uint256,uint256,uint256)" --rpc-url "$RPC_URL" 2>/dev/null
+
+echo ""
+echo "WSTETH:"
+echo -n "  wstETH→ETH:  "
+cast call "$WSTETH_ETH" "latestAnswer()(uint256,uint256,uint256,uint256)" --rpc-url "$RPC_URL" 2>/dev/null
+echo -n "  wstETH→BTC:  "
+cast call "$WSTETH_BTC" "latestAnswer()(uint256,uint256,uint256,uint256)" --rpc-url "$RPC_URL" 2>/dev/null
+echo -n "  wstETH→EUR:  "
+cast call "$WSTETH_EUR" "latestAnswer()(uint256,uint256,uint256,uint256)" --rpc-url "$RPC_URL" 2>/dev/null
+echo -n "  wstETH→XAU:  "
+cast call "$WSTETH_XAU" "latestAnswer()(uint256,uint256,uint256,uint256)" --rpc-url "$RPC_URL" 2>/dev/null
+echo -n "  wstETH→MCAP: "
+cast call "$WSTETH_MCAP" "latestAnswer()(uint256,uint256,uint256,uint256)" --rpc-url "$RPC_URL" 2>/dev/null
+
+echo ""
+echo "✅ Deployment complete!"
+
