@@ -42,7 +42,7 @@ Double feed aggregator for cross-currency conversions (e.g., fxSAVE→BTC, wstET
 - `rateSource`: Rate source (0 = wstETH, 1 = fxSAVE)
 - `firstFeed`: First feed address
 - `secondFeed`: Second feed address
-- `secondFeedDivisor`: Divisor for second feed normalization (e.g., 1e12 for MCAP)
+- `secondFeedDivisor`: Divisor for price normalization (e.g., 1e12 for MCAP, default = 1)
 - `firstFeedMaxAge`: Max age for first feed
 - `firstFeedMaxDev`: Max deviation for first feed
 - `secondFeedMaxAge`: Max age for second feed
