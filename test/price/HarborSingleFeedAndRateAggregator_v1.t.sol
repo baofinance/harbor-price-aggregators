@@ -7,6 +7,7 @@ import {IFxSAVE} from "src/interfaces/IFxSAVE.sol";
 import {IWstETH} from "@bao/interfaces/IWstETH.sol";
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
 import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
+import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 
 contract MockWstETH is IWstETH {
     uint256 private _stEthPerToken;
@@ -170,6 +171,7 @@ contract HarborSingleFeedAndRateAggregator_v1Test is Test {
             "WstETHToETH",
             0,
             address(mockEthUsdFeed),
+            1, // priceDivisor
             maxAge,
             maxDev
         );
@@ -194,6 +196,7 @@ contract HarborSingleFeedAndRateAggregator_v1Test is Test {
             "FxSAVEToETH",
             1,
             address(mockEthUsdFeed),
+            1, // priceDivisor
             maxAge,
             maxDev
         );
@@ -217,18 +220,24 @@ contract HarborSingleFeedAndRateAggregator_v1Test is Test {
             "TestOracle",
             0,
             address(mockEthUsdFeed),
+            1, // priceDivisor
             maxAge,
             maxDev
         );
         ERC1967Proxy proxy = new ERC1967Proxy(address(implementation), initData);
         oracle = HarborSingleFeedAndRateAggregator_v1(address(proxy));
 
-        // For wstETH single feed, rate is 1e18 (1:1 since wstETH is already wrapped)
-        // Price = rate / ethUsdPrice = 1e18 / (4000e18) = 0.00025e18
+        // For wstETH single feed, price = rate * 1e18 / ethUsdPrice
+        // rate = wstEthRate (1.208... stETH/wstETH)
+        // ethUsdPrice = 4000 USD/ETH (normalized to 18 decimals)
+        // price = (1208351172000448378 * 1e18) / 4000000000000000000000
         uint256 price = oracle.getPrice();
+        // Expected: rate * 1e18 / normalizedEthUsdPrice
+        // normalizedEthUsdPrice = 400000000000 * 1e10 = 4000000000000000000000
         // casting to 'uint256' is safe because ethUsdPrice is a positive price value
         // forge-lint: disable-next-line unsafe-typecast
-        uint256 expectedPrice = 1e18 * 1e18 / (uint256(ethUsdPrice) * 1e10); // normalize 8 decimals to 18
+        uint256 normalizedEthUsdPrice = uint256(ethUsdPrice) * 1e10;
+        uint256 expectedPrice = Math.mulDiv(wstEthRate, 1e18, normalizedEthUsdPrice);
         
         assertEq(price, expectedPrice, "Incorrect wstETH price");
     }
@@ -248,6 +257,7 @@ contract HarborSingleFeedAndRateAggregator_v1Test is Test {
             "FxSAVEToETH",
             1, // FXSAVE
             address(mockEthUsdFeed),
+            1, // priceDivisor
             maxAge,
             maxDev
         );
@@ -274,6 +284,7 @@ contract HarborSingleFeedAndRateAggregator_v1Test is Test {
             "TestOracle",
             0,
             address(mockEthUsdFeed),
+            1, // priceDivisor
             maxAge,
             maxDev
         );
@@ -307,6 +318,7 @@ contract HarborSingleFeedAndRateAggregator_v1Test is Test {
             "FxSAVEToETH",
             1, // FXSAVE
             address(mockEthUsdFeed),
+            1, // priceDivisor
             maxAge,
             maxDev
         );

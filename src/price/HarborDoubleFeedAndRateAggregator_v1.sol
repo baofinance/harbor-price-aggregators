@@ -59,8 +59,8 @@ contract HarborDoubleFeedAndRateAggregator_v1 is IWrappedPriceOracle, UUPSUpgrad
     /// @notice Decimals of second feed
     uint8 public secondFeedDecimals;
 
-    /// @notice Divisor for second feed normalization (e.g., 1T for MCAP)
-    uint256 public secondFeedDivisor;
+    /// @notice Divisor for price normalization (e.g., 1T for MCAP)
+    uint256 public priceDivisor;
 
     /// @notice Feed validation constraints
     mapping(address => PriceOracle_v1.Constraints) public feedConstraints;
@@ -121,7 +121,7 @@ contract HarborDoubleFeedAndRateAggregator_v1 is IWrappedPriceOracle, UUPSUpgrad
     /// @param rateSource_ Rate source (0 = wstETH, 1 = fxsave)
     /// @param firstFeed_ First feed address (e.g., USDC/USD or ETH/USD)
     /// @param secondFeed_ Second feed address (e.g., BTC/USD, EUR/USD, XAU/USD, MCAP/USD)
-    /// @param secondFeedDivisor_ Divisor for second feed normalization (default 1, use 1e12 for MCAP)
+    /// @param priceDivisor_ Divisor for price normalization (default 1, use 1e12 for MCAP)
     /// @param firstFeedMaxAge_ Max age for first feed (seconds)
     /// @param firstFeedMaxDev_ Max deviation for first feed (1e18)
     /// @param secondFeedMaxAge_ Max age for second feed (seconds)
@@ -132,7 +132,7 @@ contract HarborDoubleFeedAndRateAggregator_v1 is IWrappedPriceOracle, UUPSUpgrad
         RateSource rateSource_,
         address firstFeed_,
         address secondFeed_,
-        uint256 secondFeedDivisor_,
+        uint256 priceDivisor_,
         uint64 firstFeedMaxAge_,
         uint256 firstFeedMaxDev_,
         uint64 secondFeedMaxAge_,
@@ -146,7 +146,7 @@ contract HarborDoubleFeedAndRateAggregator_v1 is IWrappedPriceOracle, UUPSUpgrad
         if (bytes(oracleName_).length == 0) revert("Invalid oracle name");
         if (firstFeed_ == address(0)) revert InvalidPriceSource(firstFeed_);
         if (secondFeed_ == address(0)) revert InvalidConversionFeed(secondFeed_);
-        if (secondFeedDivisor_ == 0) revert("Invalid divisor");
+        if (priceDivisor_ == 0) revert("Invalid divisor");
         if (firstFeedMaxAge_ == 0) revert InvalidMaxPriceAge(firstFeedMaxAge_);
         if (secondFeedMaxAge_ == 0) revert InvalidMaxPriceAge(secondFeedMaxAge_);
         if (firstFeedMaxDev_ == 0 || firstFeedMaxDev_ > 1e18) revert InvalidMaxRelativeDeviation(firstFeedMaxDev_);
@@ -161,7 +161,7 @@ contract HarborDoubleFeedAndRateAggregator_v1 is IWrappedPriceOracle, UUPSUpgrad
         rateSource = rateSource_;
         firstFeed = firstFeed_;
         secondFeed = secondFeed_;
-        secondFeedDivisor = secondFeedDivisor_;
+        priceDivisor = priceDivisor_;
         firstFeedDecimals = AggregatorV3Interface(firstFeed_).decimals();
         secondFeedDecimals = AggregatorV3Interface(secondFeed_).decimals();
         
@@ -232,7 +232,7 @@ contract HarborDoubleFeedAndRateAggregator_v1 is IWrappedPriceOracle, UUPSUpgrad
         // Convert first price to second feed currency with divisor normalization
         // For MCAP: finalPrice = firstPrice * divisor * 1e18 / secondFeedPrice
         // For others: finalPrice = firstPrice * 1e18 / secondFeedPrice (divisor=1)
-        uint256 finalPrice = Math.mulDiv(firstPrice, secondFeedDivisor * 1e18, secondFeedPrice);
+        uint256 finalPrice = Math.mulDiv(firstPrice, priceDivisor * 1e18, secondFeedPrice);
         
         return (finalPrice, finalPrice, rate, rate);
     }
@@ -260,7 +260,7 @@ contract HarborDoubleFeedAndRateAggregator_v1 is IWrappedPriceOracle, UUPSUpgrad
         // Convert first price to second feed currency with divisor normalization
         // For MCAP: finalPrice = firstPrice * divisor * 1e18 / secondFeedPrice
         // For others: finalPrice = firstPrice * 1e18 / secondFeedPrice (divisor=1)
-        uint256 finalPrice = Math.mulDiv(firstPrice, secondFeedDivisor * 1e18, secondFeedPrice);
+        uint256 finalPrice = Math.mulDiv(firstPrice, priceDivisor * 1e18, secondFeedPrice);
         
         return finalPrice;
     }

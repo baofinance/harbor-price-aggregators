@@ -53,8 +53,8 @@ contract HarborSingleFeedAndRateAggregator_v1 is IWrappedPriceOracle, UUPSUpgrad
     /// @notice Decimals of first feed
     uint8 public firstFeedDecimals;
 
-    /// @notice Divisor for first feed normalization (default 1)
-    uint256 public firstFeedDivisor;
+    /// @notice Divisor for price normalization (default 1)
+    uint256 public priceDivisor;
 
     /// @notice Feed validation constraints
     mapping(address => PriceOracle_v1.Constraints) public feedConstraints;
@@ -113,7 +113,7 @@ contract HarborSingleFeedAndRateAggregator_v1 is IWrappedPriceOracle, UUPSUpgrad
     /// @param oracleName_ The oracle name/description
     /// @param rateSource_ Rate source (0 = wstETH, 1 = fxsave)
     /// @param firstFeed_ First feed address (e.g., ETH/USD)
-    /// @param firstFeedDivisor_ Divisor for first feed normalization (default 1)
+    /// @param priceDivisor_ Divisor for price normalization (default 1)
     /// @param firstFeedMaxAge_ Max age for first feed (seconds)
     /// @param firstFeedMaxDev_ Max deviation for first feed (1e18)
     function initialize(
@@ -121,7 +121,7 @@ contract HarborSingleFeedAndRateAggregator_v1 is IWrappedPriceOracle, UUPSUpgrad
         string memory oracleName_,
         RateSource rateSource_,
         address firstFeed_,
-        uint256 firstFeedDivisor_,
+        uint256 priceDivisor_,
         uint64 firstFeedMaxAge_,
         uint256 firstFeedMaxDev_
     ) external initializer {
@@ -132,7 +132,7 @@ contract HarborSingleFeedAndRateAggregator_v1 is IWrappedPriceOracle, UUPSUpgrad
         // Validate inputs
         if (bytes(oracleName_).length == 0) revert("Invalid oracle name");
         if (firstFeed_ == address(0)) revert InvalidPriceSource(firstFeed_);
-        if (firstFeedDivisor_ == 0) revert("Invalid divisor");
+        if (priceDivisor_ == 0) revert("Invalid divisor");
         if (firstFeedMaxAge_ == 0) revert InvalidMaxPriceAge(firstFeedMaxAge_);
         if (firstFeedMaxDev_ == 0 || firstFeedMaxDev_ > 1e18) revert InvalidMaxRelativeDeviation(firstFeedMaxDev_);
         
@@ -144,7 +144,7 @@ contract HarborSingleFeedAndRateAggregator_v1 is IWrappedPriceOracle, UUPSUpgrad
         oracleName = oracleName_;
         rateSource = rateSource_;
         firstFeed = firstFeed_;
-        firstFeedDivisor = firstFeedDivisor_;
+        priceDivisor = priceDivisor_;
         firstFeedDecimals = AggregatorV3Interface(firstFeed_).decimals();
         
         if (firstFeedDecimals == 0) revert InvalidFeedDecimals(firstFeed_);
@@ -197,7 +197,7 @@ contract HarborSingleFeedAndRateAggregator_v1 is IWrappedPriceOracle, UUPSUpgrad
         uint256 aggregatorPrice = Math.mulDiv(rate, 1e18, firstFeedPrice);
         
         // Apply divisor to final price for normalization
-        uint256 finalPrice = aggregatorPrice / firstFeedDivisor;
+        uint256 finalPrice = aggregatorPrice / priceDivisor;
         
         return (finalPrice, finalPrice, rate, rate);
     }
@@ -219,7 +219,7 @@ contract HarborSingleFeedAndRateAggregator_v1 is IWrappedPriceOracle, UUPSUpgrad
         uint256 aggregatorPrice = Math.mulDiv(rate, 1e18, firstFeedPrice);
         
         // Apply divisor to final price for normalization
-        uint256 finalPrice = aggregatorPrice / firstFeedDivisor;
+        uint256 finalPrice = aggregatorPrice / priceDivisor;
         
         return finalPrice;
     }

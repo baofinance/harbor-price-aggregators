@@ -28,7 +28,7 @@ Single feed aggregator for direct conversions (e.g., wstETH/ETH).
 - `oracleName`: Oracle name/description
 - `rateSource`: Rate source (0 = wstETH, 1 = fxSAVE)
 - `firstFeed`: First feed address
-- `firstFeedDivisor`: Divisor for feed normalization
+- `priceDivisor`: Divisor for price normalization
 - `firstFeedMaxAge`: Max age for first feed
 - `firstFeedMaxDev`: Max deviation for first feed
 
@@ -42,7 +42,7 @@ Double feed aggregator for cross-currency conversions (e.g., fxSAVE→BTC, wstET
 - `rateSource`: Rate source (0 = wstETH, 1 = fxSAVE)
 - `firstFeed`: First feed address
 - `secondFeed`: Second feed address
-- `secondFeedDivisor`: Divisor for price normalization (e.g., 1e12 for MCAP, default = 1)
+- `priceDivisor`: Divisor for price normalization (e.g., 1e12 for MCAP)
 - `firstFeedMaxAge`: Max age for first feed
 - `firstFeedMaxDev`: Max deviation for first feed
 - `secondFeedMaxAge`: Max age for second feed
