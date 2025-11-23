@@ -512,3 +512,6 @@ abstract contract MultipleRewardCompoundingAccumulator is
     /// @param account The address of user to query.
     function _getUserPoolShare(address account) internal view virtual returns (uint128 previousProd, uint256 share);
 }
+
+
+

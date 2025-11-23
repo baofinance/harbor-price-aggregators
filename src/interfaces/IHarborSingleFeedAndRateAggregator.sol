@@ -13,7 +13,9 @@ interface IHarborSingleFeedAndRateAggregator is IWrappedPriceOracle {
 
     enum RateSource {
         WSTETH,
-        FXSAVE
+        FXSAVE,
+        SUSDE_CHAINLINK,
+        WSTETH_CHAINLINK
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -58,6 +60,12 @@ interface IHarborSingleFeedAndRateAggregator is IWrappedPriceOracle {
 
     /// @notice fxsave contract address (if using fxsave rate source)
     function FXSAVE() external view returns (IFxSAVE);
+
+    /// @notice sUSDE/USDE Chainlink feed address (if using SUSDE_CHAINLINK rate source)
+    function SUSDE_USDE_FEED() external view returns (address);
+
+    /// @notice wstETH/stETH Chainlink feed address (if using WSTETH_CHAINLINK rate source)
+    function WSTETH_STETH_FEED() external view returns (address);
 
     /// @notice Oracle name/description
     function oracleName() external view returns (string memory);
@@ -135,5 +143,7 @@ interface IHarborSingleFeedAndRateAggregator is IWrappedPriceOracle {
     /// @return maxDev Maximum deviation (1e18 precision)
     function getConstraints(uint8 identifier) external view returns (uint64 maxAge, uint256 maxDev);
 }
+
+
 
 

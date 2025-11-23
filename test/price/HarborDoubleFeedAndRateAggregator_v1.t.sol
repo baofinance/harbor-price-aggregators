@@ -167,7 +167,9 @@ contract HarborDoubleFeedAndRateAggregator_v1Test is Test {
         // Deploy wstETH to BTC oracle (RateSource = 0 for wstETH, ETH/USD + BTC/USD)
         HarborDoubleFeedAndRateAggregator_v1 implementation = new HarborDoubleFeedAndRateAggregator_v1(
             address(mockWstEth),
-            address(mockFxSave)
+            address(mockFxSave),
+            address(0), // SUSDE_USDE_FEED not used in tests
+            address(0)  // WSTETH_STETH_FEED not used in tests
         );
 
         bytes memory initData = abi.encodeWithSelector(
@@ -196,7 +198,9 @@ contract HarborDoubleFeedAndRateAggregator_v1Test is Test {
         
         HarborDoubleFeedAndRateAggregator_v1 implementation = new HarborDoubleFeedAndRateAggregator_v1(
             address(mockWstEth),
-            address(mockFxSave)
+            address(mockFxSave),
+            address(0), // SUSDE_USDE_FEED not used in tests
+            address(0)  // WSTETH_STETH_FEED not used in tests
         );
 
         bytes memory initData = abi.encodeWithSelector(
@@ -227,7 +231,9 @@ contract HarborDoubleFeedAndRateAggregator_v1Test is Test {
     function test_GetPrice() public {
         HarborDoubleFeedAndRateAggregator_v1 implementation = new HarborDoubleFeedAndRateAggregator_v1(
             address(mockWstEth),
-            address(mockFxSave)
+            address(mockFxSave),
+            address(0), // SUSDE_USDE_FEED not used in tests
+            address(0)  // WSTETH_STETH_FEED not used in tests
         );
 
         bytes memory initData = abi.encodeWithSelector(
@@ -253,7 +259,9 @@ contract HarborDoubleFeedAndRateAggregator_v1Test is Test {
     function test_LatestAnswer() public {
         HarborDoubleFeedAndRateAggregator_v1 implementation = new HarborDoubleFeedAndRateAggregator_v1(
             address(mockWstEth),
-            address(mockFxSave)
+            address(mockFxSave),
+            address(0), // SUSDE_USDE_FEED not used in tests
+            address(0)  // WSTETH_STETH_FEED not used in tests
         );
 
         bytes memory initData = abi.encodeWithSelector(
@@ -283,7 +291,9 @@ contract HarborDoubleFeedAndRateAggregator_v1Test is Test {
     function test_UpdateBothConstraints() public {
         HarborDoubleFeedAndRateAggregator_v1 implementation = new HarborDoubleFeedAndRateAggregator_v1(
             address(mockWstEth),
-            address(mockFxSave)
+            address(mockFxSave),
+            address(0), // SUSDE_USDE_FEED not used in tests
+            address(0)  // WSTETH_STETH_FEED not used in tests
         );
 
         bytes memory initData = abi.encodeWithSelector(
@@ -332,7 +342,9 @@ contract HarborDoubleFeedAndRateAggregator_v1Test is Test {
 
         HarborDoubleFeedAndRateAggregator_v1 implementation = new HarborDoubleFeedAndRateAggregator_v1(
             address(mockWstEth),
-            address(mockFxSave)
+            address(mockFxSave),
+            address(0), // SUSDE_USDE_FEED not used in tests
+            address(0)  // WSTETH_STETH_FEED not used in tests
         );
 
         bytes memory initData = abi.encodeWithSelector(
@@ -372,7 +384,9 @@ contract HarborDoubleFeedAndRateAggregator_v1Test is Test {
         // Deploy wstETH to MCAP with divisor=1e12
         HarborDoubleFeedAndRateAggregator_v1 implementation = new HarborDoubleFeedAndRateAggregator_v1(
             address(mockWstEth),
-            address(mockFxSave)
+            address(mockFxSave),
+            address(0), // SUSDE_USDE_FEED not used in tests
+            address(0)  // WSTETH_STETH_FEED not used in tests
         );
 
         bytes memory initData = abi.encodeWithSelector(
@@ -413,7 +427,9 @@ contract HarborDoubleFeedAndRateAggregator_v1Test is Test {
         // Deploy fxSAVE to MCAP with divisor=1e12
         HarborDoubleFeedAndRateAggregator_v1 implementation = new HarborDoubleFeedAndRateAggregator_v1(
             address(mockWstEth),
-            address(mockFxSave)
+            address(mockFxSave),
+            address(0), // SUSDE_USDE_FEED not used in tests
+            address(0)  // WSTETH_STETH_FEED not used in tests
         );
 
         bytes memory initData = abi.encodeWithSelector(
@@ -456,7 +472,9 @@ contract HarborDoubleFeedAndRateAggregator_v1Test is Test {
 
         HarborDoubleFeedAndRateAggregator_v1 implementation = new HarborDoubleFeedAndRateAggregator_v1(
             address(mockWstEth),
-            address(mockFxSave)
+            address(mockFxSave),
+            address(0), // SUSDE_USDE_FEED not used in tests
+            address(0)  // WSTETH_STETH_FEED not used in tests
         );
 
         bytes memory initData = abi.encodeWithSelector(
@@ -495,7 +513,9 @@ contract HarborDoubleFeedAndRateAggregator_v1Test is Test {
 
         HarborDoubleFeedAndRateAggregator_v1 implementation = new HarborDoubleFeedAndRateAggregator_v1(
             address(mockWstEth),
-            address(mockFxSave)
+            address(mockFxSave),
+            address(0), // SUSDE_USDE_FEED not used in tests
+            address(0)  // WSTETH_STETH_FEED not used in tests
         );
 
         bytes memory initData = abi.encodeWithSelector(

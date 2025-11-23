@@ -24,7 +24,9 @@ contract HarborSingleFeedAndRateAggregator_v1 is IWrappedPriceOracle, UUPSUpgrad
 
     enum RateSource {
         WSTETH,
-        FXSAVE
+        FXSAVE,
+        SUSDE_CHAINLINK,
+        WSTETH_CHAINLINK
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -36,6 +38,12 @@ contract HarborSingleFeedAndRateAggregator_v1 is IWrappedPriceOracle, UUPSUpgrad
 
     /// @notice fxsave contract address (if using fxsave rate source)
     IFxSAVE public immutable FXSAVE;
+
+    /// @notice sUSDE/USDE Chainlink feed address (if using SUSDE_CHAINLINK rate source)
+    address public immutable SUSDE_USDE_FEED;
+
+    /// @notice wstETH/stETH Chainlink feed address (if using WSTETH_CHAINLINK rate source)
+    address public immutable WSTETH_STETH_FEED;
 
     /*//////////////////////////////////////////////////////////////
                                 STORAGE
@@ -98,10 +106,14 @@ contract HarborSingleFeedAndRateAggregator_v1 is IWrappedPriceOracle, UUPSUpgrad
     /// @notice Constructor sets immutable values and disables initializers
     /// @param wsteth_ wstETH contract address
     /// @param fxsave_ fxsave contract address
-    constructor(address wsteth_, address fxsave_) {
+    /// @param susdeUsdeFeed_ sUSDE/USDE Chainlink feed address
+    /// @param wstethStethFeed_ wstETH/stETH Chainlink feed address
+    constructor(address wsteth_, address fxsave_, address susdeUsdeFeed_, address wstethStethFeed_) {
         _disableInitializers();
         WSTETH = wsteth_;
         FXSAVE = IFxSAVE(fxsave_);
+        SUSDE_USDE_FEED = susdeUsdeFeed_;
+        WSTETH_STETH_FEED = wstethStethFeed_;
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -139,6 +151,8 @@ contract HarborSingleFeedAndRateAggregator_v1 is IWrappedPriceOracle, UUPSUpgrad
         // Validate rate source configuration
         if (rateSource_ == RateSource.WSTETH && WSTETH == address(0)) revert InvalidRateSource(WSTETH);
         if (rateSource_ == RateSource.FXSAVE && address(FXSAVE) == address(0)) revert InvalidRateSource(address(FXSAVE));
+        if (rateSource_ == RateSource.SUSDE_CHAINLINK && SUSDE_USDE_FEED == address(0)) revert InvalidRateSource(SUSDE_USDE_FEED);
+        if (rateSource_ == RateSource.WSTETH_CHAINLINK && WSTETH_STETH_FEED == address(0)) revert InvalidRateSource(WSTETH_STETH_FEED);
         
         // Set storage variables
         oracleName = oracleName_;
@@ -192,9 +206,11 @@ contract HarborSingleFeedAndRateAggregator_v1 is IWrappedPriceOracle, UUPSUpgrad
         // forge-lint: disable-next-line(unsafe-typecast) // Safe: only checking for zero
         if (firstFeedPrice == 0) revert InvalidPrice(firstFeed, int256(firstFeedPrice));
 
-        // For single feed, the price is the rate divided by the feed price
-        // This gives us the conversion rate (e.g., wstETH/ETH)
-        uint256 aggregatorPrice = Math.mulDiv(rate, 1e18, firstFeedPrice);
+        // For single feed, calculate: (rate * firstFeedPrice) / 1e18
+        // For wstETH: rate = wstETH/stETH, feed = stETH/ETH, result = wstETH/ETH
+        // For fxsave: rate = fxsave/assets, feed = assets/USD, result = fxsave/USD
+        // For sUSDE: rate = sUSDE/USDE, feed = USDE/USD, result = sUSDE/USD
+        uint256 aggregatorPrice = Math.mulDiv(rate, firstFeedPrice, 1e18);
         
         // Apply divisor to final price for normalization
         uint256 finalPrice = aggregatorPrice / priceDivisor;
@@ -215,8 +231,11 @@ contract HarborSingleFeedAndRateAggregator_v1 is IWrappedPriceOracle, UUPSUpgrad
         uint256 rate = _getRate();
         uint256 firstFeedPrice = firstFeedData.latestAnswer(feedConstraints[firstFeed]);
         
-        // For single feed, the price is the rate divided by the feed price
-        uint256 aggregatorPrice = Math.mulDiv(rate, 1e18, firstFeedPrice);
+        // For single feed, calculate: (rate * firstFeedPrice) / 1e18
+        // For wstETH: rate = wstETH/stETH, feed = stETH/ETH, result = wstETH/ETH
+        // For fxsave: rate = fxsave/assets, feed = assets/USD, result = fxsave/USD
+        // For sUSDE: rate = sUSDE/USDE, feed = USDE/USD, result = sUSDE/USD
+        uint256 aggregatorPrice = Math.mulDiv(rate, firstFeedPrice, 1e18);
         
         // Apply divisor to final price for normalization
         uint256 finalPrice = aggregatorPrice / priceDivisor;
@@ -228,9 +247,33 @@ contract HarborSingleFeedAndRateAggregator_v1 is IWrappedPriceOracle, UUPSUpgrad
         if (rateSource == RateSource.WSTETH) {
             // For wstETH, get the conversion rate from wstETH to stETH
             return IWstETH(WSTETH).getStETHByWstETH(1e18);
-        } else {
+        } else if (rateSource == RateSource.FXSAVE) {
             // For fxsave, get the conversion rate
             return FXSAVE.convertToAssets(1e18);
+        } else if (rateSource == RateSource.SUSDE_CHAINLINK) {
+            // For SUSDE_CHAINLINK, get the sUSDE/USDE rate from Chainlink feed
+            // Normalize to 18 decimals
+            AggregatorV3Interface feed = AggregatorV3Interface(SUSDE_USDE_FEED);
+            uint8 decimals = feed.decimals();
+            (, int256 answer, , , ) = feed.latestRoundData();
+            // Normalize to 18 decimals
+            if (decimals <= 18) {
+                return uint256(answer) * (10 ** (18 - decimals));
+            } else {
+                return uint256(answer) / (10 ** (decimals - 18));
+            }
+        } else {
+            // For WSTETH_CHAINLINK, get the wstETH/stETH rate from Chainlink feed
+            // Normalize to 18 decimals
+            AggregatorV3Interface feed = AggregatorV3Interface(WSTETH_STETH_FEED);
+            uint8 decimals = feed.decimals();
+            (, int256 answer, , , ) = feed.latestRoundData();
+            // Normalize to 18 decimals
+            if (decimals <= 18) {
+                return uint256(answer) * (10 ** (18 - decimals));
+            } else {
+                return uint256(answer) / (10 ** (decimals - 18));
+            }
         }
     }
 

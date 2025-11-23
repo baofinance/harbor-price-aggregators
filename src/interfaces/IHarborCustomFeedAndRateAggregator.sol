@@ -4,9 +4,9 @@ pragma solidity 0.8.30;
 import {IWrappedPriceOracle} from "./IWrappedPriceOracle.sol";
 import {IFxSAVE} from "./IFxSAVE.sol";
 
-/// @title Interface for Harbor Double Feed and Rate Aggregator
-/// @notice Generic oracle for double feed conversions (e.g., wstETH to BTC, EUR, XAU, MCAP)
-interface IHarborDoubleFeedAndRateAggregator is IWrappedPriceOracle {
+/// @title Interface for Harbor Custom Feed and Rate Aggregator
+/// @notice Generic oracle for custom feed aggregations (e.g., wstETH to aggregated stock prices)
+interface IHarborCustomFeedAndRateAggregator is IWrappedPriceOracle {
     /*//////////////////////////////////////////////////////////////
                                 ENUMS
     //////////////////////////////////////////////////////////////*/
@@ -41,7 +41,6 @@ interface IHarborDoubleFeedAndRateAggregator is IWrappedPriceOracle {
     //////////////////////////////////////////////////////////////*/
 
     error InvalidPriceSource(address source);
-    error InvalidConversionFeed(address source);
     error InvalidRateSource(address source);
     error InvalidMaxPriceAge(uint64 value);
     error InvalidMaxRelativeDeviation(uint256 value);
@@ -51,6 +50,10 @@ interface IHarborDoubleFeedAndRateAggregator is IWrappedPriceOracle {
     error InvalidFeedIdentifier(uint8 identifier);
     error ConstraintsNotSet(address feed);
     error InvalidRateSourceConfig();
+    error InvalidAggregationDivisor(uint256 divisor);
+    error EmptyCustomFeeds();
+    error InvalidCustomFeedCount(uint256 count);
+    error FeedNotFound(address feed);
 
     /*//////////////////////////////////////////////////////////////
                                 STATE
@@ -74,20 +77,20 @@ interface IHarborDoubleFeedAndRateAggregator is IWrappedPriceOracle {
     /// @notice Rate source configuration
     function rateSource() external view returns (RateSource);
 
-    /// @notice First feed address (e.g., USDC/USD or ETH/USD)
-    function firstFeed() external view returns (address);
+    /// @notice Array of custom feed addresses (e.g., AAPL, GOOGLE, NVDA, AMZN, MSFT, META)
+    function customFeeds(uint256 index) external view returns (address);
 
-    /// @notice Second feed address (e.g., BTC/USD, EUR/USD, XAU/USD, MCAP/USD)
-    function secondFeed() external view returns (address);
+    /// @notice USD feed address for final conversion
+    function usdFeed() external view returns (address);
 
-    /// @notice Decimals of first feed
-    function firstFeedDecimals() external view returns (uint8);
+    /// @notice Divisor for aggregated price normalization (e.g., 7)
+    function aggregationDivisor() external view returns (uint256);
 
-    /// @notice Decimals of second feed
-    function secondFeedDecimals() external view returns (uint8);
+    /// @notice Decimals of USD feed
+    function usdFeedDecimals() external view returns (uint8);
 
-    /// @notice Divisor for price normalization (e.g., 1T for MCAP)
-    function priceDivisor() external view returns (uint256);
+    /// @notice Decimals of each custom feed (indexed by feed address)
+    function feedDecimals(address feed) external view returns (uint8);
 
     /// @notice Feed validation constraints
     function feedConstraints(address feed)
@@ -100,7 +103,7 @@ interface IHarborDoubleFeedAndRateAggregator is IWrappedPriceOracle {
             uint256 maxTrendReversalDeviation
         );
 
-    /// @notice Numeric identifiers for feeds (1 = first feed, 2 = second feed)
+    /// @notice Numeric identifiers for feeds (1+ = custom feeds, 100 = USD feed)
     function feedIdentifiers(uint8 identifier) external view returns (address);
 
     /*//////////////////////////////////////////////////////////////
@@ -110,37 +113,37 @@ interface IHarborDoubleFeedAndRateAggregator is IWrappedPriceOracle {
     /// @notice Initializes upgradeability and ownership (proxy)
     /// @param owner_ The owner address
     /// @param oracleName_ The oracle name/description
-    /// @param rateSource_ Rate source (0 = wstETH, 1 = fxsave)
-    /// @param firstFeed_ First feed address (e.g., USDC/USD or ETH/USD)
-    /// @param secondFeed_ Second feed address (e.g., BTC/USD, EUR/USD, XAU/USD, MCAP/USD)
-    /// @param priceDivisor_ Divisor for price normalization (default 1, use 1e12 for MCAP)
-    /// @param firstFeedMaxAge_ Max age for first feed (seconds)
-    /// @param firstFeedMaxDev_ Max deviation for first feed (1e18)
-    /// @param secondFeedMaxAge_ Max age for second feed (seconds)
-    /// @param secondFeedMaxDev_ Max deviation for second feed (1e18)
+    /// @param rateSource_ Rate source (0 = wstETH, 1 = fxsave, etc.)
+    /// @param customFeeds_ Array of custom feed addresses (e.g., stock price feeds)
+    /// @param usdFeed_ USD feed address for final conversion
+    /// @param aggregationDivisor_ Divisor for aggregated price normalization (e.g., 7)
+    /// @param customFeedMaxAge_ Max age for custom feeds (seconds)
+    /// @param customFeedMaxDev_ Max deviation for custom feeds (1e18)
+    /// @param usdFeedMaxAge_ Max age for USD feed (seconds)
+    /// @param usdFeedMaxDev_ Max deviation for USD feed (1e18)
     function initialize(
         address owner_,
         string memory oracleName_,
         RateSource rateSource_,
-        address firstFeed_,
-        address secondFeed_,
-        uint256 priceDivisor_,
-        uint64 firstFeedMaxAge_,
-        uint256 firstFeedMaxDev_,
-        uint64 secondFeedMaxAge_,
-        uint256 secondFeedMaxDev_
+        address[] memory customFeeds_,
+        address usdFeed_,
+        uint256 aggregationDivisor_,
+        uint64 customFeedMaxAge_,
+        uint256 customFeedMaxDev_,
+        uint64 usdFeedMaxAge_,
+        uint256 usdFeedMaxDev_
     ) external;
 
     /// @notice Initializes feed identifiers and constraints for proxy storage
-    /// @param firstFeedMaxAge Max age for first feed (seconds)
-    /// @param firstFeedMaxDev Max deviation for first feed (1e18)
-    /// @param secondFeedMaxAge Max age for second feed (seconds)
-    /// @param secondFeedMaxDev Max deviation for second feed (1e18)
+    /// @param customFeedMaxAge Max age for custom feeds (seconds)
+    /// @param customFeedMaxDev Max deviation for custom feeds (1e18)
+    /// @param usdFeedMaxAge Max age for USD feed (seconds)
+    /// @param usdFeedMaxDev Max deviation for USD feed (1e18)
     function initializeFeeds(
-        uint64 firstFeedMaxAge,
-        uint256 firstFeedMaxDev,
-        uint64 secondFeedMaxAge,
-        uint256 secondFeedMaxDev
+        uint64 customFeedMaxAge,
+        uint256 customFeedMaxDev,
+        uint64 usdFeedMaxAge,
+        uint256 usdFeedMaxDev
     ) external;
 
     /*//////////////////////////////////////////////////////////////
@@ -151,31 +154,41 @@ interface IHarborDoubleFeedAndRateAggregator is IWrappedPriceOracle {
     /// @return price The current price
     function getPrice() external view returns (uint256 price);
 
-    /// @notice Set constraints for a specific feed by identifier (1=first feed, 2=second feed)
-    /// @param identifier Feed identifier (1 = first feed, 2 = second feed)
+    /// @notice Set constraints for a specific feed by identifier (1+ = custom feeds, 100 = USD feed)
+    /// @param identifier Feed identifier (1+ = custom feeds, 100 = USD feed)
     /// @param maxAge Maximum age in seconds
     /// @param maxDev Maximum deviation (1e18 precision)
     function setFeedConstraints(uint8 identifier, uint64 maxAge, uint256 maxDev) external;
 
-    /// @notice Update constraints for both feeds in one call
-    /// @param firstFeedMaxAge Max age for first feed (seconds)
-    /// @param firstFeedMaxDev Max deviation for first feed (1e18)
-    /// @param secondFeedMaxAge Max age for second feed (seconds)
-    /// @param secondFeedMaxDev Max deviation for second feed (1e18)
-    function updateBothConstraints(
-        uint64 firstFeedMaxAge,
-        uint256 firstFeedMaxDev,
-        uint64 secondFeedMaxAge,
-        uint256 secondFeedMaxDev
+    /// @notice Update constraints for all custom feeds in one call
+    /// @param customFeedMaxAge Max age for custom feeds (seconds)
+    /// @param customFeedMaxDev Max deviation for custom feeds (1e18)
+    function updateCustomFeedConstraints(
+        uint64 customFeedMaxAge,
+        uint256 customFeedMaxDev
+    ) external;
+
+    /// @notice Update constraints for USD feed
+    /// @param usdFeedMaxAge Max age for USD feed (seconds)
+    /// @param usdFeedMaxDev Max deviation for USD feed (1e18)
+    function updateUsdFeedConstraints(
+        uint64 usdFeedMaxAge,
+        uint256 usdFeedMaxDev
     ) external;
 
     /// @notice Return constraints for a feed by identifier
-    /// @param identifier Feed identifier (1 = first feed, 2 = second feed)
+    /// @param identifier Feed identifier (1+ = custom feeds, 100 = USD feed)
     /// @return maxAge Maximum age in seconds
     /// @return maxDev Maximum deviation (1e18 precision)
     function getConstraints(uint8 identifier) external view returns (uint64 maxAge, uint256 maxDev);
+
+    /// @notice Get the number of custom feeds
+    /// @return count The number of custom feeds
+    function getCustomFeedCount() external view returns (uint256);
+
+    /// @notice Get a custom feed address by index
+    /// @param index The index of the custom feed
+    /// @return feed The custom feed address
+    function getCustomFeed(uint256 index) external view returns (address);
 }
-
-
-
 
