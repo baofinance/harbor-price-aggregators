@@ -516,5 +516,198 @@ contract HarborCustomFeedAndRateAggregator_v1Test is Test {
         uint256 price = oracle.getPrice();
         assertTrue(price > 0, "Price should be positive (fuzz)");
     }
+
+    function test_GetRate() public {
+        HarborCustomFeedAndRateAggregator_v1 implementation = new HarborCustomFeedAndRateAggregator_v1(
+            address(mockWstEth),
+            address(mockFxSave),
+            address(0),
+            address(0)
+        );
+
+        address[] memory customFeeds = new address[](mockStockFeeds.length);
+        for (uint256 i = 0; i < mockStockFeeds.length; i++) {
+            customFeeds[i] = address(mockStockFeeds[i]);
+        }
+
+        bytes memory initData = abi.encodeWithSelector(
+            HarborCustomFeedAndRateAggregator_v1.initialize.selector,
+            owner,
+            "TestOracle",
+            HarborCustomFeedAndRateAggregator_v1.RateSource.WSTETH,
+            customFeeds,
+            address(mockUsdFeed),
+            aggregationDivisor,
+            maxAge,
+            maxDev,
+            maxAge,
+            maxDev
+        );
+        ERC1967Proxy proxy = new ERC1967Proxy(address(implementation), initData);
+        oracle = HarborCustomFeedAndRateAggregator_v1(address(proxy));
+
+        uint256 rate = oracle.getRate();
+        assertEq(rate, wstEthRate, "Incorrect rate from getRate()");
+    }
+
+    function test_Decimals() public {
+        HarborCustomFeedAndRateAggregator_v1 implementation = new HarborCustomFeedAndRateAggregator_v1(
+            address(mockWstEth),
+            address(mockFxSave),
+            address(0),
+            address(0)
+        );
+
+        address[] memory customFeeds = new address[](mockStockFeeds.length);
+        for (uint256 i = 0; i < mockStockFeeds.length; i++) {
+            customFeeds[i] = address(mockStockFeeds[i]);
+        }
+
+        bytes memory initData = abi.encodeWithSelector(
+            HarborCustomFeedAndRateAggregator_v1.initialize.selector,
+            owner,
+            "TestOracle",
+            HarborCustomFeedAndRateAggregator_v1.RateSource.WSTETH,
+            customFeeds,
+            address(mockUsdFeed),
+            aggregationDivisor,
+            maxAge,
+            maxDev,
+            maxAge,
+            maxDev
+        );
+        ERC1967Proxy proxy = new ERC1967Proxy(address(implementation), initData);
+        oracle = HarborCustomFeedAndRateAggregator_v1(address(proxy));
+
+        assertEq(oracle.decimals(), 18, "Decimals should always be 18");
+    }
+
+    function test_InvalidRate_TooLow() public {
+        HarborCustomFeedAndRateAggregator_v1 implementation = new HarborCustomFeedAndRateAggregator_v1(
+            address(mockWstEth),
+            address(mockFxSave),
+            address(0),
+            address(0)
+        );
+
+        address[] memory customFeeds = new address[](mockStockFeeds.length);
+        for (uint256 i = 0; i < mockStockFeeds.length; i++) {
+            customFeeds[i] = address(mockStockFeeds[i]);
+        }
+
+        // Set invalid rate (too low: < 1e18)
+        mockWstEth.setStEthPerToken(9e17); // 0.9
+
+        bytes memory initData = abi.encodeWithSelector(
+            HarborCustomFeedAndRateAggregator_v1.initialize.selector,
+            owner,
+            "TestOracle",
+            HarborCustomFeedAndRateAggregator_v1.RateSource.WSTETH,
+            customFeeds,
+            address(mockUsdFeed),
+            aggregationDivisor,
+            maxAge,
+            maxDev,
+            maxAge,
+            maxDev
+        );
+        ERC1967Proxy proxy = new ERC1967Proxy(address(implementation), initData);
+        oracle = HarborCustomFeedAndRateAggregator_v1(address(proxy));
+
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                HarborCustomFeedAndRateAggregator_v1.InvalidRate.selector,
+                9e17
+            )
+        );
+        oracle.latestAnswer();
+    }
+
+    function test_InvalidRate_TooHigh() public {
+        HarborCustomFeedAndRateAggregator_v1 implementation = new HarborCustomFeedAndRateAggregator_v1(
+            address(mockWstEth),
+            address(mockFxSave),
+            address(0),
+            address(0)
+        );
+
+        address[] memory customFeeds = new address[](mockStockFeeds.length);
+        for (uint256 i = 0; i < mockStockFeeds.length; i++) {
+            customFeeds[i] = address(mockStockFeeds[i]);
+        }
+
+        // Set invalid rate (too high: > 2e18)
+        mockWstEth.setStEthPerToken(21e17); // 2.1
+
+        bytes memory initData = abi.encodeWithSelector(
+            HarborCustomFeedAndRateAggregator_v1.initialize.selector,
+            owner,
+            "TestOracle",
+            HarborCustomFeedAndRateAggregator_v1.RateSource.WSTETH,
+            customFeeds,
+            address(mockUsdFeed),
+            aggregationDivisor,
+            maxAge,
+            maxDev,
+            maxAge,
+            maxDev
+        );
+        ERC1967Proxy proxy = new ERC1967Proxy(address(implementation), initData);
+        oracle = HarborCustomFeedAndRateAggregator_v1(address(proxy));
+
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                HarborCustomFeedAndRateAggregator_v1.InvalidRate.selector,
+                21e17
+            )
+        );
+        oracle.latestAnswer();
+    }
+
+    function test_StaleRateSource() public {
+        MockAggregatorV3 mockRateFeed = new MockAggregatorV3(18);
+        // Set stale timestamp (more than 1 day old)
+        // Advance block.timestamp to ensure we can set a stale timestamp
+        vm.warp(3 days);
+        uint256 staleTimestamp = block.timestamp - 2 days; // 2 days ago, definitely stale
+        mockRateFeed.setAnswer(12e17, staleTimestamp);
+
+        HarborCustomFeedAndRateAggregator_v1 implementation = new HarborCustomFeedAndRateAggregator_v1(
+            address(0), // WSTETH not used
+            address(0), // FXSAVE not used
+            address(0), // SUSDE not used
+            address(mockRateFeed) // WSTETH_CHAINLINK
+        );
+
+        address[] memory customFeeds = new address[](mockStockFeeds.length);
+        for (uint256 i = 0; i < mockStockFeeds.length; i++) {
+            customFeeds[i] = address(mockStockFeeds[i]);
+        }
+
+        bytes memory initData = abi.encodeWithSelector(
+            HarborCustomFeedAndRateAggregator_v1.initialize.selector,
+            owner,
+            "TestOracle",
+            HarborCustomFeedAndRateAggregator_v1.RateSource.WSTETH_CHAINLINK,
+            customFeeds,
+            address(mockUsdFeed),
+            aggregationDivisor,
+            maxAge,
+            maxDev,
+            maxAge,
+            maxDev
+        );
+        ERC1967Proxy proxy = new ERC1967Proxy(address(implementation), initData);
+        oracle = HarborCustomFeedAndRateAggregator_v1(address(proxy));
+
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                HarborCustomFeedAndRateAggregator_v1.StaleRateSource.selector,
+                address(mockRateFeed),
+                staleTimestamp
+            )
+        );
+        oracle.latestAnswer();
+    }
 }
 

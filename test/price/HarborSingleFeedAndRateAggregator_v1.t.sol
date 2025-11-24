@@ -233,17 +233,17 @@ contract HarborSingleFeedAndRateAggregator_v1Test is Test {
         ERC1967Proxy proxy = new ERC1967Proxy(address(implementation), initData);
         oracle = HarborSingleFeedAndRateAggregator_v1(address(proxy));
 
-        // For wstETH single feed, price = rate * 1e18 / ethUsdPrice
+        // For wstETH single feed, price = (rate * firstFeedPrice) / 1e18 / priceDivisor
         // rate = wstEthRate (1.208... stETH/wstETH)
         // ethUsdPrice = 4000 USD/ETH (normalized to 18 decimals)
-        // price = (1208351172000448378 * 1e18) / 4000000000000000000000
+        // price = (rate * normalizedEthUsdPrice) / 1e18
         uint256 price = oracle.getPrice();
-        // Expected: rate * 1e18 / normalizedEthUsdPrice
+        // Expected: (rate * normalizedEthUsdPrice) / 1e18
         // normalizedEthUsdPrice = 400000000000 * 1e10 = 4000000000000000000000
         // casting to 'uint256' is safe because ethUsdPrice is a positive price value
         // forge-lint: disable-next-line unsafe-typecast
         uint256 normalizedEthUsdPrice = uint256(ethUsdPrice) * 1e10;
-        uint256 expectedPrice = Math.mulDiv(wstEthRate, 1e18, normalizedEthUsdPrice);
+        uint256 expectedPrice = Math.mulDiv(wstEthRate, normalizedEthUsdPrice, 1e18);
         
         assertEq(price, expectedPrice, "Incorrect wstETH price");
     }

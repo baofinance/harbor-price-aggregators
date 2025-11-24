@@ -76,6 +76,11 @@ contract HarborCustomFeedAndRateAggregator_v1 is IWrappedPriceOracle, UUPSUpgrad
     /// @notice Numeric identifiers for feeds (1+ = custom feeds, 100 = USD feed)
     mapping(uint8 => address) public feedIdentifiers;
 
+    /// @notice Maximum age for rate source feeds (configurable, defaults to 1 day)
+    /// @dev Only applies to Chainlink rate sources (SUSDE_CHAINLINK, WSTETH_CHAINLINK)
+    ///      Direct contract calls (WSTETH, FXSAVE) are always current
+    uint64 public maxRateSourceAge = 1 days;
+
     /*//////////////////////////////////////////////////////////////
                                   ERRORS
     //////////////////////////////////////////////////////////////*/
@@ -94,6 +99,7 @@ contract HarborCustomFeedAndRateAggregator_v1 is IWrappedPriceOracle, UUPSUpgrad
     error EmptyCustomFeeds();
     error InvalidCustomFeedCount(uint256 count);
     error FeedNotFound(address feed);
+    error StaleRateSource(address source, uint256 updatedAt);
 
     /*//////////////////////////////////////////////////////////////
                                   EVENTS
@@ -112,6 +118,10 @@ contract HarborCustomFeedAndRateAggregator_v1 is IWrappedPriceOracle, UUPSUpgrad
     /// @param maxAge New maximum age in seconds
     /// @param maxDev New maximum deviation (1e18 precision)
     event ConstraintsUpdated(address indexed feed, uint64 maxAge, uint256 maxDev);
+
+    /// @notice Emitted when max rate source age is updated
+    /// @param maxAge New maximum age in seconds
+    event MaxRateSourceAgeUpdated(uint64 maxAge);
 
     /// @notice Constructor sets immutable values and disables initializers
     /// @param wsteth_ wstETH contract address
@@ -185,9 +195,9 @@ contract HarborCustomFeedAndRateAggregator_v1 is IWrappedPriceOracle, UUPSUpgrad
         for (uint256 i = 0; i < customFeeds_.length; i++) {
             address feed = customFeeds_[i];
             if (feed == address(0)) revert InvalidPriceSource(feed);
-            uint8 decimals = AggregatorV3Interface(feed).decimals();
-            if (decimals == 0) revert InvalidFeedDecimals(feed);
-            feedDecimals[feed] = decimals;
+            uint8 feedDecimalsValue = AggregatorV3Interface(feed).decimals();
+            if (feedDecimalsValue == 0) revert InvalidFeedDecimals(feed);
+            feedDecimals[feed] = feedDecimalsValue;
             feedIdentifiers[uint8(i + 1)] = feed;
         }
         
@@ -211,13 +221,17 @@ contract HarborCustomFeedAndRateAggregator_v1 is IWrappedPriceOracle, UUPSUpgrad
     }
 
     /// @notice Initializes feed identifiers and constraints for proxy storage
+    /// @dev This function is only needed if feeds were not initialized in initialize()
+    ///      Checks that feeds array is populated before setting identifiers
     function initializeFeeds(
         uint64 customFeedMaxAge,
         uint256 customFeedMaxDev,
         uint64 usdFeedMaxAge,
         uint256 usdFeedMaxDev
     ) external onlyOwner {
-        if (feedIdentifiers[1] == address(0)) revert("Feeds already initialized");
+        if (feedIdentifiers[1] != address(0)) revert("Feeds already initialized");
+        if (customFeeds.length == 0) revert EmptyCustomFeeds();
+        if (usdFeed == address(0)) revert InvalidPriceSource(usdFeed);
         
         for (uint256 i = 0; i < customFeeds.length; i++) {
             feedIdentifiers[uint8(i + 1)] = customFeeds[i];
@@ -232,7 +246,36 @@ contract HarborCustomFeedAndRateAggregator_v1 is IWrappedPriceOracle, UUPSUpgrad
     //////////////////////////////////////////////////////////////*/
 
     /// @inheritdoc IWrappedPriceOracle
+    /// @notice Returns validated oracle price information
+    /// @dev Returns (price, price, rate, rate) for compatibility with IWrappedPriceOracle interface
+    ///      First two values are the final normalized price (units of aggregated basket per 1 wstETH), always 18 decimals
+    ///      Last two values are the raw rate (wstETH/stETH conversion rate), always 18 decimals
+    ///      Min/max values are identical as this oracle provides deterministic pricing
+    /// @return minUnderlyingPrice The validated min price (units of aggregated basket per 1 wstETH), 18 decimals
+    /// @return maxUnderlyingPrice The validated max price (units of aggregated basket per 1 wstETH), 18 decimals
+    /// @return minWrappedRate The min rate (wstETH/stETH conversion rate), 18 decimals
+    /// @return maxWrappedRate The max rate (wstETH/stETH conversion rate), 18 decimals
     function latestAnswer() external view returns (uint256, uint256, uint256, uint256) {
+        uint256 price = _getPrice();
+        uint256 rate = _getRate();
+        return (price, price, rate, rate);
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                            VIEW HELPERS
+    //////////////////////////////////////////////////////////////*/
+
+    /// @notice Get the current price (units of aggregated basket per 1 wstETH)
+    /// @dev Uses internal logic to avoid external call overhead
+    /// @return price The current price, always 18 decimals
+    function getPrice() external view returns (uint256 price) {
+        price = _getPrice();
+    }
+
+    /// @notice Internal function to get the current price
+    /// @dev Reuses latestAnswer() logic without external call overhead
+    /// @return price The current price, always 18 decimals
+    function _getPrice() internal view returns (uint256 price) {
         // Validate constraints are set
         if (feedConstraints[usdFeed].maxAnswerAge == 0) revert ConstraintsNotSet(usdFeed);
         for (uint256 i = 0; i < customFeeds.length; i++) {
@@ -240,13 +283,15 @@ contract HarborCustomFeedAndRateAggregator_v1 is IWrappedPriceOracle, UUPSUpgrad
         }
         
         uint256 rate = _getRate();
-        if (rate < 1e18) revert InvalidRate(rate);
         
         // Aggregate all custom feed prices
         uint256 aggregatedPrice = 0;
+        AggregatorV3Interface usdFeedInterface = AggregatorV3Interface(usdFeed);
+        
         for (uint256 i = 0; i < customFeeds.length; i++) {
+            AggregatorV3Interface feedInterface = AggregatorV3Interface(customFeeds[i]);
             PriceOracle_v1.Feed memory feedData = PriceOracle_v1.Feed({
-                priceFeed: AggregatorV3Interface(customFeeds[i]),
+                priceFeed: feedInterface,
                 decimals: feedDecimals[customFeeds[i]]
             });
             
@@ -262,7 +307,7 @@ contract HarborCustomFeedAndRateAggregator_v1 is IWrappedPriceOracle, UUPSUpgrad
         
         // Get USD feed price
         PriceOracle_v1.Feed memory usdFeedData = PriceOracle_v1.Feed({
-            priceFeed: AggregatorV3Interface(usdFeed),
+            priceFeed: usdFeedInterface,
             decimals: usdFeedDecimals
         });
         
@@ -276,79 +321,70 @@ contract HarborCustomFeedAndRateAggregator_v1 is IWrappedPriceOracle, UUPSUpgrad
         // Calculate units of aggregated stock basket per 1 wstETH: wstETH_USD / aggregated_stock_price
         uint256 finalPrice = Math.mulDiv(wstEthUsdPrice, 1e18, normalizedAggregatedPrice);
         
-        return (finalPrice, finalPrice, rate, rate);
-    }
-
-    /*//////////////////////////////////////////////////////////////
-                            VIEW HELPERS
-    //////////////////////////////////////////////////////////////*/
-
-    function getPrice() external view returns (uint256 price) {
-        uint256 rate = _getRate();
-        
-        // Aggregate all custom feed prices
-        uint256 aggregatedPrice = 0;
-        for (uint256 i = 0; i < customFeeds.length; i++) {
-            PriceOracle_v1.Feed memory feedData = PriceOracle_v1.Feed({
-                priceFeed: AggregatorV3Interface(customFeeds[i]),
-                decimals: feedDecimals[customFeeds[i]]
-            });
-            
-            uint256 feedPrice = feedData.latestAnswer(feedConstraints[customFeeds[i]]);
-            aggregatedPrice += feedPrice;
-        }
-        
-        // Divide aggregated price by divisor
-        uint256 normalizedAggregatedPrice = aggregatedPrice / aggregationDivisor;
-        
-        // Get USD feed price
-        PriceOracle_v1.Feed memory usdFeedData = PriceOracle_v1.Feed({
-            priceFeed: AggregatorV3Interface(usdFeed),
-            decimals: usdFeedDecimals
-        });
-        
-        uint256 usdFeedPrice = usdFeedData.latestAnswer(feedConstraints[usdFeed]);
-        
-        // Calculate wstETH price in USD: rate (wstETH/stETH) * usdFeedPrice (stETH/USD)
-        uint256 wstEthUsdPrice = Math.mulDiv(rate, usdFeedPrice, 1e18);
-        
-        // Calculate units of aggregated stock basket per 1 wstETH: wstETH_USD / aggregated_stock_price
-        uint256 finalPrice = Math.mulDiv(wstEthUsdPrice, 1e18, normalizedAggregatedPrice);
-        
         return finalPrice;
     }
 
     function _getRate() internal view returns (uint256) {
         if (rateSource == RateSource.WSTETH) {
             // For wstETH, get the conversion rate from wstETH to stETH
-            return IWstETH(WSTETH).getStETHByWstETH(1e18);
+            uint256 rate = IWstETH(WSTETH).getStETHByWstETH(1e18);
+            // Validate rate is within sane bounds (wstETH/stETH should be between 1.0 and 2.0)
+            if (rate < 1e18 || rate > 2e18) revert InvalidRate(rate);
+            return rate;
         } else if (rateSource == RateSource.FXSAVE) {
             // For fxsave, get the conversion rate
-            return FXSAVE.convertToAssets(1e18);
+            uint256 rate = FXSAVE.convertToAssets(1e18);
+            // Validate rate is within sane bounds (fxSAVE should be >= 0.9x underlying)
+            if (rate < 9e17) revert InvalidRate(rate);
+            return rate;
         } else if (rateSource == RateSource.SUSDE_CHAINLINK) {
             // For SUSDE_CHAINLINK, get the sUSDE/USDE rate from Chainlink feed
-            // Normalize to 18 decimals
             AggregatorV3Interface feed = AggregatorV3Interface(SUSDE_USDE_FEED);
-            uint8 decimals = feed.decimals();
-            (, int256 answer, , , ) = feed.latestRoundData();
+            uint8 feedDecimalsValue = feed.decimals();
+            (, int256 answer, , uint256 updatedAt, ) = feed.latestRoundData();
+            
+            // Validate answer is positive
+            if (answer <= 0) revert InvalidPrice(SUSDE_USDE_FEED, answer);
+            
+            // Validate feed is not stale (uses configurable maxRateSourceAge)
+            // slither-disable-next-line timestamp
+            if (block.timestamp - updatedAt > maxRateSourceAge) revert StaleRateSource(SUSDE_USDE_FEED, updatedAt);
+            
             // Normalize to 18 decimals
-            if (decimals <= 18) {
-                return uint256(answer) * (10 ** (18 - decimals));
+            uint256 rate;
+            if (feedDecimalsValue <= 18) {
+                rate = uint256(answer) * (10 ** (18 - feedDecimalsValue));
             } else {
-                return uint256(answer) / (10 ** (decimals - 18));
+                rate = uint256(answer) / (10 ** (feedDecimalsValue - 18));
             }
+            
+            // Validate rate is within sane bounds (sUSDE/USDE should be >= 0.9x)
+            if (rate < 9e17) revert InvalidRate(rate);
+            return rate;
         } else {
             // For WSTETH_CHAINLINK, get the wstETH/stETH rate from Chainlink feed
-            // Normalize to 18 decimals
             AggregatorV3Interface feed = AggregatorV3Interface(WSTETH_STETH_FEED);
-            uint8 decimals = feed.decimals();
-            (, int256 answer, , , ) = feed.latestRoundData();
+            uint8 feedDecimalsValue = feed.decimals();
+            (, int256 answer, , uint256 updatedAt, ) = feed.latestRoundData();
+            
+            // Validate answer is positive
+            if (answer <= 0) revert InvalidPrice(WSTETH_STETH_FEED, answer);
+            
+            // Validate feed is not stale (uses configurable maxRateSourceAge)
+            // slither-disable-next-line timestamp
+            if (block.timestamp - updatedAt > maxRateSourceAge) revert StaleRateSource(WSTETH_STETH_FEED, updatedAt);
+            
             // Normalize to 18 decimals
-            if (decimals <= 18) {
-                return uint256(answer) * (10 ** (18 - decimals));
+            uint256 rate;
+            if (feedDecimalsValue <= 18) {
+                rate = uint256(answer) * (10 ** (18 - feedDecimalsValue));
             } else {
-                return uint256(answer) / (10 ** (decimals - 18));
+                rate = uint256(answer) / (10 ** (feedDecimalsValue - 18));
             }
+            
+            // Validate rate is within sane bounds (wstETH/stETH should be between 1.0 and 2.0)
+            if (rate < 1e18 || rate > 2e18) revert InvalidRate(rate);
+            return rate;
         }
     }
 
@@ -398,6 +434,43 @@ contract HarborCustomFeedAndRateAggregator_v1 is IWrappedPriceOracle, UUPSUpgrad
     function getCustomFeed(uint256 index) external view returns (address) {
         if (index >= customFeeds.length) revert FeedNotFound(address(0));
         return customFeeds[index];
+    }
+
+    /// @notice Get the current rate from the configured rate source
+    /// @return rate The current rate (wstETH/stETH, fxSAVE/assets, etc.), always 18 decimals
+    function getRate() external view returns (uint256 rate) {
+        return _getRate();
+    }
+
+    /// @notice Get the number of decimals for the price output
+    /// @dev Always returns 18 decimals for consistency
+    /// @return decimals Always returns 18
+    function decimals() external pure returns (uint8) {
+        return 18;
+    }
+
+    /// @notice Returns a human-readable description of the oracle
+    /// @dev Standard Chainlink oracle interface function
+    /// @return description The oracle description/name
+    function description() external view returns (string memory) {
+        return oracleName;
+    }
+
+    /// @notice Returns the version of the oracle contract
+    /// @dev Standard Chainlink oracle interface function
+    /// @return version The contract version (always 1 for v1)
+    function version() external pure returns (uint256) {
+        return 1;
+    }
+
+    /// @notice Set the maximum age for rate source feeds
+    /// @dev Only applies to Chainlink rate sources (SUSDE_CHAINLINK, WSTETH_CHAINLINK)
+    ///      Direct contract calls (WSTETH, FXSAVE) are always current and don't use this
+    /// @param maxAge Maximum age in seconds (e.g., 1 days = 86400, 7 days = 604800)
+    function setMaxRateSourceAge(uint64 maxAge) external onlyOwner {
+        if (maxAge == 0) revert InvalidMaxPriceAge(maxAge);
+        maxRateSourceAge = maxAge;
+        emit MaxRateSourceAgeUpdated(maxAge);
     }
 
     /// @dev Internal setter with validation and event emission

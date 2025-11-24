@@ -54,6 +54,7 @@ interface IHarborCustomFeedAndRateAggregator is IWrappedPriceOracle {
     error EmptyCustomFeeds();
     error InvalidCustomFeedCount(uint256 count);
     error FeedNotFound(address feed);
+    error StaleRateSource(address source, uint256 updatedAt);
 
     /*//////////////////////////////////////////////////////////////
                                 STATE
@@ -190,5 +191,30 @@ interface IHarborCustomFeedAndRateAggregator is IWrappedPriceOracle {
     /// @param index The index of the custom feed
     /// @return feed The custom feed address
     function getCustomFeed(uint256 index) external view returns (address);
+
+    /// @notice Get the current rate from the configured rate source
+    /// @return rate The current rate (wstETH/stETH, fxSAVE/assets, etc.), always 18 decimals
+    function getRate() external view returns (uint256 rate);
+
+    /// @notice Get the number of decimals for the price output
+    /// @dev Always returns 18 decimals for consistency
+    /// @return decimals Always returns 18
+    function decimals() external pure returns (uint8);
+
+    /// @notice Maximum age for rate source feeds (configurable, defaults to 1 day)
+    /// @dev Only applies to Chainlink rate sources (SUSDE_CHAINLINK, WSTETH_CHAINLINK)
+    ///      Direct contract calls (WSTETH, FXSAVE) are always current
+    function maxRateSourceAge() external view returns (uint64);
+
+    /// @notice Set the maximum age for rate source feeds
+    /// @dev Only applies to Chainlink rate sources (SUSDE_CHAINLINK, WSTETH_CHAINLINK)
+    ///      Direct contract calls (WSTETH, FXSAVE) are always current and don't use this
+    /// @param maxAge Maximum age in seconds (e.g., 1 days = 86400, 7 days = 604800)
+    function setMaxRateSourceAge(uint64 maxAge) external;
+
+    /// @notice Emitted when max rate source age is updated
+    /// @param maxAge New maximum age in seconds
+    event MaxRateSourceAgeUpdated(uint64 maxAge);
 }
+
 

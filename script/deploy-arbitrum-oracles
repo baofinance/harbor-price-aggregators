@@ -4,6 +4,10 @@ set -euo pipefail
 # Harbor Arbitrum Oracle Deployment Script
 # Deploys PriceOracle library, sUSDE/USD oracle, and 8 stock price oracles
 
+# Use full path to forge/cast
+FORGE=${FORGE:-$HOME/.foundry/bin/forge}
+CAST=${CAST:-$HOME/.foundry/bin/cast}
+
 RPC_URL=${RPC_URL:-http://127.0.0.1:8545}
 PRIVATE_KEY=${PRIVATE_KEY:-0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80}
 OWNER=${OWNER:-0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266}
@@ -31,9 +35,10 @@ TSLA_USD_FEED=${TSLA_USD_FEED:-0x3609baAa0a9b1f0FE4d6CC01884585d0e191C3E3}
 # Constraints
 MAX_AGE=${MAX_AGE:-604800}
 MAX_DEV=${MAX_DEV:-50000000000000000}
+MAX_RATE_SOURCE_AGE=${MAX_RATE_SOURCE_AGE:-604800}  # Default: 7 days (604800 seconds)
 
 echo "=== Deploying PriceOracle_v1 Library ==="
-PRICE_ORACLE_LIB_OUT=$(forge create src/price/PriceOracle_v1.sol:PriceOracle_v1 \
+PRICE_ORACLE_LIB_OUT=$("$FORGE" create src/price/PriceOracle_v1.sol:PriceOracle_v1 \
   --rpc-url "$RPC_URL" \
   --private-key "$PRIVATE_KEY" \
   --broadcast)
@@ -45,7 +50,7 @@ echo "=== Deploying Implementation Contracts ==="
 
 # 1. Deploy Single Feed Implementation
 echo "Deploying HarborSingleFeedAndRateAggregator_v1..."
-SINGLE_IMPL_OUT=$(forge create src/price/HarborSingleFeedAndRateAggregator_v1.sol:HarborSingleFeedAndRateAggregator_v1 \
+SINGLE_IMPL_OUT=$("$FORGE" create src/price/HarborSingleFeedAndRateAggregator_v1.sol:HarborSingleFeedAndRateAggregator_v1 \
   --rpc-url "$RPC_URL" \
   --private-key "$PRIVATE_KEY" \
   --libraries src/price/PriceOracle_v1.sol:PriceOracle_v1:$PRICE_ORACLE_LIB \
@@ -56,7 +61,7 @@ echo "  Single Feed Implementation: $SINGLE_IMPL"
 
 # 2. Deploy Double Feed Implementation
 echo "Deploying HarborDoubleFeedAndRateAggregator_v1..."
-DOUBLE_IMPL_OUT=$(forge create src/price/HarborDoubleFeedAndRateAggregator_v1.sol:HarborDoubleFeedAndRateAggregator_v1 \
+DOUBLE_IMPL_OUT=$("$FORGE" create src/price/HarborDoubleFeedAndRateAggregator_v1.sol:HarborDoubleFeedAndRateAggregator_v1 \
   --rpc-url "$RPC_URL" \
   --private-key "$PRIVATE_KEY" \
   --libraries src/price/PriceOracle_v1.sol:PriceOracle_v1:$PRICE_ORACLE_LIB \
@@ -67,7 +72,7 @@ echo "  Double Feed Implementation: $DOUBLE_IMPL"
 
 # 3. Deploy Custom Feed Implementation
 echo "Deploying HarborCustomFeedAndRateAggregator_v1..."
-CUSTOM_IMPL_OUT=$(forge create src/price/HarborCustomFeedAndRateAggregator_v1.sol:HarborCustomFeedAndRateAggregator_v1 \
+CUSTOM_IMPL_OUT=$("$FORGE" create src/price/HarborCustomFeedAndRateAggregator_v1.sol:HarborCustomFeedAndRateAggregator_v1 \
   --rpc-url "$RPC_URL" \
   --private-key "$PRIVATE_KEY" \
   --libraries src/price/PriceOracle_v1.sol:PriceOracle_v1:$PRICE_ORACLE_LIB \
@@ -84,7 +89,7 @@ deploy_proxy() {
   local impl=$1
   local init_data=$2
   
-  PROXY_OUT=$(forge create lib/openzeppelin-contracts-upgradeable/lib/openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Proxy.sol:ERC1967Proxy \
+  PROXY_OUT=$("$FORGE" create lib/openzeppelin-contracts-upgradeable/lib/openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Proxy.sol:ERC1967Proxy \
     --rpc-url "$RPC_URL" \
     --private-key "$PRIVATE_KEY" \
     --broadcast \
@@ -95,7 +100,7 @@ deploy_proxy() {
 
 # sUSDE to USD (Single Feed, RateSource=SUSDE_CHAINLINK=2, uses USDE/USD feed)
 echo "--- sUSDE Oracle ---"
-INIT_DATA=$(cast calldata "initialize(address,string,uint8,address,uint256,uint64,uint256)" \
+INIT_DATA=$("$CAST" calldata "initialize(address,string,uint8,address,uint256,uint64,uint256)" \
   "$OWNER" "sUSDEToUSD" 2 "$USDE_USD_FEED" 1 "$MAX_AGE" "$MAX_DEV")
 SUSDE_USD=$(deploy_proxy "$SINGLE_IMPL" "$INIT_DATA")
 echo "  sUSDE→USD: $SUSDE_USD"
@@ -105,49 +110,49 @@ echo ""
 echo "--- Stock Price Oracles ---"
 
 # sUSDE→AAPL (RateSource=SUSDE_CHAINLINK=2, first feed=USDE/USD, second feed=AAPL/USD)
-INIT_DATA=$(cast calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256)" \
+INIT_DATA=$("$CAST" calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256)" \
   "$OWNER" "sUSDEToAAPL" 2 "$USDE_USD_FEED" "$AAPL_USD_FEED" 1 "$MAX_AGE" "$MAX_DEV" "$MAX_AGE" "$MAX_DEV")
 SUSDE_AAPL=$(deploy_proxy "$DOUBLE_IMPL" "$INIT_DATA")
 echo "  sUSDE→AAPL: $SUSDE_AAPL"
 
 # sUSDE→AMZN (RateSource=SUSDE=2, first feed=USDE/USD, second feed=AMZN/USD)
-INIT_DATA=$(cast calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256)" \
+INIT_DATA=$("$CAST" calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256)" \
   "$OWNER" "sUSDEToAMZN" 2 "$USDE_USD_FEED" "$AMZN_USD_FEED" 1 "$MAX_AGE" "$MAX_DEV" "$MAX_AGE" "$MAX_DEV")
 SUSDE_AMZN=$(deploy_proxy "$DOUBLE_IMPL" "$INIT_DATA")
 echo "  sUSDE→AMZN: $SUSDE_AMZN"
 
 # sUSDE→GOOGL (RateSource=SUSDE=2, first feed=USDE/USD, second feed=GOOGL/USD)
-INIT_DATA=$(cast calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256)" \
+INIT_DATA=$("$CAST" calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256)" \
   "$OWNER" "sUSDEToGOOGL" 2 "$USDE_USD_FEED" "$GOOGL_USD_FEED" 1 "$MAX_AGE" "$MAX_DEV" "$MAX_AGE" "$MAX_DEV")
 SUSDE_GOOGL=$(deploy_proxy "$DOUBLE_IMPL" "$INIT_DATA")
 echo "  sUSDE→GOOGL: $SUSDE_GOOGL"
 
 # sUSDE→META (RateSource=SUSDE=2, first feed=USDE/USD, second feed=META/USD)
-INIT_DATA=$(cast calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256)" \
+INIT_DATA=$("$CAST" calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256)" \
   "$OWNER" "sUSDEToMETA" 2 "$USDE_USD_FEED" "$META_USD_FEED" 1 "$MAX_AGE" "$MAX_DEV" "$MAX_AGE" "$MAX_DEV")
 SUSDE_META=$(deploy_proxy "$DOUBLE_IMPL" "$INIT_DATA")
 echo "  sUSDE→META: $SUSDE_META"
 
 # sUSDE→MSFT (RateSource=SUSDE=2, first feed=USDE/USD, second feed=MSFT/USD)
-INIT_DATA=$(cast calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256)" \
+INIT_DATA=$("$CAST" calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256)" \
   "$OWNER" "sUSDEToMSFT" 2 "$USDE_USD_FEED" "$MSFT_USD_FEED" 1 "$MAX_AGE" "$MAX_DEV" "$MAX_AGE" "$MAX_DEV")
 SUSDE_MSFT=$(deploy_proxy "$DOUBLE_IMPL" "$INIT_DATA")
 echo "  sUSDE→MSFT: $SUSDE_MSFT"
 
 # sUSDE→NVDA (RateSource=SUSDE=2, first feed=USDE/USD, second feed=NVDA/USD)
-INIT_DATA=$(cast calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256)" \
+INIT_DATA=$("$CAST" calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256)" \
   "$OWNER" "sUSDEToNVDA" 2 "$USDE_USD_FEED" "$NVDA_USD_FEED" 1 "$MAX_AGE" "$MAX_DEV" "$MAX_AGE" "$MAX_DEV")
 SUSDE_NVDA=$(deploy_proxy "$DOUBLE_IMPL" "$INIT_DATA")
 echo "  sUSDE→NVDA: $SUSDE_NVDA"
 
 # sUSDE→SPY (RateSource=SUSDE=2, first feed=USDE/USD, second feed=SPY/USD)
-INIT_DATA=$(cast calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256)" \
+INIT_DATA=$("$CAST" calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256)" \
   "$OWNER" "sUSDEToSPY" 2 "$USDE_USD_FEED" "$SPY_USD_FEED" 1 "$MAX_AGE" "$MAX_DEV" "$MAX_AGE" "$MAX_DEV")
 SUSDE_SPY=$(deploy_proxy "$DOUBLE_IMPL" "$INIT_DATA")
 echo "  sUSDE→SPY: $SUSDE_SPY"
 
 # sUSDE→TSLA (RateSource=SUSDE=2, first feed=USDE/USD, second feed=TSLA/USD)
-INIT_DATA=$(cast calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256)" \
+INIT_DATA=$("$CAST" calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256)" \
   "$OWNER" "sUSDEToTSLA" 2 "$USDE_USD_FEED" "$TSLA_USD_FEED" 1 "$MAX_AGE" "$MAX_DEV" "$MAX_AGE" "$MAX_DEV")
 SUSDE_TSLA=$(deploy_proxy "$DOUBLE_IMPL" "$INIT_DATA")
 echo "  sUSDE→TSLA: $SUSDE_TSLA"
@@ -157,55 +162,55 @@ echo ""
 echo "--- wstETH Price Oracles ---"
 
 # wstETH→USD (Single Feed, RateSource=WSTETH_CHAINLINK=3, uses stETH/USD feed)
-INIT_DATA=$(cast calldata "initialize(address,string,uint8,address,uint256,uint64,uint256)" \
+INIT_DATA=$("$CAST" calldata "initialize(address,string,uint8,address,uint256,uint64,uint256)" \
   "$OWNER" "wstETHToUSD" 3 "$STETH_USD_FEED" 1 "$MAX_AGE" "$MAX_DEV")
 WSTETH_USD=$(deploy_proxy "$SINGLE_IMPL" "$INIT_DATA")
 echo "  wstETH→USD: $WSTETH_USD"
 
 # wstETH→AAPL (RateSource=WSTETH_CHAINLINK=3, first feed=stETH/USD, second feed=AAPL/USD)
-INIT_DATA=$(cast calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256)" \
+INIT_DATA=$("$CAST" calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256)" \
   "$OWNER" "wstETHToAAPL" 3 "$STETH_USD_FEED" "$AAPL_USD_FEED" 1 "$MAX_AGE" "$MAX_DEV" "$MAX_AGE" "$MAX_DEV")
 WSTETH_AAPL=$(deploy_proxy "$DOUBLE_IMPL" "$INIT_DATA")
 echo "  wstETH→AAPL: $WSTETH_AAPL"
 
 # wstETH→AMZN (RateSource=WSTETH_CHAINLINK=3, first feed=stETH/USD, second feed=AMZN/USD)
-INIT_DATA=$(cast calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256)" \
+INIT_DATA=$("$CAST" calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256)" \
   "$OWNER" "wstETHToAMZN" 3 "$STETH_USD_FEED" "$AMZN_USD_FEED" 1 "$MAX_AGE" "$MAX_DEV" "$MAX_AGE" "$MAX_DEV")
 WSTETH_AMZN=$(deploy_proxy "$DOUBLE_IMPL" "$INIT_DATA")
 echo "  wstETH→AMZN: $WSTETH_AMZN"
 
 # wstETH→GOOGL (RateSource=WSTETH_CHAINLINK=3, first feed=stETH/USD, second feed=GOOGL/USD)
-INIT_DATA=$(cast calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256)" \
+INIT_DATA=$("$CAST" calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256)" \
   "$OWNER" "wstETHToGOOGL" 3 "$STETH_USD_FEED" "$GOOGL_USD_FEED" 1 "$MAX_AGE" "$MAX_DEV" "$MAX_AGE" "$MAX_DEV")
 WSTETH_GOOGL=$(deploy_proxy "$DOUBLE_IMPL" "$INIT_DATA")
 echo "  wstETH→GOOGL: $WSTETH_GOOGL"
 
 # wstETH→META (RateSource=WSTETH_CHAINLINK=3, first feed=stETH/USD, second feed=META/USD)
-INIT_DATA=$(cast calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256)" \
+INIT_DATA=$("$CAST" calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256)" \
   "$OWNER" "wstETHToMETA" 3 "$STETH_USD_FEED" "$META_USD_FEED" 1 "$MAX_AGE" "$MAX_DEV" "$MAX_AGE" "$MAX_DEV")
 WSTETH_META=$(deploy_proxy "$DOUBLE_IMPL" "$INIT_DATA")
 echo "  wstETH→META: $WSTETH_META"
 
 # wstETH→MSFT (RateSource=WSTETH_CHAINLINK=3, first feed=stETH/USD, second feed=MSFT/USD)
-INIT_DATA=$(cast calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256)" \
+INIT_DATA=$("$CAST" calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256)" \
   "$OWNER" "wstETHToMSFT" 3 "$STETH_USD_FEED" "$MSFT_USD_FEED" 1 "$MAX_AGE" "$MAX_DEV" "$MAX_AGE" "$MAX_DEV")
 WSTETH_MSFT=$(deploy_proxy "$DOUBLE_IMPL" "$INIT_DATA")
 echo "  wstETH→MSFT: $WSTETH_MSFT"
 
 # wstETH→NVDA (RateSource=WSTETH_CHAINLINK=3, first feed=stETH/USD, second feed=NVDA/USD)
-INIT_DATA=$(cast calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256)" \
+INIT_DATA=$("$CAST" calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256)" \
   "$OWNER" "wstETHToNVDA" 3 "$STETH_USD_FEED" "$NVDA_USD_FEED" 1 "$MAX_AGE" "$MAX_DEV" "$MAX_AGE" "$MAX_DEV")
 WSTETH_NVDA=$(deploy_proxy "$DOUBLE_IMPL" "$INIT_DATA")
 echo "  wstETH→NVDA: $WSTETH_NVDA"
 
 # wstETH→SPY (RateSource=WSTETH_CHAINLINK=3, first feed=stETH/USD, second feed=SPY/USD)
-INIT_DATA=$(cast calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256)" \
+INIT_DATA=$("$CAST" calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256)" \
   "$OWNER" "wstETHToSPY" 3 "$STETH_USD_FEED" "$SPY_USD_FEED" 1 "$MAX_AGE" "$MAX_DEV" "$MAX_AGE" "$MAX_DEV")
 WSTETH_SPY=$(deploy_proxy "$DOUBLE_IMPL" "$INIT_DATA")
 echo "  wstETH→SPY: $WSTETH_SPY"
 
 # wstETH→TSLA (RateSource=WSTETH_CHAINLINK=3, first feed=stETH/USD, second feed=TSLA/USD)
-INIT_DATA=$(cast calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256)" \
+INIT_DATA=$("$CAST" calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256)" \
   "$OWNER" "wstETHToTSLA" 3 "$STETH_USD_FEED" "$TSLA_USD_FEED" 1 "$MAX_AGE" "$MAX_DEV" "$MAX_AGE" "$MAX_DEV")
 WSTETH_TSLA=$(deploy_proxy "$DOUBLE_IMPL" "$INIT_DATA")
 echo "  wstETH→TSLA: $WSTETH_TSLA"
@@ -217,8 +222,8 @@ echo "--- wstETH Custom Feed Oracle ---"
 USD_FEED_FOR_CUSTOM=${USD_FEED_FOR_CUSTOM:-$STETH_USD_FEED}
 AGGREGATION_DIVISOR=${AGGREGATION_DIVISOR:-6}
 
-# Use cast calldata with array syntax - cast should handle arrays correctly
-INIT_DATA=$(cast calldata "initialize(address,string,uint8,address[],address,uint256,uint64,uint256,uint64,uint256)" \
+# Use "$CAST" calldata with array syntax - cast should handle arrays correctly
+INIT_DATA=$("$CAST" calldata "initialize(address,string,uint8,address[],address,uint256,uint64,uint256,uint64,uint256)" \
   "$OWNER" "wstETHToT6CH" 3 "[$AAPL_USD_FEED,$GOOGL_USD_FEED,$NVDA_USD_FEED,$AMZN_USD_FEED,$MSFT_USD_FEED,$META_USD_FEED]" "$USD_FEED_FOR_CUSTOM" "$AGGREGATION_DIVISOR" "$MAX_AGE" "$MAX_DEV" "$MAX_AGE" "$MAX_DEV")
 WSTETH_AGGREGATED=$(deploy_proxy "$CUSTOM_IMPL" "$INIT_DATA")
 echo "  wstETH→T6CH (AAPL+GOOGL+NVDA+AMZN+MSFT+META/6): $WSTETH_AGGREGATED"
@@ -258,58 +263,102 @@ echo ""
 echo "CUSTOM FEED ORACLES:"
 echo "  wstETH→T6CH: $WSTETH_AGGREGATED"
 
+echo ""
+echo "=== CONFIGURING RATE SOURCE STALENESS ==="
+echo "Setting maxRateSourceAge to ${MAX_RATE_SOURCE_AGE} seconds for Chainlink rate source oracles..."
+
+# Helper function to set max rate source age
+set_max_rate_source_age() {
+  local oracle=$1
+  local name=$2
+  
+  echo -n "  Setting $name... "
+  "$CAST" send "$oracle" "setMaxRateSourceAge(uint64)" "$MAX_RATE_SOURCE_AGE" \
+    --rpc-url "$RPC_URL" \
+    --private-key "$PRIVATE_KEY" > /dev/null 2>&1 && echo "✓" || echo "✗"
+}
+
+# Set maxRateSourceAge for oracles using Chainlink rate sources
+# RateSource 2 = SUSDE_CHAINLINK
+# RateSource 3 = WSTETH_CHAINLINK
+
+echo ""
+echo "sUSDE Oracles (RateSource=SUSDE_CHAINLINK):"
+set_max_rate_source_age "$SUSDE_USD" "sUSDE→USD"
+set_max_rate_source_age "$SUSDE_AAPL" "sUSDE→AAPL"
+set_max_rate_source_age "$SUSDE_AMZN" "sUSDE→AMZN"
+set_max_rate_source_age "$SUSDE_GOOGL" "sUSDE→GOOGL"
+set_max_rate_source_age "$SUSDE_META" "sUSDE→META"
+set_max_rate_source_age "$SUSDE_MSFT" "sUSDE→MSFT"
+set_max_rate_source_age "$SUSDE_NVDA" "sUSDE→NVDA"
+set_max_rate_source_age "$SUSDE_SPY" "sUSDE→SPY"
+set_max_rate_source_age "$SUSDE_TSLA" "sUSDE→TSLA"
+
+echo ""
+echo "wstETH Oracles (RateSource=WSTETH_CHAINLINK):"
+set_max_rate_source_age "$WSTETH_USD" "wstETH→USD"
+set_max_rate_source_age "$WSTETH_AAPL" "wstETH→AAPL"
+set_max_rate_source_age "$WSTETH_AMZN" "wstETH→AMZN"
+set_max_rate_source_age "$WSTETH_GOOGL" "wstETH→GOOGL"
+set_max_rate_source_age "$WSTETH_META" "wstETH→META"
+set_max_rate_source_age "$WSTETH_MSFT" "wstETH→MSFT"
+set_max_rate_source_age "$WSTETH_NVDA" "wstETH→NVDA"
+set_max_rate_source_age "$WSTETH_SPY" "wstETH→SPY"
+set_max_rate_source_age "$WSTETH_TSLA" "wstETH→TSLA"
+set_max_rate_source_age "$WSTETH_AGGREGATED" "wstETH→T6CH"
+
 # Test price readouts
 echo ""
 echo "=== PRICE READOUTS ==="
 echo "sUSDE:"
 echo -n "  sUSDE→USD:  "
-cast call "$SUSDE_USD" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null || echo "N/A"
+"$CAST" call "$SUSDE_USD" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null || echo "N/A"
 
 echo ""
 echo "Stock Oracles:"
 echo "sUSDE:"
 echo -n "  sUSDE→AAPL: "
-cast call "$SUSDE_AAPL" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null || echo "N/A"
+"$CAST" call "$SUSDE_AAPL" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null || echo "N/A"
 echo -n "  sUSDE→AMZN: "
-cast call "$SUSDE_AMZN" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null || echo "N/A"
+"$CAST" call "$SUSDE_AMZN" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null || echo "N/A"
 echo -n "  sUSDE→GOOGL: "
-cast call "$SUSDE_GOOGL" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null || echo "N/A"
+"$CAST" call "$SUSDE_GOOGL" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null || echo "N/A"
 echo -n "  sUSDE→META: "
-cast call "$SUSDE_META" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null || echo "N/A"
+"$CAST" call "$SUSDE_META" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null || echo "N/A"
 echo -n "  sUSDE→MSFT: "
-cast call "$SUSDE_MSFT" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null || echo "N/A"
+"$CAST" call "$SUSDE_MSFT" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null || echo "N/A"
 echo -n "  sUSDE→NVDA: "
-cast call "$SUSDE_NVDA" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null || echo "N/A"
+"$CAST" call "$SUSDE_NVDA" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null || echo "N/A"
 echo -n "  sUSDE→SPY:  "
-cast call "$SUSDE_SPY" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null || echo "N/A"
+"$CAST" call "$SUSDE_SPY" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null || echo "N/A"
 echo -n "  sUSDE→TSLA: "
-cast call "$SUSDE_TSLA" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null || echo "N/A"
+"$CAST" call "$SUSDE_TSLA" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null || echo "N/A"
 
 echo ""
 echo "wstETH:"
 echo -n "  wstETH→USD:  "
-cast call "$WSTETH_USD" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null || echo "N/A"
+"$CAST" call "$WSTETH_USD" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null || echo "N/A"
 echo -n "  wstETH→AAPL: "
-cast call "$WSTETH_AAPL" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null || echo "N/A"
+"$CAST" call "$WSTETH_AAPL" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null || echo "N/A"
 echo -n "  wstETH→AMZN: "
-cast call "$WSTETH_AMZN" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null || echo "N/A"
+"$CAST" call "$WSTETH_AMZN" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null || echo "N/A"
 echo -n "  wstETH→GOOGL: "
-cast call "$WSTETH_GOOGL" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null || echo "N/A"
+"$CAST" call "$WSTETH_GOOGL" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null || echo "N/A"
 echo -n "  wstETH→META: "
-cast call "$WSTETH_META" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null || echo "N/A"
+"$CAST" call "$WSTETH_META" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null || echo "N/A"
 echo -n "  wstETH→MSFT: "
-cast call "$WSTETH_MSFT" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null || echo "N/A"
+"$CAST" call "$WSTETH_MSFT" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null || echo "N/A"
 echo -n "  wstETH→NVDA: "
-cast call "$WSTETH_NVDA" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null || echo "N/A"
+"$CAST" call "$WSTETH_NVDA" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null || echo "N/A"
 echo -n "  wstETH→SPY:  "
-cast call "$WSTETH_SPY" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null || echo "N/A"
+"$CAST" call "$WSTETH_SPY" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null || echo "N/A"
 echo -n "  wstETH→TSLA: "
-cast call "$WSTETH_TSLA" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null || echo "N/A"
+"$CAST" call "$WSTETH_TSLA" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null || echo "N/A"
 
 echo ""
 echo "Custom Feed Oracle:"
 echo -n "  wstETH→T6CH: "
-cast call "$WSTETH_AGGREGATED" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null || echo "N/A"
+"$CAST" call "$WSTETH_AGGREGATED" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null || echo "N/A"
 
 echo ""
 echo "✅ Deployment complete!"
