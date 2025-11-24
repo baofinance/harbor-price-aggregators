@@ -36,8 +36,12 @@ Single feed aggregator for direct conversions (e.g., wstETH/ETH).
 - `firstFeedMaxDev`: Max deviation for first feed
 
 **Key Functions:**
+- `getPrice()`: Get the current price (optimized internal implementation)
 - `getRate()`: Get the current rate from the configured rate source
 - `decimals()`: Returns 18 (always 18 decimals)
+- `description()`: Returns the oracle name/description (Chainlink interface)
+- `version()`: Returns the contract version (always 1 for v1)
+- `maxRateSourceAge()`: View the current max age setting for Chainlink rate feeds
 - `setMaxRateSourceAge(uint64)`: Configure staleness tolerance for Chainlink rate feeds (default: 1 day)
 
 ### HarborDoubleFeedAndRateAggregator_v1
@@ -57,8 +61,12 @@ Double feed aggregator for cross-currency conversions (e.g., fxSAVE→BTC, wstET
 - `secondFeedMaxDev`: Max deviation for second feed
 
 **Key Functions:**
+- `getPrice()`: Get the current price (optimized internal implementation)
 - `getRate()`: Get the current rate from the configured rate source
 - `decimals()`: Returns 18 (always 18 decimals)
+- `description()`: Returns the oracle name/description (Chainlink interface)
+- `version()`: Returns the contract version (always 1 for v1)
+- `maxRateSourceAge()`: View the current max age setting for Chainlink rate feeds
 - `setMaxRateSourceAge(uint64)`: Configure staleness tolerance for Chainlink rate feeds (default: 1 day)
 
 ### HarborCustomFeedAndRateAggregator_v1
@@ -78,10 +86,14 @@ Custom feed aggregator for aggregating multiple feeds (e.g., wstETH→T6CH aggre
 - `usdFeedMaxDev`: Max deviation for USD feed
 
 **Key Functions:**
+- `getPrice()`: Get the current price (optimized internal implementation)
 - `getRate()`: Get the current rate from the configured rate source
 - `decimals()`: Returns 18 (always 18 decimals)
+- `description()`: Returns the oracle name/description (Chainlink interface)
+- `version()`: Returns the contract version (always 1 for v1)
 - `getCustomFeedCount()`: Get the number of custom feeds
 - `getCustomFeed(uint256)`: Get a custom feed address by index
+- `maxRateSourceAge()`: View the current max age setting for Chainlink rate feeds
 - `setMaxRateSourceAge(uint64)`: Configure staleness tolerance for Chainlink rate feeds (default: 1 day)
 
 ## Installation
@@ -129,7 +141,13 @@ The contracts support four rate source types:
 3. **SUSDE_CHAINLINK** (2): Chainlink feed for sUSDE/USDE rate - configurable staleness check
 4. **WSTETH_CHAINLINK** (3): Chainlink feed for wstETH/stETH rate - configurable staleness check
 
-For Chainlink rate sources, use `setMaxRateSourceAge()` to configure the maximum acceptable age (default: 1 day). If a Chainlink rate feed goes stale beyond this threshold, the oracle will revert to prevent using outdated conversion rates.
+For Chainlink rate sources, use `setMaxRateSourceAge()` to configure the maximum acceptable age (default: 1 day, typically set to 7 days in production). If a Chainlink rate feed goes stale beyond this threshold, the oracle will revert to prevent using outdated conversion rates.
+
+**Rate Validation:**
+- **WSTETH**: Rate must be between 1.0 and 2.0 (wstETH/stETH conversion)
+- **FXSAVE**: Rate must be >= 0.9x underlying
+- **SUSDE_CHAINLINK**: Rate must be >= 0.9x (no upper bound, matches fxSAVE pattern)
+- **WSTETH_CHAINLINK**: Rate must be between 1.0 and 2.0 (wstETH/stETH conversion)
 
 ### Deployment Output
 
