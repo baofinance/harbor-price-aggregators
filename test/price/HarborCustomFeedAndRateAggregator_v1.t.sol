@@ -131,6 +131,13 @@ contract MockAggregatorV3 is AggregatorV3Interface {
     }
 }
 
+// V2 contract for upgrade testing - same as V1, used to verify upgrade works
+contract HarborCustomFeedAndRateAggregator_v2 is HarborCustomFeedAndRateAggregator_v1 {
+    constructor(address wsteth_, address fxsave_, address susdeUsdeFeed_, address wstethStethFeed_)
+        HarborCustomFeedAndRateAggregator_v1(wsteth_, fxsave_, susdeUsdeFeed_, wstethStethFeed_)
+    {}
+}
+
 contract HarborCustomFeedAndRateAggregator_v1Test is Test {
     HarborCustomFeedAndRateAggregator_v1 oracle;
     MockWstETH mockWstEth;
@@ -158,6 +165,9 @@ contract HarborCustomFeedAndRateAggregator_v1Test is Test {
     
     int256 usdPrice = 283214000000; // 2832.14 USD/stETH with 8 decimals (stETH/USD feed - current market price)
     uint8 feedDecimals = 8;
+
+    // ERC1967 implementation slot
+    bytes32 internal constant IMPLEMENTATION_SLOT = 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc;
 
     function setUp() public {
         // Deploy mocks
@@ -708,6 +718,207 @@ contract HarborCustomFeedAndRateAggregator_v1Test is Test {
             )
         );
         oracle.latestAnswer();
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                            UPGRADE TESTS
+    //////////////////////////////////////////////////////////////*/
+
+    function test_Upgrade_Success() public {
+        // Deploy V1 implementation and proxy
+        HarborCustomFeedAndRateAggregator_v1 implementationV1 = new HarborCustomFeedAndRateAggregator_v1(
+            address(mockWstEth),
+            address(mockFxSave),
+            address(0),
+            address(0)
+        );
+
+        address[] memory customFeeds = new address[](mockStockFeeds.length);
+        for (uint256 i = 0; i < mockStockFeeds.length; i++) {
+            customFeeds[i] = address(mockStockFeeds[i]);
+        }
+
+        bytes memory initData = abi.encodeWithSelector(
+            HarborCustomFeedAndRateAggregator_v1.initialize.selector,
+            owner,
+            "TestOracle",
+            HarborCustomFeedAndRateAggregator_v1.RateSource.WSTETH,
+            customFeeds,
+            address(mockUsdFeed),
+            aggregationDivisor,
+            maxAge,
+            maxDev,
+            maxAge,
+            maxDev
+        );
+        ERC1967Proxy proxy = new ERC1967Proxy(address(implementationV1), initData);
+        oracle = HarborCustomFeedAndRateAggregator_v1(address(proxy));
+
+        // Store some state before upgrade
+        string memory oracleNameBefore = oracle.oracleName();
+        address ownerBefore = oracle.owner();
+        uint256 priceBefore = oracle.getPrice();
+        uint256 customFeedCountBefore = oracle.getCustomFeedCount();
+
+        // Get V1 implementation address
+        bytes32 implSlot = vm.load(address(proxy), IMPLEMENTATION_SLOT);
+        address implV1 = address(uint160(uint256(implSlot)));
+        assertEq(implV1, address(implementationV1), "V1 implementation should be set");
+
+        // Deploy V2 implementation
+        HarborCustomFeedAndRateAggregator_v2 implementationV2 = new HarborCustomFeedAndRateAggregator_v2(
+            address(mockWstEth),
+            address(mockFxSave),
+            address(0),
+            address(0)
+        );
+
+        // Upgrade to V2
+        vm.expectEmit(true, false, false, false);
+        emit HarborCustomFeedAndRateAggregator_v1.Upgraded(address(implementationV2));
+        
+        vm.prank(owner);
+        oracle.upgradeToAndCall(address(implementationV2), "");
+
+        // Verify implementation changed
+        implSlot = vm.load(address(proxy), IMPLEMENTATION_SLOT);
+        address implV2 = address(uint160(uint256(implSlot)));
+        assertEq(implV2, address(implementationV2), "V2 implementation should be set");
+        assertTrue(implV2 != implV1, "Implementation should have changed");
+
+        // Verify storage is preserved
+        assertEq(oracle.oracleName(), oracleNameBefore, "Oracle name should be preserved");
+        assertEq(oracle.owner(), ownerBefore, "Owner should be preserved");
+        assertEq(oracle.getCustomFeedCount(), customFeedCountBefore, "Custom feed count should be preserved");
+        
+        // Verify functionality still works
+        uint256 priceAfter = oracle.getPrice();
+        assertEq(priceAfter, priceBefore, "Price should be unchanged after upgrade");
+    }
+
+    function test_Upgrade_Revert_NonOwner() public {
+        // Deploy V1 implementation and proxy
+        HarborCustomFeedAndRateAggregator_v1 implementationV1 = new HarborCustomFeedAndRateAggregator_v1(
+            address(mockWstEth),
+            address(mockFxSave),
+            address(0),
+            address(0)
+        );
+
+        address[] memory customFeeds = new address[](mockStockFeeds.length);
+        for (uint256 i = 0; i < mockStockFeeds.length; i++) {
+            customFeeds[i] = address(mockStockFeeds[i]);
+        }
+
+        bytes memory initData = abi.encodeWithSelector(
+            HarborCustomFeedAndRateAggregator_v1.initialize.selector,
+            owner,
+            "TestOracle",
+            HarborCustomFeedAndRateAggregator_v1.RateSource.WSTETH,
+            customFeeds,
+            address(mockUsdFeed),
+            aggregationDivisor,
+            maxAge,
+            maxDev,
+            maxAge,
+            maxDev
+        );
+        ERC1967Proxy proxy = new ERC1967Proxy(address(implementationV1), initData);
+        oracle = HarborCustomFeedAndRateAggregator_v1(address(proxy));
+
+        // Deploy V2 implementation
+        HarborCustomFeedAndRateAggregator_v2 implementationV2 = new HarborCustomFeedAndRateAggregator_v2(
+            address(mockWstEth),
+            address(mockFxSave),
+            address(0),
+            address(0)
+        );
+
+        // Try to upgrade as non-owner
+        address nonOwner = address(0x1234);
+        vm.prank(nonOwner);
+        vm.expectRevert(); // Should revert due to onlyOwner modifier
+        oracle.upgradeToAndCall(address(implementationV2), "");
+    }
+
+    function test_Upgrade_PreservesState() public {
+        // Deploy V1 implementation and proxy
+        HarborCustomFeedAndRateAggregator_v1 implementationV1 = new HarborCustomFeedAndRateAggregator_v1(
+            address(mockWstEth),
+            address(mockFxSave),
+            address(0),
+            address(0)
+        );
+
+        address[] memory customFeeds = new address[](mockStockFeeds.length);
+        for (uint256 i = 0; i < mockStockFeeds.length; i++) {
+            customFeeds[i] = address(mockStockFeeds[i]);
+        }
+
+        bytes memory initData = abi.encodeWithSelector(
+            HarborCustomFeedAndRateAggregator_v1.initialize.selector,
+            owner,
+            "TestOracle",
+            HarborCustomFeedAndRateAggregator_v1.RateSource.WSTETH,
+            customFeeds,
+            address(mockUsdFeed),
+            aggregationDivisor,
+            maxAge,
+            maxDev,
+            maxAge,
+            maxDev
+        );
+        ERC1967Proxy proxy = new ERC1967Proxy(address(implementationV1), initData);
+        oracle = HarborCustomFeedAndRateAggregator_v1(address(proxy));
+
+        // Update some state before upgrade
+        uint64 newMaxAge = 7200;
+        uint256 newMaxDev = 10e16;
+        vm.prank(owner);
+        oracle.updateCustomFeedConstraints(newMaxAge, newMaxDev);
+        vm.prank(owner);
+        oracle.updateUsdFeedConstraints(newMaxAge, newMaxDev);
+
+        // Store state values before upgrade
+        string memory oracleNameBefore = oracle.oracleName();
+        address ownerBefore = oracle.owner();
+        address usdFeedBefore = oracle.usdFeed();
+        uint256 aggregationDivisorBefore = oracle.aggregationDivisor();
+        uint256 customFeedCountBefore = oracle.getCustomFeedCount();
+        (uint64 maxAgeCustomBefore, uint256 maxDevCustomBefore) = oracle.getConstraints(1);
+        (uint64 maxAgeUsdBefore, uint256 maxDevUsdBefore) = oracle.getConstraints(100);
+
+        // Deploy V2 implementation
+        HarborCustomFeedAndRateAggregator_v2 implementationV2 = new HarborCustomFeedAndRateAggregator_v2(
+            address(mockWstEth),
+            address(mockFxSave),
+            address(0),
+            address(0)
+        );
+
+        // Upgrade to V2
+        vm.prank(owner);
+        oracle.upgradeToAndCall(address(implementationV2), "");
+
+        // Verify all state is preserved
+        assertEq(oracle.oracleName(), oracleNameBefore, "Oracle name should be preserved");
+        assertEq(oracle.owner(), ownerBefore, "Owner should be preserved");
+        assertEq(oracle.usdFeed(), usdFeedBefore, "USD feed should be preserved");
+        assertEq(oracle.aggregationDivisor(), aggregationDivisorBefore, "Aggregation divisor should be preserved");
+        assertEq(oracle.getCustomFeedCount(), customFeedCountBefore, "Custom feed count should be preserved");
+        
+        // Verify custom feed addresses are preserved (check against mockStockFeeds directly to avoid stack issues)
+        for (uint256 i = 0; i < customFeedCountBefore; i++) {
+            assertEq(oracle.getCustomFeed(i), address(mockStockFeeds[i]), "Custom feed address should be preserved");
+        }
+        
+        // Verify constraints are preserved
+        (uint64 maxAgeCustomAfter, uint256 maxDevCustomAfter) = oracle.getConstraints(1);
+        (uint64 maxAgeUsdAfter, uint256 maxDevUsdAfter) = oracle.getConstraints(100);
+        assertEq(maxAgeCustomAfter, maxAgeCustomBefore, "Custom feed max age should be preserved");
+        assertEq(maxDevCustomAfter, maxDevCustomBefore, "Custom feed max dev should be preserved");
+        assertEq(maxAgeUsdAfter, maxAgeUsdBefore, "USD feed max age should be preserved");
+        assertEq(maxDevUsdAfter, maxDevUsdBefore, "USD feed max dev should be preserved");
     }
 }
 
