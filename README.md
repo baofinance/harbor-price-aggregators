@@ -117,20 +117,121 @@ forge test
 
 ### Prerequisites
 
-1. Start anvil with a mainnet fork to access real contract data:
-```bash
-anvil --fork-url https://eth-mainnet.g.alchemy.com/v2/YOUR_ALCHEMY_KEY --host 0.0.0.0 --port 8545
-```
+1. **Set required environment variables** (choose one method):
 
-2. Deploy the contracts:
+   **Option A: Create a `.env.local` or `.env` file** in the project root:
+   ```bash
+   # .env.local (recommended - typically gitignored)
+   RPC_URL=https://eth-mainnet.g.alchemy.com/v2/YOUR_ALCHEMY_KEY
+   ETHERSCAN_API_KEY=your_etherscan_api_key
+   PRIVATE_KEY=your_private_key
+   OWNER=your_owner_address  # Set to your deployer address
+   ```
+
+   **Option B: Export environment variables**:
+   ```bash
+   export RPC_URL="https://eth-mainnet.g.alchemy.com/v2/YOUR_ALCHEMY_KEY"
+   export ETHERSCAN_API_KEY="your_etherscan_api_key"
+   export PRIVATE_KEY="your_private_key"
+   export OWNER="your_owner_address"  # Set to your deployer address
+   ```
+
+   **Note**: The scripts will automatically load from `.env.local` (if exists) or `.env` (if exists). Priority order:
+   1. Environment variables (exported)
+   2. `.env.local` file
+   3. `.env` file
+
+2. **Get API keys**:
+   - **RPC URL**: Get an Alchemy/Infura API key for your target network
+   - **Etherscan API Key**: Get from [Etherscan](https://etherscan.io/apis) (works for both mainnet and Arbitrum via their multichain API v2)
+
+3. **Optional: Use Anvil fork for testing**:
+   For local testing with real mainnet data, you can use Anvil:
+   ```bash
+   # Fork Ethereum mainnet
+   anvil --fork-url https://eth-mainnet.g.alchemy.com/v2/YOUR_ALCHEMY_KEY --host 0.0.0.0 --port 8545
+   
+   # Fork Arbitrum
+   anvil --fork-url https://arb-mainnet.g.alchemy.com/v2/YOUR_ALCHEMY_KEY --host 0.0.0.0 --port 8545
+   ```
+   Then set `RPC_URL=http://localhost:8545` in your `.env.local` or export it.
+
+### Deploy to Ethereum Mainnet
+
+Deploy the new mainnet oracle contracts:
+
 ```bash
-export PATH="$HOME/.foundry/bin:$PATH" && cd /Volumes/Github/Cursor/harbor-price-aggregators && OWNER=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 ./script/deploy-harbor-oracles-v2
+./script/deploy-harbor-oracles-v2-mainnet-new
 ```
 
 This will deploy:
-- 3 implementation contracts (Single Feed, Double Feed, and Custom Feed)
-- Multiple proxy contracts for various oracle configurations
-- All oracles will use real mainnet data via the fork
+- 1 Double Feed implementation contract
+- 10 proxy contracts:
+  - fxsave→ETH, fxsave→BTC, fxsave→EUR, fxsave→XAU, fxsave→MCAP
+  - wstETH→BTC, wstETH→EUR, wstETH→XAU, wstETH→MCAP
+
+**Deployment Modes:**
+- `MODE=deploy` (default): Deploy all contracts
+- `MODE=check`: Check deployment status
+- `MODE=retry`: Retry initialization of failed contracts
+- `MODE=init`: Initialize contracts only
+- `MODE=verify`: Verify all contracts on Etherscan
+
+**Examples:**
+```bash
+# Deploy all contracts
+./script/deploy-harbor-oracles-v2-mainnet-new
+
+# Check deployment status
+MODE=check ./script/deploy-harbor-oracles-v2-mainnet-new
+
+# Verify all contracts
+MODE=verify ./script/deploy-harbor-oracles-v2-mainnet-new
+
+# Skip rate source configuration
+SKIP_RATE_CONFIG=true ./script/deploy-harbor-oracles-v2-mainnet-new
+```
+
+### Deploy to Arbitrum
+
+Deploy the Arbitrum oracle contracts:
+
+```bash
+./script/deploy-arbitrum-oracles
+```
+
+This will deploy:
+- 1 PriceOracle library (pre-deployed, reused)
+- 3 implementation contracts (Single Feed, Double Feed, Custom Feed)
+- 20 proxy contracts:
+  - sUSDE→USD, sUSDE→AAPL, sUSDE→AMZN, sUSDE→GOOGL, sUSDE→META, sUSDE→MSFT, sUSDE→NVDA, sUSDE→SPY, sUSDE→TSLA, sUSDE→MAG7
+  - wstETH→USD, wstETH→AAPL, wstETH→AMZN, wstETH→GOOGL, wstETH→META, wstETH→MSFT, wstETH→NVDA, wstETH→SPY, wstETH→TSLA, wstETH→MAG7
+
+**Deployment Modes:**
+- `MODE=deploy` (default): Deploy all contracts
+- `MODE=check`: Check deployment status
+- `MODE=retry`: Retry initialization of failed contracts
+- `MODE=init`: Initialize contracts only
+- `MODE=verify`: Verify all contracts on Arbiscan
+
+**Examples:**
+```bash
+# Deploy all contracts
+./script/deploy-arbitrum-oracles
+
+# Check deployment status
+MODE=check ./script/deploy-arbitrum-oracles
+
+# Verify all contracts
+MODE=verify ./script/deploy-arbitrum-oracles
+
+# Skip rate source configuration
+SKIP_RATE_CONFIG=true ./script/deploy-arbitrum-oracles
+```
+
+**Note**: For Arbitrum, make sure to set:
+- `RPC_URL` to an Arbitrum RPC endpoint (e.g., `https://arb-mainnet.g.alchemy.com/v2/YOUR_KEY`)
+- `ETHERSCAN_API_KEY` to your Etherscan API key (same key works for both mainnet and Arbitrum)
 
 ## Rate Sources
 

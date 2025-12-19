@@ -1,0 +1,961 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Harbor Generic Oracle Deployment Script v2 - Mainnet (V2 Contracts)
+# Deploys 2 implementation contracts and 9 proxies using V2 contracts
+# Deploys: fxUSD→ETH, fxUSD→BTC, fxUSD→EUR, fxUSD→XAU, fxUSD→MCAP (Single Feed V2)
+#          stETH→BTC, stETH→EUR, stETH→XAU, stETH→MCAP (Double Feed V2)
+# Note: V2 contracts do NOT multiply price by rate - use feed prices directly
+# Note: Rate sources remain WSTETH (0) and FXSAVE (1), but naming uses fxUSD and stETH
+#
+# Configuration:
+#   - Set RPC_URL and ETHERSCAN_API_KEY as environment variables, or
+#   - Create a .env file in the project root (see .env.example)
+#   - Environment variables take precedence over .env file
+
+# Use full path to forge/cast
+FORGE=${FORGE:-$HOME/.foundry/bin/forge}
+CAST=${CAST:-$HOME/.foundry/bin/cast}
+
+# State file for tracking deployments
+STATE_FILE="${STATE_FILE:-deployment-state-v2.json}"
+MODE="${MODE:-deploy}"  # deploy, check, retry, init, verify
+
+# Allow manual override of addresses via environment variables
+if [[ -n "${MANUAL_SINGLE_IMPL:-}" ]]; then
+  SINGLE_IMPL="$MANUAL_SINGLE_IMPL"
+fi
+if [[ -n "${MANUAL_DOUBLE_IMPL:-}" ]]; then
+  DOUBLE_IMPL="$MANUAL_DOUBLE_IMPL"
+fi
+if [[ -n "${MANUAL_FXUSD_ETH:-}" ]]; then FXUSD_ETH="$MANUAL_FXUSD_ETH"; fi
+if [[ -n "${MANUAL_FXUSD_BTC:-}" ]]; then FXUSD_BTC="$MANUAL_FXUSD_BTC"; fi
+if [[ -n "${MANUAL_FXUSD_EUR:-}" ]]; then FXUSD_EUR="$MANUAL_FXUSD_EUR"; fi
+if [[ -n "${MANUAL_FXUSD_XAU:-}" ]]; then FXUSD_XAU="$MANUAL_FXUSD_XAU"; fi
+if [[ -n "${MANUAL_FXUSD_MCAP:-}" ]]; then FXUSD_MCAP="$MANUAL_FXUSD_MCAP"; fi
+if [[ -n "${MANUAL_STETH_BTC:-}" ]]; then STETH_BTC="$MANUAL_STETH_BTC"; fi
+if [[ -n "${MANUAL_STETH_EUR:-}" ]]; then STETH_EUR="$MANUAL_STETH_EUR"; fi
+if [[ -n "${MANUAL_STETH_XAU:-}" ]]; then STETH_XAU="$MANUAL_STETH_XAU"; fi
+if [[ -n "${MANUAL_STETH_MCAP:-}" ]]; then STETH_MCAP="$MANUAL_STETH_MCAP"; fi
+
+# Helper function to get contract address from transaction hash
+get_contract_from_tx() {
+  local tx_hash=$1
+  if [[ ${#tx_hash} -eq 66 ]] && [[ "$tx_hash" =~ ^0x[0-9a-fA-F]{64}$ ]]; then
+    # This looks like a transaction hash, try to get contract address
+    local contract=$("$CAST" receipt "$tx_hash" contractAddress --rpc-url "$RPC_URL" 2>/dev/null || echo "")
+    if [[ -n "$contract" ]] && [[ "$contract" != "null" ]] && [[ "$contract" != "" ]]; then
+      echo "$contract"
+      return 0
+    fi
+  fi
+  # If it's already a contract address (42 chars), return as-is
+  if [[ ${#tx_hash} -eq 42 ]] && [[ "$tx_hash" =~ ^0x[0-9a-fA-F]{40}$ ]]; then
+    echo "$tx_hash"
+    return 0
+  fi
+  echo ""
+  return 1
+}
+
+# Helper to update state file with transaction hashes (will convert to addresses)
+update_state_from_txs() {
+  local single_impl_tx=${1:-}
+  local double_impl_tx=${2:-}
+  shift 2
+  local proxy_txs=("$@")
+  
+  if [[ -n "$single_impl_tx" ]]; then
+    local impl_addr=$(get_contract_from_tx "$single_impl_tx")
+    if [[ -n "$impl_addr" ]]; then
+      SINGLE_IMPL="$impl_addr"
+      echo "✓ Extracted Single Feed implementation address: $SINGLE_IMPL"
+    else
+      echo "⚠️  Could not extract address from Single Feed implementation tx: $single_impl_tx"
+    fi
+  fi
+  
+  if [[ -n "$double_impl_tx" ]]; then
+    local impl_addr=$(get_contract_from_tx "$double_impl_tx")
+    if [[ -n "$impl_addr" ]]; then
+      DOUBLE_IMPL="$impl_addr"
+      echo "✓ Extracted Double Feed implementation address: $DOUBLE_IMPL"
+    else
+      echo "⚠️  Could not extract address from Double Feed implementation tx: $double_impl_tx"
+    fi
+  fi
+  
+  # Map proxy transaction hashes to their names
+  local proxy_names=("FXUSD_ETH" "FXUSD_BTC" "FXUSD_EUR" "FXUSD_XAU" "FXUSD_MCAP" "STETH_BTC" "STETH_EUR" "STETH_XAU" "STETH_MCAP")
+  
+  for i in "${!proxy_txs[@]}"; do
+    if [[ $i -lt ${#proxy_names[@]} ]] && [[ -n "${proxy_txs[$i]}" ]]; then
+      local proxy_addr=$(get_contract_from_tx "${proxy_txs[$i]}")
+      if [[ -n "$proxy_addr" ]]; then
+        case "${proxy_names[$i]}" in
+          "FXUSD_ETH") FXUSD_ETH="$proxy_addr" ;;
+          "FXUSD_BTC") FXUSD_BTC="$proxy_addr" ;;
+          "FXUSD_EUR") FXUSD_EUR="$proxy_addr" ;;
+          "FXUSD_XAU") FXUSD_XAU="$proxy_addr" ;;
+          "FXUSD_MCAP") FXUSD_MCAP="$proxy_addr" ;;
+          "STETH_BTC") STETH_BTC="$proxy_addr" ;;
+          "STETH_EUR") STETH_EUR="$proxy_addr" ;;
+          "STETH_XAU") STETH_XAU="$proxy_addr" ;;
+          "STETH_MCAP") STETH_MCAP="$proxy_addr" ;;
+        esac
+        echo "✓ Extracted ${proxy_names[$i]} address: $proxy_addr"
+      else
+        echo "⚠️  Could not extract address from ${proxy_names[$i]} tx: ${proxy_txs[$i]}"
+      fi
+    fi
+  done
+  
+  save_state
+}
+
+# Helper function to save state
+save_state() {
+  local state_json=$(cat <<EOF
+{
+  "implementations": {
+    "single": "${SINGLE_IMPL:-}",
+    "double": "${DOUBLE_IMPL:-}"
+  },
+  "proxies": {
+    "FXUSD_ETH": "${FXUSD_ETH:-}",
+    "FXUSD_BTC": "${FXUSD_BTC:-}",
+    "FXUSD_EUR": "${FXUSD_EUR:-}",
+    "FXUSD_XAU": "${FXUSD_XAU:-}",
+    "FXUSD_MCAP": "${FXUSD_MCAP:-}",
+    "STETH_BTC": "${STETH_BTC:-}",
+    "STETH_EUR": "${STETH_EUR:-}",
+    "STETH_XAU": "${STETH_XAU:-}",
+    "STETH_MCAP": "${STETH_MCAP:-}"
+  },
+  "deployment_time": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+  "version": "v2"
+}
+EOF
+)
+  echo "$state_json" > "$STATE_FILE"
+  echo "✓ State saved to $STATE_FILE"
+}
+
+# Helper function to load state
+load_state() {
+  if [[ -f "$STATE_FILE" ]]; then
+    echo "📂 Loading state from $STATE_FILE"
+    local impl_val=$(jq -r '.implementations.single // empty' "$STATE_FILE" 2>/dev/null || echo "")
+    [[ -n "$impl_val" ]] && [[ "$impl_val" != "null" ]] && SINGLE_IMPL="$impl_val"
+    
+    impl_val=$(jq -r '.implementations.double // empty' "$STATE_FILE" 2>/dev/null || echo "")
+    [[ -n "$impl_val" ]] && [[ "$impl_val" != "null" ]] && DOUBLE_IMPL="$impl_val"
+    
+    # Fallback for old state format
+    if [[ -z "$SINGLE_IMPL" ]] && [[ -z "$DOUBLE_IMPL" ]]; then
+      impl_val=$(jq -r '.implementation // empty' "$STATE_FILE" 2>/dev/null || echo "")
+      [[ -n "$impl_val" ]] && [[ "$impl_val" != "null" ]] && DOUBLE_IMPL="$impl_val"
+    fi
+    
+    local val=$(jq -r '.proxies.FXUSD_ETH // empty' "$STATE_FILE" 2>/dev/null || echo "")
+    [[ -n "$val" ]] && [[ "$val" != "null" ]] && FXUSD_ETH="$val"
+    
+    val=$(jq -r '.proxies.FXUSD_BTC // empty' "$STATE_FILE" 2>/dev/null || echo "")
+    [[ -n "$val" ]] && [[ "$val" != "null" ]] && FXUSD_BTC="$val"
+    
+    val=$(jq -r '.proxies.FXUSD_EUR // empty' "$STATE_FILE" 2>/dev/null || echo "")
+    [[ -n "$val" ]] && [[ "$val" != "null" ]] && FXUSD_EUR="$val"
+    
+    val=$(jq -r '.proxies.FXUSD_XAU // empty' "$STATE_FILE" 2>/dev/null || echo "")
+    [[ -n "$val" ]] && [[ "$val" != "null" ]] && FXUSD_XAU="$val"
+    
+    val=$(jq -r '.proxies.FXUSD_MCAP // empty' "$STATE_FILE" 2>/dev/null || echo "")
+    [[ -n "$val" ]] && [[ "$val" != "null" ]] && FXUSD_MCAP="$val"
+    
+    val=$(jq -r '.proxies.STETH_BTC // empty' "$STATE_FILE" 2>/dev/null || echo "")
+    [[ -n "$val" ]] && [[ "$val" != "null" ]] && STETH_BTC="$val"
+    
+    val=$(jq -r '.proxies.STETH_EUR // empty' "$STATE_FILE" 2>/dev/null || echo "")
+    [[ -n "$val" ]] && [[ "$val" != "null" ]] && STETH_EUR="$val"
+    
+    val=$(jq -r '.proxies.STETH_XAU // empty' "$STATE_FILE" 2>/dev/null || echo "")
+    [[ -n "$val" ]] && [[ "$val" != "null" ]] && STETH_XAU="$val"
+    
+    val=$(jq -r '.proxies.STETH_MCAP // empty' "$STATE_FILE" 2>/dev/null || echo "")
+    [[ -n "$val" ]] && [[ "$val" != "null" ]] && STETH_MCAP="$val"
+    
+    return 0
+  else
+    return 1
+  fi
+}
+
+# Helper function to check if contract is initialized
+check_initialized() {
+  local proxy=$1
+  local name=$2
+  
+  if [[ -z "$proxy" ]] || [[ "$proxy" == "null" ]] || [[ "$proxy" == "" ]]; then
+    echo "❌ $name: Not deployed"
+    return 1
+  fi
+  
+  # Check if contract exists (has code)
+  local code=$("$CAST" code "$proxy" --rpc-url "$RPC_URL" 2>/dev/null | head -1)
+  if [[ "$code" == "0x" ]]; then
+    echo "❌ $name ($proxy): No code at address"
+    return 1
+  fi
+  
+  # Try to call oracleName() - if initialized, this should work
+  local oracle_name=$("$CAST" call "$proxy" "oracleName()(string)" --rpc-url "$RPC_URL" 2>/dev/null || echo "")
+  if [[ -n "$oracle_name" ]] && [[ "$oracle_name" != "" ]]; then
+    echo "✅ $name ($proxy): Initialized (name: $oracle_name)"
+    return 0
+  else
+    echo "⚠️  $name ($proxy): Deployed but NOT initialized"
+    return 1
+  fi
+}
+
+# Function to manually initialize a proxy
+initialize_proxy() {
+  local proxy=$1
+  local name=$2
+  local init_data=$3
+  
+  echo "🔧 Initializing $name ($proxy)..."
+  
+  # Check if already initialized
+  local oracle_name=$("$CAST" call "$proxy" "oracleName()(string)" --rpc-url "$RPC_URL" 2>/dev/null || echo "")
+  if [[ -n "$oracle_name" ]] && [[ "$oracle_name" != "" ]]; then
+    echo "  ✓ Already initialized (name: $oracle_name)"
+    return 0
+  fi
+  
+  # Send initialization transaction
+  local tx_hash=$("$CAST" send "$proxy" "$init_data" --rpc-url "$RPC_URL" --private-key "$PRIVATE_KEY" --json 2>/dev/null | jq -r '.transactionHash // empty' || echo "")
+  
+  if [[ -n "$tx_hash" ]] && [[ "$tx_hash" != "null" ]] && [[ "$tx_hash" != "" ]]; then
+    echo "  ✓ Initialization tx: $tx_hash"
+    echo "  ⏳ Waiting for confirmation..."
+    sleep 5
+    
+    # Verify initialization
+    local verify_name=$("$CAST" call "$proxy" "oracleName()(string)" --rpc-url "$RPC_URL" 2>/dev/null || echo "")
+    if [[ -n "$verify_name" ]] && [[ "$verify_name" != "" ]]; then
+      echo "  ✅ Successfully initialized"
+      return 0
+    else
+      echo "  ⚠️  Transaction sent but verification failed. Check manually."
+      return 1
+    fi
+  else
+    echo "  ❌ Failed to send initialization transaction"
+    return 1
+  fi
+}
+
+# Function to check all deployments
+check_all_deployments() {
+  echo "=== CHECKING DEPLOYMENT STATUS ==="
+  echo ""
+  
+  if ! load_state; then
+    echo "❌ No state file found: $STATE_FILE"
+    echo "   Run with MODE=deploy to start deployment"
+    return 1
+  fi
+  
+  echo "Implementations:"
+  echo "  Single Feed (V2): ${SINGLE_IMPL:-not set}"
+  echo "  Double Feed (V2): ${DOUBLE_IMPL:-not set}"
+  echo ""
+  
+  local all_ok=true
+  
+  check_initialized "$FXUSD_ETH" "fxUSD→ETH" || all_ok=false
+  check_initialized "$FXUSD_BTC" "fxUSD→BTC" || all_ok=false
+  check_initialized "$FXUSD_EUR" "fxUSD→EUR" || all_ok=false
+  check_initialized "$FXUSD_XAU" "fxUSD→XAU" || all_ok=false
+  check_initialized "$FXUSD_MCAP" "fxUSD→MCAP" || all_ok=false
+  check_initialized "$STETH_BTC" "stETH→BTC" || all_ok=false
+  check_initialized "$STETH_EUR" "stETH→EUR" || all_ok=false
+  check_initialized "$STETH_XAU" "stETH→XAU" || all_ok=false
+  check_initialized "$STETH_MCAP" "stETH→MCAP" || all_ok=false
+  
+  echo ""
+  if [[ "$all_ok" == "true" ]]; then
+    echo "✅ All contracts are deployed and initialized!"
+  else
+    echo "⚠️  Some contracts need attention. Run with MODE=retry to initialize missing contracts."
+  fi
+  
+  return 0
+}
+
+# Load environment variables from .env.local or .env file if they exist (optional)
+# Priority: .env.local > .env > environment variables
+# You can create a .env.local or .env file in the project root with:
+#   RPC_URL=your_rpc_url
+#   ETHERSCAN_API_KEY=your_api_key
+#   PRIVATE_KEY=your_private_key
+#   OWNER=your_owner_address
+if [[ -f .env.local ]]; then
+  set -a
+  source .env.local
+  set +a
+elif [[ -f .env ]]; then
+  set -a
+  source .env
+  set +a
+fi
+
+# Configuration: REQUIRED environment variables
+# These MUST be set via environment variables or .env file:
+#   export RPC_URL="your_rpc_url"
+#   export ETHERSCAN_API_KEY="your_api_key"
+# Or create a .env file in the project root
+if [[ -z "${RPC_URL:-}" ]]; then
+  echo "❌ ERROR: RPC_URL is not set"
+  echo "   Set it via: export RPC_URL='your_rpc_url'"
+  echo "   Or add it to a .env.local or .env file in the project root"
+  exit 1
+fi
+if [[ -z "${ETHERSCAN_API_KEY:-}" ]]; then
+  echo "❌ ERROR: ETHERSCAN_API_KEY is not set"
+  echo "   Set it via: export ETHERSCAN_API_KEY='your_api_key'"
+  echo "   Or add it to a .env.local or .env file in the project root"
+  exit 1
+fi
+
+# Use PRIVATE_KEY_LOCAL if set, otherwise fall back to PRIVATE_KEY or default
+PRIVATE_KEY=${PRIVATE_KEY_LOCAL:-${PRIVATE_KEY:-0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80}}
+OWNER=${OWNER:-0x2f1567c4a651ed93db0fc6d9df1ea9196054f63e}
+
+# Check network
+CHAIN_ID=$("$CAST" chain-id --rpc-url "$RPC_URL" 2>/dev/null || echo "unknown")
+echo "=== Network Check ==="
+echo "RPC URL: $RPC_URL"
+echo "Chain ID: $CHAIN_ID"
+if [[ "$CHAIN_ID" == "0xa4b1" ]] || [[ "$CHAIN_ID" == "42161" ]]; then
+  echo "⚠️  WARNING: This script uses Ethereum mainnet addresses!"
+  echo "   For Arbitrum deployment, use: ./script/deploy-arbitrum-oracles"
+  echo "   Press Ctrl+C to cancel, or wait 5 seconds to continue..."
+  sleep 5
+fi
+echo ""
+
+# Contract addresses (Ethereum mainnet)
+# Rate sources remain WSTETH and FXSAVE (these are the actual token contracts)
+WSTETH=${WSTETH:-0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0}
+FXSAVE=${FXSAVE:-0x7743e50f534a7f9f1791dde7dcd89f7783eefc39}
+
+# Chainlink feeds
+USDC_USD_FEED=${USDC_USD_FEED:-0x8fFfFfd4AfB6115b954Bd326cbe7B4BA576818f6}
+ETH_USD_FEED=${ETH_USD_FEED:-0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419}
+BTC_USD_FEED=${BTC_USD_FEED:-0xF4030086522a5bEEa4988F8cA5B36dbC97BeE88c}
+EUR_USD_FEED=${EUR_USD_FEED:-0xb49f677943BC038e9857d61E7d053CaA2C1734C1}
+XAU_USD_FEED=${XAU_USD_FEED:-0x214eD9Da11D2fbe465a6fc601a91E62EbEc1a0D6}
+MCAP_USD_FEED=${MCAP_USD_FEED:-0xEC8761a0A73c34329CA5B1D3Dc7eD07F30e836e2}
+STETH_USD_FEED=${STETH_USD_FEED:-0xCfE54B5cD566aB89272946F602D76Ea879CAb4a8}
+STETH_ETH_FEED=${STETH_ETH_FEED:-0x86392dC19c0b719886221c78AB11eb8Cf5c52812}
+
+# Library
+PRICE_ORACLE_LIB=${PRICE_ORACLE_LIB:-0xe0fa670bb2e77a14d64945acae9c09f1bd268b39}
+
+# Constraints
+MAX_AGE=${MAX_AGE:-604800}
+MAX_DEV=${MAX_DEV:-50000000000000000}
+MAX_RATE_SOURCE_AGE=${MAX_RATE_SOURCE_AGE:-604800}  # Default: 7 days (604800 seconds)
+
+# Initialize variables to avoid unbound variable errors
+SINGLE_IMPL="${SINGLE_IMPL:-}"
+DOUBLE_IMPL="${DOUBLE_IMPL:-}"
+FXUSD_ETH="${FXUSD_ETH:-}"
+FXUSD_BTC="${FXUSD_BTC:-}"
+FXUSD_EUR="${FXUSD_EUR:-}"
+FXUSD_XAU="${FXUSD_XAU:-}"
+FXUSD_MCAP="${FXUSD_MCAP:-}"
+STETH_BTC="${STETH_BTC:-}"
+STETH_EUR="${STETH_EUR:-}"
+STETH_XAU="${STETH_XAU:-}"
+STETH_MCAP="${STETH_MCAP:-}"
+
+# Handle different modes
+if [[ "$MODE" == "check" ]]; then
+  check_all_deployments
+  exit 0
+fi
+
+if [[ "$MODE" == "verify-impl" ]] || [[ "$MODE" == "verify-implementations" ]]; then
+  # Load state first (optional - can use manual overrides)
+  load_state || true
+  
+  # Allow manual override of implementation addresses
+  if [[ -n "${MANUAL_SINGLE_IMPL:-}" ]]; then
+    SINGLE_IMPL="$MANUAL_SINGLE_IMPL"
+  fi
+  if [[ -n "${MANUAL_DOUBLE_IMPL:-}" ]]; then
+    DOUBLE_IMPL="$MANUAL_DOUBLE_IMPL"
+  fi
+  
+  # Check if ETHERSCAN_API_KEY is set
+  if [[ -z "$ETHERSCAN_API_KEY" ]]; then
+    echo "❌ ETHERSCAN_API_KEY is not set. Cannot verify contracts."
+    exit 1
+  fi
+  
+  # Check if we have at least one implementation address
+  if [[ -z "$SINGLE_IMPL" ]] && [[ -z "$DOUBLE_IMPL" ]]; then
+    echo "❌ No implementation addresses found."
+    echo "   Either load from state file or set MANUAL_SINGLE_IMPL and/or MANUAL_DOUBLE_IMPL"
+    exit 1
+  fi
+  
+  echo "=== VERIFYING IMPLEMENTATION CONTRACTS ON ETHERSCAN (V2) ==="
+  echo ""
+  
+  # Chainlink feeds (not used on mainnet, but required for constructor)
+  SUSDE_USDE_FEED=${SUSDE_USDE_FEED:-0x0000000000000000000000000000000000000000}
+  WSTETH_STETH_FEED=${WSTETH_STETH_FEED:-0x0000000000000000000000000000000000000000}
+  
+  # Pre-compute constructor args for implementations
+  IMPL_CONSTRUCTOR_ARGS=$("$CAST" abi-encode "constructor(address,address,address,address)" "$WSTETH" "$FXSAVE" "$SUSDE_USDE_FEED" "$WSTETH_STETH_FEED")
+  
+  COUNT=0
+  TOTAL=0
+  [[ -n "$SINGLE_IMPL" ]] && TOTAL=$((TOTAL + 1))
+  [[ -n "$DOUBLE_IMPL" ]] && TOTAL=$((TOTAL + 1))
+  
+  # Verify Single Feed Implementation (V2)
+  if [[ -n "$SINGLE_IMPL" ]] && [[ "$SINGLE_IMPL" != "null" ]] && [[ "$SINGLE_IMPL" != "" ]]; then
+    COUNT=$((COUNT + 1))
+    echo "$COUNT/$TOTAL Verifying Single Feed Implementation (V2)..."
+    echo "   Address: $SINGLE_IMPL"
+    "$FORGE" verify-contract \
+      "$SINGLE_IMPL" \
+      src/price/HarborSingleFeedAndRateAggregator_v2.sol:HarborSingleFeedAndRateAggregator_v2 \
+      --verifier etherscan \
+      --etherscan-api-key "$ETHERSCAN_API_KEY" \
+      --libraries src/price/PriceOracle_v1.sol:PriceOracle_v1:$PRICE_ORACLE_LIB \
+      --constructor-args "$IMPL_CONSTRUCTOR_ARGS" \
+      --compiler-version 0.8.30 \
+      --chain mainnet && echo "  ✓ Single Feed Implementation (V2) verified" || echo "  ✗ Single Feed Implementation (V2) verification failed"
+    echo ""
+  fi
+  
+  # Verify Double Feed Implementation (V2)
+  if [[ -n "$DOUBLE_IMPL" ]] && [[ "$DOUBLE_IMPL" != "null" ]] && [[ "$DOUBLE_IMPL" != "" ]]; then
+    COUNT=$((COUNT + 1))
+    echo "$COUNT/$TOTAL Verifying Double Feed Implementation (V2)..."
+    echo "   Address: $DOUBLE_IMPL"
+    "$FORGE" verify-contract \
+      "$DOUBLE_IMPL" \
+      src/price/HarborDoubleFeedAndRateAggregator_v2.sol:HarborDoubleFeedAndRateAggregator_v2 \
+      --verifier etherscan \
+      --etherscan-api-key "$ETHERSCAN_API_KEY" \
+      --libraries src/price/PriceOracle_v1.sol:PriceOracle_v1:$PRICE_ORACLE_LIB \
+      --constructor-args "$IMPL_CONSTRUCTOR_ARGS" \
+      --compiler-version 0.8.30 \
+      --chain mainnet && echo "  ✓ Double Feed Implementation (V2) verified" || echo "  ✗ Double Feed Implementation (V2) verification failed"
+  fi
+  
+  echo ""
+  echo "✅ Implementation verification complete!"
+  exit 0
+fi
+
+if [[ "$MODE" == "verify" ]]; then
+  # Load state first
+  if ! load_state; then
+    echo "❌ No state file found: $STATE_FILE"
+    echo "   Deploy contracts first with: ./script/deploy-harbor-oracles-v2-mainnet-new"
+    exit 1
+  fi
+  
+  # Check if ETHERSCAN_API_KEY is set
+  if [[ -z "$ETHERSCAN_API_KEY" ]]; then
+    echo "❌ ETHERSCAN_API_KEY is not set. Cannot verify contracts."
+    exit 1
+  fi
+  
+  # Initialize required variables (same as deployment section)
+  WSTETH=${WSTETH:-0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0}
+  FXSAVE=${FXSAVE:-0x7743e50f534a7f9f1791dde7dcd89f7783eefc39}
+  SUSDE_USDE_FEED=${SUSDE_USDE_FEED:-0x0000000000000000000000000000000000000000}
+  WSTETH_STETH_FEED=${WSTETH_STETH_FEED:-0x0000000000000000000000000000000000000000}
+  PRICE_ORACLE_LIB=${PRICE_ORACLE_LIB:-0xe0fa670bb2e77a14d64945acae9c09f1bd268b39}
+  
+  echo "=== VERIFYING ALL CONTRACTS ON ETHERSCAN (V2) ==="
+  echo ""
+  
+  # Pre-compute constructor args for implementations
+  IMPL_CONSTRUCTOR_ARGS=$("$CAST" abi-encode "constructor(address,address,address,address)" "$WSTETH" "$FXSAVE" "$SUSDE_USDE_FEED" "$WSTETH_STETH_FEED")
+  
+  # Verify Single Feed Implementation (V2)
+  if [[ -n "$SINGLE_IMPL" ]] && [[ "$SINGLE_IMPL" != "null" ]] && [[ "$SINGLE_IMPL" != "" ]]; then
+    echo "1/11 Verifying Single Feed Implementation (V2)..."
+    "$FORGE" verify-contract \
+      "$SINGLE_IMPL" \
+      src/price/HarborSingleFeedAndRateAggregator_v2.sol:HarborSingleFeedAndRateAggregator_v2 \
+      --verifier etherscan \
+      --etherscan-api-key "$ETHERSCAN_API_KEY" \
+      --libraries src/price/PriceOracle_v1.sol:PriceOracle_v1:$PRICE_ORACLE_LIB \
+      --constructor-args "$IMPL_CONSTRUCTOR_ARGS" \
+      --compiler-version 0.8.30 \
+      --chain mainnet && echo "  ✓ Single Feed Implementation (V2) verified" || echo "  ✗ Single Feed Implementation (V2) verification failed"
+  fi
+  
+  # Verify Double Feed Implementation (V2)
+  if [[ -n "$DOUBLE_IMPL" ]] && [[ "$DOUBLE_IMPL" != "null" ]] && [[ "$DOUBLE_IMPL" != "" ]]; then
+    echo "2/11 Verifying Double Feed Implementation (V2)..."
+    "$FORGE" verify-contract \
+      "$DOUBLE_IMPL" \
+      src/price/HarborDoubleFeedAndRateAggregator_v2.sol:HarborDoubleFeedAndRateAggregator_v2 \
+      --verifier etherscan \
+      --etherscan-api-key "$ETHERSCAN_API_KEY" \
+      --libraries src/price/PriceOracle_v1.sol:PriceOracle_v1:$PRICE_ORACLE_LIB \
+      --constructor-args "$IMPL_CONSTRUCTOR_ARGS" \
+      --compiler-version 0.8.30 \
+      --chain mainnet && echo "  ✓ Double Feed Implementation (V2) verified" || echo "  ✗ Double Feed Implementation (V2) verification failed"
+  fi
+  
+  # Verify Proxies
+  echo ""
+  echo "=== Verifying Proxy Contracts ==="
+  
+  # Regenerate init data for each proxy (Single Feed V2 for fxUSD)
+  INIT_DATA_FXUSD_ETH_VERIFY=$("$CAST" calldata "initialize(address,string,uint8,address,uint256,uint64,uint256,bool)" \
+    "$OWNER" "FxUSDToETH" 1 "$ETH_USD_FEED" 1 "$MAX_AGE" "$MAX_DEV" true)
+  PROXY_ARGS=$("$CAST" abi-encode "constructor(address,bytes)" "$SINGLE_IMPL" "$INIT_DATA_FXUSD_ETH_VERIFY")
+  echo "3/11 Verifying fxUSD→ETH..."
+  "$FORGE" verify-contract \
+    "$FXUSD_ETH" \
+    lib/openzeppelin-contracts-upgradeable/lib/openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Proxy.sol:ERC1967Proxy \
+    --verifier etherscan \
+    --etherscan-api-key "$ETHERSCAN_API_KEY" \
+    --constructor-args "$PROXY_ARGS" \
+    --compiler-version 0.8.30 \
+    --chain mainnet && echo "  ✓ fxUSD→ETH verified" || echo "  ✗ fxUSD→ETH verification failed"
+  
+  INIT_DATA_FXUSD_BTC_VERIFY=$("$CAST" calldata "initialize(address,string,uint8,address,uint256,uint64,uint256,bool)" \
+    "$OWNER" "FxUSDToBTC" 1 "$BTC_USD_FEED" 1 "$MAX_AGE" "$MAX_DEV" true)
+  PROXY_ARGS=$("$CAST" abi-encode "constructor(address,bytes)" "$SINGLE_IMPL" "$INIT_DATA_FXUSD_BTC_VERIFY")
+  echo "4/11 Verifying fxUSD→BTC..."
+  "$FORGE" verify-contract \
+    "$FXUSD_BTC" \
+    lib/openzeppelin-contracts-upgradeable/lib/openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Proxy.sol:ERC1967Proxy \
+    --verifier etherscan \
+    --etherscan-api-key "$ETHERSCAN_API_KEY" \
+    --constructor-args "$PROXY_ARGS" \
+    --compiler-version 0.8.30 \
+    --chain mainnet && echo "  ✓ fxUSD→BTC verified" || echo "  ✗ fxUSD→BTC verification failed"
+  
+  INIT_DATA_FXUSD_EUR_VERIFY=$("$CAST" calldata "initialize(address,string,uint8,address,uint256,uint64,uint256,bool)" \
+    "$OWNER" "FxUSDToEUR" 1 "$EUR_USD_FEED" 1 "$MAX_AGE" "$MAX_DEV" true)
+  PROXY_ARGS=$("$CAST" abi-encode "constructor(address,bytes)" "$SINGLE_IMPL" "$INIT_DATA_FXUSD_EUR_VERIFY")
+  echo "5/11 Verifying fxUSD→EUR..."
+  "$FORGE" verify-contract \
+    "$FXUSD_EUR" \
+    lib/openzeppelin-contracts-upgradeable/lib/openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Proxy.sol:ERC1967Proxy \
+    --verifier etherscan \
+    --etherscan-api-key "$ETHERSCAN_API_KEY" \
+    --constructor-args "$PROXY_ARGS" \
+    --compiler-version 0.8.30 \
+    --chain mainnet && echo "  ✓ fxUSD→EUR verified" || echo "  ✗ fxUSD→EUR verification failed"
+  
+  INIT_DATA_FXUSD_XAU_VERIFY=$("$CAST" calldata "initialize(address,string,uint8,address,uint256,uint64,uint256,bool)" \
+    "$OWNER" "FxUSDToXAU" 1 "$XAU_USD_FEED" 1 "$MAX_AGE" "$MAX_DEV" true)
+  PROXY_ARGS=$("$CAST" abi-encode "constructor(address,bytes)" "$SINGLE_IMPL" "$INIT_DATA_FXUSD_XAU_VERIFY")
+  echo "6/11 Verifying fxUSD→XAU..."
+  "$FORGE" verify-contract \
+    "$FXUSD_XAU" \
+    lib/openzeppelin-contracts-upgradeable/lib/openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Proxy.sol:ERC1967Proxy \
+    --verifier etherscan \
+    --etherscan-api-key "$ETHERSCAN_API_KEY" \
+    --constructor-args "$PROXY_ARGS" \
+    --compiler-version 0.8.30 \
+    --chain mainnet && echo "  ✓ fxUSD→XAU verified" || echo "  ✗ fxUSD→XAU verification failed"
+  
+  INIT_DATA_FXUSD_MCAP_VERIFY=$("$CAST" calldata "initialize(address,string,uint8,address,uint256,uint64,uint256,bool)" \
+    "$OWNER" "FxUSDToMCAP" 1 "$MCAP_USD_FEED" 1000000000000 "$MAX_AGE" "$MAX_DEV" true)
+  PROXY_ARGS=$("$CAST" abi-encode "constructor(address,bytes)" "$SINGLE_IMPL" "$INIT_DATA_FXUSD_MCAP_VERIFY")
+  echo "7/11 Verifying fxUSD→MCAP..."
+  "$FORGE" verify-contract \
+    "$FXUSD_MCAP" \
+    lib/openzeppelin-contracts-upgradeable/lib/openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Proxy.sol:ERC1967Proxy \
+    --verifier etherscan \
+    --etherscan-api-key "$ETHERSCAN_API_KEY" \
+    --constructor-args "$PROXY_ARGS" \
+    --compiler-version 0.8.30 \
+    --chain mainnet && echo "  ✓ fxUSD→MCAP verified" || echo "  ✗ fxUSD→MCAP verification failed"
+  
+  # Regenerate init data for each proxy (Double Feed V2 for stETH)
+  INIT_DATA_STETH_BTC_VERIFY=$("$CAST" calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256,bool)" \
+    "$OWNER" "StETHToBTC" 0 "$ETH_USD_FEED" "$BTC_USD_FEED" 1 "$MAX_AGE" "$MAX_DEV" "$MAX_AGE" "$MAX_DEV" false)
+  PROXY_ARGS=$("$CAST" abi-encode "constructor(address,bytes)" "$DOUBLE_IMPL" "$INIT_DATA_STETH_BTC_VERIFY")
+  echo "8/11 Verifying stETH→BTC..."
+  "$FORGE" verify-contract \
+    "$STETH_BTC" \
+    lib/openzeppelin-contracts-upgradeable/lib/openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Proxy.sol:ERC1967Proxy \
+    --verifier etherscan \
+    --etherscan-api-key "$ETHERSCAN_API_KEY" \
+    --constructor-args "$PROXY_ARGS" \
+    --compiler-version 0.8.30 \
+    --chain mainnet && echo "  ✓ stETH→BTC verified" || echo "  ✗ stETH→BTC verification failed"
+  
+  INIT_DATA_STETH_EUR_VERIFY=$("$CAST" calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256,bool)" \
+    "$OWNER" "StETHToEUR" 0 "$ETH_USD_FEED" "$EUR_USD_FEED" 1 "$MAX_AGE" "$MAX_DEV" "$MAX_AGE" "$MAX_DEV" false)
+  PROXY_ARGS=$("$CAST" abi-encode "constructor(address,bytes)" "$DOUBLE_IMPL" "$INIT_DATA_STETH_EUR_VERIFY")
+  echo "9/11 Verifying stETH→EUR..."
+  "$FORGE" verify-contract \
+    "$STETH_EUR" \
+    lib/openzeppelin-contracts-upgradeable/lib/openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Proxy.sol:ERC1967Proxy \
+    --verifier etherscan \
+    --etherscan-api-key "$ETHERSCAN_API_KEY" \
+    --constructor-args "$PROXY_ARGS" \
+    --compiler-version 0.8.30 \
+    --chain mainnet && echo "  ✓ stETH→EUR verified" || echo "  ✗ stETH→EUR verification failed"
+  
+  INIT_DATA_STETH_XAU_VERIFY=$("$CAST" calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256,bool)" \
+    "$OWNER" "StETHToXAU" 0 "$ETH_USD_FEED" "$XAU_USD_FEED" 1 "$MAX_AGE" "$MAX_DEV" "$MAX_AGE" "$MAX_DEV" false)
+  PROXY_ARGS=$("$CAST" abi-encode "constructor(address,bytes)" "$DOUBLE_IMPL" "$INIT_DATA_STETH_XAU_VERIFY")
+  echo "10/11 Verifying stETH→XAU..."
+  "$FORGE" verify-contract \
+    "$STETH_XAU" \
+    lib/openzeppelin-contracts-upgradeable/lib/openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Proxy.sol:ERC1967Proxy \
+    --verifier etherscan \
+    --etherscan-api-key "$ETHERSCAN_API_KEY" \
+    --constructor-args "$PROXY_ARGS" \
+    --compiler-version 0.8.30 \
+    --chain mainnet && echo "  ✓ stETH→XAU verified" || echo "  ✗ stETH→XAU verification failed"
+  
+  INIT_DATA_STETH_MCAP_VERIFY=$("$CAST" calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256,bool)" \
+    "$OWNER" "StETHToMCAP" 0 "$ETH_USD_FEED" "$MCAP_USD_FEED" 1000000000000 "$MAX_AGE" "$MAX_DEV" "$MAX_AGE" "$MAX_DEV" false)
+  PROXY_ARGS=$("$CAST" abi-encode "constructor(address,bytes)" "$DOUBLE_IMPL" "$INIT_DATA_STETH_MCAP_VERIFY")
+  echo "11/11 Verifying stETH→MCAP..."
+  "$FORGE" verify-contract \
+    "$STETH_MCAP" \
+    lib/openzeppelin-contracts-upgradeable/lib/openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Proxy.sol:ERC1967Proxy \
+    --verifier etherscan \
+    --etherscan-api-key "$ETHERSCAN_API_KEY" \
+    --constructor-args "$PROXY_ARGS" \
+    --compiler-version 0.8.30 \
+    --chain mainnet && echo "  ✓ stETH→MCAP verified" || echo "  ✗ stETH→MCAP verification failed"
+  
+  echo ""
+  echo "✅ Verification complete!"
+  exit 0
+fi
+
+# Load existing state if available
+if load_state; then
+  echo "📂 Resuming from previous deployment state"
+  echo "   Single Feed Implementation: ${SINGLE_IMPL:-not set}"
+  echo "   Double Feed Implementation: ${DOUBLE_IMPL:-not set}"
+  echo "   To start fresh, delete $STATE_FILE or set MODE=deploy"
+  echo ""
+fi
+
+echo "=== Deploying Implementation Contracts (V2) ==="
+
+# Chainlink feeds (not used on mainnet, but required for constructor)
+SUSDE_USDE_FEED=${SUSDE_USDE_FEED:-0x0000000000000000000000000000000000000000}
+WSTETH_STETH_FEED=${WSTETH_STETH_FEED:-0x0000000000000000000000000000000000000000}
+
+# Deploy Single Feed Implementation (V2) for fxUSD oracles
+if [[ -z "$SINGLE_IMPL" ]] || [[ "$SINGLE_IMPL" == "null" ]] || [[ "$SINGLE_IMPL" == "" ]]; then
+  echo "Deploying HarborSingleFeedAndRateAggregator_v2..."
+  SINGLE_IMPL_OUT=$("$FORGE" create src/price/HarborSingleFeedAndRateAggregator_v2.sol:HarborSingleFeedAndRateAggregator_v2 \
+    --rpc-url "$RPC_URL" \
+    --private-key "$PRIVATE_KEY" \
+    --libraries src/price/PriceOracle_v1.sol:PriceOracle_v1:$PRICE_ORACLE_LIB \
+    --broadcast \
+    --constructor-args "$WSTETH" "$FXSAVE" "$SUSDE_USDE_FEED" "$WSTETH_STETH_FEED")
+  SINGLE_IMPL=$(grep -Eo "Deployed to: 0x[0-9a-fA-F]{40}" <<<"$SINGLE_IMPL_OUT" | awk '{print $3}')
+  echo "  Single Feed Implementation (V2): $SINGLE_IMPL"
+  save_state
+else
+  echo "✓ Single Feed Implementation already deployed: $SINGLE_IMPL"
+fi
+
+# Deploy Double Feed Implementation (V2) for stETH oracles
+if [[ -z "$DOUBLE_IMPL" ]] || [[ "$DOUBLE_IMPL" == "null" ]] || [[ "$DOUBLE_IMPL" == "" ]]; then
+  echo "Deploying HarborDoubleFeedAndRateAggregator_v2..."
+  DOUBLE_IMPL_OUT=$("$FORGE" create src/price/HarborDoubleFeedAndRateAggregator_v2.sol:HarborDoubleFeedAndRateAggregator_v2 \
+    --rpc-url "$RPC_URL" \
+    --private-key "$PRIVATE_KEY" \
+    --libraries src/price/PriceOracle_v1.sol:PriceOracle_v1:$PRICE_ORACLE_LIB \
+    --broadcast \
+    --constructor-args "$WSTETH" "$FXSAVE" "$SUSDE_USDE_FEED" "$WSTETH_STETH_FEED")
+  DOUBLE_IMPL=$(grep -Eo "Deployed to: 0x[0-9a-fA-F]{40}" <<<"$DOUBLE_IMPL_OUT" | awk '{print $3}')
+  echo "  Double Feed Implementation (V2): $DOUBLE_IMPL"
+  save_state
+else
+  echo "✓ Double Feed Implementation already deployed: $DOUBLE_IMPL"
+fi
+
+echo ""
+echo "=== Deploying 9 Proxy Contracts ==="
+
+# Helper function to deploy proxy
+deploy_proxy() {
+  local impl=$1
+  local init_data=$2
+  local existing_proxy="${3:-}"  # Optional: existing proxy address to check
+  
+  # If existing proxy provided and valid, check if it's already initialized
+  if [[ -n "$existing_proxy" ]] && [[ "$existing_proxy" != "null" ]] && [[ "$existing_proxy" != "" ]]; then
+    local code=$("$CAST" code "$existing_proxy" --rpc-url "$RPC_URL" 2>/dev/null | head -1)
+    if [[ "$code" != "0x" ]]; then
+      echo "$existing_proxy"
+      return 0
+    fi
+  fi
+  
+  PROXY_OUT=$("$FORGE" create lib/openzeppelin-contracts-upgradeable/lib/openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Proxy.sol:ERC1967Proxy \
+    --rpc-url "$RPC_URL" \
+    --private-key "$PRIVATE_KEY" \
+    --broadcast \
+    --constructor-args "$impl" "$init_data" 2>&1)
+  
+  if [[ $? -ne 0 ]] || ! echo "$PROXY_OUT" | grep -q "Deployed to:"; then
+    echo "ERROR: Proxy deployment failed!" >&2
+    echo "Error output:" >&2
+    echo "$PROXY_OUT" | grep -E "(Error|error|revert|Revert)" | head -5 >&2
+    # Try to decode the error
+    ERROR_SELECTOR=$(echo "$PROXY_OUT" | grep -oE "0x[0-9a-f]{8}" | head -1)
+    if [[ -n "$ERROR_SELECTOR" ]]; then
+      echo "Error selector: $ERROR_SELECTOR" >&2
+      echo "Common errors:" >&2
+      echo "  0x5b6a2564 = InvalidRateSource(address)" >&2
+      echo "  0xfc5b0399 = InvalidConversionFeed(address)" >&2
+      echo "  0x8251e0cd = InvalidPriceSource(address)" >&2
+    fi
+    return 1
+  fi
+  
+  PROXY=$(grep -Eo "Deployed to: 0x[0-9a-fA-F]{40}" <<<"$PROXY_OUT" | awk '{print $3}')
+  echo "$PROXY"
+}
+
+# fxUSD Oracles (Single Feed V2)
+echo "--- fxUSD Oracles (Single Feed V2) ---"
+
+# fxUSD→ETH (Single Feed: ETH/USD, RateSource=FXSAVE=1, divisor=1, invertPrice=true)
+INIT_DATA_FXUSD_ETH=$("$CAST" calldata "initialize(address,string,uint8,address,uint256,uint64,uint256,bool)" \
+  "$OWNER" "FxUSDToETH" 1 "$ETH_USD_FEED" 1 "$MAX_AGE" "$MAX_DEV" true)
+if [[ -z "$FXUSD_ETH" ]] || [[ "$FXUSD_ETH" == "null" ]] || [[ "$FXUSD_ETH" == "" ]]; then
+  FXUSD_ETH=$(deploy_proxy "$SINGLE_IMPL" "$INIT_DATA_FXUSD_ETH")
+  save_state
+else
+  echo "✓ fxUSD→ETH already deployed: $FXUSD_ETH"
+fi
+
+# fxUSD→BTC (Single Feed: BTC/USD, RateSource=FXSAVE=1, divisor=1, invertPrice=true)
+INIT_DATA_FXUSD_BTC=$("$CAST" calldata "initialize(address,string,uint8,address,uint256,uint64,uint256,bool)" \
+  "$OWNER" "FxUSDToBTC" 1 "$BTC_USD_FEED" 1 "$MAX_AGE" "$MAX_DEV" true)
+if [[ -z "$FXUSD_BTC" ]] || [[ "$FXUSD_BTC" == "null" ]] || [[ "$FXUSD_BTC" == "" ]]; then
+  FXUSD_BTC=$(deploy_proxy "$SINGLE_IMPL" "$INIT_DATA_FXUSD_BTC")
+  save_state
+else
+  echo "✓ fxUSD→BTC already deployed: $FXUSD_BTC"
+fi
+
+# fxUSD→EUR (Single Feed: EUR/USD, RateSource=FXSAVE=1, divisor=1, invertPrice=true)
+INIT_DATA_FXUSD_EUR=$("$CAST" calldata "initialize(address,string,uint8,address,uint256,uint64,uint256,bool)" \
+  "$OWNER" "FxUSDToEUR" 1 "$EUR_USD_FEED" 1 "$MAX_AGE" "$MAX_DEV" true)
+if [[ -z "$FXUSD_EUR" ]] || [[ "$FXUSD_EUR" == "null" ]] || [[ "$FXUSD_EUR" == "" ]]; then
+  FXUSD_EUR=$(deploy_proxy "$SINGLE_IMPL" "$INIT_DATA_FXUSD_EUR")
+  save_state
+else
+  echo "✓ fxUSD→EUR already deployed: $FXUSD_EUR"
+fi
+
+# fxUSD→XAU (Single Feed: XAU/USD, RateSource=FXSAVE=1, divisor=1, invertPrice=true)
+INIT_DATA_FXUSD_XAU=$("$CAST" calldata "initialize(address,string,uint8,address,uint256,uint64,uint256,bool)" \
+  "$OWNER" "FxUSDToXAU" 1 "$XAU_USD_FEED" 1 "$MAX_AGE" "$MAX_DEV" true)
+if [[ -z "$FXUSD_XAU" ]] || [[ "$FXUSD_XAU" == "null" ]] || [[ "$FXUSD_XAU" == "" ]]; then
+  FXUSD_XAU=$(deploy_proxy "$SINGLE_IMPL" "$INIT_DATA_FXUSD_XAU")
+  save_state
+else
+  echo "✓ fxUSD→XAU already deployed: $FXUSD_XAU"
+fi
+
+# fxUSD→MCAP (Single Feed: MCAP/USD, RateSource=FXSAVE=1, divisor=1e12, invertPrice=true)
+INIT_DATA_FXUSD_MCAP=$("$CAST" calldata "initialize(address,string,uint8,address,uint256,uint64,uint256,bool)" \
+  "$OWNER" "FxUSDToMCAP" 1 "$MCAP_USD_FEED" 1000000000000 "$MAX_AGE" "$MAX_DEV" true)
+if [[ -z "$FXUSD_MCAP" ]] || [[ "$FXUSD_MCAP" == "null" ]] || [[ "$FXUSD_MCAP" == "" ]]; then
+  FXUSD_MCAP=$(deploy_proxy "$SINGLE_IMPL" "$INIT_DATA_FXUSD_MCAP")
+  save_state
+else
+  echo "✓ fxUSD→MCAP already deployed: $FXUSD_MCAP"
+fi
+
+# stETH Oracles (Double Feed V2)
+echo "--- stETH Oracles (Double Feed V2) ---"
+
+# stETH→BTC (Double Feed: ETH/USD + BTC/USD, RateSource=WSTETH=0, divisor=1, invertPrice=false)
+INIT_DATA_STETH_BTC=$("$CAST" calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256,bool)" \
+  "$OWNER" "StETHToBTC" 0 "$ETH_USD_FEED" "$BTC_USD_FEED" 1 "$MAX_AGE" "$MAX_DEV" "$MAX_AGE" "$MAX_DEV" false)
+if [[ -z "$STETH_BTC" ]] || [[ "$STETH_BTC" == "null" ]] || [[ "$STETH_BTC" == "" ]]; then
+  STETH_BTC=$(deploy_proxy "$DOUBLE_IMPL" "$INIT_DATA_STETH_BTC")
+  save_state
+else
+  echo "✓ stETH→BTC already deployed: $STETH_BTC"
+fi
+
+# stETH→EUR (Double Feed: ETH/USD + EUR/USD, RateSource=WSTETH=0, divisor=1, invertPrice=false)
+INIT_DATA_STETH_EUR=$("$CAST" calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256,bool)" \
+  "$OWNER" "StETHToEUR" 0 "$ETH_USD_FEED" "$EUR_USD_FEED" 1 "$MAX_AGE" "$MAX_DEV" "$MAX_AGE" "$MAX_DEV" false)
+if [[ -z "$STETH_EUR" ]] || [[ "$STETH_EUR" == "null" ]] || [[ "$STETH_EUR" == "" ]]; then
+  STETH_EUR=$(deploy_proxy "$DOUBLE_IMPL" "$INIT_DATA_STETH_EUR")
+  save_state
+else
+  echo "✓ stETH→EUR already deployed: $STETH_EUR"
+fi
+
+# stETH→XAU (Double Feed: ETH/USD + XAU/USD, RateSource=WSTETH=0, divisor=1, invertPrice=false)
+INIT_DATA_STETH_XAU=$("$CAST" calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256,bool)" \
+  "$OWNER" "StETHToXAU" 0 "$ETH_USD_FEED" "$XAU_USD_FEED" 1 "$MAX_AGE" "$MAX_DEV" "$MAX_AGE" "$MAX_DEV" false)
+if [[ -z "$STETH_XAU" ]] || [[ "$STETH_XAU" == "null" ]] || [[ "$STETH_XAU" == "" ]]; then
+  STETH_XAU=$(deploy_proxy "$DOUBLE_IMPL" "$INIT_DATA_STETH_XAU")
+  save_state
+else
+  echo "✓ stETH→XAU already deployed: $STETH_XAU"
+fi
+
+# stETH→MCAP (Double Feed: ETH/USD + MCAP/USD, RateSource=WSTETH=0, divisor=1e12, invertPrice=false)
+INIT_DATA_STETH_MCAP=$("$CAST" calldata "initialize(address,string,uint8,address,address,uint256,uint64,uint256,uint64,uint256,bool)" \
+  "$OWNER" "StETHToMCAP" 0 "$ETH_USD_FEED" "$MCAP_USD_FEED" 1000000000000 "$MAX_AGE" "$MAX_DEV" "$MAX_AGE" "$MAX_DEV" false)
+if [[ -z "$STETH_MCAP" ]] || [[ "$STETH_MCAP" == "null" ]] || [[ "$STETH_MCAP" == "" ]]; then
+  STETH_MCAP=$(deploy_proxy "$DOUBLE_IMPL" "$INIT_DATA_STETH_MCAP")
+  save_state
+else
+  echo "✓ stETH→MCAP already deployed: $STETH_MCAP"
+fi
+
+# Retry mode: Initialize any uninitialized proxies
+if [[ "$MODE" == "retry" ]] || [[ "$MODE" == "init" ]]; then
+  echo ""
+  echo "=== RETRY MODE: Initializing uninitialized contracts ==="
+  
+  initialize_proxy "$FXUSD_ETH" "fxUSD→ETH" "$INIT_DATA_FXUSD_ETH" || true
+  initialize_proxy "$FXUSD_BTC" "fxUSD→BTC" "$INIT_DATA_FXUSD_BTC" || true
+  initialize_proxy "$FXUSD_EUR" "fxUSD→EUR" "$INIT_DATA_FXUSD_EUR" || true
+  initialize_proxy "$FXUSD_XAU" "fxUSD→XAU" "$INIT_DATA_FXUSD_XAU" || true
+  initialize_proxy "$FXUSD_MCAP" "fxUSD→MCAP" "$INIT_DATA_FXUSD_MCAP" || true
+  initialize_proxy "$STETH_BTC" "stETH→BTC" "$INIT_DATA_STETH_BTC" || true
+  initialize_proxy "$STETH_EUR" "stETH→EUR" "$INIT_DATA_STETH_EUR" || true
+  initialize_proxy "$STETH_XAU" "stETH→XAU" "$INIT_DATA_STETH_XAU" || true
+  initialize_proxy "$STETH_MCAP" "stETH→MCAP" "$INIT_DATA_STETH_MCAP" || true
+  
+  echo ""
+  echo "=== Checking final status ==="
+  check_all_deployments
+fi
+
+echo ""
+echo "=== DEPLOYMENT SUMMARY (V2) ==="
+echo ""
+echo "IMPLEMENTATIONS (2 contracts):"
+echo "  Single Feed (V2): $SINGLE_IMPL"
+echo "  Double Feed (V2): $DOUBLE_IMPL"
+echo ""
+echo "FXUSD ORACLES (5) - Single Feed V2:"
+echo "  fxUSD→ETH:  $FXUSD_ETH"
+echo "  fxUSD→BTC:  $FXUSD_BTC"
+echo "  fxUSD→EUR:  $FXUSD_EUR"
+echo "  fxUSD→XAU:  $FXUSD_XAU"
+echo "  fxUSD→MCAP: $FXUSD_MCAP"
+echo ""
+echo "STETH ORACLES (4) - Double Feed V2:"
+echo "  stETH→BTC:  $STETH_BTC"
+echo "  stETH→EUR:  $STETH_EUR"
+echo "  stETH→XAU:  $STETH_XAU"
+echo "  stETH→MCAP: $STETH_MCAP"
+
+# Test price readouts
+echo ""
+echo "=== PRICE READOUTS (V2 - No Rate Multiplication) ==="
+echo "FXUSD:"
+echo -n "  fxUSD→ETH:  "
+"$CAST" call "$FXUSD_ETH" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null
+echo -n "  fxUSD→BTC:  "
+"$CAST" call "$FXUSD_BTC" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null
+echo -n "  fxUSD→EUR:  "
+"$CAST" call "$FXUSD_EUR" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null
+echo -n "  fxUSD→XAU:  "
+"$CAST" call "$FXUSD_XAU" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null
+echo -n "  fxUSD→MCAP: "
+"$CAST" call "$FXUSD_MCAP" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null
+
+echo ""
+echo "STETH:"
+echo -n "  stETH→BTC:  "
+"$CAST" call "$STETH_BTC" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null
+echo -n "  stETH→EUR:  "
+"$CAST" call "$STETH_EUR" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null
+echo -n "  stETH→XAU:  "
+"$CAST" call "$STETH_XAU" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null
+echo -n "  stETH→MCAP: "
+"$CAST" call "$STETH_MCAP" "getPrice()(uint256)" --rpc-url "$RPC_URL" 2>/dev/null
+
+echo ""
+echo "=== ORACLE NAMES ==="
+echo "FXUSD:"
+echo -n "  fxUSD→ETH:  "
+"$CAST" call "$FXUSD_ETH" "oracleName()(string)" --rpc-url "$RPC_URL" 2>/dev/null
+echo -n "  fxUSD→BTC:  "
+"$CAST" call "$FXUSD_BTC" "oracleName()(string)" --rpc-url "$RPC_URL" 2>/dev/null
+echo -n "  fxUSD→EUR:  "
+"$CAST" call "$FXUSD_EUR" "oracleName()(string)" --rpc-url "$RPC_URL" 2>/dev/null
+echo -n "  fxUSD→XAU:  "
+"$CAST" call "$FXUSD_XAU" "oracleName()(string)" --rpc-url "$RPC_URL" 2>/dev/null
+echo -n "  fxUSD→MCAP: "
+"$CAST" call "$FXUSD_MCAP" "oracleName()(string)" --rpc-url "$RPC_URL" 2>/dev/null
+
+echo ""
+echo "STETH:"
+echo -n "  stETH→BTC:  "
+"$CAST" call "$STETH_BTC" "oracleName()(string)" --rpc-url "$RPC_URL" 2>/dev/null
+echo -n "  stETH→EUR:  "
+"$CAST" call "$STETH_EUR" "oracleName()(string)" --rpc-url "$RPC_URL" 2>/dev/null
+echo -n "  stETH→XAU:  "
+"$CAST" call "$STETH_XAU" "oracleName()(string)" --rpc-url "$RPC_URL" 2>/dev/null
+echo -n "  stETH→MCAP: "
+"$CAST" call "$STETH_MCAP" "oracleName()(string)" --rpc-url "$RPC_URL" 2>/dev/null
+
+echo ""
+echo "✅ Deployment complete!"
+echo ""
+echo "=== STATE FILE ==="
+echo "Deployment state saved to: $STATE_FILE"
+echo ""
+echo "=== USAGE ==="
+echo "Check deployment status:      MODE=check ./script/deploy-harbor-oracles-v2-mainnet-new"
+echo "Retry initialization:         MODE=retry ./script/deploy-harbor-oracles-v2-mainnet-new"
+echo "Initialize only:              MODE=init ./script/deploy-harbor-oracles-v2-mainnet-new"
+echo "Verify implementations only:  MODE=verify-impl ./script/deploy-harbor-oracles-v2-mainnet-new"
+echo "Verify all contracts:         MODE=verify ./script/deploy-harbor-oracles-v2-mainnet-new"
+echo ""
+echo "=== NOTE ==="
+echo "V2 contracts do NOT multiply price by rate - they use feed prices directly."
+echo "This means prices will be different from V1 contracts."
+echo ""
+echo "=== REQUIRED ENVIRONMENT VARIABLES ==="
+echo "The following variables MUST be set via export or .env file:"
+echo "  RPC_URL              - Ethereum RPC endpoint"
+echo "  ETHERSCAN_API_KEY    - Etherscan API key for verification"
+echo "  PRIVATE_KEY          - Private key for deployment (or use PRIVATE_KEY_LOCAL)"
+echo "  OWNER                - Owner address for contracts (optional, has default)"
+echo ""
+echo "Optional variables (with defaults):"
+echo "  WSTETH               - wstETH contract address (default: 0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0)"
+echo "  FXSAVE               - FXSAVE contract address (default: 0x7743e50f534a7f9f1791dde7dcd89f7783eefc39)"
+echo "  PRICE_ORACLE_LIB     - PriceOracle library address (default: 0xe0fa670bb2e77a14d64945acae9c09f1bd268b39)"
+echo "  MAX_AGE              - Max feed age in seconds (default: 604800 = 7 days)"
+echo "  MAX_DEV              - Max deviation (default: 50000000000000000 = 5%)"
+echo ""
+save_state

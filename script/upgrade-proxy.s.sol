@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.30;
 
-import {Script} from "forge-std/Script.sol";
+import {Script, console} from "forge-std/Script.sol";
 import {HarborDoubleFeedAndRateAggregator_v1} from "../src/price/HarborDoubleFeedAndRateAggregator_v1.sol";
 import {HarborSingleFeedAndRateAggregator_v1} from "../src/price/HarborSingleFeedAndRateAggregator_v1.sol";
 import {HarborCustomFeedAndRateAggregator_v1} from "../src/price/HarborCustomFeedAndRateAggregator_v1.sol";
@@ -111,4 +111,7 @@ contract UpgradeProxyScript is Script {
         } catch {}
     }
 }
+
+
+
 
