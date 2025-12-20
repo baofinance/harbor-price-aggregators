@@ -269,6 +269,3 @@ abstract contract LinearMultipleRewardDistributor is
         (distributable, undistributed) = $.rewardData[token].pending();
     }
 }
-
-
-

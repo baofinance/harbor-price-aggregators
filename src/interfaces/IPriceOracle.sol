@@ -10,6 +10,3 @@ interface IPriceOracle is IPriceOracleErrors {
     /// @return price The price - 18 decimals
     function latestAnswer() external view returns (uint256 price);
 }
-
-
-

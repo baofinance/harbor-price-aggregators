@@ -84,7 +84,9 @@ interface IHarborSingleFeedAndRateAggregator is IWrappedPriceOracle {
     function priceDivisor() external view returns (uint256);
 
     /// @notice Feed validation constraints
-    function feedConstraints(address feed)
+    function feedConstraints(
+        address feed
+    )
         external
         view
         returns (
@@ -168,7 +170,3 @@ interface IHarborSingleFeedAndRateAggregator is IWrappedPriceOracle {
     /// @param maxAge New maximum age in seconds
     event MaxRateSourceAgeUpdated(uint64 maxAge);
 }
-
-
-
-
