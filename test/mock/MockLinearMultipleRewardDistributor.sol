@@ -2,7 +2,7 @@
 
 pragma solidity >=0.8.28 <0.9.0;
 
-import {LinearMultipleRewardDistributor} from "src/reward/distributor/LinearMultipleRewardDistributor.sol";
+import {LinearMultipleRewardDistributor} from "@harbor-price/reward/distributor/LinearMultipleRewardDistributor.sol";
 
 contract MockLinearMultipleRewardDistributor is LinearMultipleRewardDistributor {
     // used to discover if the _accumulateReward virtual function has been called

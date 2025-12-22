@@ -2,21 +2,26 @@
 pragma solidity 0.8.30;
 
 import "forge-std/Test.sol";
-import {IWrappedPriceOracle} from "src/interfaces/IWrappedPriceOracle.sol";
-import {DeployedAddresses, MainnetAddresses} from "../DeployedAddresses.sol";
-import {HarborSingleFeedAndRateAggregator_v2} from "src/price/HarborSingleFeedAndRateAggregator_v2.sol";
-import {HarborDoubleFeedAndRateAggregator_v2} from "src/price/HarborDoubleFeedAndRateAggregator_v2.sol";
+import {IWrappedPriceOracle} from "@harbor-price/interfaces/IWrappedPriceOracle.sol";
+import {DeployedAddresses} from "../DeployedAddresses.sol";
+import {MainnetOracleAddresses} from "@harbor-price/price/MainnetOracleAddresses.sol";
+import {HarborSingleFeedAndRateAggregator_v2} from "@harbor-price/price/HarborSingleFeedAndRateAggregator_v2.sol";
+import {HarborDoubleFeedAndRateAggregator_v2} from "@harbor-price/price/HarborDoubleFeedAndRateAggregator_v2.sol";
+import {HarborPriceAggregator_v3} from "@harbor-price/price/HarborPriceAggregator_v3.sol";
 import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 
 /// @title Oracle Comparison Base
-/// @notice Abstract base for comparing base oracle against candidate implementation
-/// @dev Forks mainnet at deployment block, deploys candidate, compares at evenly spaced intervals
-/// @dev Subclasses must implement _deployBase(), _deployCandidate(), and _oracleName()
-abstract contract OracleComparisonBase is Test {
+/// @notice Shared comparison engine for forked mainnet oracle parity checks
+/// @dev Forks mainnet at a fixed end block, then rolls within [START_BLOCK, endBlock] for sampling.
+contract OracleComparisonBase is Test {
     // Start block is deployment block
     uint256 constant START_BLOCK = DeployedAddresses.DEPLOYMENT_BLOCK;
 
-    // End block captured at setUp time (latest mainnet block)
+    // Fixed end block for deterministic fork comparisons.
+    // 24067873 == 2025-12-22 11:32:47 UTC
+    uint256 constant END_BLOCK = 24_067_873;
+
+    // End block captured at setUp time (fixed mainnet block)
     uint256 endTimestamp;
     uint256 endBlock;
 
@@ -24,18 +29,12 @@ abstract contract OracleComparisonBase is Test {
     HarborSingleFeedAndRateAggregator_v2 singleImpl;
     HarborDoubleFeedAndRateAggregator_v2 doubleImpl;
 
-    /*//////////////////////////////////////////////////////////////
-                         VIRTUAL FUNCTIONS
-    //////////////////////////////////////////////////////////////*/
-
-    /// @notice Deploy the base oracle (e.g., deployed mainnet oracle)
-    function _deployBase() internal virtual returns (IWrappedPriceOracle);
-
-    /// @notice Deploy the candidate oracle being evaluated against base
-    function _deployCandidate() internal virtual returns (IWrappedPriceOracle);
-
-    /// @notice Display name for logging
-    function _oracleName() internal pure virtual returns (string memory);
+    struct OracleAnswer {
+        uint256 minPrice;
+        uint256 maxPrice;
+        uint256 minRate;
+        uint256 maxRate;
+    }
 
     /*//////////////////////////////////////////////////////////////
                          CONFIGURATION
@@ -54,6 +53,13 @@ abstract contract OracleComparisonBase is Test {
     /*//////////////////////////////////////////////////////////////
                          FORMATTING HELPERS
     //////////////////////////////////////////////////////////////*/
+
+    function _pad2(uint256 value) internal pure returns (string memory) {
+        if (value < 10) {
+            return string.concat("0", vm.toString(value));
+        }
+        return vm.toString(value);
+    }
 
     /// @notice Format timestamp as YYYY-MM-DD HH:MM:SS UTC
     function _formatTimestamp(uint256 timestamp) internal pure returns (string memory) {
@@ -75,26 +81,9 @@ abstract contract OracleComparisonBase is Test {
         uint256 min = (secondsInDay % 3600) / 60;
         uint256 s = secondsInDay % 60;
 
-        return
-            string.concat(
-                vm.toString(y),
-                "-",
-                m < 10 ? "0" : "",
-                vm.toString(m),
-                "-",
-                d < 10 ? "0" : "",
-                vm.toString(d),
-                " ",
-                h < 10 ? "0" : "",
-                vm.toString(h),
-                ":",
-                min < 10 ? "0" : "",
-                vm.toString(min),
-                ":",
-                s < 10 ? "0" : "",
-                vm.toString(s),
-                " UTC"
-            );
+        string memory date = string.concat(vm.toString(y), "-", _pad2(m), "-", _pad2(d));
+        string memory time = string.concat(_pad2(h), ":", _pad2(min), ":", _pad2(s));
+        return string.concat(date, " ", time, " UTC");
     }
 
     /// @notice Format block info as "block# (YYYY-MM-DD HH:MM:SS UTC)"
@@ -107,9 +96,9 @@ abstract contract OracleComparisonBase is Test {
     //////////////////////////////////////////////////////////////*/
 
     function setUp() public virtual {
-        // Fork mainnet at latest to capture endBlock
-        vm.createSelectFork("mainnet");
-        endBlock = block.number;
+        // Fork mainnet at a fixed block for deterministic comparisons.
+        vm.createSelectFork("mainnet", END_BLOCK);
+        endBlock = END_BLOCK;
         endTimestamp = block.timestamp;
     }
 
@@ -117,16 +106,16 @@ abstract contract OracleComparisonBase is Test {
     /// @dev Must be called after rollFork to START_BLOCK
     function _deployImplementations() internal {
         singleImpl = new HarborSingleFeedAndRateAggregator_v2(
-            MainnetAddresses.WSTETH,
-            MainnetAddresses.FXSAVE,
-            MainnetAddresses.SUSDE_USDE_FEED,
-            MainnetAddresses.WSTETH_STETH_FEED
+            MainnetOracleAddresses.WSTETH,
+            MainnetOracleAddresses.FXSAVE,
+            MainnetOracleAddresses.SUSDE_USDE_FEED,
+            MainnetOracleAddresses.WSTETH_STETH_FEED
         );
         doubleImpl = new HarborDoubleFeedAndRateAggregator_v2(
-            MainnetAddresses.WSTETH,
-            MainnetAddresses.FXSAVE,
-            MainnetAddresses.SUSDE_USDE_FEED,
-            MainnetAddresses.WSTETH_STETH_FEED
+            MainnetOracleAddresses.WSTETH,
+            MainnetOracleAddresses.FXSAVE,
+            MainnetOracleAddresses.SUSDE_USDE_FEED,
+            MainnetOracleAddresses.WSTETH_STETH_FEED
         );
     }
 
@@ -153,8 +142,8 @@ abstract contract OracleComparisonBase is Test {
                 HarborSingleFeedAndRateAggregator_v2.RateSource.FXSAVE,
                 feed,
                 divisor,
-                MainnetAddresses.MAX_AGE,
-                MainnetAddresses.MAX_DEV,
+                MainnetOracleAddresses.MAX_AGE,
+                MainnetOracleAddresses.MAX_DEV,
                 invertPrice
             )
         );
@@ -185,16 +174,35 @@ abstract contract OracleComparisonBase is Test {
                 firstFeed,
                 secondFeed,
                 divisor,
-                MainnetAddresses.MAX_AGE,
-                MainnetAddresses.MAX_DEV,
-                MainnetAddresses.MAX_AGE,
-                MainnetAddresses.MAX_DEV,
+                MainnetOracleAddresses.MAX_AGE,
+                MainnetOracleAddresses.MAX_DEV,
+                MainnetOracleAddresses.MAX_AGE,
+                MainnetOracleAddresses.MAX_DEV,
                 invertPrice
             )
         );
 
         ERC1967Proxy proxy = new ERC1967Proxy(address(doubleImpl), initData);
         return IWrappedPriceOracle(address(proxy));
+    }
+
+    function _deployV3(address impl) internal returns (IWrappedPriceOracle) {
+        bytes memory initData = abi.encodeCall(HarborPriceAggregator_v3.initialize, (address(this)));
+        ERC1967Proxy proxy = new ERC1967Proxy(impl, initData);
+        return IWrappedPriceOracle(address(proxy));
+    }
+
+    function _latest(IWrappedPriceOracle oracle) internal view returns (OracleAnswer memory answer) {
+        (answer.minPrice, answer.maxPrice, answer.minRate, answer.maxRate) = oracle.latestAnswer();
+    }
+
+    function _logMismatch(string memory name, OracleAnswer memory baseA, OracleAnswer memory candA) internal view {
+        console.log("  Block %s: MISMATCH", _formatBlock(block.number, block.timestamp));
+        console.log("    base:      minPrice=%d, maxPrice=%d", baseA.minPrice, baseA.maxPrice);
+        console.log("    base:      minRate=%d, maxRate=%d", baseA.minRate, baseA.maxRate);
+        console.log("    candidate: minPrice=%d, maxPrice=%d", candA.minPrice, candA.maxPrice);
+        console.log("    candidate: minRate=%d, maxRate=%d", candA.minRate, candA.maxRate);
+        console.log("    oracle: %s", name);
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -210,6 +218,7 @@ abstract contract OracleComparisonBase is Test {
 
     /// @notice Compare base vs candidate oracle across the block range
     function _compareOracle(IWrappedPriceOracle base, IWrappedPriceOracle candidate, string memory name) internal {
+        uint256 startBlock = block.number;
         uint256 step = _blockStep();
         uint256 count = 0;
         uint256 mismatches = 0;
@@ -224,21 +233,17 @@ abstract contract OracleComparisonBase is Test {
 
         uint256 nextBlock = block.number;
         while (true) {
-            (uint256 bMinPrice, uint256 bMaxPrice, uint256 bMinRate, uint256 bMaxRate) = base.latestAnswer();
-            (uint256 cMinPrice, uint256 cMaxPrice, uint256 cMinRate, uint256 cMaxRate) = candidate.latestAnswer();
+            OracleAnswer memory baseA = _latest(base);
+            OracleAnswer memory candA = _latest(candidate);
 
-            bool match_ = (bMinPrice == cMinPrice) &&
-                (bMaxPrice == cMaxPrice) &&
-                (bMinRate == cMinRate) &&
-                (bMaxRate == cMaxRate);
+            bool match_ = (baseA.minPrice == candA.minPrice) &&
+                (baseA.maxPrice == candA.maxPrice) &&
+                (baseA.minRate == candA.minRate) &&
+                (baseA.maxRate == candA.maxRate);
 
             if (!match_) {
                 mismatches++;
-                console.log("  Block %s: MISMATCH", _formatBlock(block.number, block.timestamp));
-                console.log("    base:      minPrice=%d, maxPrice=%d", bMinPrice, bMaxPrice);
-                console.log("    base:      minRate=%d, maxRate=%d", bMinRate, bMaxRate);
-                console.log("    candidate: minPrice=%d, maxPrice=%d", cMinPrice, cMaxPrice);
-                console.log("    candidate: minRate=%d, maxRate=%d", cMinRate, cMaxRate);
+                _logMismatch(name, baseA, candA);
             } else {
                 // console.log("  Block %s: matched", _formatBlock(block.number, block.timestamp));
             }
@@ -253,18 +258,7 @@ abstract contract OracleComparisonBase is Test {
         }
 
         console.log("%s: COMPLETE - %d samples, %d mismatches", name, count, mismatches);
+        vm.rollFork(startBlock);
         assertEq(mismatches, 0, string.concat(name, ": found mismatches"));
-    }
-
-    /*//////////////////////////////////////////////////////////////
-                            TEST FUNCTION
-    //////////////////////////////////////////////////////////////*/
-
-    /// @notice Run the comparison test
-    function test_compare() public {
-        _prepareForComparison();
-        IWrappedPriceOracle base = _deployBase();
-        IWrappedPriceOracle candidate = _deployCandidate();
-        _compareOracle(base, candidate, _oracleName());
     }
 }

@@ -36,9 +36,6 @@ remappings = [
   "@harbor-test/=test/",
   # harbor price aggregators
   "@harbor-price/=src/",
-  # retain the below for legacy
-  "src/=src/",
-  "test/=test/",
 ]
 
 include_paths = []

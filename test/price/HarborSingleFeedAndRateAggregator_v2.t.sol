@@ -3,8 +3,8 @@ pragma solidity 0.8.30;
 
 import {Test} from "forge-std/Test.sol";
 import {console} from "forge-std/console.sol";
-import {HarborSingleFeedAndRateAggregator_v2} from "src/price/HarborSingleFeedAndRateAggregator_v2.sol";
-import {IFxSAVE} from "src/interfaces/IFxSAVE.sol";
+import {HarborSingleFeedAndRateAggregator_v2} from "@harbor-price/price/HarborSingleFeedAndRateAggregator_v2.sol";
+import {IFxSAVE} from "@harbor-price/interfaces/IFxSAVE.sol";
 import {IWstETH} from "@bao/interfaces/IWstETH.sol";
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
 import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";

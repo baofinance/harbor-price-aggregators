@@ -3,7 +3,7 @@ pragma solidity 0.8.30;
 
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
 import {SignedMath} from "@openzeppelin/contracts/utils/math/SignedMath.sol";
-import {IPriceOracleErrors} from "src/interfaces/IPriceOracleErrors.sol";
+import {IPriceOracleErrors} from "@harbor-price/interfaces/IPriceOracleErrors.sol";
 
 /// @title PriceOracle_v1
 /// @notice Library for validating Chainlink price feed data.
