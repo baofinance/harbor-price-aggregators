@@ -1,0 +1,18 @@
+| Contract                             |   Runtime Size (B) |   Runtime Margin (B) |   Initcode Size (B) |   Deploy Gas |   Deploy Cost ($) |
+|--------------------------------------|--------------------|----------------------|---------------------|--------------|-------------------|
+| DoubleFeedPriceLib                   |                 57 |               24,519 |                  85 |       12,250 |              1.23 |
+| FxSaveRateLib                        |                 57 |               24,519 |                  85 |       12,250 |              1.23 |
+| HarborCustomFeedAndRateAggregator_v1 |             10,271 |               14,305 |              10,813 |    2,162,330 |            216.23 |
+| HarborCustomFeedAndRateAggregator_v2 |             10,314 |               14,262 |              10,856 |    2,171,360 |            217.14 |
+| HarborDoubleFeedAndRateAggregator_v1 |              9,604 |               14,972 |              10,146 |    2,022,260 |            202.23 |
+| HarborDoubleFeedAndRateAggregator_v2 |              9,664 |               14,912 |              10,206 |    2,034,860 |            203.49 |
+| HarborSingleFeedAndRateAggregator_v1 |              8,195 |               16,381 |               8,737 |    1,726,370 |            172.64 |
+| HarborSingleFeedAndRateAggregator_v2 |              8,453 |               16,123 |               8,995 |    1,780,550 |            178.06 |
+| MainnetOracleAddresses               |                 57 |               24,519 |                  85 |       12,250 |              1.23 |
+| Oracle_fxUSD_ETH                     |              4,206 |               20,370 |               5,065 |      891,850 |             89.19 |
+| Oracle_fxUSD_ETH_Mainnet             |              4,206 |               20,370 |               4,959 |      890,790 |             89.08 |
+| Oracle_stETH_BTC                     |              4,993 |               19,583 |               6,064 |    1,059,240 |            105.92 |
+| Oracle_stETH_BTC_Mainnet             |              4,993 |               19,583 |               5,860 |    1,057,200 |            105.72 |
+| PriceOracle_v1                       |              1,284 |               23,292 |               1,314 |      269,940 |             26.99 |
+| SingleFeedPriceLib                   |                 57 |               24,519 |                  85 |       12,250 |              1.23 |
+| WstETHRateLib                        |                 57 |               24,519 |                  85 |       12,250 |              1.23 |
