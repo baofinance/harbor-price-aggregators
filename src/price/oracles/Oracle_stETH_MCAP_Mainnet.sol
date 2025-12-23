@@ -2,18 +2,18 @@
 pragma solidity 0.8.30;
 
 import {MainnetOracleAddresses} from "@harbor-price/price/MainnetOracleAddresses.sol";
-import {Oracle_stETH_BTC} from "@harbor-price/price/oracles/Oracle_stETH_BTC.sol";
+import {Oracle_stETH_MCAP} from "@harbor-price/price/oracles/Oracle_stETH_MCAP.sol";
 
-/// @notice Ethereum mainnet stETH/BTC oracle.
+/// @notice Ethereum mainnet stETH/MCAP oracle.
 /// @dev Hard-coded wiring for mainnet; deploy scripts select this bytecode by chain.
-contract Oracle_stETH_BTC_Mainnet is Oracle_stETH_BTC {
+contract Oracle_stETH_MCAP_Mainnet is Oracle_stETH_MCAP {
     constructor()
-        Oracle_stETH_BTC(
+        Oracle_stETH_MCAP(
             MainnetOracleAddresses.STETH,
             MainnetOracleAddresses.WSTETH,
-            MainnetOracleAddresses.STETH_USD_FEED,
-            MainnetOracleAddresses.BTC_USD_FEED,
-            1,
+            MainnetOracleAddresses.ETH_USD_FEED,
+            MainnetOracleAddresses.MCAP_USD_FEED,
+            1e12,
             false,
             MainnetOracleAddresses.MAX_AGE,
             MainnetOracleAddresses.MAX_DEV,
