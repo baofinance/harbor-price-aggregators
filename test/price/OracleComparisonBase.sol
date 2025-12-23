@@ -9,6 +9,7 @@ import {HarborSingleFeedAndRateAggregator_v2} from "@harbor-price/price/HarborSi
 import {HarborDoubleFeedAndRateAggregator_v2} from "@harbor-price/price/HarborDoubleFeedAndRateAggregator_v2.sol";
 import {HarborPriceAggregator_v3} from "@harbor-price/price/HarborPriceAggregator_v3.sol";
 import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
+import {UtcTimestampFormatter} from "@harbor-price/format/UtcTimestampFormatter.sol";
 
 /// @title Oracle Comparison Base
 /// @notice Shared comparison engine for forked mainnet oracle parity checks
@@ -54,41 +55,9 @@ contract OracleComparisonBase is Test {
                          FORMATTING HELPERS
     //////////////////////////////////////////////////////////////*/
 
-    function _pad2(uint256 value) internal pure returns (string memory) {
-        if (value < 10) {
-            return string.concat("0", vm.toString(value));
-        }
-        return vm.toString(value);
-    }
-
-    /// @notice Format timestamp as YYYY-MM-DD HH:MM:SS UTC
-    function _formatTimestamp(uint256 timestamp) internal pure returns (string memory) {
-        // Calculate date components from unix timestamp
-        uint256 z = timestamp / 86400 + 719468;
-        uint256 era = z / 146097;
-        uint256 doe = z - era * 146097;
-        uint256 yoe = (doe - doe / 1460 + doe / 36524 - doe / 146096) / 365;
-        uint256 y = yoe + era * 400;
-        uint256 doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
-        uint256 mp = (5 * doy + 2) / 153;
-        uint256 d = doy - (153 * mp + 2) / 5 + 1;
-        uint256 m = mp < 10 ? mp + 3 : mp - 9;
-        if (m <= 2) y += 1;
-
-        // Calculate time components
-        uint256 secondsInDay = timestamp % 86400;
-        uint256 h = secondsInDay / 3600;
-        uint256 min = (secondsInDay % 3600) / 60;
-        uint256 s = secondsInDay % 60;
-
-        string memory date = string.concat(vm.toString(y), "-", _pad2(m), "-", _pad2(d));
-        string memory time = string.concat(_pad2(h), ":", _pad2(min), ":", _pad2(s));
-        return string.concat(date, " ", time, " UTC");
-    }
-
     /// @notice Format block info as "block# (YYYY-MM-DD HH:MM:SS UTC)"
     function _formatBlock(uint256 blockNum, uint256 timestamp) internal pure returns (string memory) {
-        return string.concat(vm.toString(blockNum), " (", _formatTimestamp(timestamp), ")");
+        return string.concat(vm.toString(blockNum), " (", UtcTimestampFormatter.format(timestamp), ")");
     }
 
     /*//////////////////////////////////////////////////////////////
