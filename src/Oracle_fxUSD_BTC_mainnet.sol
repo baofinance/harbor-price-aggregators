@@ -2,15 +2,15 @@
 pragma solidity 0.8.30;
 
 import {MainnetOracleAddresses} from "@harbor-price/price/MainnetOracleAddresses.sol";
-import {Oracle_fxUSD_EUR} from "@harbor-price/price/oracles/Oracle_fxUSD_EUR.sol";
+import {Oracle_fxUSD_BTC} from "@harbor-price/price/oracles/Oracle_fxUSD_BTC.sol";
 
-/// @notice Ethereum mainnet fxUSD/EUR oracle.
+/// @notice Ethereum mainnet fxUSD/BTC oracle.
 /// @dev Hard-coded wiring for mainnet; deploy scripts select this bytecode by chain.
-contract Oracle_fxUSD_EUR_Mainnet is Oracle_fxUSD_EUR {
+contract Oracle_fxUSD_BTC_mainnet is Oracle_fxUSD_BTC {
     constructor()
-        Oracle_fxUSD_EUR(
+        Oracle_fxUSD_BTC(
             MainnetOracleAddresses.FXSAVE,
-            MainnetOracleAddresses.EUR_USD_FEED,
+            MainnetOracleAddresses.BTC_USD_FEED,
             1,
             true,
             MainnetOracleAddresses.MAX_AGE,

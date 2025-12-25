@@ -6,7 +6,7 @@ import {Oracle_stETH_XAU} from "@harbor-price/price/oracles/Oracle_stETH_XAU.sol
 
 /// @notice Ethereum mainnet stETH/XAU oracle.
 /// @dev Hard-coded wiring for mainnet; deploy scripts select this bytecode by chain.
-contract Oracle_stETH_XAU_Mainnet is Oracle_stETH_XAU {
+contract Oracle_stETH_XAU_mainnet is Oracle_stETH_XAU {
     constructor()
         Oracle_stETH_XAU(
             MainnetOracleAddresses.STETH,

@@ -45,8 +45,8 @@ The proxy-time configuration is always just `initialize(owner)`.
   - `src/price/oracles/Oracle_fxUSD_ETH.sol`
   - `src/price/oracles/Oracle_stETH_BTC.sol`
 - Mainnet wiring (0-arg wrappers):
-  - `src/price/oracles/Oracle_fxUSD_ETH_Mainnet.sol`
-  - `src/price/oracles/Oracle_stETH_BTC_Mainnet.sol`
+  - `src/Oracle_fxUSD_ETH_mainnet.sol`
+  - `src/Oracle_stETH_BTC_mainnet.sol`
 
 ### Base contract
 
@@ -86,7 +86,7 @@ The formula contract composes them and returns `(price, price, rate, rate)`.
 Each oracle pair is written as:
 
 - A **formula contract** with constructor args and immutables (portable across chains).
-- A **chain wiring wrapper** (e.g. `_Mainnet`) that hardcodes canonical addresses from `MainnetOracleAddresses`.
+- A **chain wiring wrapper** (e.g. `_mainnet`) that hardcodes canonical addresses from `MainnetOracleAddresses`.
 
 This keeps formula code reusable while making deployments deterministic and reviewable on a given chain.
 

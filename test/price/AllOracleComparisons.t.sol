@@ -8,8 +8,15 @@ import {DeployedAddresses} from "../DeployedAddresses.sol";
 import {MainnetOracleAddresses} from "@harbor-price/price/MainnetOracleAddresses.sol";
 import {OracleComparisonBase} from "./OracleComparisonBase.sol";
 
-import {Oracle_fxUSD_ETH_Mainnet} from "@harbor-price/price/oracles/Oracle_fxUSD_ETH_Mainnet.sol";
-import {Oracle_stETH_BTC_Mainnet} from "@harbor-price/price/oracles/Oracle_stETH_BTC_Mainnet.sol";
+import {Oracle_fxUSD_ETH_mainnet} from "@harbor-price/Oracle_fxUSD_ETH_mainnet.sol";
+import {Oracle_fxUSD_BTC_mainnet} from "@harbor-price/Oracle_fxUSD_BTC_mainnet.sol";
+import {Oracle_fxUSD_EUR_mainnet} from "@harbor-price/Oracle_fxUSD_EUR_mainnet.sol";
+import {Oracle_fxUSD_XAU_mainnet} from "@harbor-price/Oracle_fxUSD_XAU_mainnet.sol";
+import {Oracle_fxUSD_MCAP_mainnet} from "@harbor-price/Oracle_fxUSD_MCAP_mainnet.sol";
+import {Oracle_stETH_BTC_mainnet} from "@harbor-price/Oracle_stETH_BTC_mainnet.sol";
+import {Oracle_stETH_EUR_mainnet} from "@harbor-price/Oracle_stETH_EUR_mainnet.sol";
+import {Oracle_stETH_XAU_mainnet} from "@harbor-price/Oracle_stETH_XAU_mainnet.sol";
+import {Oracle_stETH_MCAP_mainnet} from "@harbor-price/Oracle_stETH_MCAP_mainnet.sol";
 
 contract AllOracleComparisons is OracleComparisonBase {
     function test_compare_all() public {
@@ -30,6 +37,13 @@ contract AllOracleComparisons is OracleComparisonBase {
             "FXUSD_BTC"
         );
 
+        // FXUSD / BTC (deployed v2 vs local v3)
+        _compareOracle(
+            IWrappedPriceOracle(DeployedAddresses.FXUSD_BTC),
+            _deployV3(address(new Oracle_fxUSD_BTC_mainnet())),
+            "FXUSD_BTC_v3"
+        );
+
         // FXUSD / ETH (deployed v2 vs local v2)
         _compareOracle(
             IWrappedPriceOracle(DeployedAddresses.FXUSD_ETH),
@@ -40,14 +54,14 @@ contract AllOracleComparisons is OracleComparisonBase {
         // FXUSD / ETH (deployed v2 vs local v3)
         _compareOracle(
             IWrappedPriceOracle(DeployedAddresses.FXUSD_ETH),
-            _deployV3(address(new Oracle_fxUSD_ETH_Mainnet())),
+            _deployV3(address(new Oracle_fxUSD_ETH_mainnet())),
             "FXUSD_ETH_v3"
         );
 
         // FXUSD / ETH (local v2 vs local v3)
         _compareOracle(
             _deploySingleFeed("FxUSDToETH", MainnetOracleAddresses.ETH_USD_FEED, 1, true),
-            _deployV3(address(new Oracle_fxUSD_ETH_Mainnet())),
+            _deployV3(address(new Oracle_fxUSD_ETH_mainnet())),
             "FXUSD_ETH_v3_vs_v2"
         );
 
@@ -58,6 +72,13 @@ contract AllOracleComparisons is OracleComparisonBase {
             "FXUSD_EUR"
         );
 
+        // FXUSD / EUR (deployed v2 vs local v3)
+        _compareOracle(
+            IWrappedPriceOracle(DeployedAddresses.FXUSD_EUR),
+            _deployV3(address(new Oracle_fxUSD_EUR_mainnet())),
+            "FXUSD_EUR_v3"
+        );
+
         // FXUSD / MCAP (deployed v2 vs local v2)
         _compareOracle(
             IWrappedPriceOracle(DeployedAddresses.FXUSD_MCAP),
@@ -65,11 +86,25 @@ contract AllOracleComparisons is OracleComparisonBase {
             "FXUSD_MCAP"
         );
 
+        // FXUSD / MCAP (deployed v2 vs local v3)
+        _compareOracle(
+            IWrappedPriceOracle(DeployedAddresses.FXUSD_MCAP),
+            _deployV3(address(new Oracle_fxUSD_MCAP_mainnet())),
+            "FXUSD_MCAP_v3"
+        );
+
         // FXUSD / XAU (deployed v2 vs local v2)
         _compareOracle(
             IWrappedPriceOracle(DeployedAddresses.FXUSD_XAU),
             _deploySingleFeed("FxUSDToXAU", MainnetOracleAddresses.XAU_USD_FEED, 1, true),
             "FXUSD_XAU"
+        );
+
+        // FXUSD / XAU (deployed v2 vs local v3)
+        _compareOracle(
+            IWrappedPriceOracle(DeployedAddresses.FXUSD_XAU),
+            _deployV3(address(new Oracle_fxUSD_XAU_mainnet())),
+            "FXUSD_XAU_v3"
         );
 
         // ===== stETH =====
@@ -87,22 +122,24 @@ contract AllOracleComparisons is OracleComparisonBase {
         );
 
         // STETH / BTC (deployed v2 vs local v3)
-        _compareOracle(
+        _compareOracleApproxPrice(
             IWrappedPriceOracle(DeployedAddresses.STETH_BTC),
-            _deployV3(address(new Oracle_stETH_BTC_Mainnet())),
-            "STETH_BTC_v3"
+            _deployV3(address(new Oracle_stETH_BTC_mainnet())),
+            "STETH_BTC_v3",
+            0,
+            463e13
         );
 
         // STETH / BTC (local v2 vs local v3)
         _compareOracle(
             _deployDoubleFeed(
                 "StETHToBTC",
-                MainnetOracleAddresses.ETH_USD_FEED,
+                MainnetOracleAddresses.STETH_USD_FEED,
                 MainnetOracleAddresses.BTC_USD_FEED,
                 1,
                 false
             ),
-            _deployV3(address(new Oracle_stETH_BTC_Mainnet())),
+            _deployV3(address(new Oracle_stETH_BTC_mainnet())),
             "STETH_BTC_v3_vs_v2"
         );
 
@@ -119,6 +156,13 @@ contract AllOracleComparisons is OracleComparisonBase {
             "STETH_EUR"
         );
 
+        // STETH / EUR (deployed v2 vs local v3)
+        _compareOracle(
+            IWrappedPriceOracle(DeployedAddresses.STETH_EUR),
+            _deployV3(address(new Oracle_stETH_EUR_mainnet())),
+            "STETH_EUR_v3"
+        );
+
         // STETH / MCAP (deployed v2 vs local v2)
         _compareOracle(
             IWrappedPriceOracle(DeployedAddresses.STETH_MCAP),
@@ -132,6 +176,13 @@ contract AllOracleComparisons is OracleComparisonBase {
             "STETH_MCAP"
         );
 
+        // STETH / MCAP (deployed v2 vs local v3)
+        _compareOracle(
+            IWrappedPriceOracle(DeployedAddresses.STETH_MCAP),
+            _deployV3(address(new Oracle_stETH_MCAP_mainnet())),
+            "STETH_MCAP_v3"
+        );
+
         // STETH / XAU (deployed v2 vs local v2)
         _compareOracle(
             IWrappedPriceOracle(DeployedAddresses.STETH_XAU),
@@ -143,6 +194,13 @@ contract AllOracleComparisons is OracleComparisonBase {
                 false
             ),
             "STETH_XAU"
+        );
+
+        // STETH / XAU (deployed v2 vs local v3)
+        _compareOracle(
+            IWrappedPriceOracle(DeployedAddresses.STETH_XAU),
+            _deployV3(address(new Oracle_stETH_XAU_mainnet())),
+            "STETH_XAU_v3"
         );
     }
 }

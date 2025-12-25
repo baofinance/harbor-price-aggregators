@@ -20,7 +20,7 @@ Every v3 oracle:
 ## Where code goes
 
 - Formula contract: `src/price/oracles/Oracle_<BASE>_<QUOTE>.sol`
-- Mainnet wiring contract: `src/price/oracles/Oracle_<BASE>_<QUOTE>_Mainnet.sol`
+- Mainnet wiring contract: `src/Oracle_<BASE>_<QUOTE>_mainnet.sol`
 - Rate library: `src/price/rates/*RateLib.sol` (only if a new rate source is needed)
 - Price library: `src/price/prices/*PriceLib.sol` (only if a new feed graph is needed)
 
@@ -100,8 +100,8 @@ This should be a tiny constructor wrapper that selects canonical addresses from 
 
 See:
 
-- `Oracle_fxUSD_ETH_Mainnet`
-- `Oracle_stETH_BTC_Mainnet`
+- `Oracle_fxUSD_ETH_mainnet`
+- `Oracle_stETH_BTC_mainnet`
 
 Expectation: the wrapper has **no configuration logic**, just passes constants to the formula constructor.
 

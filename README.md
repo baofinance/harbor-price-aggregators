@@ -113,6 +113,120 @@ forge install
 forge test
 ```
 
+## Off-chain market data (offchain_feeds)
+
+The repo includes a small Python tool, `offchain_feeds`, that downloads and stores **daily** time series (UTC day boundaries) and computes basic stats.
+
+### Setup
+
+```bash
+yarn uv
+```
+
+If you use CoinGecko sources, you may need a (free) Demo API key:
+
+```bash
+export COINGECKO_API_KEY=your_coingecko_demo_key
+```
+
+### CLI entrypoints (through Yarn)
+
+- Extract to `<ROOT>/daily/<MARKET>.parquet` (default `<ROOT>` is `data/offchain`):
+   - `yarn offchain:extract --market <MARKET> --source <SOURCE> --start <YYYY-MM-DD> --end <YYYY-MM-DD> [--root <ROOT>]`
+- Compute extremes from the stored parquet:
+   - `yarn offchain:stats --market <MARKET> --measure close_return --top 20 [--root <ROOT>]`
+   - `yarn offchain:stats --market <MARKET> --measure intraday_range --top 20 [--root <ROOT>]`
+- Show embedded parquet metadata:
+   - `yarn offchain:meta --market <MARKET> [--root <ROOT>] [--pretty]`
+
+Notes:
+
+- `intraday_range` requires `high/low` and will fail for close-only datasets.
+- Sources are **market-specific** in the current implementation (a source errors if it doesn’t support a market), so run separate extract commands per market.
+
+### 9 mainnet v3 feeds: what to extract and how to run stats
+
+These 9 “feeds” correspond to the v3 mainnet wrapper inventory in [V3_MAINNET_ORACLES_WORKPLAN.md](V3_MAINNET_ORACLES_WORKPLAN.md). The extractor stores the **underlying input markets** used by those feeds (not the derived on-chain wrapper output series).
+
+Use `START=2017-01-01` (or later) and `END=2025-12-24` (or today).
+
+1) **fxUSD/ETH** (extract `ETH/USD`)
+
+```bash
+yarn offchain:extract --market ETH-USD --source coinbase --start 2017-01-01 --end 2025-12-24
+yarn offchain:stats   --market ETH-USD --measure close_return   --top 20
+yarn offchain:stats   --market ETH-USD --measure intraday_range --top 20
+```
+
+2) **fxUSD/BTC** (extract `BTC/USD`)
+
+```bash
+yarn offchain:extract --market BTC-USD --source coinbase --start 2017-01-01 --end 2025-12-24
+yarn offchain:stats   --market BTC-USD --measure close_return   --top 20
+yarn offchain:stats   --market BTC-USD --measure intraday_range --top 20
+```
+
+3) **fxUSD/EUR** (extract `EUR/USD`)
+
+```bash
+yarn offchain:extract --market EUR-USD --source fred --start 2017-01-01 --end 2025-12-24
+yarn offchain:stats   --market EUR-USD --measure close_return --top 20
+```
+
+4) **fxUSD/XAU** (extract `XAU/USD`)
+
+```bash
+yarn offchain:extract --market XAU-USD --source fred --start 2017-01-01 --end 2025-12-24
+yarn offchain:stats   --market XAU-USD --measure close_return --top 20
+```
+
+5) **fxUSD/MCAP** (extract `MCAP/USD`)
+
+```bash
+yarn offchain:extract --market MCAP-USD --source coingecko --start 2017-01-01 --end 2025-12-24
+yarn offchain:stats   --market MCAP-USD --measure close_return --top 20
+```
+
+6) **stETH/BTC** (extract `stETH/USD` and `BTC/USD`)
+
+```bash
+yarn offchain:extract --market STETH-USD --source coingecko --start 2017-01-01 --end 2025-12-24
+yarn offchain:extract --market BTC-USD   --source coinbase  --start 2017-01-01 --end 2025-12-24
+
+yarn offchain:stats --market STETH-USD --measure close_return --top 20
+yarn offchain:stats --market BTC-USD   --measure close_return --top 20
+```
+
+7) **stETH/EUR** (extract `stETH/USD` and `EUR/USD`)
+
+```bash
+yarn offchain:extract --market STETH-USD --source coingecko --start 2017-01-01 --end 2025-12-24
+yarn offchain:extract --market EUR-USD   --source fred     --start 2017-01-01 --end 2025-12-24
+
+yarn offchain:stats --market STETH-USD --measure close_return --top 20
+yarn offchain:stats --market EUR-USD   --measure close_return --top 20
+```
+
+8) **stETH/XAU** (extract `stETH/USD` and `XAU/USD`)
+
+```bash
+yarn offchain:extract --market STETH-USD --source coingecko --start 2017-01-01 --end 2025-12-24
+yarn offchain:extract --market XAU-USD   --source fred     --start 2017-01-01 --end 2025-12-24
+
+yarn offchain:stats --market STETH-USD --measure close_return --top 20
+yarn offchain:stats --market XAU-USD   --measure close_return --top 20
+```
+
+9) **stETH/MCAP** (extract `stETH/USD` and `MCAP/USD`)
+
+```bash
+yarn offchain:extract --market STETH-USD --source coingecko --start 2017-01-01 --end 2025-12-24
+yarn offchain:extract --market MCAP-USD  --source coingecko --start 2017-01-01 --end 2025-12-24
+
+yarn offchain:stats --market STETH-USD --measure close_return --top 20
+yarn offchain:stats --market MCAP-USD  --measure close_return --top 20
+```
+
 ## Deployment
 
 ### Prerequisites

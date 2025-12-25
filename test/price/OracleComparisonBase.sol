@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.30;
 
-import "forge-std/Test.sol";
+import {BaoTest} from "@bao-test/BaoTest.sol";
+import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
+import "forge-std/console.sol";
 import {IWrappedPriceOracle} from "@harbor-price/interfaces/IWrappedPriceOracle.sol";
 import {DeployedAddresses} from "../DeployedAddresses.sol";
 import {MainnetOracleAddresses} from "@harbor-price/price/MainnetOracleAddresses.sol";
@@ -14,7 +16,7 @@ import {UtcTimestampFormatter} from "@harbor-price/format/UtcTimestampFormatter.
 /// @title Oracle Comparison Base
 /// @notice Shared comparison engine for forked mainnet oracle parity checks
 /// @dev Forks mainnet at a fixed end block, then rolls within [START_BLOCK, endBlock] for sampling.
-contract OracleComparisonBase is Test {
+contract OracleComparisonBase is BaoTest {
     // Start block is deployment block
     uint256 constant START_BLOCK = DeployedAddresses.DEPLOYMENT_BLOCK;
 
@@ -187,21 +189,24 @@ contract OracleComparisonBase is Test {
 
     /// @notice Compare base vs candidate oracle across the block range
     function _compareOracle(IWrappedPriceOracle base, IWrappedPriceOracle candidate, string memory name) internal {
-        uint256 startBlock = block.number;
+        uint256 originalBlock = block.number;
+        vm.rollFork(START_BLOCK);
+
         uint256 step = _blockStep();
-        uint256 count = 0;
         uint256 mismatches = 0;
 
         console.log(
             "Comparing %s: blocks %s to %s",
             name,
-            _formatBlock(block.number, block.timestamp),
+            _formatBlock(START_BLOCK, block.timestamp),
             _formatBlock(endBlock, endTimestamp)
         );
         console.log("  step: %d, iterations: %d", step, _iterations());
 
-        uint256 nextBlock = block.number;
-        while (true) {
+        for (uint256 i = 0; i <= _iterations(); i++) {
+            uint256 sampleBlock = START_BLOCK + (i * step);
+            vm.rollFork(sampleBlock);
+
             OracleAnswer memory baseA = _latest(base);
             OracleAnswer memory candA = _latest(candidate);
 
@@ -217,17 +222,97 @@ contract OracleComparisonBase is Test {
                 // console.log("  Block %s: matched", _formatBlock(block.number, block.timestamp));
             }
 
-            count++;
-            nextBlock += step;
-            if (nextBlock <= endBlock) {
-                vm.rollFork(nextBlock);
-            } else {
-                break;
-            }
+            // NOTE: sampling schedule is fixed by (START_BLOCK, step, iterations)
         }
 
-        console.log("%s: COMPLETE - %d samples, %d mismatches", name, count, mismatches);
-        vm.rollFork(startBlock);
+        console.log("%s: COMPLETE - %d samples, %d mismatches", name, _iterations() + 1, mismatches);
+        vm.rollFork(originalBlock);
+        assertEq(mismatches, 0, string.concat(name, ": found mismatches"));
+    }
+
+    /// @notice Compare base vs candidate oracle across the block range, with approximate matching for price only.
+    /// @dev Rates are compared exactly; min/maxPrice are compared using BaoTest-compatible abs/rel tolerances.
+    function _compareOracleApproxPrice(
+        IWrappedPriceOracle base,
+        IWrappedPriceOracle candidate,
+        string memory name,
+        uint256 absTolerance,
+        uint256 relTolerance
+    ) internal {
+        uint256 originalBlock = block.number;
+        vm.rollFork(START_BLOCK);
+
+        uint256 step = _blockStep();
+        uint256 mismatches = 0;
+        uint256 maxAbsPriceError = 0;
+        uint256 maxRelPriceError = 0;
+
+        console.log(
+            "Comparing %s: blocks %s to %s",
+            name,
+            _formatBlock(START_BLOCK, block.timestamp),
+            _formatBlock(endBlock, endTimestamp)
+        );
+        console.log("  step: %d, iterations: %d", step, _iterations());
+
+        for (uint256 i = 0; i <= _iterations(); i++) {
+            uint256 sampleBlock = START_BLOCK + (i * step);
+            vm.rollFork(sampleBlock);
+
+            OracleAnswer memory baseA = _latest(base);
+            OracleAnswer memory candA = _latest(candidate);
+
+            {
+                uint256 absMin = baseA.minPrice > candA.minPrice
+                    ? baseA.minPrice - candA.minPrice
+                    : candA.minPrice - baseA.minPrice;
+                if (absMin > maxAbsPriceError) {
+                    maxAbsPriceError = absMin;
+                }
+
+                uint256 denomMin = baseA.minPrice > candA.minPrice ? baseA.minPrice : candA.minPrice;
+                if (denomMin > 0) {
+                    uint256 relMin = Math.mulDiv(absMin, 1e18, denomMin, Math.Rounding.Ceil);
+                    if (relMin > maxRelPriceError) {
+                        maxRelPriceError = relMin;
+                    }
+                }
+            }
+
+            {
+                uint256 absMax = baseA.maxPrice > candA.maxPrice
+                    ? baseA.maxPrice - candA.maxPrice
+                    : candA.maxPrice - baseA.maxPrice;
+                if (absMax > maxAbsPriceError) {
+                    maxAbsPriceError = absMax;
+                }
+
+                uint256 denomMax = baseA.maxPrice > candA.maxPrice ? baseA.maxPrice : candA.maxPrice;
+                if (denomMax > 0) {
+                    uint256 relMax = Math.mulDiv(absMax, 1e18, denomMax, Math.Rounding.Ceil);
+                    if (relMax > maxRelPriceError) {
+                        maxRelPriceError = relMax;
+                    }
+                }
+            }
+
+            bool priceMatch = isApprox(baseA.minPrice, candA.minPrice, absTolerance, relTolerance) &&
+                isApprox(baseA.maxPrice, candA.maxPrice, absTolerance, relTolerance);
+
+            bool rateMatch = (baseA.minRate == candA.minRate) && (baseA.maxRate == candA.maxRate);
+
+            if (!(priceMatch && rateMatch)) {
+                mismatches++;
+                _logMismatch(name, baseA, candA);
+            }
+
+            // NOTE: sampling schedule is fixed by (START_BLOCK, step, iterations)
+        }
+
+        console.log("%s: COMPLETE - %d samples, %d mismatches", name, _iterations() + 1, mismatches);
+        console.log("%s: maxAbsPriceError=%d", name, maxAbsPriceError);
+        console.log("%s: maxRelPriceError(1e18)=%d", name, maxRelPriceError);
+        vm.rollFork(originalBlock);
         assertEq(mismatches, 0, string.concat(name, ": found mismatches"));
     }
 }

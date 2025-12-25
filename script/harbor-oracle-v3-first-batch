@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Harbor Generic Oracle Deployment Script v3 (first batch)
+#
+# Orchestrates a multi-oracle run by calling:
+#   script/harbor-oracle-v3
+#
+# IMPORTANT:
+# - This script must be run from the project root (fails otherwise).
+
+usage() {
+  cat <<EOF
+Usage:
+  $0 <args forwarded to script/harbor-oracle-v3>
+
+Notes:
+  - This script does not parse or validate args.
+  - It forwards your exact "$@" to script/harbor-oracle-v3 and appends --base/--quote for each oracle.
+  - Do not pass --base/--quote yourself.
+EOF
+}
+
+require_project_root() {
+  if [[ ! -f "foundry.toml" ]] || [[ ! -d "src" ]] || [[ ! -d "script" ]]; then
+    echo "❌ Must be run from the project root (missing foundry.toml/src/script)" >&2
+    exit 1
+  fi
+}
+
+# Oracle set (explicit list)
+# Format: BASE|QUOTE
+ORACLES=(
+  "fxUSD|ETH"
+  "fxUSD|BTC"
+  "fxUSD|EUR"
+  "fxUSD|XAU"
+  "fxUSD|MCAP"
+  "stETH|BTC"
+  "stETH|EUR"
+  "stETH|XAU"
+  "stETH|MCAP"
+)
+
+if [[ "${1:-}" == "-h" ]] || [[ "${1:-}" == "--help" ]]; then
+  usage
+  exit 0
+fi
+
+require_project_root
+
+SINGLE_SCRIPT="script/harbor-oracle-v3"
+if [[ ! -f "$SINGLE_SCRIPT" ]]; then
+  echo "❌ Missing single-oracle script: $SINGLE_SCRIPT" >&2
+  exit 1
+fi
+
+echo "=== V3 ORACLE FIRST BATCH ==="
+echo "Script: $0"
+echo "Single: $SINGLE_SCRIPT"
+echo "Args:   $*"
+echo ""
+
+fail=false
+for entry in "${ORACLES[@]}"; do
+  IFS='|' read -r base quote <<<"$entry"
+  if [[ -z "$base" ]] || [[ -z "$quote" ]]; then
+    echo "❌ Invalid ORACLES entry: $entry" >&2
+    fail=true
+    continue
+  fi
+
+  echo "=== $base/$quote ==="
+  if ! bash "$SINGLE_SCRIPT" "$@" --base "$base" --quote "$quote"; then
+    fail=true
+  fi
+  echo ""
+done
+
+if [[ "$fail" == "true" ]]; then
+  echo "❌ One or more oracle operations failed" >&2
+  exit 1
+fi
+
+echo "✅ Done"

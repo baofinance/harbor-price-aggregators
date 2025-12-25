@@ -6,7 +6,7 @@ import {Oracle_stETH_BTC} from "@harbor-price/price/oracles/Oracle_stETH_BTC.sol
 
 /// @notice Ethereum mainnet stETH/BTC oracle.
 /// @dev Hard-coded wiring for mainnet; deploy scripts select this bytecode by chain.
-contract Oracle_stETH_BTC_Mainnet is Oracle_stETH_BTC {
+contract Oracle_stETH_BTC_mainnet is Oracle_stETH_BTC {
     constructor()
         Oracle_stETH_BTC(
             MainnetOracleAddresses.STETH,
