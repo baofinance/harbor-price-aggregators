@@ -16,6 +16,3 @@
 [submodule "lib/bao-base"]
 	path = lib/bao-base
 	url = https://github.com/baofinance/bao-base
-[submodule "lib/bao-base-audit-2025-07"]
-	path = lib/bao-base-audit-2025-07
-	url = https://github.com/baofinance/bao-base
