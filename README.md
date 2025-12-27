@@ -27,6 +27,7 @@ This repository contains three main oracle aggregator contracts:
 Single feed aggregator for direct conversions (e.g., wstETH/ETH).
 
 **Initialize Parameters:**
+
 - `owner`: The owner address
 - `oracleName`: Oracle name/description
 - `rateSource`: Rate source (0 = WSTETH, 1 = FXSAVE, 2 = SUSDE_CHAINLINK, 3 = WSTETH_CHAINLINK)
@@ -36,6 +37,7 @@ Single feed aggregator for direct conversions (e.g., wstETH/ETH).
 - `firstFeedMaxDev`: Max deviation for first feed
 
 **Key Functions:**
+
 - `getPrice()`: Get the current price (optimized internal implementation)
 - `getRate()`: Get the current rate from the configured rate source
 - `decimals()`: Returns 18 (always 18 decimals)
@@ -49,6 +51,7 @@ Single feed aggregator for direct conversions (e.g., wstETH/ETH).
 Double feed aggregator for cross-currency conversions (e.g., fxSAVE→BTC, wstETH→MCAP).
 
 **Initialize Parameters:**
+
 - `owner`: The owner address
 - `oracleName`: Oracle name/description
 - `rateSource`: Rate source (0 = WSTETH, 1 = FXSAVE, 2 = SUSDE_CHAINLINK, 3 = WSTETH_CHAINLINK)
@@ -61,6 +64,7 @@ Double feed aggregator for cross-currency conversions (e.g., fxSAVE→BTC, wstET
 - `secondFeedMaxDev`: Max deviation for second feed
 
 **Key Functions:**
+
 - `getPrice()`: Get the current price (optimized internal implementation)
 - `getRate()`: Get the current rate from the configured rate source
 - `decimals()`: Returns 18 (always 18 decimals)
@@ -74,6 +78,7 @@ Double feed aggregator for cross-currency conversions (e.g., fxSAVE→BTC, wstET
 Custom feed aggregator for aggregating multiple feeds (e.g., wstETH→T6CH aggregated stock basket).
 
 **Initialize Parameters:**
+
 - `owner`: The owner address
 - `oracleName`: Oracle name/description
 - `rateSource`: Rate source (0 = WSTETH, 1 = FXSAVE, 2 = SUSDE_CHAINLINK, 3 = WSTETH_CHAINLINK)
@@ -86,6 +91,7 @@ Custom feed aggregator for aggregating multiple feeds (e.g., wstETH→T6CH aggre
 - `usdFeedMaxDev`: Max deviation for USD feed
 
 **Key Functions:**
+
 - `getPrice()`: Get the current price (optimized internal implementation)
 - `getRate()`: Get the current rate from the configured rate source
 - `decimals()`: Returns 18 (always 18 decimals)
@@ -132,17 +138,58 @@ export COINGECKO_API_KEY=your_coingecko_demo_key
 ### CLI entrypoints (through Yarn)
 
 - Extract to `<ROOT>/daily/<MARKET>.parquet` (default `<ROOT>` is `data/offchain`):
-   - `yarn offchain:extract --market <MARKET> --source <SOURCE> --start <YYYY-MM-DD> --end <YYYY-MM-DD> [--root <ROOT>]`
+  - `yarn offchain:extract --market <MARKET> --source <SOURCE> --start <YYYY-MM-DD> --end <YYYY-MM-DD> [--root <ROOT>]`
 - Compute extremes from the stored parquet:
-   - `yarn offchain:stats --market <MARKET> --measure close_return --top 20 [--root <ROOT>]`
-   - `yarn offchain:stats --market <MARKET> --measure intraday_range --top 20 [--root <ROOT>]`
+  - `yarn offchain:stats --market <MARKET> --measure close_return --top 20 [--root <ROOT>]`
+  - `yarn offchain:stats --market <MARKET> --measure intraday_range --top 20 [--root <ROOT>]`
 - Show embedded parquet metadata:
-   - `yarn offchain:meta --market <MARKET> [--root <ROOT>] [--pretty]`
+  - `yarn offchain:meta --market <MARKET> [--root <ROOT>] [--pretty]`
 
 Notes:
 
 - `intraday_range` requires `high/low` and will fail for close-only datasets.
 - Sources are **market-specific** in the current implementation (a source errors if it doesn’t support a market), so run separate extract commands per market.
+
+#### Return distributions (GARCH + fitted curve)
+
+There is an additional stats mode that treats the close-to-close returns as a random variable, fits a volatility model (GARCH), then fits a parametric curve to the **standardized** returns.
+
+Example:
+
+```bash
+yarn offchain:stats --market ETH-BTC --measure return_fit --top 10 --return-kind log --dist auto --buckets --plot results/eth-btc-return-fit.png
+```
+
+What it prints:
+
+- A JSON block describing the fitted model parameters.
+- A `--top` table of the most “surprising” days under the fitted model.
+- (Optional) a “fitted histogram” in 1% buckets, plus empirical frequencies.
+
+Return kind:
+
+- **simple** return: $r = C_t / C_{t-1} - 1$ (this is the existing `close_return` measure)
+- **log** return: $\ell = \ln(C_t / C_{t-1})$ (often more statistically convenient)
+
+Probability / score columns (layman descriptions):
+
+- **Two-sided tail probability** (`p_two_sided`): “how extreme is this move (up or down) compared to the model?”
+  - Smaller means more extreme.
+  - It’s a p-value style score: $p = 2\min(F(z), 1-F(z))$ where $z$ is the standardized return.
+- **One-sided tail probability** (`p_one_sided`): “how extreme is this move in the direction it occurred?”
+  - Smaller means a rarer move on that side.
+- **PDF density** (`pdf_density`): “how concentrated the fitted curve is at exactly this return value.”
+  - This is a density, not a probability; higher usually means more ‘typical’.
+- **1% bucket probability** (`p_bucket`): “what is the model probability that the return lands in this 1% bin?”
+  - This is a true probability mass for the interval (e.g. [1%, 2%)).
+  - Useful when you want histogram-style probabilities.
+
+#### Market inversion (BTC-ETH vs ETH-BTC)
+
+Some providers only list one direction of a market (e.g. Coinbase has `ETH-BTC` but not `BTC-ETH`).
+
+- `extract`: if the requested market 404s but the inverse exists, the tool will fetch the inverse and mathematically invert OHLC (e.g. `close' = 1/close`, and `high/low` swap accordingly).
+- `stats` / `export` / `meta`: if `<ROOT>/daily/<MARKET>.parquet` is missing but the inverse parquet exists, the tool will read the inverse and invert it on the fly.
 
 ### 9 mainnet v3 feeds: what to extract and how to run stats
 
@@ -150,7 +197,7 @@ These 9 “feeds” correspond to the v3 mainnet wrapper inventory in [V3_MAINNE
 
 Use `START=2017-01-01` (or later) and `END=2025-12-24` (or today).
 
-1) **fxUSD/ETH** (extract `ETH/USD`)
+1. **fxUSD/ETH** (extract `ETH/USD`)
 
 ```bash
 yarn offchain:extract --market ETH-USD --source coinbase --start 2017-01-01 --end 2025-12-24
@@ -158,7 +205,7 @@ yarn offchain:stats   --market ETH-USD --measure close_return   --top 20
 yarn offchain:stats   --market ETH-USD --measure intraday_range --top 20
 ```
 
-2) **fxUSD/BTC** (extract `BTC/USD`)
+2. **fxUSD/BTC** (extract `BTC/USD`)
 
 ```bash
 yarn offchain:extract --market BTC-USD --source coinbase --start 2017-01-01 --end 2025-12-24
@@ -166,28 +213,28 @@ yarn offchain:stats   --market BTC-USD --measure close_return   --top 20
 yarn offchain:stats   --market BTC-USD --measure intraday_range --top 20
 ```
 
-3) **fxUSD/EUR** (extract `EUR/USD`)
+3. **fxUSD/EUR** (extract `EUR/USD`)
 
 ```bash
 yarn offchain:extract --market EUR-USD --source fred --start 2017-01-01 --end 2025-12-24
 yarn offchain:stats   --market EUR-USD --measure close_return --top 20
 ```
 
-4) **fxUSD/XAU** (extract `XAU/USD`)
+4. **fxUSD/XAU** (extract `XAU/USD`)
 
 ```bash
 yarn offchain:extract --market XAU-USD --source fred --start 2017-01-01 --end 2025-12-24
 yarn offchain:stats   --market XAU-USD --measure close_return --top 20
 ```
 
-5) **fxUSD/MCAP** (extract `MCAP/USD`)
+5. **fxUSD/MCAP** (extract `MCAP/USD`)
 
 ```bash
 yarn offchain:extract --market MCAP-USD --source coingecko --start 2017-01-01 --end 2025-12-24
 yarn offchain:stats   --market MCAP-USD --measure close_return --top 20
 ```
 
-6) **stETH/BTC** (extract `stETH/USD` and `BTC/USD`)
+6. **stETH/BTC** (extract `stETH/USD` and `BTC/USD`)
 
 ```bash
 yarn offchain:extract --market STETH-USD --source coingecko --start 2017-01-01 --end 2025-12-24
@@ -197,7 +244,7 @@ yarn offchain:stats --market STETH-USD --measure close_return --top 20
 yarn offchain:stats --market BTC-USD   --measure close_return --top 20
 ```
 
-7) **stETH/EUR** (extract `stETH/USD` and `EUR/USD`)
+7. **stETH/EUR** (extract `stETH/USD` and `EUR/USD`)
 
 ```bash
 yarn offchain:extract --market STETH-USD --source coingecko --start 2017-01-01 --end 2025-12-24
@@ -207,7 +254,7 @@ yarn offchain:stats --market STETH-USD --measure close_return --top 20
 yarn offchain:stats --market EUR-USD   --measure close_return --top 20
 ```
 
-8) **stETH/XAU** (extract `stETH/USD` and `XAU/USD`)
+8. **stETH/XAU** (extract `stETH/USD` and `XAU/USD`)
 
 ```bash
 yarn offchain:extract --market STETH-USD --source coingecko --start 2017-01-01 --end 2025-12-24
@@ -217,7 +264,7 @@ yarn offchain:stats --market STETH-USD --measure close_return --top 20
 yarn offchain:stats --market XAU-USD   --measure close_return --top 20
 ```
 
-9) **stETH/MCAP** (extract `stETH/USD` and `MCAP/USD`)
+9. **stETH/MCAP** (extract `stETH/USD` and `MCAP/USD`)
 
 ```bash
 yarn offchain:extract --market STETH-USD --source coingecko --start 2017-01-01 --end 2025-12-24
@@ -234,6 +281,7 @@ yarn offchain:stats --market MCAP-USD  --measure close_return --top 20
 1. **Set required environment variables** (choose one method):
 
    **Option A: Create a `.env.local` or `.env` file** in the project root:
+
    ```bash
    # .env.local (recommended - typically gitignored)
    RPC_URL=https://eth-mainnet.g.alchemy.com/v2/YOUR_ALCHEMY_KEY
@@ -243,6 +291,7 @@ yarn offchain:stats --market MCAP-USD  --measure close_return --top 20
    ```
 
    **Option B: Export environment variables**:
+
    ```bash
    export RPC_URL="https://eth-mainnet.g.alchemy.com/v2/YOUR_ALCHEMY_KEY"
    export ETHERSCAN_API_KEY="your_etherscan_api_key"
@@ -261,13 +310,15 @@ yarn offchain:stats --market MCAP-USD  --measure close_return --top 20
 
 3. **Optional: Use Anvil fork for testing**:
    For local testing with real mainnet data, you can use Anvil:
+
    ```bash
    # Fork Ethereum mainnet
    anvil --fork-url https://eth-mainnet.g.alchemy.com/v2/YOUR_ALCHEMY_KEY --host 0.0.0.0 --port 8545
-   
+
    # Fork Arbitrum
    anvil --fork-url https://arb-mainnet.g.alchemy.com/v2/YOUR_ALCHEMY_KEY --host 0.0.0.0 --port 8545
    ```
+
    Then set `RPC_URL=http://localhost:8545` in your `.env.local` or export it.
 
 ### Deploy to Ethereum Mainnet
@@ -279,12 +330,14 @@ Deploy the new mainnet oracle contracts:
 ```
 
 This will deploy:
+
 - 1 Double Feed implementation contract
 - 10 proxy contracts:
   - fxsave→ETH, fxsave→BTC, fxsave→EUR, fxsave→XAU, fxsave→MCAP
   - wstETH→BTC, wstETH→EUR, wstETH→XAU, wstETH→MCAP
 
 **Deployment Modes:**
+
 - `MODE=deploy` (default): Deploy all contracts
 - `MODE=check`: Check deployment status
 - `MODE=retry`: Retry initialization of failed contracts
@@ -292,6 +345,7 @@ This will deploy:
 - `MODE=verify`: Verify all contracts on Etherscan
 
 **Examples:**
+
 ```bash
 # Deploy all contracts
 ./script/deploy-harbor-oracles-v2-mainnet-new
@@ -315,6 +369,7 @@ Deploy the Arbitrum oracle contracts:
 ```
 
 This will deploy:
+
 - 1 PriceOracle library (pre-deployed, reused)
 - 3 implementation contracts (Single Feed, Double Feed, Custom Feed)
 - 20 proxy contracts:
@@ -322,6 +377,7 @@ This will deploy:
   - wstETH→USD, wstETH→AAPL, wstETH→AMZN, wstETH→GOOGL, wstETH→META, wstETH→MSFT, wstETH→NVDA, wstETH→SPY, wstETH→TSLA, wstETH→MAG7
 
 **Deployment Modes:**
+
 - `MODE=deploy` (default): Deploy all contracts
 - `MODE=check`: Check deployment status
 - `MODE=retry`: Retry initialization of failed contracts
@@ -329,6 +385,7 @@ This will deploy:
 - `MODE=verify`: Verify all contracts on Arbiscan
 
 **Examples:**
+
 ```bash
 # Deploy all contracts
 ./script/deploy-arbitrum-oracles
@@ -344,6 +401,7 @@ SKIP_RATE_CONFIG=true ./script/deploy-arbitrum-oracles
 ```
 
 **Note**: For Arbitrum, make sure to set:
+
 - `RPC_URL` to an Arbitrum RPC endpoint (e.g., `https://arb-mainnet.g.alchemy.com/v2/YOUR_KEY`)
 - `ETHERSCAN_API_KEY` to your Etherscan API key (same key works for both mainnet and Arbitrum)
 
@@ -359,6 +417,7 @@ The contracts support four rate source types:
 For Chainlink rate sources, use `setMaxRateSourceAge()` to configure the maximum acceptable age (default: 1 day, typically set to 7 days in production). If a Chainlink rate feed goes stale beyond this threshold, the oracle will revert to prevent using outdated conversion rates.
 
 **Rate Validation:**
+
 - **WSTETH**: Rate must be between 1.0 and 2.0 (wstETH/stETH conversion)
 - **FXSAVE**: Rate must be >= 0.9x underlying
 - **SUSDE_CHAINLINK**: Rate must be >= 0.9x (no upper bound, matches fxSAVE pattern)
@@ -371,4 +430,3 @@ The script will output all deployed contract addresses and verify they're workin
 ## License
 
 MIT
-

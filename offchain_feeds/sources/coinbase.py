@@ -6,6 +6,7 @@ import httpx
 import pandas as pd
 
 from ..markets import Market
+from ..market_inversion import invert_daily_bars
 from ..schema import filter_by_date, normalize_daily_bars_frame
 from .base import SourceAdapter
 
@@ -23,9 +24,13 @@ class Coinbase(SourceAdapter):
         return ts.astimezone(dt.timezone.utc).replace(microsecond=0).strftime("%Y-%m-%dT%H:%M:%SZ")
 
     def fetch_daily_bars(self, market: Market, start: dt.date, end: dt.date) -> pd.DataFrame:
-        product_id = market.code
+        requested_market_code = market.code
+        product_id = requested_market_code
+        inverted_product_id = market.inverted().code
 
         url = f"{self._BASE_URL}/products/{product_id}/candles"
+        invert = False
+        tried_invert = False
 
         # Coinbase candles endpoint returns a maximum number of rows per request.
         # With daily granularity, we page in ~300-day chunks.
@@ -49,9 +54,21 @@ class Coinbase(SourceAdapter):
                 resp.raise_for_status()
             except httpx.HTTPStatusError as e:
                 if e.response is not None and e.response.status_code == 404:
+                    if not tried_invert and inverted_product_id != product_id:
+                        tried_invert = True
+                        product_id = inverted_product_id
+                        url = f"{self._BASE_URL}/products/{product_id}/candles"
+                        invert = True
+                        continue
+
+                    attempted = {requested_market_code}
+                    if inverted_product_id != requested_market_code:
+                        attempted.add(inverted_product_id)
+
+                    attempted_s = ", ".join(sorted(attempted))
                     raise RuntimeError(
-                        "Coinbase Exchange product not found: "
-                        f"{product_id}. Coinbase uses BASE-QUOTE ids (example: ETH-BTC, not BTC-ETH)."
+                        "Coinbase Exchange product not found. Attempted: "
+                        f"{attempted_s}. Coinbase uses BASE-QUOTE ids (example: ETH-BTC, not BTC-ETH)."
                     ) from e
                 raise
             data = resp.json()
@@ -79,6 +96,8 @@ class Coinbase(SourceAdapter):
             chunk = pd.DataFrame(rows)
             if not chunk.empty:
                 chunk = normalize_daily_bars_frame(chunk)
+                if invert:
+                    chunk = invert_daily_bars(chunk, inverted_market_code=requested_market_code)
                 frames.append(chunk)
 
             cursor = chunk_end + dt.timedelta(seconds=1)

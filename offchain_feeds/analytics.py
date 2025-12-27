@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import numpy as np
 import pandas as pd
 
 
@@ -14,6 +15,14 @@ def close_to_close_returns(df: pd.DataFrame) -> pd.DataFrame:
     out["prev_close"] = out["close"].shift(1)
     out["return"] = out["close"] / out["prev_close"] - 1
     return out.dropna(subset=["return"]).reset_index(drop=True)
+
+
+def close_to_close_log_returns(df: pd.DataFrame) -> pd.DataFrame:
+    out = df.copy().sort_values(["date"], kind="stable")
+    out["prev_close"] = out["close"].shift(1)
+    ratio = out["close"] / out["prev_close"]
+    out["log_return"] = np.log(ratio)
+    return out.dropna(subset=["log_return"]).reset_index(drop=True)
 
 
 def intraday_range(df: pd.DataFrame) -> pd.DataFrame:

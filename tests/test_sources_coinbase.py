@@ -69,10 +69,10 @@ def test_coinbase_pages_long_ranges() -> None:
 
 
 def test_coinbase_404_has_actionable_error() -> None:
-    market = Market.parse("BTC-ETH")
+    market = Market.parse("FOO-BAR")
 
     def handler(request: httpx.Request) -> httpx.Response:
-        assert request.url.path.endswith("/products/BTC-ETH/candles")
+        assert request.url.path.endswith("/products/FOO-BAR/candles") or request.url.path.endswith("/products/BAR-FOO/candles")
         return httpx.Response(404, content=b"not found")
 
     transport = httpx.MockTransport(handler)
@@ -81,3 +81,38 @@ def test_coinbase_404_has_actionable_error() -> None:
 
     with pytest.raises(RuntimeError, match=r"BASE-QUOTE"):
         src.fetch_daily_bars(market, dt.date(2025, 1, 1), dt.date(2025, 1, 2))
+
+
+def test_coinbase_inverts_market_when_only_inverse_exists() -> None:
+    market = Market.parse("BTC-ETH")
+
+    # BTC-ETH missing, ETH-BTC exists.
+    payload = [
+        # time, low, high, open, close, volume (volume in base units, here ETH)
+        [1735689600, 0.01, 0.02, 0.0125, 0.015, 100],
+    ]
+
+    calls: list[str] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        calls.append(request.url.path)
+        if request.url.path.endswith("/products/BTC-ETH/candles"):
+            return httpx.Response(404, content=b"not found")
+        if request.url.path.endswith("/products/ETH-BTC/candles"):
+            return httpx.Response(200, json=payload)
+        return httpx.Response(500)
+
+    transport = httpx.MockTransport(handler)
+    client = httpx.Client(transport=transport)
+    src = Coinbase(client=client)
+
+    df = src.fetch_daily_bars(market, dt.date(2025, 1, 1), dt.date(2025, 1, 1))
+    assert calls[0].endswith("/products/BTC-ETH/candles")
+    assert any(p.endswith("/products/ETH-BTC/candles") for p in calls)
+
+    row = df.iloc[0]
+    assert row["market"] == "BTC-ETH"
+    assert row["close"] == pytest.approx(1.0 / 0.015)
+    # Inversion must flip high/low
+    assert row["high"] == pytest.approx(1.0 / 0.01)
+    assert row["low"] == pytest.approx(1.0 / 0.02)

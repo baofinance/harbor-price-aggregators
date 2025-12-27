@@ -20,6 +20,9 @@ class Market:
     def code(self) -> str:
         return f"{self.base.upper()}-{self.quote.upper()}"
 
+    def inverted(self) -> "Market":
+        return Market(base=self.quote, quote=self.base)
+
     @staticmethod
     def parse(value: str) -> "Market":
         value = value.strip()
