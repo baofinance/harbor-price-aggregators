@@ -94,7 +94,9 @@ interface IHarborCustomFeedAndRateAggregator is IWrappedPriceOracle {
     function feedDecimals(address feed) external view returns (uint8);
 
     /// @notice Feed validation constraints
-    function feedConstraints(address feed)
+    function feedConstraints(
+        address feed
+    )
         external
         view
         returns (
@@ -164,18 +166,12 @@ interface IHarborCustomFeedAndRateAggregator is IWrappedPriceOracle {
     /// @notice Update constraints for all custom feeds in one call
     /// @param customFeedMaxAge Max age for custom feeds (seconds)
     /// @param customFeedMaxDev Max deviation for custom feeds (1e18)
-    function updateCustomFeedConstraints(
-        uint64 customFeedMaxAge,
-        uint256 customFeedMaxDev
-    ) external;
+    function updateCustomFeedConstraints(uint64 customFeedMaxAge, uint256 customFeedMaxDev) external;
 
     /// @notice Update constraints for USD feed
     /// @param usdFeedMaxAge Max age for USD feed (seconds)
     /// @param usdFeedMaxDev Max deviation for USD feed (1e18)
-    function updateUsdFeedConstraints(
-        uint64 usdFeedMaxAge,
-        uint256 usdFeedMaxDev
-    ) external;
+    function updateUsdFeedConstraints(uint64 usdFeedMaxAge, uint256 usdFeedMaxDev) external;
 
     /// @notice Return constraints for a feed by identifier
     /// @param identifier Feed identifier (1+ = custom feeds, 100 = USD feed)
@@ -216,5 +212,3 @@ interface IHarborCustomFeedAndRateAggregator is IWrappedPriceOracle {
     /// @param maxAge New maximum age in seconds
     event MaxRateSourceAgeUpdated(uint64 maxAge);
 }
-
-

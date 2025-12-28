@@ -4,4 +4,23 @@ version = "0.1.0"
 description = "vyper for Bao Minter"
 readme = "README.md"
 requires-python = "==3.10.*"
-dependencies = ["black>=25.1.0", "vyper==0.3.10", "semgrep>=1.85,<2"]
+dependencies = [
+    "black>=25.1.0",
+    "vyper==0.3.10",
+    "semgrep>=1.85,<2",
+    "pandas==2.2.3",
+    "pyarrow==19.0.1",
+    "httpx==0.28.1",
+    "scipy==1.15.3",
+    "matplotlib==3.10.8",
+    "arch==8.0.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest==8.3.4",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+norecursedirs = ["lib", "cache", "deployments", "results"]

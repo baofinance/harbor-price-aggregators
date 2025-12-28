@@ -3,8 +3,8 @@ pragma solidity 0.8.30;
 
 import {Test} from "forge-std/Test.sol";
 import {console} from "forge-std/console.sol";
-import {HarborSingleFeedAndRateAggregator_v2} from "src/price/HarborSingleFeedAndRateAggregator_v2.sol";
-import {IFxSAVE} from "src/interfaces/IFxSAVE.sol";
+import {HarborSingleFeedAndRateAggregator_v2} from "@harbor-price/price/HarborSingleFeedAndRateAggregator_v2.sol";
+import {IFxSAVE} from "@harbor-price/interfaces/IFxSAVE.sol";
 import {IWstETH} from "@bao/interfaces/IWstETH.sol";
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
 import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
@@ -32,12 +32,24 @@ contract MockWstETH is IWstETH {
         return _stEthPerToken;
     }
 
-    function allowance(address, address) external pure override returns (uint256) { return 0; }
-    function approve(address, uint256) external pure override returns (bool) { return true; }
-    function balanceOf(address) external pure override returns (uint256) { return 0; }
-    function totalSupply() external pure override returns (uint256) { return 0; }
-    function transfer(address, uint256) external pure override returns (bool) { return true; }
-    function transferFrom(address, address, uint256) external pure override returns (bool) { return true; }
+    function allowance(address, address) external pure override returns (uint256) {
+        return 0;
+    }
+    function approve(address, uint256) external pure override returns (bool) {
+        return true;
+    }
+    function balanceOf(address) external pure override returns (uint256) {
+        return 0;
+    }
+    function totalSupply() external pure override returns (uint256) {
+        return 0;
+    }
+    function transfer(address, uint256) external pure override returns (bool) {
+        return true;
+    }
+    function transferFrom(address, address, uint256) external pure override returns (bool) {
+        return true;
+    }
 }
 
 contract MockFxSAVE is IFxSAVE {
@@ -52,55 +64,142 @@ contract MockFxSAVE is IFxSAVE {
     }
 
     // IERC4626 functions (stubs)
-    function asset() external pure override returns (address) { return address(0); }
-    function convertToShares(uint256) external pure override returns (uint256) { return 0; }
-    function deposit(uint256, address) external pure override returns (uint256) { return 0; }
-    function maxDeposit(address) external pure override returns (uint256) { return 0; }
-    function maxMint(address) external pure override returns (uint256) { return 0; }
-    function maxRedeem(address) external pure override returns (uint256) { return 0; }
-    function maxWithdraw(address) external pure override returns (uint256) { return 0; }
-    function mint(uint256, address) external pure override returns (uint256) { return 0; }
-    function previewDeposit(uint256) external pure override returns (uint256) { return 0; }
-    function previewMint(uint256) external pure override returns (uint256) { return 0; }
-    function previewRedeem(uint256) external pure override returns (uint256) { return 0; }
-    function previewWithdraw(uint256) external pure override returns (uint256) { return 0; }
-    function redeem(uint256, address, address) external pure override returns (uint256) { return 0; }
-    function totalAssets() external pure override returns (uint256) { return 0; }
-    function withdraw(uint256, address, address) external pure override returns (uint256) { return 0; }
+    function asset() external pure override returns (address) {
+        return address(0);
+    }
+    function convertToShares(uint256) external pure override returns (uint256) {
+        return 0;
+    }
+    function deposit(uint256, address) external pure override returns (uint256) {
+        return 0;
+    }
+    function maxDeposit(address) external pure override returns (uint256) {
+        return 0;
+    }
+    function maxMint(address) external pure override returns (uint256) {
+        return 0;
+    }
+    function maxRedeem(address) external pure override returns (uint256) {
+        return 0;
+    }
+    function maxWithdraw(address) external pure override returns (uint256) {
+        return 0;
+    }
+    function mint(uint256, address) external pure override returns (uint256) {
+        return 0;
+    }
+    function previewDeposit(uint256) external pure override returns (uint256) {
+        return 0;
+    }
+    function previewMint(uint256) external pure override returns (uint256) {
+        return 0;
+    }
+    function previewRedeem(uint256) external pure override returns (uint256) {
+        return 0;
+    }
+    function previewWithdraw(uint256) external pure override returns (uint256) {
+        return 0;
+    }
+    function redeem(uint256, address, address) external pure override returns (uint256) {
+        return 0;
+    }
+    function totalAssets() external pure override returns (uint256) {
+        return 0;
+    }
+    function withdraw(uint256, address, address) external pure override returns (uint256) {
+        return 0;
+    }
 
     // IERC20Metadata stubs
-    function name() external pure override returns (string memory) { return ""; }
-    function symbol() external pure override returns (string memory) { return ""; }
-    function decimals() external pure override returns (uint8) { return 18; }
+    function name() external pure override returns (string memory) {
+        return "";
+    }
+    function symbol() external pure override returns (string memory) {
+        return "";
+    }
+    function decimals() external pure override returns (uint8) {
+        return 18;
+    }
 
     // IERC20 stubs
-    function allowance(address, address) external pure override returns (uint256) { return 0; }
-    function approve(address, uint256) external pure override returns (bool) { return true; }
-    function balanceOf(address) external pure override returns (uint256) { return 0; }
-    function totalSupply() external pure override returns (uint256) { return 0; }
-    function transfer(address, uint256) external pure override returns (bool) { return true; }
-    function transferFrom(address, address, uint256) external pure override returns (bool) { return true; }
+    function allowance(address, address) external pure override returns (uint256) {
+        return 0;
+    }
+    function approve(address, uint256) external pure override returns (bool) {
+        return true;
+    }
+    function balanceOf(address) external pure override returns (uint256) {
+        return 0;
+    }
+    function totalSupply() external pure override returns (uint256) {
+        return 0;
+    }
+    function transfer(address, uint256) external pure override returns (bool) {
+        return true;
+    }
+    function transferFrom(address, address, uint256) external pure override returns (bool) {
+        return true;
+    }
 
     // IFxSAVE-specific stubs
-    function CLAIM_FOR_ROLE() external pure override returns (bytes32) { return bytes32(0); }
-    function DEFAULT_ADMIN_ROLE() external pure override returns (bytes32) { return bytes32(0); }
-    function DOMAIN_SEPARATOR() external pure override returns (bytes32) { return bytes32(0); }
-    function base() external pure override returns (address) { return address(0); }
-    function gauge() external pure override returns (address) { return address(0); }
-    function getExpenseRatio() external pure override returns (uint256) { return 0; }
-    function getHarvesterRatio() external pure override returns (uint256) { return 0; }
-    function getRoleAdmin(bytes32) external pure override returns (bytes32) { return bytes32(0); }
-    function getThreshold() external pure override returns (uint256) { return 0; }
-    function harvester() external pure override returns (address) { return address(0); }
-    function hasRole(bytes32, address) external pure override returns (bool) { return false; }
-    function lockedProxy(address) external pure override returns (address) { return address(0); }
-    function nav() external pure override returns (uint256) { return 0; }
-    function nonces(address) external pure override returns (uint256) { return 0; }
-    function supportsInterface(bytes4) external pure override returns (bool) { return false; }
-    function treasury() external pure override returns (address) { return address(0); }
-    function vault() external pure override returns (address) { return address(0); }
-    function eip712Domain() external pure override returns (bytes1, string memory, string memory, uint256, address, bytes32, uint256[] memory) { 
-        return (bytes1(0), "", "", 0, address(0), bytes32(0), new uint256[](0)); 
+    function CLAIM_FOR_ROLE() external pure override returns (bytes32) {
+        return bytes32(0);
+    }
+    function DEFAULT_ADMIN_ROLE() external pure override returns (bytes32) {
+        return bytes32(0);
+    }
+    function DOMAIN_SEPARATOR() external pure override returns (bytes32) {
+        return bytes32(0);
+    }
+    function base() external pure override returns (address) {
+        return address(0);
+    }
+    function gauge() external pure override returns (address) {
+        return address(0);
+    }
+    function getExpenseRatio() external pure override returns (uint256) {
+        return 0;
+    }
+    function getHarvesterRatio() external pure override returns (uint256) {
+        return 0;
+    }
+    function getRoleAdmin(bytes32) external pure override returns (bytes32) {
+        return bytes32(0);
+    }
+    function getThreshold() external pure override returns (uint256) {
+        return 0;
+    }
+    function harvester() external pure override returns (address) {
+        return address(0);
+    }
+    function hasRole(bytes32, address) external pure override returns (bool) {
+        return false;
+    }
+    function lockedProxy(address) external pure override returns (address) {
+        return address(0);
+    }
+    function nav() external pure override returns (uint256) {
+        return 0;
+    }
+    function nonces(address) external pure override returns (uint256) {
+        return 0;
+    }
+    function supportsInterface(bytes4) external pure override returns (bool) {
+        return false;
+    }
+    function treasury() external pure override returns (address) {
+        return address(0);
+    }
+    function vault() external pure override returns (address) {
+        return address(0);
+    }
+    function eip712Domain()
+        external
+        pure
+        override
+        returns (bytes1, string memory, string memory, uint256, address, bytes32, uint256[] memory)
+    {
+        return (bytes1(0), "", "", 0, address(0), bytes32(0), new uint256[](0));
     }
 }
 
@@ -110,7 +209,9 @@ contract MockAggregatorV3 is AggregatorV3Interface {
     uint80 private _roundId;
     uint256 private _updatedAt;
 
-    constructor(uint8 decimals_) { _decimals = decimals_; }
+    constructor(uint8 decimals_) {
+        _decimals = decimals_;
+    }
 
     function setAnswer(int256 answer_, uint256 updatedAt_) external {
         _answer = answer_;
@@ -118,15 +219,33 @@ contract MockAggregatorV3 is AggregatorV3Interface {
         _roundId++;
     }
 
-    function decimals() external view override returns (uint8) { return _decimals; }
+    function decimals() external view override returns (uint8) {
+        return _decimals;
+    }
 
-    function latestRoundData() external view override returns (uint80 roundId, int256 answer, uint256 startedAt, uint256 updatedAt, uint80 answeredInRound) {
+    function latestRoundData()
+        external
+        view
+        override
+        returns (uint80 roundId, int256 answer, uint256 startedAt, uint256 updatedAt, uint80 answeredInRound)
+    {
         return (_roundId, _answer, 0, _updatedAt, _roundId);
     }
 
-    function description() external pure override returns (string memory) { return ""; }
-    function version() external pure override returns (uint256) { return 1; }
-    function getRoundData(uint80) external view override returns (uint80 roundId, int256 answer, uint256 startedAt, uint256 updatedAt, uint80 answeredInRound) {
+    function description() external pure override returns (string memory) {
+        return "";
+    }
+    function version() external pure override returns (uint256) {
+        return 1;
+    }
+    function getRoundData(
+        uint80
+    )
+        external
+        view
+        override
+        returns (uint80 roundId, int256 answer, uint256 startedAt, uint256 updatedAt, uint80 answeredInRound)
+    {
         return (_roundId, _answer, 0, _updatedAt, _roundId);
     }
 }
@@ -167,7 +286,7 @@ contract HarborSingleFeedAndRateAggregator_v2Test is Test {
             address(mockWstEth),
             address(mockFxSave),
             address(0), // SUSDE_USDE_FEED not used in tests
-            address(0)  // WSTETH_STETH_FEED not used in tests
+            address(0) // WSTETH_STETH_FEED not used in tests
         );
 
         bytes memory initData = abi.encodeWithSelector(
@@ -195,7 +314,7 @@ contract HarborSingleFeedAndRateAggregator_v2Test is Test {
             address(mockWstEth),
             address(mockFxSave),
             address(0), // SUSDE_USDE_FEED not used in tests
-            address(0)  // WSTETH_STETH_FEED not used in tests
+            address(0) // WSTETH_STETH_FEED not used in tests
         );
 
         bytes memory initData = abi.encodeWithSelector(
@@ -222,7 +341,7 @@ contract HarborSingleFeedAndRateAggregator_v2Test is Test {
             address(mockWstEth),
             address(mockFxSave),
             address(0), // SUSDE_USDE_FEED not used in tests
-            address(0)  // WSTETH_STETH_FEED not used in tests
+            address(0) // WSTETH_STETH_FEED not used in tests
         );
 
         bytes memory initData = abi.encodeWithSelector(
@@ -244,10 +363,9 @@ contract HarborSingleFeedAndRateAggregator_v2Test is Test {
         // Expected: normalizedEthUsdPrice / priceDivisor
         // normalizedEthUsdPrice = 400000000000 * 1e10 = 4000000000000000000000
         // casting to 'uint256' is safe because ethUsdPrice is a positive price value
-        // forge-lint: disable-next-line unsafe-typecast
         uint256 normalizedEthUsdPrice = uint256(ethUsdPrice) * 1e10;
         uint256 expectedPrice = normalizedEthUsdPrice / 1; // priceDivisor = 1
-        
+
         console.log("Price (wstETH):", price);
         assertEq(price, expectedPrice, "Incorrect wstETH price (V2 - no rate)");
     }
@@ -260,7 +378,7 @@ contract HarborSingleFeedAndRateAggregator_v2Test is Test {
             address(mockWstEth),
             address(mockFxSave),
             address(0), // SUSDE_USDE_FEED not used in tests
-            address(0)  // WSTETH_STETH_FEED not used in tests
+            address(0) // WSTETH_STETH_FEED not used in tests
         );
 
         bytes memory initData = abi.encodeWithSelector(
@@ -278,7 +396,7 @@ contract HarborSingleFeedAndRateAggregator_v2Test is Test {
         oracle = HarborSingleFeedAndRateAggregator_v2(address(proxy));
 
         (uint256 minPrice, uint256 maxPrice, uint256 minRate, uint256 maxRate) = oracle.latestAnswer();
-        
+
         console.log("Price (FxSAVE latestAnswer):", minPrice);
         console.log("Rate (FxSAVE):", minRate);
         assertEq(minPrice, maxPrice, "Min/max price mismatch");
@@ -292,7 +410,7 @@ contract HarborSingleFeedAndRateAggregator_v2Test is Test {
             address(mockWstEth),
             address(mockFxSave),
             address(0), // SUSDE_USDE_FEED not used in tests
-            address(0)  // WSTETH_STETH_FEED not used in tests
+            address(0) // WSTETH_STETH_FEED not used in tests
         );
 
         bytes memory initData = abi.encodeWithSelector(
@@ -329,7 +447,7 @@ contract HarborSingleFeedAndRateAggregator_v2Test is Test {
             address(mockWstEth),
             address(mockFxSave),
             address(0), // SUSDE_USDE_FEED not used in tests
-            address(0)  // WSTETH_STETH_FEED not used in tests
+            address(0) // WSTETH_STETH_FEED not used in tests
         );
 
         bytes memory initData = abi.encodeWithSelector(
@@ -376,16 +494,15 @@ contract HarborSingleFeedAndRateAggregator_v2Test is Test {
         oracle = HarborSingleFeedAndRateAggregator_v2(address(proxy));
 
         uint256 price = oracle.getPrice();
-        
+
         // V2: price should be firstFeedPrice / priceDivisor (no rate multiplication)
-        // forge-lint: disable-next-line unsafe-typecast
         uint256 normalizedEthUsdPrice = uint256(ethUsdPrice) * 1e10;
         uint256 expectedPrice = normalizedEthUsdPrice / 1; // priceDivisor = 1
-        
+
         console.log("Price (V2 NoRateMultiplication):", price);
         console.log("Expected Price:", expectedPrice);
         assertEq(price, expectedPrice, "V2 price should not multiply by rate");
-        
+
         // Verify rate is still returned correctly
         uint256 rate = oracle.getRate();
         console.log("Rate:", rate);
@@ -397,7 +514,7 @@ contract HarborSingleFeedAndRateAggregator_v2Test is Test {
         // Feed: ETH/USD = 4000 means 4000 USD per ETH
         // Inverted: USD/ETH = 1/4000 = 0.00025 ETH per USD
         // Since fxUSD is pegged to USD, this gives us fxUSD/ETH
-        
+
         HarborSingleFeedAndRateAggregator_v2 implementation = new HarborSingleFeedAndRateAggregator_v2(
             address(mockWstEth),
             address(mockFxSave),
@@ -420,18 +537,17 @@ contract HarborSingleFeedAndRateAggregator_v2Test is Test {
         oracle = HarborSingleFeedAndRateAggregator_v2(address(proxy));
 
         uint256 price = oracle.getPrice();
-        
+
         // Expected: 1e36 / normalizedEthUsdPrice
-        // forge-lint: disable-next-line unsafe-typecast
         uint256 normalizedEthUsdPrice = uint256(ethUsdPrice) * 1e10; // 4000 * 1e8 * 1e10 = 4000e18
         uint256 expectedPrice = (1e18 * 1e18) / normalizedEthUsdPrice; // 1e36 / 4000e18 = 0.00025e18
-        
+
         console.log("Price (Inverted):", price);
         console.log("Expected Price (Inverted):", expectedPrice);
         console.log("Feed Price (ETH/USD):", normalizedEthUsdPrice);
         assertEq(price, expectedPrice, "Inverted price should be 1e36 / feedPrice");
         assertEq(price, 250000000000000, "Inverted price should be 0.00025 ETH per USD (0.00025e18)");
-        
+
         // Verify the oracle has invertPrice set
         assertTrue(oracle.invertPrice(), "invertPrice should be true");
     }
@@ -459,18 +575,17 @@ contract HarborSingleFeedAndRateAggregator_v2Test is Test {
         oracle = HarborSingleFeedAndRateAggregator_v2(address(proxy));
 
         assertFalse(oracle.invertPrice(), "invertPrice should be false initially");
-        
+
         // Get normal price first
         uint256 normalPrice = oracle.getPrice();
         console.log("Price (Normal, before inversion):", normalPrice);
-        
+
         // Set invertPrice to true
         oracle.setInvertPrice(true);
         assertTrue(oracle.invertPrice(), "invertPrice should be true after setting");
-        
+
         // Verify price is now inverted
         uint256 price = oracle.getPrice();
-        // forge-lint: disable-next-line unsafe-typecast
         uint256 normalizedEthUsdPrice = uint256(ethUsdPrice) * 1e10;
         uint256 expectedInvertedPrice = (1e18 * 1e18) / normalizedEthUsdPrice;
         console.log("Price (Inverted, after setting):", price);
@@ -478,4 +593,3 @@ contract HarborSingleFeedAndRateAggregator_v2Test is Test {
         assertEq(price, expectedInvertedPrice, "Price should be inverted after setting invertPrice");
     }
 }
-

@@ -5,9 +5,9 @@ import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/Aggr
 import {ReentrancyGuardTransientUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardTransientUpgradeable.sol";
 import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import {BaoOwnable} from "@bao/BaoOwnable.sol";
-import {IFxSAVE} from "src/interfaces/IFxSAVE.sol";
+import {IFxSAVE} from "@harbor-price/interfaces/IFxSAVE.sol";
 import {PriceOracle_v1} from "./PriceOracle_v1.sol";
-import {IWrappedPriceOracle} from "src/interfaces/IWrappedPriceOracle.sol";
+import {IWrappedPriceOracle} from "@harbor-price/interfaces/IWrappedPriceOracle.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 import {IWstETH} from "@bao/interfaces/IWstETH.sol";
 
@@ -15,7 +15,12 @@ import {IWstETH} from "@bao/interfaces/IWstETH.sol";
 /// @notice Generic oracle for double feed conversions (e.g., wstETH to BTC, EUR, XAU, MCAP)
 /// @dev Supports both wstETH and fxsave rate sources with configurable feed constraints
 /// @custom:oz-upgrades-unsafe-allow external-library-linking
-contract HarborDoubleFeedAndRateAggregator_v1 is IWrappedPriceOracle, UUPSUpgradeable, ReentrancyGuardTransientUpgradeable, BaoOwnable {
+contract HarborDoubleFeedAndRateAggregator_v1 is
+    IWrappedPriceOracle,
+    UUPSUpgradeable,
+    ReentrancyGuardTransientUpgradeable,
+    BaoOwnable
+{
     using PriceOracle_v1 for PriceOracle_v1.Feed;
 
     /*//////////////////////////////////////////////////////////////
@@ -163,7 +168,7 @@ contract HarborDoubleFeedAndRateAggregator_v1 is IWrappedPriceOracle, UUPSUpgrad
         __UUPSUpgradeable_init();
         __ReentrancyGuardTransient_init();
         _initializeOwner(owner_);
-        
+
         // Validate inputs
         if (bytes(oracleName_).length == 0) revert("Invalid oracle name");
         if (firstFeed_ == address(0)) revert InvalidPriceSource(firstFeed_);
@@ -173,13 +178,16 @@ contract HarborDoubleFeedAndRateAggregator_v1 is IWrappedPriceOracle, UUPSUpgrad
         if (secondFeedMaxAge_ == 0) revert InvalidMaxPriceAge(secondFeedMaxAge_);
         if (firstFeedMaxDev_ == 0 || firstFeedMaxDev_ > 1e18) revert InvalidMaxRelativeDeviation(firstFeedMaxDev_);
         if (secondFeedMaxDev_ == 0 || secondFeedMaxDev_ > 1e18) revert InvalidMaxRelativeDeviation(secondFeedMaxDev_);
-        
+
         // Validate rate source configuration
         if (rateSource_ == RateSource.WSTETH && WSTETH == address(0)) revert InvalidRateSource(WSTETH);
-        if (rateSource_ == RateSource.FXSAVE && address(FXSAVE) == address(0)) revert InvalidRateSource(address(FXSAVE));
-        if (rateSource_ == RateSource.SUSDE_CHAINLINK && SUSDE_USDE_FEED == address(0)) revert InvalidRateSource(SUSDE_USDE_FEED);
-        if (rateSource_ == RateSource.WSTETH_CHAINLINK && WSTETH_STETH_FEED == address(0)) revert InvalidRateSource(WSTETH_STETH_FEED);
-        
+        if (rateSource_ == RateSource.FXSAVE && address(FXSAVE) == address(0))
+            revert InvalidRateSource(address(FXSAVE));
+        if (rateSource_ == RateSource.SUSDE_CHAINLINK && SUSDE_USDE_FEED == address(0))
+            revert InvalidRateSource(SUSDE_USDE_FEED);
+        if (rateSource_ == RateSource.WSTETH_CHAINLINK && WSTETH_STETH_FEED == address(0))
+            revert InvalidRateSource(WSTETH_STETH_FEED);
+
         // Set storage variables
         oracleName = oracleName_;
         rateSource = rateSource_;
@@ -188,18 +196,18 @@ contract HarborDoubleFeedAndRateAggregator_v1 is IWrappedPriceOracle, UUPSUpgrad
         priceDivisor = priceDivisor_;
         firstFeedDecimals = AggregatorV3Interface(firstFeed_).decimals();
         secondFeedDecimals = AggregatorV3Interface(secondFeed_).decimals();
-        
+
         if (firstFeedDecimals == 0) revert InvalidFeedDecimals(firstFeed_);
         if (secondFeedDecimals == 0) revert InvalidFeedDecimals(secondFeed_);
-        
+
         // Store feed identifiers
         feedIdentifiers[1] = firstFeed_;
         feedIdentifiers[2] = secondFeed_;
-        
+
         // Set initial constraints
         _setFeedConstraints(firstFeed_, firstFeedMaxAge_, firstFeedMaxDev_);
         _setFeedConstraints(secondFeed_, secondFeedMaxAge_, secondFeedMaxDev_);
-        
+
         emit Initialized(owner_);
     }
 
@@ -262,7 +270,7 @@ contract HarborDoubleFeedAndRateAggregator_v1 is IWrappedPriceOracle, UUPSUpgrad
     function _getPrice() internal view returns (uint256 price) {
         if (feedConstraints[firstFeed].maxAnswerAge == 0) revert ConstraintsNotSet(firstFeed);
         if (feedConstraints[secondFeed].maxAnswerAge == 0) revert ConstraintsNotSet(secondFeed);
-        
+
         PriceOracle_v1.Feed memory firstFeedData = PriceOracle_v1.Feed({
             priceFeed: AggregatorV3Interface(firstFeed),
             decimals: firstFeedDecimals
@@ -273,10 +281,10 @@ contract HarborDoubleFeedAndRateAggregator_v1 is IWrappedPriceOracle, UUPSUpgrad
         });
 
         uint256 rate = _getRate();
-        
+
         uint256 firstFeedPrice = firstFeedData.latestAnswer(feedConstraints[firstFeed]);
         uint256 secondFeedPrice = secondFeedData.latestAnswer(feedConstraints[secondFeed]);
-        
+
         // forge-lint: disable-next-line(unsafe-typecast) // Safe: only checking for zero
         if (firstFeedPrice == 0) revert InvalidPrice(firstFeed, int256(firstFeedPrice));
         // forge-lint: disable-next-line(unsafe-typecast) // Safe: only checking for zero
@@ -284,14 +292,10 @@ contract HarborDoubleFeedAndRateAggregator_v1 is IWrappedPriceOracle, UUPSUpgrad
 
         // Convert rate to first price: (rate18 * firstFeedPrice18) / 1e18
         uint256 firstPrice = Math.mulDiv(rate, firstFeedPrice, 1e18);
-        
+
         // Convert first price to second feed currency with divisor normalization
-        uint256 finalPrice = Math.mulDiv(
-            Math.mulDiv(firstPrice, priceDivisor, 1),
-            1e18,
-            secondFeedPrice
-        );
-        
+        uint256 finalPrice = Math.mulDiv(Math.mulDiv(firstPrice, priceDivisor, 1), 1e18, secondFeedPrice);
+
         return finalPrice;
     }
 
@@ -313,14 +317,14 @@ contract HarborDoubleFeedAndRateAggregator_v1 is IWrappedPriceOracle, UUPSUpgrad
             AggregatorV3Interface feed = AggregatorV3Interface(SUSDE_USDE_FEED);
             uint8 feedDecimals = feed.decimals();
             (, int256 answer, , uint256 updatedAt, ) = feed.latestRoundData();
-            
+
             // Validate answer is positive
             if (answer <= 0) revert InvalidPrice(SUSDE_USDE_FEED, answer);
-            
+
             // Validate feed is not stale (uses configurable maxRateSourceAge)
             // slither-disable-next-line timestamp
             if (block.timestamp - updatedAt > maxRateSourceAge) revert StaleRateSource(SUSDE_USDE_FEED, updatedAt);
-            
+
             // Normalize to 18 decimals
             uint256 rate;
             if (feedDecimals <= 18) {
@@ -328,7 +332,7 @@ contract HarborDoubleFeedAndRateAggregator_v1 is IWrappedPriceOracle, UUPSUpgrad
             } else {
                 rate = uint256(answer) / (10 ** (feedDecimals - 18));
             }
-            
+
             // Validate rate is within sane bounds (sUSDE/USDE should be >= 0.9x)
             if (rate < 9e17) revert InvalidRate(rate);
             return rate;
@@ -337,14 +341,14 @@ contract HarborDoubleFeedAndRateAggregator_v1 is IWrappedPriceOracle, UUPSUpgrad
             AggregatorV3Interface feed = AggregatorV3Interface(WSTETH_STETH_FEED);
             uint8 feedDecimals = feed.decimals();
             (, int256 answer, , uint256 updatedAt, ) = feed.latestRoundData();
-            
+
             // Validate answer is positive
             if (answer <= 0) revert InvalidPrice(WSTETH_STETH_FEED, answer);
-            
+
             // Validate feed is not stale (uses configurable maxRateSourceAge)
             // slither-disable-next-line timestamp
             if (block.timestamp - updatedAt > maxRateSourceAge) revert StaleRateSource(WSTETH_STETH_FEED, updatedAt);
-            
+
             // Normalize to 18 decimals
             uint256 rate;
             if (feedDecimals <= 18) {
@@ -352,7 +356,7 @@ contract HarborDoubleFeedAndRateAggregator_v1 is IWrappedPriceOracle, UUPSUpgrad
             } else {
                 rate = uint256(answer) / (10 ** (feedDecimals - 18));
             }
-            
+
             // Validate rate is within sane bounds (wstETH/stETH should be between 1.0 and 2.0)
             if (rate < 1e18 || rate > 2e18) revert InvalidRate(rate);
             return rate;
@@ -431,14 +435,14 @@ contract HarborDoubleFeedAndRateAggregator_v1 is IWrappedPriceOracle, UUPSUpgrad
         if (feed != firstFeed && feed != secondFeed) revert InvalidFeedIdentifier(0);
         if (maxAge == 0) revert InvalidMaxPriceAge(maxAge);
         if (maxDev == 0 || maxDev > 1e18) revert InvalidMaxRelativeDeviation(maxDev);
-        
+
         feedConstraints[feed] = PriceOracle_v1.Constraints({
             maxAnswerAge: maxAge,
             maxPercentageDeviation: maxDev,
             maxAbsoluteDeviation: type(uint256).max,
             maxTrendReversalDeviation: type(uint256).max
         });
-        
+
         emit ConstraintsUpdated(feed, maxAge, maxDev);
     }
 }

@@ -1,0 +1,147 @@
+#!/usr/bin/env bash
+#
+# Deploy Harbor Price Oracles
+#
+# Usage: script/deploy-oracles --salt SALT --network NETWORK [OPTIONS]
+#
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+cd "$PROJECT_ROOT"
+
+usage() {
+  cat <<'USAGE'
+Usage: script/deploy-oracles --salt SALT --network NETWORK [OPTIONS]
+
+Required:
+  --salt SALT           Deployment salt (e.g. test2, oracles_v1)
+  --network NETWORK     Network name (must exist in foundry.toml rpc_endpoints)
+
+Options:
+  --account NAME    Use keystore account from ~/.foundry/keystores (for non-local networks)
+  -v                Increase verbosity
+  -h, --help        Show this help
+
+Wallet:
+  For 'local' network: uses first Anvil account (0xac0974...)
+  For other networks:  requires --account NAME (keystore in ~/.foundry/keystores)
+                       Create with: cast wallet import <name> --interactive
+
+Examples:
+  script/deploy-oracles --salt oracles_v1 --network local
+  script/deploy-oracles --salt oracles_v1 --network mainnet --account deployer
+USAGE
+}
+
+# Defaults
+SALT=""
+NETWORK=""
+VERBOSITY=""
+# Wallet: for local use anvil private key, for other networks use --account
+ANVIL_PRIVATE_KEY="0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
+ACCOUNT=""
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --account)
+      ACCOUNT="$2"
+      shift 2
+      ;;
+    --salt)
+      SALT="$2"
+      shift 2
+      ;;
+    --network)
+      NETWORK="$2"
+      shift 2
+      ;;
+    -v)
+      VERBOSITY="${VERBOSITY:--}v"
+      shift
+      ;;
+    -v*)
+      VERBOSITY="$1"
+      shift
+      ;;
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    *)
+      echo "Error: Unknown argument: $1" >&2
+      usage
+      exit 1
+      ;;
+  esac
+done
+
+# Validate required arguments
+if [[ -z "$SALT" ]]; then
+  echo "Error: --salt is required" >&2
+  usage
+  exit 1
+fi
+
+if [[ -z "$NETWORK" ]]; then
+  echo "Error: --network is required" >&2
+  usage
+  exit 1
+fi
+
+# For local network, can't verify; for others, verify by default
+if [[ "$NETWORK" == "local" ]]; then
+  VERIFY=""
+  if [[ -n "$ACCOUNT" ]]; then
+    WALLET_ARGS="--account $ACCOUNT"
+  else
+    WALLET_ARGS="--private-key $ANVIL_PRIVATE_KEY"
+  fi
+else
+  VERIFY="--verify"
+  if [[ -z "$ACCOUNT" ]]; then
+    echo "Error: --account is required for non-local networks" >&2
+    exit 1
+  fi
+  WALLET_ARGS="--account $ACCOUNT"
+fi
+
+echo "Salt: $SALT"
+echo "Network: $NETWORK"
+echo "Wallet args: $WALLET_ARGS"
+
+# ============================================================================
+# Run the deployment script
+# ============================================================================
+
+run_forge() {
+  local script_contract="$1"
+  local sig="$2"
+  shift 2
+  echo "Running: forge script script/Deploy.s.sol:$script_contract --sig \"$sig\" $* --rpc-url \"$NETWORK\" --broadcast --slow $VERIFY $WALLET_ARGS $VERBOSITY"
+
+  FORGE_OUTPUT=$(forge script "script/Deploy.s.sol:$script_contract" \
+    --sig "$sig" "$@" \
+    --rpc-url "$NETWORK" \
+    --broadcast --slow $VERIFY \
+    $WALLET_ARGS \
+    $VERBOSITY 2>&1) && FORGE_EXIT=0 || FORGE_EXIT=$?
+
+  echo "$FORGE_OUTPUT"
+
+  if [[ $FORGE_EXIT -ne 0 ]]; then
+    if SELECTOR=$(echo "$FORGE_OUTPUT" | grep -oE 'custom error 0x[a-fA-F0-9]{8}' | grep -oE '0x[a-fA-F0-9]{8}' | head -1); then
+      cast decode-error "$SELECTOR" 2>/dev/null || true
+    fi
+    exit 1
+  fi
+}
+
+echo ""
+echo "=== Deploying Price Oracles ==="
+run_forge DeployPriceOracles "run(string,string)" "$NETWORK" "$SALT"
+
+echo ""
+echo "=== Deployment complete ==="

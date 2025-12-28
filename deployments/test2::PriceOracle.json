@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "owner": "0x9bABfC1A1952a6ed2caC1922BFfE80c0506364a2",
+  "prefix": "test3",
+  "implementations": {
+    "HarborSingleFeedAndRateAggregator_v2": "0x3860ae3Df9Fa0Bb56fbdD1c4A6e30bEAa497E0E1",
+    "HarborDoubleFeedAndRateAggregator_v2": "0xaC669B64c85F89150f9C0a379dF731E79218C3C5"
+  },
+  "feeds": {
+    "USDC_USD_FEED": "0x8fFfFfd4AfB6115b954Bd326cbe7B4BA576818f6",
+    "ETH_USD_FEED": "0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419",
+    "BTC_USD_FEED": "0xF4030086522a5bEEa4988F8cA5B36dbC97BeE88c",
+    "EUR_USD_FEED": "0xb49f677943BC038e9857d61E7d053CaA2C1734C1",
+    "XAU_USD_FEED": "0x214eD9Da11D2fbe465a6fc601a91E62EbEc1a0D6",
+    "MCAP_USD_FEED": "0xEC8761a0A73c34329CA5B1D3Dc7eD07F30e836e2",
+    "STETH_USD_FEED": "0xCfE54B5cD566aB89272946F602D76Ea879CAb4a8",
+    "STETH_ETH_FEED": "0x86392dC19c0b719886221c78AB11eb8Cf5c52812"
+  },
+  "treasury": "0x9bABfC1A1952a6ed2caC1922BFfE80c0506364a2",
+  "contracts": {
+    "fxUSD-ETH": {
+      "implementation": {
+        "type": "HarborSingleFeedAndRateAggregator_v2"
+      },
+      "collateral": "fxUSD",
+      "peggedTicker": "ETH",
+      "rateSource": "wstETH",
+      "firstFeed": "feeds.ETH_USD_FEED",
+      "priceDivisor": 1,
+      "firstFeedMaxAge": 604800,
+      "firstFeedMaxDev": 5e16,
+      "invertPrice": false
+    },
+    "double": {
+      "implementation": {
+        "address": "",
+        "type": "implementations.HarborDoubleFeedAndRateAggregator_v2"
+      },
+      "collateral": "fxUSD",
+      "peggedTicker": "ETH",
+      "rateSource": "wstETH",
+      "firstFeed": "feeds.ETH_USD_FEED",
+      "secondFeed": "ETH-USD",
+      "priceDivisor": 1,
+      "firstFeedMaxAge": 604800,
+      "firstFeedMaxDev": 5e16,
+      "secondFeedMaxAge": 604800,
+      "secondFeedMaxDev": 5e16,
+      "invertPrice": false
+    }
+  }
+}

@@ -1,0 +1,80 @@
+[lsp]
+compilation_delay = 0.5
+
+[compiler.solc.optimizer]
+enabled = false # unset = let the compiler decide
+# runs = 200
+
+[compiler.solc]
+# Exclude paths define locations of Solidity files that should not be compiled unless imported from another non-excluded file.
+exclude_paths = ["node_modules", "venv", "lib", "doc"]
+# include paths are for import resolution
+remappings = [
+  # foundry
+  "ds-test/=lib/forge-std/lib/ds-test/src/",
+  "forge-std/=lib/forge-std/src/",
+  # openzeppelin
+  "@openzeppelin/contracts/=lib/openzeppelin-contracts-upgradeable/lib/openzeppelin-contracts/contracts/",
+  "@openzeppelin/contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts/",
+  "openzeppelin-foundry-upgrades/=lib/openzeppelin-foundry-upgrades/src/",
+  "solidity-stringutils/=lib/openzeppelin-foundry-upgrades/lib/solidity-stringutils/",
+  # solady
+  "@solady/=lib/solady/src/",
+  # chainlink
+  "@chainlink/contracts/=lib/chainlink-brownie-contracts/contracts/src/v0.8/",
+  # bao audited code
+  "@bao/=lib/bao-base/src/",
+  # bao latest
+  "@bao-test/=lib/bao-base/test/",
+  "@bao-script/=lib/bao-base/script/",
+  # bao-factory is a transitive dependency via bao-base
+  "@bao-factory/=lib/bao-base/lib/bao-factory/src/",
+  "@bao-factory-test/=lib/bao-base/lib/bao-factory/test/",
+  # harbor
+  "@harbor/=src/",
+  "@harbor-script/=script/",
+  "@harbor-test/=test/",
+  # harbor price aggregators
+  "@harbor-price/=src/",
+]
+
+include_paths = []
+
+[lsp.code_lens]
+enable = true
+
+[lsp.detectors]
+enable = false
+
+[detectors]
+# ignore_paths = ["test"]
+# exclude_paths = ["node_modules", "lib", "script"]
+only = []
+#exclude = [
+#  "abi-encode-with-signature",
+#  "axelar-proxy-contract-id",
+#  "balance-relied-on",
+#  "calldata-tuple-reencoding-head-overflow-bug",
+#  "call-options-not-called",
+#  "empty-byte-array-copy-bug",
+#  "msg-value-nonpayable-function",
+#  "unused-contract",
+#  "unchecked-return-value"
+#]
+
+[printers]
+only = []
+#exclude = [
+#   "control-flow-graph",
+#   "imports-graph",
+#   "inheritance-graph",
+#   "inheritance-tree",
+#   "lsp-control-flow-graph",
+#   "lsp-inheritance-graph",
+#   "lsp-linearized-inheritance-graph",
+#   "lsp-selectors",
+#   "modifiers",
+#   "state-changes",
+#   "storage-layout",
+#   "tokens",
+#]
