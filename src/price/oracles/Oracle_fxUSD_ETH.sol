@@ -7,10 +7,10 @@ import {IWrappedPriceOracle} from "@harbor-price/interfaces/IWrappedPriceOracle.
 import {HarborPriceAggregator_v3} from "@harbor-price/price/HarborPriceAggregator_v3.sol";
 import {FxSaveRateLib} from "@harbor-price/price/rates/FxSaveRateLib.sol";
 import {SingleFeedPriceLib} from "@harbor-price/price/prices/SingleFeedPriceLib.sol";
-import {PriceOracle_v1} from "@harbor-price/price/PriceOracle_v1.sol";
 
 /// @notice fxUSD/ETH oracle (rate: fxSAVE, price: inverted ETH/USD).
 /// @dev This is the formula contract; wiring (feeds/addresses) is provided via constructor.
+/// @custom:oz-upgrades-unsafe-allow state-variable-immutable constructor
 contract Oracle_fxUSD_ETH is HarborPriceAggregator_v3 {
     using FxSaveRateLib for IFxSAVE;
 
@@ -25,16 +25,11 @@ contract Oracle_fxUSD_ETH is HarborPriceAggregator_v3 {
     uint256 public immutable PRICE_DIVISOR;
     bool public immutable INVERT_PRICE;
 
-    uint64 public immutable MAX_ANSWER_AGE;
-    uint256 public immutable MAX_PERCENT_DEVIATION;
-
     constructor(
         address fxsave_,
         address priceFeed_,
         uint256 priceDivisor_,
-        bool invertPrice_,
-        uint64 maxAnswerAge_,
-        uint256 maxPercentDeviation_
+        bool invertPrice_
     ) {
         if (fxsave_ == address(0)) revert InvalidAddress(fxsave_);
         if (priceFeed_ == address(0)) revert InvalidAddress(priceFeed_);
@@ -47,9 +42,6 @@ contract Oracle_fxUSD_ETH is HarborPriceAggregator_v3 {
         PRICE_FEED_DECIMALS = PRICE_FEED.decimals();
         PRICE_DIVISOR = priceDivisor_;
         INVERT_PRICE = invertPrice_;
-
-        MAX_ANSWER_AGE = maxAnswerAge_;
-        MAX_PERCENT_DEVIATION = maxPercentDeviation_;
     }
 
     function base() external view returns (address) {
@@ -75,12 +67,6 @@ contract Oracle_fxUSD_ETH is HarborPriceAggregator_v3 {
         uint256 price = SingleFeedPriceLib.getPrice(
             PRICE_FEED,
             PRICE_FEED_DECIMALS,
-            PriceOracle_v1.Constraints({
-                maxAnswerAge: MAX_ANSWER_AGE,
-                maxPercentageDeviation: MAX_PERCENT_DEVIATION,
-                maxAbsoluteDeviation: type(uint256).max,
-                maxTrendReversalDeviation: type(uint256).max
-            }),
             PRICE_DIVISOR,
             INVERT_PRICE
         );

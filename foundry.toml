@@ -69,14 +69,6 @@ severity = ["gas"]
 [profile.novyper]
 skip = ["**/*.vy"]
 
-[vyper]
-path = ".venv/bin/vyper"
-# version = "0.3.10"
-# evm_version = "shanghai" # or "london", "cancun" depending on your target
-optimize = "gas"
-# optimize_runs = 700
-# via_ir = false           # you can enable this later if needed
-
 
 [etherscan]
 mainnet = { key = "${ETHERSCAN_KEY}" }

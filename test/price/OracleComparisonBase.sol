@@ -158,8 +158,8 @@ contract OracleComparisonBase is BaoTest {
     }
 
     function _deployV3(address impl) internal returns (IWrappedPriceOracle) {
-        bytes memory initData = abi.encodeCall(HarborPriceAggregator_v3.initialize, (address(this)));
-        ERC1967Proxy proxy = new ERC1967Proxy(impl, initData);
+        // BaoFixedOwnable has no initialize - owner is set via constructor immutables
+        ERC1967Proxy proxy = new ERC1967Proxy(impl, "");
         return IWrappedPriceOracle(address(proxy));
     }
 

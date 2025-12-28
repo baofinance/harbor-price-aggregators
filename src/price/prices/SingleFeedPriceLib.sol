@@ -3,20 +3,16 @@ pragma solidity 0.8.30;
 
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
-import {PriceOracle_v1} from "../PriceOracle_v1.sol";
+import {ChainlinkFeedLib} from "../feeds/ChainlinkFeedLib.sol";
 
 library SingleFeedPriceLib {
-    using PriceOracle_v1 for PriceOracle_v1.Feed;
-
     function getPrice(
         AggregatorV3Interface feed,
         uint8 feedDecimals,
-        PriceOracle_v1.Constraints memory constraints,
         uint256 divisor,
         bool invert
     ) internal view returns (uint256) {
-        PriceOracle_v1.Feed memory feedData = PriceOracle_v1.Feed({priceFeed: feed, decimals: feedDecimals});
-        uint256 feedPrice = feedData.latestAnswer(constraints);
+        uint256 feedPrice = ChainlinkFeedLib.latestAnswerNormalized(feed, feedDecimals);
         return computeFromValidatedFeedPrice(feedPrice, divisor, invert);
     }
 

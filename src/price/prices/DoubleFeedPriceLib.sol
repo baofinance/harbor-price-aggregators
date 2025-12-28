@@ -3,26 +3,19 @@ pragma solidity 0.8.30;
 
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
-import {PriceOracle_v1} from "../PriceOracle_v1.sol";
+import {ChainlinkFeedLib} from "../feeds/ChainlinkFeedLib.sol";
 
 library DoubleFeedPriceLib {
-    using PriceOracle_v1 for PriceOracle_v1.Feed;
-
     function getPrice(
         AggregatorV3Interface firstFeed,
         uint8 firstDecimals,
-        PriceOracle_v1.Constraints memory firstConstraints,
         AggregatorV3Interface secondFeed,
         uint8 secondDecimals,
-        PriceOracle_v1.Constraints memory secondConstraints,
         uint256 divisor,
         bool invert
     ) internal view returns (uint256) {
-        PriceOracle_v1.Feed memory firstFeedData = PriceOracle_v1.Feed({priceFeed: firstFeed, decimals: firstDecimals});
-        PriceOracle_v1.Feed memory secondFeedData = PriceOracle_v1.Feed({priceFeed: secondFeed, decimals: secondDecimals});
-
-        uint256 firstFeedPrice = firstFeedData.latestAnswer(firstConstraints);
-        uint256 secondFeedPrice = secondFeedData.latestAnswer(secondConstraints);
+        uint256 firstFeedPrice = ChainlinkFeedLib.latestAnswerNormalized(firstFeed, firstDecimals);
+        uint256 secondFeedPrice = ChainlinkFeedLib.latestAnswerNormalized(secondFeed, secondDecimals);
 
         if (invert) {
             // Invert: Convert from second feed to first feed

@@ -4,6 +4,7 @@ pragma solidity 0.8.30;
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
 import {SignedMath} from "@openzeppelin/contracts/utils/math/SignedMath.sol";
 import {IPriceOracleErrors} from "@harbor-price/interfaces/IPriceOracleErrors.sol";
+import {ChainlinkFeedLib} from "./feeds/ChainlinkFeedLib.sol";
 
 /// @title PriceOracle_v1
 /// @notice Library for validating Chainlink price feed data.
@@ -39,7 +40,7 @@ library PriceOracle_v1 {
         (uint80 roundId, int256 answer /* uint256 startedAt*/, , uint256 updatedAt /*uint256 answeredInRound*/, ) = feed
             .priceFeed
             .latestRoundData();
-        answer = _normaliseTo18(answer, feed.decimals);
+        answer = ChainlinkFeedLib.normaliseTo18(answer, feed.decimals);
 
         // Basic validation
         // updatedAt == 0 means the feed has never answered and so the answer is invalid
@@ -64,7 +65,7 @@ library PriceOracle_v1 {
         if (prevRoundId > 0) {
             // slither-disable-next-line unused-return // just get the data needed for the check
             (, int256 prevAnswer, , uint256 prevUpdatedAt, ) = feed.priceFeed.getRoundData(prevRoundId);
-            prevAnswer = _normaliseTo18(prevAnswer, feed.decimals);
+            prevAnswer = ChainlinkFeedLib.normaliseTo18(prevAnswer, feed.decimals);
 
             // Debug: log previous normalized answer and timestamp
 
@@ -139,16 +140,4 @@ library PriceOracle_v1 {
         }
     }
 
-    // Normalize a price to 18 decimals for consistent constraint checking
-    function _normaliseTo18(int256 value, uint8 decimals) private pure returns (int256 normalisedValue) {
-        if (decimals == 18) {
-            normalisedValue = value;
-        } else if (decimals < 18) {
-            // Scale up - not lossy
-            normalisedValue = value * int256(10 ** (18 - decimals));
-        } else {
-            // Scale down (lossy for >18 decimals, but Chainlink never does this)
-            normalisedValue = value / int256(10 ** (decimals - 18));
-        }
-    }
 }

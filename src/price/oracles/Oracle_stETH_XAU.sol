@@ -7,10 +7,10 @@ import {IWrappedPriceOracle} from "@harbor-price/interfaces/IWrappedPriceOracle.
 import {IWstETH} from "@bao/interfaces/IWstETH.sol";
 import {WstETHRateLib} from "@harbor-price/price/rates/WstETHRateLib.sol";
 import {DoubleFeedPriceLib} from "@harbor-price/price/prices/DoubleFeedPriceLib.sol";
-import {PriceOracle_v1} from "@harbor-price/price/PriceOracle_v1.sol";
 
 /// @notice stETH/XAU oracle (rate: wstETH, price: (ETH/USD)/(XAU/USD)).
 /// @dev This is the formula contract; wiring (feeds/addresses) is provided via constructor.
+/// @custom:oz-upgrades-unsafe-allow state-variable-immutable constructor
 contract Oracle_stETH_XAU is HarborPriceAggregator_v3 {
     using WstETHRateLib for IWstETH;
 
@@ -28,22 +28,13 @@ contract Oracle_stETH_XAU is HarborPriceAggregator_v3 {
     uint256 public immutable PRICE_DIVISOR;
     bool public immutable INVERT_PRICE;
 
-    uint64 public immutable FIRST_MAX_ANSWER_AGE;
-    uint256 public immutable FIRST_MAX_PERCENT_DEVIATION;
-    uint64 public immutable SECOND_MAX_ANSWER_AGE;
-    uint256 public immutable SECOND_MAX_PERCENT_DEVIATION;
-
     constructor(
         address steth_,
         address wsteth_,
         address firstFeed_,
         address secondFeed_,
         uint256 priceDivisor_,
-        bool invertPrice_,
-        uint64 firstMaxAnswerAge_,
-        uint256 firstMaxPercentDeviation_,
-        uint64 secondMaxAnswerAge_,
-        uint256 secondMaxPercentDeviation_
+        bool invertPrice_
     ) {
         if (steth_ == address(0)) revert InvalidAddress(steth_);
         if (wsteth_ == address(0)) revert InvalidAddress(wsteth_);
@@ -61,11 +52,6 @@ contract Oracle_stETH_XAU is HarborPriceAggregator_v3 {
 
         PRICE_DIVISOR = priceDivisor_;
         INVERT_PRICE = invertPrice_;
-
-        FIRST_MAX_ANSWER_AGE = firstMaxAnswerAge_;
-        FIRST_MAX_PERCENT_DEVIATION = firstMaxPercentDeviation_;
-        SECOND_MAX_ANSWER_AGE = secondMaxAnswerAge_;
-        SECOND_MAX_PERCENT_DEVIATION = secondMaxPercentDeviation_;
     }
 
     function base() external view returns (address) {
@@ -91,20 +77,8 @@ contract Oracle_stETH_XAU is HarborPriceAggregator_v3 {
         uint256 price = DoubleFeedPriceLib.getPrice(
             FIRST_FEED,
             FIRST_FEED_DECIMALS,
-            PriceOracle_v1.Constraints({
-                maxAnswerAge: FIRST_MAX_ANSWER_AGE,
-                maxPercentageDeviation: FIRST_MAX_PERCENT_DEVIATION,
-                maxAbsoluteDeviation: type(uint256).max,
-                maxTrendReversalDeviation: type(uint256).max
-            }),
             SECOND_FEED,
             SECOND_FEED_DECIMALS,
-            PriceOracle_v1.Constraints({
-                maxAnswerAge: SECOND_MAX_ANSWER_AGE,
-                maxPercentageDeviation: SECOND_MAX_PERCENT_DEVIATION,
-                maxAbsoluteDeviation: type(uint256).max,
-                maxTrendReversalDeviation: type(uint256).max
-            }),
             PRICE_DIVISOR,
             INVERT_PRICE
         );

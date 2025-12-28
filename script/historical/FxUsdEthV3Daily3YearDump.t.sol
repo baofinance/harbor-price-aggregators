@@ -228,13 +228,11 @@ contract FxUsdEthV3Daily3YearDump is Test {
             MainnetOracleAddresses.FXSAVE,
             MainnetOracleAddresses.ETH_USD_FEED,
             1,
-            true,
-            MainnetOracleAddresses.MAX_AGE,
-            MainnetOracleAddresses.MAX_DEV
+            true
         );
 
-        bytes memory initData = abi.encodeCall(HarborPriceAggregator_v3.initialize, (address(this)));
-        ERC1967Proxy proxy = new ERC1967Proxy(address(impl), initData);
+        // BaoFixedOwnable has no initialize - owner is set via constructor immutables
+        ERC1967Proxy proxy = new ERC1967Proxy(address(impl), "");
         IWrappedPriceOracle oracle = IWrappedPriceOracle(address(proxy));
 
         string memory filename = "results/FXUSD_ETH_v3_daily_3y.csv";
