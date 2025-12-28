@@ -12,7 +12,7 @@ contract Oracle_stETH_EUR_mainnet is Oracle_stETH_EUR {
         Oracle_stETH_EUR(
             MainnetOracleAddresses.STETH,
             MainnetOracleAddresses.WSTETH,
-            MainnetOracleAddresses.ETH_USD_FEED,
+            MainnetOracleAddresses.STETH_USD_FEED,
             MainnetOracleAddresses.EUR_USD_FEED,
             1,
             false

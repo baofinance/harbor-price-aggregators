@@ -12,7 +12,7 @@ contract Oracle_stETH_XAU_mainnet is Oracle_stETH_XAU {
         Oracle_stETH_XAU(
             MainnetOracleAddresses.STETH,
             MainnetOracleAddresses.WSTETH,
-            MainnetOracleAddresses.ETH_USD_FEED,
+            MainnetOracleAddresses.STETH_USD_FEED,
             MainnetOracleAddresses.XAU_USD_FEED,
             1,
             false

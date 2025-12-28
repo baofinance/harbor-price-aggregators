@@ -12,7 +12,7 @@ contract Oracle_stETH_MCAP_mainnet is Oracle_stETH_MCAP {
         Oracle_stETH_MCAP(
             MainnetOracleAddresses.STETH,
             MainnetOracleAddresses.WSTETH,
-            MainnetOracleAddresses.ETH_USD_FEED,
+            MainnetOracleAddresses.STETH_USD_FEED,
             MainnetOracleAddresses.MCAP_USD_FEED,
             1e12,
             false
