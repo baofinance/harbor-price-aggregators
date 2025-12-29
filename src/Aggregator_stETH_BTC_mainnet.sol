@@ -15,7 +15,9 @@ contract Aggregator_stETH_BTC_mainnet is Aggregator_stETH_BTC {
             MainnetRateSources.STETH,
             MainnetRateSources.WSTETH,
             STETH_USD.FEED,
+            STETH_USD.HEARTBEAT,
             BTC_USD.FEED,
+            BTC_USD.HEARTBEAT,
             1,
             false
         )

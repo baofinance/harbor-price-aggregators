@@ -9,10 +9,11 @@ library SingleFeedPriceLib {
     function getPrice(
         AggregatorV3Interface feed,
         uint8 feedDecimals,
+        uint256 heartbeat,
         uint256 divisor,
         bool invert
     ) internal view returns (uint256) {
-        uint256 feedPrice = ChainlinkFeedLib.latestAnswerNormalized(feed, feedDecimals);
+        uint256 feedPrice = ChainlinkFeedLib.latestAnswerNormalized(feed, feedDecimals, heartbeat);
         return computeFromValidatedFeedPrice(feedPrice, divisor, invert);
     }
 

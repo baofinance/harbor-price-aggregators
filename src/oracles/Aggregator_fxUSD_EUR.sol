@@ -21,10 +21,11 @@ contract Aggregator_fxUSD_EUR is HarborAggregator_v3 {
 
     AggregatorV3Interface public immutable PRICE_FEED;
     uint8 public immutable PRICE_FEED_DECIMALS;
+    uint256 public immutable PRICE_FEED_HEARTBEAT;
     uint256 public immutable PRICE_DIVISOR;
     bool public immutable INVERT_PRICE;
 
-    constructor(address fxsave_, address priceFeed_, uint256 priceDivisor_, bool invertPrice_) {
+    constructor(address fxsave_, address priceFeed_, uint256 priceHeartbeat_, uint256 priceDivisor_, bool invertPrice_) {
         if (fxsave_ == address(0)) revert InvalidAddress(fxsave_);
         if (priceFeed_ == address(0)) revert InvalidAddress(priceFeed_);
         if (priceDivisor_ == 0) revert InvalidDivisor(priceDivisor_);
@@ -33,6 +34,7 @@ contract Aggregator_fxUSD_EUR is HarborAggregator_v3 {
 
         PRICE_FEED = AggregatorV3Interface(priceFeed_);
         PRICE_FEED_DECIMALS = PRICE_FEED.decimals();
+        PRICE_FEED_HEARTBEAT = priceHeartbeat_;
         PRICE_DIVISOR = priceDivisor_;
         INVERT_PRICE = invertPrice_;
     }
@@ -53,7 +55,8 @@ contract Aggregator_fxUSD_EUR is HarborAggregator_v3 {
     function latestAnswer() external view override(IWrappedPriceOracle) returns (uint256, uint256, uint256, uint256) {
         uint256 rate = FXSAVE.getRate();
 
-        uint256 price = SingleFeedPriceLib.getPrice(PRICE_FEED, PRICE_FEED_DECIMALS, PRICE_DIVISOR, INVERT_PRICE);
+        uint256 price =
+            SingleFeedPriceLib.getPrice(PRICE_FEED, PRICE_FEED_DECIMALS, PRICE_FEED_HEARTBEAT, PRICE_DIVISOR, INVERT_PRICE);
 
         return (price, price, rate, rate);
     }

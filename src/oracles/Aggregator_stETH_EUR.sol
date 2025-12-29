@@ -21,8 +21,10 @@ contract Aggregator_stETH_EUR is HarborAggregator_v3 {
 
     AggregatorV3Interface public immutable FIRST_FEED;
     uint8 public immutable FIRST_FEED_DECIMALS;
+    uint256 public immutable FIRST_FEED_HEARTBEAT;
     AggregatorV3Interface public immutable SECOND_FEED;
     uint8 public immutable SECOND_FEED_DECIMALS;
+    uint256 public immutable SECOND_FEED_HEARTBEAT;
 
     uint256 public immutable PRICE_DIVISOR;
     bool public immutable INVERT_PRICE;
@@ -31,7 +33,9 @@ contract Aggregator_stETH_EUR is HarborAggregator_v3 {
         address steth_,
         address wsteth_,
         address firstFeed_,
+        uint256 firstHeartbeat_,
         address secondFeed_,
+        uint256 secondHeartbeat_,
         uint256 priceDivisor_,
         bool invertPrice_
     ) {
@@ -45,8 +49,10 @@ contract Aggregator_stETH_EUR is HarborAggregator_v3 {
 
         FIRST_FEED = AggregatorV3Interface(firstFeed_);
         FIRST_FEED_DECIMALS = FIRST_FEED.decimals();
+        FIRST_FEED_HEARTBEAT = firstHeartbeat_;
         SECOND_FEED = AggregatorV3Interface(secondFeed_);
         SECOND_FEED_DECIMALS = SECOND_FEED.decimals();
+        SECOND_FEED_HEARTBEAT = secondHeartbeat_;
 
         PRICE_DIVISOR = priceDivisor_;
         INVERT_PRICE = invertPrice_;
@@ -70,8 +76,10 @@ contract Aggregator_stETH_EUR is HarborAggregator_v3 {
         uint256 price = DoubleFeedPriceLib.getPrice(
             FIRST_FEED,
             FIRST_FEED_DECIMALS,
+            FIRST_FEED_HEARTBEAT,
             SECOND_FEED,
             SECOND_FEED_DECIMALS,
+            SECOND_FEED_HEARTBEAT,
             PRICE_DIVISOR,
             INVERT_PRICE
         );

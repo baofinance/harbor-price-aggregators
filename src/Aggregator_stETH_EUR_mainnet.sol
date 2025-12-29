@@ -15,7 +15,9 @@ contract Aggregator_stETH_EUR_mainnet is Aggregator_stETH_EUR {
             MainnetRateSources.STETH,
             MainnetRateSources.WSTETH,
             ETH_USD.FEED,
+            ETH_USD.HEARTBEAT,
             EUR_USD.FEED,
+            EUR_USD.HEARTBEAT,
             1,
             false
         )

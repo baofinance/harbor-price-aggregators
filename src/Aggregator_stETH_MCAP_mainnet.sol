@@ -15,7 +15,9 @@ contract Aggregator_stETH_MCAP_mainnet is Aggregator_stETH_MCAP {
             MainnetRateSources.STETH,
             MainnetRateSources.WSTETH,
             ETH_USD.FEED,
+            ETH_USD.HEARTBEAT,
             MCAP_USD.FEED,
+            MCAP_USD.HEARTBEAT,
             1e12,
             false
         )

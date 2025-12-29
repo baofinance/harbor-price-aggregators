@@ -9,5 +9,5 @@ import {Aggregator_fxUSD_MCAP} from "@harbor-price/oracles/Aggregator_fxUSD_MCAP
 /// @dev Hard-coded wiring for mainnet; deploy scripts select this bytecode by chain.
 /// @custom:oz-upgrades-unsafe-allow constructor
 contract Aggregator_fxUSD_MCAP_mainnet is Aggregator_fxUSD_MCAP {
-    constructor() Aggregator_fxUSD_MCAP(MainnetRateSources.FXSAVE, MCAP_USD.FEED, 1e12, true) {}
+    constructor() Aggregator_fxUSD_MCAP(MainnetRateSources.FXSAVE, MCAP_USD.FEED, MCAP_USD.HEARTBEAT, 1e12, true) {}
 }

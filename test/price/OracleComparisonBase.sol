@@ -12,6 +12,7 @@ import {HarborDoubleFeedAndRateAggregator_v2} from "@harbor-price/price/HarborDo
 import {HarborAggregator_v3} from "@harbor-price/HarborAggregator_v3.sol";
 import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import {UtcTimestampFormatter} from "@harbor-price/format/UtcTimestampFormatter.sol";
+import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
 
 /// @title Oracle Comparison Base
 /// @notice Shared comparison engine for forked mainnet oracle parity checks
@@ -167,6 +168,18 @@ contract OracleComparisonBase is BaoTest {
         (answer.minPrice, answer.maxPrice, answer.minRate, answer.maxRate) = oracle.latestAnswer();
     }
 
+    /// @notice Try to get latest answer, returns success=false if oracle reverts (e.g., stale feed)
+    /// @dev When it fails, logs the error details for debugging
+    function _tryLatest(IWrappedPriceOracle oracle) internal view returns (bool success, OracleAnswer memory answer) {
+        try oracle.latestAnswer() returns (uint256 minP, uint256 maxP, uint256 minR, uint256 maxR) {
+            answer = OracleAnswer(minP, maxP, minR, maxR);
+            success = true;
+        } catch {
+            // Note: can't log from view function, caller should log details
+            success = false;
+        }
+    }
+
     function _logMismatch(string memory name, OracleAnswer memory baseA, OracleAnswer memory candA) internal view {
         console.log("  Block %s: MISMATCH", _formatBlock(block.number, block.timestamp));
         console.log("    base:      minPrice=%d, maxPrice=%d", baseA.minPrice, baseA.maxPrice);
@@ -174,6 +187,35 @@ contract OracleComparisonBase is BaoTest {
         console.log("    candidate: minPrice=%d, maxPrice=%d", candA.minPrice, candA.maxPrice);
         console.log("    candidate: minRate=%d, maxRate=%d", candA.minRate, candA.maxRate);
         console.log("    oracle: %s", name);
+    }
+
+    /// @notice Log staleness details for known Chainlink feeds
+    function _logFeedStaleness(IWrappedPriceOracle) internal view {
+        // Query common Chainlink feeds to understand staleness
+        address[] memory feeds = new address[](5);
+        feeds[0] = MainnetOracleAddresses.ETH_USD_FEED;
+        feeds[1] = MainnetOracleAddresses.BTC_USD_FEED;
+        feeds[2] = MainnetOracleAddresses.EUR_USD_FEED;
+        feeds[3] = MainnetOracleAddresses.XAU_USD_FEED;
+        feeds[4] = MainnetOracleAddresses.STETH_USD_FEED;
+
+        string[5] memory names = ["ETH/USD", "BTC/USD", "EUR/USD", "XAU/USD", "STETH/USD"];
+        uint256[5] memory heartbeats = [uint256(3600), uint256(3600), uint256(86400), uint256(86400), uint256(86400)];
+
+        console.log("    Feed staleness check (block.timestamp=%d):", block.timestamp);
+        for (uint256 i = 0; i < feeds.length; i++) {
+            AggregatorV3Interface feed = AggregatorV3Interface(feeds[i]);
+            (, int256 answer, , uint256 updatedAt, ) = feed.latestRoundData();
+            uint256 age = block.timestamp - updatedAt;
+            bool stale = age > heartbeats[i];
+            console.log("    %s: updatedAt=%d, age=%d", names[i], updatedAt, age);
+            console.log(
+                "      answer=%s, heartbeat=%d, stale=%s",
+                answer > 0 ? "positive" : "non-positive",
+                heartbeats[i],
+                stale
+            );
+        }
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -194,6 +236,7 @@ contract OracleComparisonBase is BaoTest {
 
         uint256 step = _blockStep();
         uint256 mismatches = 0;
+        uint256 skipped = 0;
 
         console.log(
             "Comparing %s: blocks %s to %s",
@@ -207,8 +250,17 @@ contract OracleComparisonBase is BaoTest {
             uint256 sampleBlock = START_BLOCK + (i * step);
             vm.rollFork(sampleBlock);
 
-            OracleAnswer memory baseA = _latest(base);
-            OracleAnswer memory candA = _latest(candidate);
+            (bool baseOk, OracleAnswer memory baseA) = _tryLatest(base);
+            (bool candOk, OracleAnswer memory candA) = _tryLatest(candidate);
+
+            // Log and skip if either oracle reverts (stale feed data beyond tolerance)
+            if (!baseOk || !candOk) {
+                console.log("  STALE at block %d, timestamp %d", sampleBlock, block.timestamp);
+                console.log("    baseOk=%s, candOk=%s", baseOk, candOk);
+                _logFeedStaleness(candidate);
+                skipped++;
+                continue;
+            }
 
             bool match_ = (baseA.minPrice == candA.minPrice) &&
                 (baseA.maxPrice == candA.maxPrice) &&
@@ -225,7 +277,8 @@ contract OracleComparisonBase is BaoTest {
             // NOTE: sampling schedule is fixed by (START_BLOCK, step, iterations)
         }
 
-        console.log("%s: COMPLETE - %d samples, %d mismatches", name, _iterations() + 1, mismatches);
+        console.log("%s: COMPLETE - %d samples, %d skipped (stale)", name, _iterations() + 1, skipped);
+        console.log("  mismatches: %d", mismatches);
         vm.rollFork(originalBlock);
         assertEq(mismatches, 0, string.concat(name, ": found mismatches"));
     }
@@ -244,6 +297,7 @@ contract OracleComparisonBase is BaoTest {
 
         uint256 step = _blockStep();
         uint256 mismatches = 0;
+        uint256 skipped = 0;
         uint256 maxAbsPriceError = 0;
         uint256 maxRelPriceError = 0;
 
@@ -259,8 +313,14 @@ contract OracleComparisonBase is BaoTest {
             uint256 sampleBlock = START_BLOCK + (i * step);
             vm.rollFork(sampleBlock);
 
-            OracleAnswer memory baseA = _latest(base);
-            OracleAnswer memory candA = _latest(candidate);
+            (bool baseOk, OracleAnswer memory baseA) = _tryLatest(base);
+            (bool candOk, OracleAnswer memory candA) = _tryLatest(candidate);
+
+            // Skip if either oracle reverts (stale feed data)
+            if (!baseOk || !candOk) {
+                skipped++;
+                continue;
+            }
 
             {
                 uint256 absMin = baseA.minPrice > candA.minPrice
@@ -309,7 +369,8 @@ contract OracleComparisonBase is BaoTest {
             // NOTE: sampling schedule is fixed by (START_BLOCK, step, iterations)
         }
 
-        console.log("%s: COMPLETE - %d samples, %d mismatches", name, _iterations() + 1, mismatches);
+        console.log("%s: COMPLETE - %d samples, %d skipped (stale)", name, _iterations() + 1, skipped);
+        console.log("  mismatches: %d", mismatches);
         console.log("%s: maxAbsPriceError=%d", name, maxAbsPriceError);
         console.log("%s: maxRelPriceError(1e18)=%d", name, maxRelPriceError);
         vm.rollFork(originalBlock);

@@ -225,7 +225,8 @@ contract FxUsdEthV3Daily3YearDump is Test {
         vm.createSelectFork("mainnet", END_BLOCK);
 
         // Deploy a fresh v3 implementation + proxy (do not use already-deployed proxies).
-        Aggregator_fxUSD_ETH impl = new Aggregator_fxUSD_ETH(MainnetRateSources.FXSAVE, ETH_USD.FEED, 1, true);
+        Aggregator_fxUSD_ETH impl =
+            new Aggregator_fxUSD_ETH(MainnetRateSources.FXSAVE, ETH_USD.FEED, ETH_USD.HEARTBEAT, 1, true);
 
         // BaoFixedOwnable has no initialize - owner is set via constructor immutables
         ERC1967Proxy proxy = new ERC1967Proxy(address(impl), "");

@@ -9,5 +9,5 @@ import {Aggregator_fxUSD_EUR} from "@harbor-price/oracles/Aggregator_fxUSD_EUR.s
 /// @dev Hard-coded wiring for mainnet; deploy scripts select this bytecode by chain.
 /// @custom:oz-upgrades-unsafe-allow constructor
 contract Aggregator_fxUSD_EUR_mainnet is Aggregator_fxUSD_EUR {
-    constructor() Aggregator_fxUSD_EUR(MainnetRateSources.FXSAVE, EUR_USD.FEED, 1, true) {}
+    constructor() Aggregator_fxUSD_EUR(MainnetRateSources.FXSAVE, EUR_USD.FEED, EUR_USD.HEARTBEAT, 1, true) {}
 }
