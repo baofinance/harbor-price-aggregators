@@ -9,7 +9,7 @@ set -euo pipefail
 # - This script must be run from the project root (fails otherwise).
 #
 # Network selection:
-# - --network determines the contract name suffix (e.g., mainnet -> Oracle_*_mainnet.sol)
+# - --network determines the contract name suffix (e.g., mainnet -> Aggregator_*_mainnet.sol)
 # - --local overrides the RPC to use local anvil while keeping --network for contract naming
 
 usage() {
@@ -36,7 +36,7 @@ Options:
   --etherscan-api-key  Required for --verify / --verify-impl
 
 Contract resolution:
-  Deploys: src/Oracle_<base>_<quote>_<network>.sol:Oracle_<base>_<quote>_<network>
+  Deploys: src/Aggregator_<base>_<quote>_<network>.sol:Aggregator_<base>_<quote>_<network>
   Salt:    <salt-prefix>::<base>::<quote>
 
 State file:
