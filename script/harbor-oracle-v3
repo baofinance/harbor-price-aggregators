@@ -257,8 +257,12 @@ if [[ "$CHAIN_ID" != "$EXPECTED_CHAIN_ID" ]]; then
   exit 1
 fi
 
-# Set state file path
-STATE_FILE="deployment-state-v3-${NETWORK}.json"
+# Set state file path (suffix with -local when using local anvil)
+if [[ "$USE_LOCAL" == true ]]; then
+  STATE_FILE="deployment-state-v3-local.json"
+else
+  STATE_FILE="deployment-state-v3-${NETWORK}.json"
+fi
 
 DEPLOYER=""
 if [[ -n "$ACCOUNT_NAME" ]]; then
@@ -449,7 +453,7 @@ if [[ "$MODE" == "deploy" ]]; then
 fi
 echo ""
 
-salt_str="${SALT_PREFIX}::${BASE}::${QUOTE}"
+salt_str="${SALT_PREFIX}::${BASE}::${QUOTE}::wrappedPriceAggregator"
 salt_b32=$("$CAST" keccak "$("$CAST" from-utf8 "$salt_str")")
 
 predicted=$(predict_address "$salt_b32")
