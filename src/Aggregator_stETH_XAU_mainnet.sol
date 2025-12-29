@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.30;
 
-import {MainnetOracleAddresses} from "@harbor-price/price/MainnetOracleAddresses.sol";
+import {MainnetRateSources} from "@harbor-price/rates/mainnet/MainnetRateSources.sol";
+import {ETH_USD} from "@harbor-price/feeds/chainlink/mainnet/ETH_USD.sol";
+import {XAU_USD} from "@harbor-price/feeds/chainlink/mainnet/XAU_USD.sol";
 import {Aggregator_stETH_XAU} from "@harbor-price/oracles/Aggregator_stETH_XAU.sol";
 
 /// @notice Ethereum mainnet stETH/XAU oracle.
@@ -9,13 +11,6 @@ import {Aggregator_stETH_XAU} from "@harbor-price/oracles/Aggregator_stETH_XAU.s
 /// @custom:oz-upgrades-unsafe-allow constructor
 contract Aggregator_stETH_XAU_mainnet is Aggregator_stETH_XAU {
     constructor()
-        Aggregator_stETH_XAU(
-            MainnetOracleAddresses.STETH,
-            MainnetOracleAddresses.WSTETH,
-            MainnetOracleAddresses.ETH_USD_FEED,
-            MainnetOracleAddresses.XAU_USD_FEED,
-            1,
-            false
-        )
+        Aggregator_stETH_XAU(MainnetRateSources.STETH, MainnetRateSources.WSTETH, ETH_USD.FEED, XAU_USD.FEED, 1, false)
     {}
 }

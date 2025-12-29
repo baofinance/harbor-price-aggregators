@@ -4,7 +4,8 @@ pragma solidity 0.8.30;
 import "forge-std/Test.sol";
 import {IWrappedPriceOracle} from "@harbor-price/interfaces/IWrappedPriceOracle.sol";
 import {HarborAggregator_v3} from "@harbor-price/HarborAggregator_v3.sol";
-import {MainnetOracleAddresses} from "@harbor-price/price/MainnetOracleAddresses.sol";
+import {MainnetRateSources} from "@harbor-price/rates/mainnet/MainnetRateSources.sol";
+import {ETH_USD} from "@harbor-price/feeds/chainlink/mainnet/ETH_USD.sol";
 import {Aggregator_fxUSD_ETH} from "@harbor-price/oracles/Aggregator_fxUSD_ETH.sol";
 import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import {LatestAnswerErrorClassifier} from "./LatestAnswerErrorClassifier.sol";
@@ -224,12 +225,7 @@ contract FxUsdEthV3Daily3YearDump is Test {
         vm.createSelectFork("mainnet", END_BLOCK);
 
         // Deploy a fresh v3 implementation + proxy (do not use already-deployed proxies).
-        Aggregator_fxUSD_ETH impl = new Aggregator_fxUSD_ETH(
-            MainnetOracleAddresses.FXSAVE,
-            MainnetOracleAddresses.ETH_USD_FEED,
-            1,
-            true
-        );
+        Aggregator_fxUSD_ETH impl = new Aggregator_fxUSD_ETH(MainnetRateSources.FXSAVE, ETH_USD.FEED, 1, true);
 
         // BaoFixedOwnable has no initialize - owner is set via constructor immutables
         ERC1967Proxy proxy = new ERC1967Proxy(address(impl), "");

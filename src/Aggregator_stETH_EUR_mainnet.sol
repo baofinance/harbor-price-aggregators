@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.30;
 
-import {MainnetOracleAddresses} from "@harbor-price/price/MainnetOracleAddresses.sol";
+import {MainnetRateSources} from "@harbor-price/rates/mainnet/MainnetRateSources.sol";
+import {ETH_USD} from "@harbor-price/feeds/chainlink/mainnet/ETH_USD.sol";
+import {EUR_USD} from "@harbor-price/feeds/chainlink/mainnet/EUR_USD.sol";
 import {Aggregator_stETH_EUR} from "@harbor-price/oracles/Aggregator_stETH_EUR.sol";
 
 /// @notice Ethereum mainnet stETH/EUR oracle.
@@ -10,10 +12,10 @@ import {Aggregator_stETH_EUR} from "@harbor-price/oracles/Aggregator_stETH_EUR.s
 contract Aggregator_stETH_EUR_mainnet is Aggregator_stETH_EUR {
     constructor()
         Aggregator_stETH_EUR(
-            MainnetOracleAddresses.STETH,
-            MainnetOracleAddresses.WSTETH,
-            MainnetOracleAddresses.ETH_USD_FEED,
-            MainnetOracleAddresses.EUR_USD_FEED,
+            MainnetRateSources.STETH,
+            MainnetRateSources.WSTETH,
+            ETH_USD.FEED,
+            EUR_USD.FEED,
             1,
             false
         )

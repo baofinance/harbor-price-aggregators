@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.30;
 
-import {MainnetOracleAddresses} from "@harbor-price/price/MainnetOracleAddresses.sol";
+import {MainnetRateSources} from "@harbor-price/rates/mainnet/MainnetRateSources.sol";
+import {ETH_USD} from "@harbor-price/feeds/chainlink/mainnet/ETH_USD.sol";
+import {MCAP_USD} from "@harbor-price/feeds/chainlink/mainnet/MCAP_USD.sol";
 import {Aggregator_stETH_MCAP} from "@harbor-price/oracles/Aggregator_stETH_MCAP.sol";
 
 /// @notice Ethereum mainnet stETH/MCAP oracle.
@@ -10,10 +12,10 @@ import {Aggregator_stETH_MCAP} from "@harbor-price/oracles/Aggregator_stETH_MCAP
 contract Aggregator_stETH_MCAP_mainnet is Aggregator_stETH_MCAP {
     constructor()
         Aggregator_stETH_MCAP(
-            MainnetOracleAddresses.STETH,
-            MainnetOracleAddresses.WSTETH,
-            MainnetOracleAddresses.ETH_USD_FEED,
-            MainnetOracleAddresses.MCAP_USD_FEED,
+            MainnetRateSources.STETH,
+            MainnetRateSources.WSTETH,
+            ETH_USD.FEED,
+            MCAP_USD.FEED,
             1e12,
             false
         )
