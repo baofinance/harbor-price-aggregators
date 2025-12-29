@@ -3,7 +3,7 @@
 | script/deployment/PriceAggregatorsDeploymentJsonScript.sol | X   0% (0/85)     | X   0% (0/87)      | X   0% (0/20)   | X   0% (0/3)     |
 | script/historical/LatestAnswerErrorClassifier.sol          | X   0% (0/28)     | X   0% (0/34)      | X   0% (0/10)   | X   0% (0/4)     |
 | src/HarborAggregator_v3.sol                                | X   0% (0/9)      | X   0% (0/7)       | ✓ 100% (0/0)    | X   0% (0/5)     |
-| src/feeds/chainlink/ChainlinkFeedLib.sol                   | X  92% (12/13)    | X  93% (14/15)     | X  50% (3/6)    | ✓ 100% (2/2)     |
+| src/feeds/chainlink/ChainlinkFeedLib.sol                   | X  93% (13/14)    | X  94% (15/16)     | X  80% (4/5)    | ✓ 100% (2/2)     |
 | src/format/UtcTimestampFormatter.sol                       | ✓ 100% (40/40)    | X  98% (58/59)     | X   0% (0/1)    | ✓ 100% (1/1)     |
 | src/oracles/Aggregator_fxUSD_BTC.sol                       | X  70% (14/20)    | X  70% (14/20)     | X   0% (0/3)    | X  40% (2/5)     |
 | src/oracles/Aggregator_fxUSD_ETH.sol                       | X  70% (14/20)    | X  70% (14/20)     | X   0% (0/3)    | X  40% (2/5)     |
@@ -25,4 +25,4 @@
 | src/prices/SingleFeedPriceLib.sol                          | X  86% (6/7)      | X  75% (6/8)       | ✓ 100% (1/1)    | ✓ 100% (2/2)     |
 | src/rates/FxSaveRateLib.sol                                | X  88% (7/8)      | X  78% (7/9)       | X   0% (0/1)    | ✓ 100% (3/3)     |
 | src/rates/WstETHRateLib.sol                                | X  88% (7/8)      | X  82% (9/11)      | X   0% (0/1)    | ✓ 100% (3/3)     |
-| Total                                                      | X  54% (858/1600) | X  52% (1005/1944) | X   9% (34/395) | X  47% (128/270) |
+| Total                                                      | X  54% (859/1601) | X  52% (1006/1945) | X   9% (35/394) | X  47% (128/270) |
