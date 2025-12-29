@@ -9,7 +9,6 @@ import {DeployedAddresses} from "../DeployedAddresses.sol";
 import {MainnetOracleAddresses} from "@harbor-price/price/MainnetOracleAddresses.sol";
 import {HarborSingleFeedAndRateAggregator_v2} from "@harbor-price/price/HarborSingleFeedAndRateAggregator_v2.sol";
 import {HarborDoubleFeedAndRateAggregator_v2} from "@harbor-price/price/HarborDoubleFeedAndRateAggregator_v2.sol";
-import {HarborAggregator_v3} from "@harbor-price/HarborAggregator_v3.sol";
 import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import {UtcTimestampFormatter} from "@harbor-price/format/UtcTimestampFormatter.sol";
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
