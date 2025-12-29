@@ -8,5 +8,5 @@ import {Oracle_fxUSD_BTC} from "@harbor-price/price/oracles/Oracle_fxUSD_BTC.sol
 /// @dev Hard-coded wiring for mainnet; deploy scripts select this bytecode by chain.
 contract Oracle_fxUSD_BTC_mainnet is Oracle_fxUSD_BTC {
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor() Oracle_fxUSD_BTC(MainnetOracleAddresses.FXSAVE, MainnetOracleAddresses.BTC_USD_FEED, 1, true) {}
+    constructor() Oracle_fxUSD_BTC("fxUSD", MainnetOracleAddresses.FXSAVE, MainnetOracleAddresses.BTC_USD_FEED, 1, true) {}
 }

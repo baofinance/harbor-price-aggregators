@@ -10,7 +10,7 @@ import {Oracle_stETH_EUR} from "@harbor-price/price/oracles/Oracle_stETH_EUR.sol
 contract Oracle_stETH_EUR_mainnet is Oracle_stETH_EUR {
     constructor()
         Oracle_stETH_EUR(
-            MainnetOracleAddresses.STETH,
+            "stETH", // Base name
             MainnetOracleAddresses.WSTETH,
             MainnetOracleAddresses.STETH_USD_FEED,
             MainnetOracleAddresses.EUR_USD_FEED,

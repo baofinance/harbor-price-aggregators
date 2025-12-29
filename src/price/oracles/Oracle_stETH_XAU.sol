@@ -18,7 +18,7 @@ contract Oracle_stETH_XAU is HarborPriceAggregator_v3 {
     error InvalidDivisor(uint256 divisor);
 
     IWstETH public immutable WSTETH;
-    address public immutable BASE;
+    string public BASE_NAME;
 
     AggregatorV3Interface public immutable FIRST_FEED;
     uint8 public immutable FIRST_FEED_DECIMALS;
@@ -29,20 +29,19 @@ contract Oracle_stETH_XAU is HarborPriceAggregator_v3 {
     bool public immutable INVERT_PRICE;
 
     constructor(
-        address steth_,
+        string memory baseName_,
         address wsteth_,
         address firstFeed_,
         address secondFeed_,
         uint256 priceDivisor_,
         bool invertPrice_
     ) {
-        if (steth_ == address(0)) revert InvalidAddress(steth_);
         if (wsteth_ == address(0)) revert InvalidAddress(wsteth_);
         if (firstFeed_ == address(0)) revert InvalidAddress(firstFeed_);
         if (secondFeed_ == address(0)) revert InvalidAddress(secondFeed_);
         if (priceDivisor_ == 0) revert InvalidDivisor(priceDivisor_);
 
-        BASE = steth_;
+        BASE_NAME = baseName_;
         WSTETH = IWstETH(wsteth_);
 
         FIRST_FEED = AggregatorV3Interface(firstFeed_);
@@ -54,8 +53,8 @@ contract Oracle_stETH_XAU is HarborPriceAggregator_v3 {
         INVERT_PRICE = invertPrice_;
     }
 
-    function base() external view returns (address) {
-        return BASE;
+    function base() external view returns (string memory) {
+        return BASE_NAME;
     }
 
     function rateProvider() external view returns (address) {

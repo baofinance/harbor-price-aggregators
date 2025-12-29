@@ -10,8 +10,8 @@ import {Oracle_stETH_MSFT} from "@harbor-price/price/oracles/arbitrum/Oracle_stE
 contract Oracle_stETH_MSFT_arbitrum is Oracle_stETH_MSFT {
     constructor()
         Oracle_stETH_MSFT(
-            ArbitrumOracleAddresses.WSTETH, // Base token (wstETH - stETH does not exist as contract on Arbitrum) 
-            ArbitrumOracleAddresses.WSTETH_STETH_FEED, // Rate feed
+            "stETH", // Base name (wstETH) 
+            ArbitrumOracleAddresses.WSTETH_STETH_FEED, // // Rate feed (wstETH/stETH)
             ArbitrumOracleAddresses.STETH_USD_FEED, // First feed (stETH/USD)
             ArbitrumOracleAddresses.MSFT_USD_FEED, // Second feed (MSFT/USD)
             1,

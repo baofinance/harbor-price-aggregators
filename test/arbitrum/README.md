@@ -1,6 +1,6 @@
 # Arbitrum Oracle Tests
 
-Fork tests for Arbitrum oracle contracts.
+Fork tests for Arbitrum oracle contracts (stETH and USDE).
 
 ## Running Tests
 
@@ -19,8 +19,14 @@ forge test --match-path "test/arbitrum/*.t.sol" --fork-url ${ARBITRUM_RPC_URL} -
 To run a specific test:
 
 ```bash
-forge test --match-path "test/arbitrum/*.t.sol" --match-test "test_AllOracles_RateAndPrice" --fork-url $arbitrum -vvv
+# Run all stETH oracle tests
+forge test --match-path "test/arbitrum/ArbitrumOraclesFork.t.sol" --match-test "test_AllOracles_RateAndPrice" --fork-url $arbitrum -vvv
+
+# Run all USDE oracle tests
+forge test --match-path "test/arbitrum/ArbitrumSUSDEOraclesFork.t.sol" --match-test "test_AllOracles_RateAndPrice" --fork-url $arbitrum -vvv
 ```
+
+**Note:** Make sure to set `ARBITRUM_RPC_URL` in your `.env` file (see `.env.example` for reference).
 
 ## Test Output
 

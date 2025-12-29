@@ -10,7 +10,7 @@ import {Oracle_stETH_BTC} from "@harbor-price/price/oracles/Oracle_stETH_BTC.sol
 contract Oracle_stETH_BTC_mainnet is Oracle_stETH_BTC {
     constructor()
         Oracle_stETH_BTC(
-            MainnetOracleAddresses.STETH,
+            "stETH", // Base name
             MainnetOracleAddresses.WSTETH,
             MainnetOracleAddresses.STETH_USD_FEED,
             MainnetOracleAddresses.BTC_USD_FEED,

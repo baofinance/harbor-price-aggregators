@@ -10,8 +10,8 @@ import {Oracle_stETH_SPY} from "@harbor-price/price/oracles/arbitrum/Oracle_stET
 contract Oracle_stETH_SPY_arbitrum is Oracle_stETH_SPY {
     constructor()
         Oracle_stETH_SPY(
-            ArbitrumOracleAddresses.WSTETH, // Base token (wstETH - stETH does not exist as contract on Arbitrum) 
-            ArbitrumOracleAddresses.WSTETH_STETH_FEED, // Rate feed
+            "stETH", // Base name (wstETH) 
+            ArbitrumOracleAddresses.WSTETH_STETH_FEED, // Rate feed (wstETH/stETH)
             ArbitrumOracleAddresses.STETH_USD_FEED, // First feed (stETH/USD)
             ArbitrumOracleAddresses.SPY_USD_FEED, // Second feed (SPY/USD)
             1,

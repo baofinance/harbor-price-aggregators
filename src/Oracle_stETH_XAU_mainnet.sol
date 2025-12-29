@@ -10,7 +10,7 @@ import {Oracle_stETH_XAU} from "@harbor-price/price/oracles/Oracle_stETH_XAU.sol
 contract Oracle_stETH_XAU_mainnet is Oracle_stETH_XAU {
     constructor()
         Oracle_stETH_XAU(
-            MainnetOracleAddresses.STETH,
+            "stETH", // Base name
             MainnetOracleAddresses.WSTETH,
             MainnetOracleAddresses.STETH_USD_FEED,
             MainnetOracleAddresses.XAU_USD_FEED,

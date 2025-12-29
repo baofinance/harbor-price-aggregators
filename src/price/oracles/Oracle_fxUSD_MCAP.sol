@@ -18,14 +18,14 @@ contract Oracle_fxUSD_MCAP is HarborPriceAggregator_v3 {
     error InvalidDivisor(uint256 divisor);
 
     IFxSAVE public immutable FXSAVE;
-    address public immutable BASE;
+    string public BASE_NAME;
 
     AggregatorV3Interface public immutable PRICE_FEED;
     uint8 public immutable PRICE_FEED_DECIMALS;
     uint256 public immutable PRICE_DIVISOR;
     bool public immutable INVERT_PRICE;
 
-    constructor(
+    constructor(string memory baseName_,
         address fxsave_,
         address priceFeed_,
         uint256 priceDivisor_,
@@ -36,7 +36,7 @@ contract Oracle_fxUSD_MCAP is HarborPriceAggregator_v3 {
         if (priceDivisor_ == 0) revert InvalidDivisor(priceDivisor_);
 
         FXSAVE = IFxSAVE(fxsave_);
-        BASE = IFxSAVE(fxsave_).asset();
+        BASE_NAME = baseName_;
 
         PRICE_FEED = AggregatorV3Interface(priceFeed_);
         PRICE_FEED_DECIMALS = PRICE_FEED.decimals();
@@ -44,8 +44,8 @@ contract Oracle_fxUSD_MCAP is HarborPriceAggregator_v3 {
         INVERT_PRICE = invertPrice_;
     }
 
-    function base() external view returns (address) {
-        return BASE;
+    function base() external view returns (string memory) {
+        return BASE_NAME;
     }
 
     function rateProvider() external view returns (address) {

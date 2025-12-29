@@ -8,5 +8,5 @@ import {Oracle_fxUSD_XAU} from "@harbor-price/price/oracles/Oracle_fxUSD_XAU.sol
 /// @dev Hard-coded wiring for mainnet; deploy scripts select this bytecode by chain.
 /// @custom:oz-upgrades-unsafe-allow constructor
 contract Oracle_fxUSD_XAU_mainnet is Oracle_fxUSD_XAU {
-    constructor() Oracle_fxUSD_XAU(MainnetOracleAddresses.FXSAVE, MainnetOracleAddresses.XAU_USD_FEED, 1, true) {}
+    constructor() Oracle_fxUSD_XAU("fxUSD", MainnetOracleAddresses.FXSAVE, MainnetOracleAddresses.XAU_USD_FEED, 1, true) {}
 }

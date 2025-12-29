@@ -5,8 +5,8 @@ import {IWrappedPriceOracle} from "./IWrappedPriceOracle.sol";
 
 /// @notice v3 oracle interface: IWrappedPriceOracle + identity.
 interface IHarborPriceAggregatorV3 is IWrappedPriceOracle {
-    /// @notice Base asset address (e.g. fxUSD token).
-    function base() external view returns (address);
+    /// @notice Base asset name (e.g. "stETH", "USDE", "fxUSD").
+    function base() external view returns (string memory);
 
     /// @notice Address of the rate provider used by this oracle (e.g. fxSAVE / wstETH).
     function rateProvider() external view returns (address);

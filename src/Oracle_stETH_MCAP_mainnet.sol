@@ -10,7 +10,7 @@ import {Oracle_stETH_MCAP} from "@harbor-price/price/oracles/Oracle_stETH_MCAP.s
 contract Oracle_stETH_MCAP_mainnet is Oracle_stETH_MCAP {
     constructor()
         Oracle_stETH_MCAP(
-            MainnetOracleAddresses.STETH,
+            "stETH", // Base name
             MainnetOracleAddresses.WSTETH,
             MainnetOracleAddresses.STETH_USD_FEED,
             MainnetOracleAddresses.MCAP_USD_FEED,

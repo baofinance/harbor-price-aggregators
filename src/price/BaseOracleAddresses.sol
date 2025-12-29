@@ -5,7 +5,7 @@ pragma solidity 0.8.30;
 library BaseOracleAddresses {
     // Tokens
     address internal constant STETH = address(0); // Not deployed on Base
-    address internal constant WSTETH = address(0); // Not used (using Chainlink rate)
+    address internal constant WSTETH = 0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452; // wstETH on Base
 
     // Rate sources
     address internal constant FXSAVE = address(0); // Not used
@@ -29,6 +29,15 @@ library BaseOracleAddresses {
     address internal constant PEPE_USD_FEED = 0xB48ac6409C0c3718b956089b0fFE295A10ACDdad;
     address internal constant TRUMP_USD_FEED = 0x7bAfa1Af54f17cC0775a1Cf813B9fF5dED2C51E5;
     address internal constant WIF_USD_FEED = 0x674940e1dBf7FD841b33156DA9A88afbD95AaFBa;
+
+    // Meme coin normalization factors (18 decimals)
+    // These normalize each coin's price to WIF's total supply (~998.84M)
+    // Formula: normalized_price = original_price * normalization_factor
+    uint256 internal constant DOGE_NORM_FACTOR = 168_200_000_000_000_000_000; // 168.2e18 (WIF_supply / DOGE_circ_supply ≈ 998.84M / 168B)
+    uint256 internal constant SHIB_NORM_FACTOR = 589_500_000_000_000_000_000_000; // 589500e18 (WIF_supply / SHIB_max_supply)
+    uint256 internal constant PEPE_NORM_FACTOR = 421_000_000_000_000_000_000_000; // 421000e18 (WIF_supply / PEPE_max_supply)
+    uint256 internal constant TRUMP_NORM_FACTOR = 998_840_000_000_000_000; // ~0.99884e18 (WIF_max / TRUMP_max ≈ 998.84M / 1B)
+    uint256 internal constant WIF_NORM_FACTOR = 1_000_000_000_000_000_000; // 1e18 (WIF_max / WIF_max = 1.0, no change)
 
     // Chainlink feeds that are unused on Base for current rate sources but may be required by constructors.
     address internal constant SUSDE_USDE_FEED = address(0);

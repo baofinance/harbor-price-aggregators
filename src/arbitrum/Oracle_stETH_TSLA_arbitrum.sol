@@ -10,8 +10,8 @@ import {Oracle_stETH_TSLA} from "@harbor-price/price/oracles/arbitrum/Oracle_stE
 contract Oracle_stETH_TSLA_arbitrum is Oracle_stETH_TSLA {
     constructor()
         Oracle_stETH_TSLA(
-            ArbitrumOracleAddresses.WSTETH, // Base token (wstETH - stETH does not exist as contract on Arbitrum) 
-            ArbitrumOracleAddresses.WSTETH_STETH_FEED, // Rate feed
+            "stETH", // Base name (wstETH) 
+            ArbitrumOracleAddresses.WSTETH_STETH_FEED, // Rate feed (wstETH/stETH)
             ArbitrumOracleAddresses.STETH_USD_FEED, // First feed (stETH/USD)
             ArbitrumOracleAddresses.TSLA_USD_FEED, // Second feed (TSLA/USD)
             1,

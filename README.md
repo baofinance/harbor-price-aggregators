@@ -4,103 +4,104 @@ Generic price oracle aggregators for Harbor Protocol, supporting single, double,
 
 ## Overview
 
-This repository contains three main oracle aggregator contracts:
+This repository contains v3 price oracle aggregators built on a modular, immutable architecture. The v3 design separates formula logic (price calculations) from chain-specific wiring (addresses and feeds), enabling clean, upgradeable, and secure oracle implementations.
 
-- **HarborSingleFeedAndRateAggregator_v1**: For single feed conversions (e.g., wstETH→ETH)
-- **HarborDoubleFeedAndRateAggregator_v1**: For double feed conversions (e.g., fxSAVE→BTC, wstETH→MCAP)
-- **HarborCustomFeedAndRateAggregator_v1**: For custom feed aggregations (e.g., wstETH→T6CH aggregated stock basket)
+**Architecture:**
+
+- **Formula Contracts** (`src/price/oracles/`): Contain immutable price calculation logic
+- **Wiring Contracts** (`src/mainnet/`, `src/arbitrum/`, `src/base/`): Wire formula contracts with chain-specific addresses
+- **Utility Libraries**: Reusable price calculation libraries (SingleFeedPriceLib, DoubleFeedPriceLib, MultiFeedPriceLib, etc.)
+- **Rate Libraries**: Rate fetching libraries (FxSaveRateLib, WstETHRateLib, ChainlinkRateLib)
 
 ## Features
 
-- **Generic Implementation**: Reusable contracts that can be configured for different feed combinations
-- **Rate Sources**: Support for wstETH, fxSAVE, and Chainlink rate feeds (SUSDE_CHAINLINK, WSTETH_CHAINLINK)
-- **Custom Feed Aggregation**: Aggregate multiple feeds with configurable divisor (e.g., average of 6 stock prices)
-- **Rate Source Validation**: Configurable staleness checks for Chainlink rate feeds
-- **Divisor Support**: Configurable divisors for special feed normalization (e.g., MCAP)
+- **Immutable Configuration**: All oracle parameters are set at construction time, ensuring security and predictability
+- **Modular Design**: Formula contracts are chain-agnostic; wiring contracts provide chain-specific configuration
+- **Multi-Chain Support**: Deployed on Ethereum Mainnet, Arbitrum, and Base
+- **Library-Based Calculations**: Price calculations use embedded library functions (no separate deployments)
+- **Rate Source Support**: 
+  - Direct contract calls: fxSAVE, wstETH
+  - Chainlink feeds: wstETH/stETH, sUSDE/USDE
+- **Oracle Types**:
+  - **Single Feed**: Direct price conversions (e.g., fxUSD/BTC, fxUSD/ETH)
+  - **Double Feed**: Cross-currency conversions (e.g., stETH/BTC, stETH/EUR)
+  - **Multi-Feed Average**: Average of multiple feeds (e.g., stETH/MAG7 - 7 stock average)
+  - **Multi-Feed Indexed**: Indexed multi-feed with baseline normalization (e.g., stETH/MAG7.i26)
+  - **Multi-Feed Normalized**: Multi-feed with per-feed normalization factors (e.g., stETH/BOM5 - meme coin basket)
 - **UUPS Upgradeable**: Upgradeable proxy pattern for future improvements
-- **Comprehensive Testing**: Full test coverage with fuzzing
+- **Comprehensive Testing**: Full test coverage including fork tests for live chain validation
 
-## Contracts
+## Oracle Types
 
-### HarborSingleFeedAndRateAggregator_v1
+### Single Feed Oracles
 
-Single feed aggregator for direct conversions (e.g., wstETH/ETH).
+Single feed oracles use one Chainlink price feed with optional price inversion.
 
-**Initialize Parameters:**
+**Examples:**
+- `Oracle_fxUSD_BTC`: fxUSD/BTC (inverted BTC/USD feed)
+- `Oracle_fxUSD_ETH`: fxUSD/ETH (ETH/USD feed)
+- `Oracle_fxUSD_EUR`: fxUSD/EUR (EUR/USD feed)
 
-- `owner`: The owner address
-- `oracleName`: Oracle name/description
-- `rateSource`: Rate source (0 = WSTETH, 1 = FXSAVE, 2 = SUSDE_CHAINLINK, 3 = WSTETH_CHAINLINK)
-- `firstFeed`: First feed address
-- `priceDivisor`: Divisor for price normalization
-- `firstFeedMaxAge`: Max age for first feed
-- `firstFeedMaxDev`: Max deviation for first feed
+**Formula Contract Structure:**
+- Uses `SingleFeedPriceLib` for price calculation
+- Rate from fxSAVE or wstETH contract
+- Immutable feed address, decimals, divisor, and inversion flag
 
-**Key Functions:**
+### Double Feed Oracles
 
-- `getPrice()`: Get the current price (optimized internal implementation)
-- `getRate()`: Get the current rate from the configured rate source
-- `decimals()`: Returns 18 (always 18 decimals)
-- `description()`: Returns the oracle name/description (Chainlink interface)
-- `version()`: Returns the contract version (always 1 for v1)
-- `maxRateSourceAge()`: View the current max age setting for Chainlink rate feeds
-- `setMaxRateSourceAge(uint64)`: Configure staleness tolerance for Chainlink rate feeds (default: 1 day)
+Double feed oracles combine two Chainlink feeds to calculate cross-currency prices.
 
-### HarborDoubleFeedAndRateAggregator_v1
+**Examples:**
+- `Oracle_stETH_BTC`: stETH/BTC = (stETH/USD) / (BTC/USD)
+- `Oracle_stETH_EUR`: stETH/EUR = (stETH/USD) / (EUR/USD)
+- `Oracle_stETH_XAU`: stETH/XAU = (stETH/USD) / (XAU/USD)
 
-Double feed aggregator for cross-currency conversions (e.g., fxSAVE→BTC, wstETH→MCAP).
+**Formula Contract Structure:**
+- Uses `DoubleFeedPriceLib` for price calculation
+- Rate from wstETH contract or Chainlink feed
+- Immutable first feed, second feed, decimals, divisor, and inversion flag
 
-**Initialize Parameters:**
+### Multi-Feed Average Oracles
 
-- `owner`: The owner address
-- `oracleName`: Oracle name/description
-- `rateSource`: Rate source (0 = WSTETH, 1 = FXSAVE, 2 = SUSDE_CHAINLINK, 3 = WSTETH_CHAINLINK)
-- `firstFeed`: First feed address
-- `secondFeed`: Second feed address
-- `priceDivisor`: Divisor for price normalization (e.g., 1e12 for MCAP)
-- `firstFeedMaxAge`: Max age for first feed
-- `firstFeedMaxDev`: Max deviation for first feed
-- `secondFeedMaxAge`: Max age for second feed
-- `secondFeedMaxDev`: Max deviation for second feed
+Multi-feed average oracles calculate the average of multiple feeds, then convert to base asset terms.
 
-**Key Functions:**
+**Examples:**
+- `Oracle_stETH_MAG7`: stETH/MAG7 = (stETH/USD) / (average of 7 stock feeds)
+- `Oracle_USDE_MAG7`: USDE/MAG7 = (USDE/USD) / (average of 7 stock feeds)
 
-- `getPrice()`: Get the current price (optimized internal implementation)
-- `getRate()`: Get the current rate from the configured rate source
-- `decimals()`: Returns 18 (always 18 decimals)
-- `description()`: Returns the oracle name/description (Chainlink interface)
-- `version()`: Returns the contract version (always 1 for v1)
-- `maxRateSourceAge()`: View the current max age setting for Chainlink rate feeds
-- `setMaxRateSourceAge(uint64)`: Configure staleness tolerance for Chainlink rate feeds (default: 1 day)
+**Formula Contract Structure:**
+- Uses `MultiFeedDivPriceLib` to sum feeds and divide by feed count
+- Rate from Chainlink feed (wstETH/stETH or sUSDE/USDE)
+- Immutable array of feed addresses and decimals
 
-### HarborCustomFeedAndRateAggregator_v1
+### Multi-Feed Indexed Oracles
 
-Custom feed aggregator for aggregating multiple feeds (e.g., wstETH→T6CH aggregated stock basket).
+Multi-feed indexed oracles normalize a multi-feed sum against a baseline index price.
 
-**Initialize Parameters:**
+**Examples:**
+- `Oracle_stETH_MAG7i26`: stETH/MAG7.i26 = (stETH/USD) / (indexed MAG7 value)
+  - Indexed value = (current sum of 7 stocks) / (baseline sum from 1-1-2026)
+- `Oracle_USDE_MAG7i26`: USDE/MAG7.i26 = (USDE/USD) / (indexed MAG7 value)
 
-- `owner`: The owner address
-- `oracleName`: Oracle name/description
-- `rateSource`: Rate source (0 = WSTETH, 1 = FXSAVE, 2 = SUSDE_CHAINLINK, 3 = WSTETH_CHAINLINK)
-- `customFeeds`: Array of custom feed addresses (e.g., stock price feeds)
-- `usdFeed`: USD feed address for final conversion
-- `aggregationDivisor`: Divisor for aggregated price normalization (e.g., 6 for average of 6 stocks)
-- `customFeedMaxAge`: Max age for custom feeds
-- `customFeedMaxDev`: Max deviation for custom feeds
-- `usdFeedMaxAge`: Max age for USD feed
-- `usdFeedMaxDev`: Max deviation for USD feed
+**Formula Contract Structure:**
+- Uses `MultiFeedSumPriceLib` to sum feeds
+- Calculates indexed value: `(currentSum * 1e18) / indexPrice`
+- Immutable index price baseline
 
-**Key Functions:**
+### Multi-Feed Normalized Oracles
 
-- `getPrice()`: Get the current price (optimized internal implementation)
-- `getRate()`: Get the current rate from the configured rate source
-- `decimals()`: Returns 18 (always 18 decimals)
-- `description()`: Returns the oracle name/description (Chainlink interface)
-- `version()`: Returns the contract version (always 1 for v1)
-- `getCustomFeedCount()`: Get the number of custom feeds
-- `getCustomFeed(uint256)`: Get a custom feed address by index
-- `maxRateSourceAge()`: View the current max age setting for Chainlink rate feeds
-- `setMaxRateSourceAge(uint64)`: Configure staleness tolerance for Chainlink rate feeds (default: 1 day)
+Multi-feed normalized oracles apply per-feed normalization factors before summing.
+
+**Examples:**
+- `Oracle_stETH_BOM5`: stETH/BOM5 = (stETH/USD) / (normalized basket sum)
+  - Basket: DOGE, SHIB, PEPE, TRUMP, WIF
+  - Each feed price is multiplied by its normalization factor (supply normalization)
+  - Sum of normalized prices represents the basket value
+
+**Formula Contract Structure:**
+- Uses `MultiFeedNormalizedPriceLib` for per-feed normalization
+- Each feed has an immutable normalization factor (18 decimals)
+- Normalization factors normalize prices to a common supply base (e.g., WIF's total supply)
 
 ## Installation
 
@@ -115,9 +116,51 @@ forge install
 
 ## Testing
 
+### Prerequisites
+
+**Important**: Before running tests, you must set the required RPC URLs in your `.env` file:
+
+```bash
+# Required RPC URLs for fork tests
+MAINNET_RPC_URL=https://eth-mainnet.g.alchemy.com/v2/YOUR_KEY
+ARBITRUM_RPC_URL=https://arb-mainnet.g.alchemy.com/v2/YOUR_KEY
+BASE_RPC_URL=https://base-mainnet.g.alchemy.com/v2/YOUR_KEY
+```
+
+These are used by fork tests to test oracles against live on-chain data.
+
+### Running Tests
+
+**Run all tests:**
 ```bash
 forge test
 ```
+
+**Run specific test suites:**
+
+- **Mainnet v3 Oracle Tests:**
+  ```bash
+  forge test --match-path "test/price/*.t.sol" -vvv
+  ```
+
+- **Arbitrum Oracle Fork Tests:**
+  ```bash
+  # All Arbitrum tests
+  forge test --match-path "test/arbitrum/*.t.sol" --fork-url $arbitrum -vvv
+  
+  # Specific test suites
+  forge test --match-path "test/arbitrum/ArbitrumOraclesFork.t.sol" --fork-url $arbitrum -vvv
+  forge test --match-path "test/arbitrum/ArbitrumSUSDEOraclesFork.t.sol" --fork-url $arbitrum -vvv
+  forge test --match-path "test/arbitrum/ArbitrumMAG7OraclesFork.t.sol" --fork-url $arbitrum -vvv
+  forge test --match-path "test/arbitrum/ArbitrumMAG7i26OraclesFork.t.sol" --fork-url $arbitrum -vvv
+  ```
+
+- **Base Oracle Fork Tests:**
+  ```bash
+  forge test --match-path "test/base/*.t.sol" --fork-url $base -vvv
+  ```
+
+**Note**: Fork tests require the corresponding RPC URLs to be set in your `.env` file. See `test/arbitrum/README.md` and `test/base/README.md` for more details.
 
 ## Off-chain market data (offchain_feeds)
 

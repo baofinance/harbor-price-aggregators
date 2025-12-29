@@ -225,6 +225,7 @@ contract FxUsdEthV3Daily3YearDump is Test {
 
         // Deploy a fresh v3 implementation + proxy (do not use already-deployed proxies).
         Oracle_fxUSD_ETH impl = new Oracle_fxUSD_ETH(
+            "fxUSD",
             MainnetOracleAddresses.FXSAVE,
             MainnetOracleAddresses.ETH_USD_FEED,
             1,

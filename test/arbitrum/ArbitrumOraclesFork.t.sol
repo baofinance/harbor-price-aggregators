@@ -43,8 +43,6 @@ contract ArbitrumOraclesForkTest is Test {
         console.log("Ask Price (18 decimals):", askPrice);
         console.log("Bid Rate (18 decimals):", bidRate);
         console.log("Ask Rate (18 decimals):", askRate);
-        console.log("Price (human readable):", bidPrice / 1e18);
-        console.log("Rate (human readable):", bidRate / 1e18);
         console.log("");
     }
 
@@ -55,8 +53,6 @@ contract ArbitrumOraclesForkTest is Test {
         console.log("Ask Price (18 decimals):", askPrice);
         console.log("Bid Rate (18 decimals):", bidRate);
         console.log("Ask Rate (18 decimals):", askRate);
-        console.log("Price (human readable):", bidPrice / 1e18);
-        console.log("Rate (human readable):", bidRate / 1e18);
         console.log("");
     }
 
@@ -67,8 +63,6 @@ contract ArbitrumOraclesForkTest is Test {
         console.log("Ask Price (18 decimals):", askPrice);
         console.log("Bid Rate (18 decimals):", bidRate);
         console.log("Ask Rate (18 decimals):", askRate);
-        console.log("Price (human readable):", bidPrice / 1e18);
-        console.log("Rate (human readable):", bidRate / 1e18);
         console.log("");
     }
 
@@ -79,8 +73,6 @@ contract ArbitrumOraclesForkTest is Test {
         console.log("Ask Price (18 decimals):", askPrice);
         console.log("Bid Rate (18 decimals):", bidRate);
         console.log("Ask Rate (18 decimals):", askRate);
-        console.log("Price (human readable):", bidPrice / 1e18);
-        console.log("Rate (human readable):", bidRate / 1e18);
         console.log("");
     }
 
@@ -91,8 +83,6 @@ contract ArbitrumOraclesForkTest is Test {
         console.log("Ask Price (18 decimals):", askPrice);
         console.log("Bid Rate (18 decimals):", bidRate);
         console.log("Ask Rate (18 decimals):", askRate);
-        console.log("Price (human readable):", bidPrice / 1e18);
-        console.log("Rate (human readable):", bidRate / 1e18);
         console.log("");
     }
 
@@ -103,8 +93,6 @@ contract ArbitrumOraclesForkTest is Test {
         console.log("Ask Price (18 decimals):", askPrice);
         console.log("Bid Rate (18 decimals):", bidRate);
         console.log("Ask Rate (18 decimals):", askRate);
-        console.log("Price (human readable):", bidPrice / 1e18);
-        console.log("Rate (human readable):", bidRate / 1e18);
         console.log("");
     }
 
@@ -115,8 +103,6 @@ contract ArbitrumOraclesForkTest is Test {
         console.log("Ask Price (18 decimals):", askPrice);
         console.log("Bid Rate (18 decimals):", bidRate);
         console.log("Ask Rate (18 decimals):", askRate);
-        console.log("Price (human readable):", bidPrice / 1e18);
-        console.log("Rate (human readable):", bidRate / 1e18);
         console.log("");
     }
 
@@ -127,8 +113,6 @@ contract ArbitrumOraclesForkTest is Test {
         console.log("Ask Price (18 decimals):", askPrice);
         console.log("Bid Rate (18 decimals):", bidRate);
         console.log("Ask Rate (18 decimals):", askRate);
-        console.log("Price (human readable):", bidPrice / 1e18);
-        console.log("Rate (human readable):", bidRate / 1e18);
         console.log("");
     }
 

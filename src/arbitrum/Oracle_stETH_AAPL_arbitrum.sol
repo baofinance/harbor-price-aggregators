@@ -10,8 +10,8 @@ import {Oracle_stETH_AAPL} from "@harbor-price/price/oracles/arbitrum/Oracle_stE
 contract Oracle_stETH_AAPL_arbitrum is Oracle_stETH_AAPL {
     constructor()
         Oracle_stETH_AAPL(
-            ArbitrumOracleAddresses.WSTETH, // Base token (wstETH - stETH doesn't exist as contract on Arbitrum)
-            ArbitrumOracleAddresses.WSTETH_STETH_FEED, // Rate feed
+            "stETH", // Base name (stETH doesn't exist as contract on Arbitrum)
+            ArbitrumOracleAddresses.WSTETH_STETH_FEED, // Rate feed (wstETH/stETH)
             ArbitrumOracleAddresses.STETH_USD_FEED, // First feed (stETH/USD)
             ArbitrumOracleAddresses.AAPL_USD_FEED, // Second feed (AAPL/USD)
             1,

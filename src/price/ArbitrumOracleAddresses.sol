@@ -6,6 +6,7 @@ library ArbitrumOracleAddresses {
     // Tokens
     address internal constant STETH = address(0); // Not directly used (via wstETH)
     address internal constant WSTETH = 0x5979D7b546E38E414F7E9822514be443A4800529;
+    address internal constant SUSDE = 0x211Cc4DD073734dA055fbF44a2b4667d5E5fE5d2; // sUSDE token address on Arbitrum
 
     // Rate sources
     address internal constant FXSAVE = address(0); // Not used for stock oracles
@@ -34,6 +35,12 @@ library ArbitrumOracleAddresses {
     address internal constant NVDA_USD_FEED = 0x4881A4418b5F2460B21d6F08CD5aA0678a7f262F;
     address internal constant SPY_USD_FEED = 0x46306F3795342117721D8DEd50fbcF6DF2b3cc10;
     address internal constant TSLA_USD_FEED = 0x3609baAa0a9b1f0FE4d6CC01884585d0e191C3E3;
+
+    // MAG7 Index Price (sum of 7 stocks on 1-1-2026)
+    // Set to current prices as of deployment - will be updated to 1-1-2026 prices when available
+    // Current sum: 2635395000000000000000 (2635.395 in human readable)
+    // Breakdown: AAPL: 273.345, MSFT: 487.58, TSLA: 475.075, GOOGL: 313.505, META: 662.945, AMZN: 232.535, NVDA: 190.41
+    uint256 internal constant MAG7_I26_INDEX_PRICE = 2635395000000000000000;
 
     // Constraints
     uint64 internal constant MAX_AGE = 604_800; // 7 days
