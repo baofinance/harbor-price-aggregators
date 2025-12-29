@@ -62,7 +62,11 @@ contract Aggregator_fxUSD_ETH is HarborAggregator_v3 {
         uint256 rate = FXSAVE.getRate();
 
         uint256 price = SingleFeedPriceLib.getPrice(
-            PRICE_FEED, PRICE_FEED_DECIMALS, PRICE_FEED_HEARTBEAT, PRICE_DIVISOR, INVERT_PRICE
+            PRICE_FEED,
+            PRICE_FEED_DECIMALS,
+            PRICE_FEED_HEARTBEAT,
+            PRICE_DIVISOR,
+            INVERT_PRICE
         );
 
         return (price, price, rate, rate);

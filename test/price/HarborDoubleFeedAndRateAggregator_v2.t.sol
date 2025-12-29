@@ -252,7 +252,7 @@ contract HarborDoubleFeedAndRateAggregator_v2Test is Test {
         ERC1967Proxy proxy = new ERC1967Proxy(address(implementation), initData);
         oracle = HarborDoubleFeedAndRateAggregator_v2(address(proxy));
 
-        (uint256 minPrice,, uint256 minRate,) = oracle.latestAnswer();
+        (uint256 minPrice, , uint256 minRate, ) = oracle.latestAnswer();
 
         assertEq(minRate, rate, "Incorrect rate (fuzz)");
         assertTrue(minPrice > 0, "Price should be positive (fuzz)");
@@ -263,8 +263,12 @@ contract HarborDoubleFeedAndRateAggregator_v2Test is Test {
         // Set first feed to USDC/USD for FXSAVE test
         mockFirstFeed.setAnswer(usdcUsdPrice, block.timestamp);
 
-        HarborDoubleFeedAndRateAggregator_v2 implementation =
-            new HarborDoubleFeedAndRateAggregator_v2(address(mockWstEth), address(mockFxSave), address(0), address(0));
+        HarborDoubleFeedAndRateAggregator_v2 implementation = new HarborDoubleFeedAndRateAggregator_v2(
+            address(mockWstEth),
+            address(mockFxSave),
+            address(0),
+            address(0)
+        );
 
         bytes memory initData = abi.encodeWithSelector(
             HarborDoubleFeedAndRateAggregator_v2.initialize.selector,
@@ -308,8 +312,12 @@ contract HarborDoubleFeedAndRateAggregator_v2Test is Test {
         // Set first feed to USDC/USD for this test
         mockFirstFeed.setAnswer(usdcUsdPrice, block.timestamp);
 
-        HarborDoubleFeedAndRateAggregator_v2 implementation =
-            new HarborDoubleFeedAndRateAggregator_v2(address(mockWstEth), address(mockFxSave), address(0), address(0));
+        HarborDoubleFeedAndRateAggregator_v2 implementation = new HarborDoubleFeedAndRateAggregator_v2(
+            address(mockWstEth),
+            address(mockFxSave),
+            address(0),
+            address(0)
+        );
 
         bytes memory initData = abi.encodeWithSelector(
             HarborDoubleFeedAndRateAggregator_v2.initialize.selector,
@@ -359,8 +367,12 @@ contract HarborDoubleFeedAndRateAggregator_v2Test is Test {
     }
 
     function test_SetInvertPrice() public {
-        HarborDoubleFeedAndRateAggregator_v2 implementation =
-            new HarborDoubleFeedAndRateAggregator_v2(address(mockWstEth), address(mockFxSave), address(0), address(0));
+        HarborDoubleFeedAndRateAggregator_v2 implementation = new HarborDoubleFeedAndRateAggregator_v2(
+            address(mockWstEth),
+            address(mockFxSave),
+            address(0),
+            address(0)
+        );
 
         bytes memory initData = abi.encodeWithSelector(
             HarborDoubleFeedAndRateAggregator_v2.initialize.selector,

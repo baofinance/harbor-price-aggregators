@@ -11,9 +11,12 @@ import {MockAggregatorV3} from "test/mock/MockAggregatorV3.sol";
 
 // V2 contract for upgrade testing - same as V1, used to verify upgrade works
 contract HarborSingleFeedAndRateAggregator_v2 is HarborSingleFeedAndRateAggregator_v1 {
-    constructor(address wsteth_, address fxsave_, address susdeUsdeFeed_, address wstethStethFeed_)
-        HarborSingleFeedAndRateAggregator_v1(wsteth_, fxsave_, susdeUsdeFeed_, wstethStethFeed_)
-    {}
+    constructor(
+        address wsteth_,
+        address fxsave_,
+        address susdeUsdeFeed_,
+        address wstethStethFeed_
+    ) HarborSingleFeedAndRateAggregator_v1(wsteth_, fxsave_, susdeUsdeFeed_, wstethStethFeed_) {}
 }
 
 contract HarborSingleFeedAndRateAggregator_v1Test is Test {
@@ -224,7 +227,7 @@ contract HarborSingleFeedAndRateAggregator_v1Test is Test {
         ERC1967Proxy proxy = new ERC1967Proxy(address(implementation), initData);
         oracle = HarborSingleFeedAndRateAggregator_v1(address(proxy));
 
-        (,, uint256 minRate, uint256 maxRate) = oracle.latestAnswer();
+        (, , uint256 minRate, uint256 maxRate) = oracle.latestAnswer();
         assertEq(minRate, rate, "Incorrect rate (fuzz)");
         assertEq(maxRate, rate, "Rate mismatch (fuzz)");
     }
@@ -235,8 +238,12 @@ contract HarborSingleFeedAndRateAggregator_v1Test is Test {
 
     function test_Upgrade_Success() public {
         // Deploy V1 implementation and proxy
-        HarborSingleFeedAndRateAggregator_v1 implementationV1 =
-            new HarborSingleFeedAndRateAggregator_v1(address(mockWstEth), address(mockFxSave), address(0), address(0));
+        HarborSingleFeedAndRateAggregator_v1 implementationV1 = new HarborSingleFeedAndRateAggregator_v1(
+            address(mockWstEth),
+            address(mockFxSave),
+            address(0),
+            address(0)
+        );
 
         bytes memory initData = abi.encodeWithSelector(
             HarborSingleFeedAndRateAggregator_v1.initialize.selector,
@@ -262,8 +269,12 @@ contract HarborSingleFeedAndRateAggregator_v1Test is Test {
         assertEq(implV1, address(implementationV1), "V1 implementation should be set");
 
         // Deploy V2 implementation
-        HarborSingleFeedAndRateAggregator_v2 implementationV2 =
-            new HarborSingleFeedAndRateAggregator_v2(address(mockWstEth), address(mockFxSave), address(0), address(0));
+        HarborSingleFeedAndRateAggregator_v2 implementationV2 = new HarborSingleFeedAndRateAggregator_v2(
+            address(mockWstEth),
+            address(mockFxSave),
+            address(0),
+            address(0)
+        );
 
         // Upgrade to V2
         vm.expectEmit(true, false, false, false);
@@ -289,8 +300,12 @@ contract HarborSingleFeedAndRateAggregator_v1Test is Test {
 
     function test_Upgrade_Revert_NonOwner() public {
         // Deploy V1 implementation and proxy
-        HarborSingleFeedAndRateAggregator_v1 implementationV1 =
-            new HarborSingleFeedAndRateAggregator_v1(address(mockWstEth), address(mockFxSave), address(0), address(0));
+        HarborSingleFeedAndRateAggregator_v1 implementationV1 = new HarborSingleFeedAndRateAggregator_v1(
+            address(mockWstEth),
+            address(mockFxSave),
+            address(0),
+            address(0)
+        );
 
         bytes memory initData = abi.encodeWithSelector(
             HarborSingleFeedAndRateAggregator_v1.initialize.selector,
@@ -306,8 +321,12 @@ contract HarborSingleFeedAndRateAggregator_v1Test is Test {
         oracle = HarborSingleFeedAndRateAggregator_v1(address(proxy));
 
         // Deploy V2 implementation
-        HarborSingleFeedAndRateAggregator_v2 implementationV2 =
-            new HarborSingleFeedAndRateAggregator_v2(address(mockWstEth), address(mockFxSave), address(0), address(0));
+        HarborSingleFeedAndRateAggregator_v2 implementationV2 = new HarborSingleFeedAndRateAggregator_v2(
+            address(mockWstEth),
+            address(mockFxSave),
+            address(0),
+            address(0)
+        );
 
         // Try to upgrade as non-owner
         address nonOwner = address(0x1234);
@@ -318,8 +337,12 @@ contract HarborSingleFeedAndRateAggregator_v1Test is Test {
 
     function test_Upgrade_PreservesState() public {
         // Deploy V1 implementation and proxy
-        HarborSingleFeedAndRateAggregator_v1 implementationV1 =
-            new HarborSingleFeedAndRateAggregator_v1(address(mockWstEth), address(mockFxSave), address(0), address(0));
+        HarborSingleFeedAndRateAggregator_v1 implementationV1 = new HarborSingleFeedAndRateAggregator_v1(
+            address(mockWstEth),
+            address(mockFxSave),
+            address(0),
+            address(0)
+        );
 
         bytes memory initData = abi.encodeWithSelector(
             HarborSingleFeedAndRateAggregator_v1.initialize.selector,
@@ -340,30 +363,33 @@ contract HarborSingleFeedAndRateAggregator_v1Test is Test {
         vm.prank(owner);
         oracle.setFeedConstraints(1, newMaxAge, newMaxDev);
 
-        // Store state values
-        string memory oracleNameBefore = oracle.oracleName();
+        // Capture pre-upgrade state in a struct-like pattern using scoped storage
+        bytes32 oracleNameHash = keccak256(bytes(oracle.oracleName()));
         address ownerBefore = oracle.owner();
         address firstFeedBefore = oracle.firstFeed();
         uint8 firstFeedDecimalsBefore = oracle.firstFeedDecimals();
         uint256 priceDivisorBefore = oracle.priceDivisor();
-        (uint64 maxAgeBefore, uint256 maxDevBefore) = oracle.getConstraints(1);
 
-        // Deploy V2 implementation
-        HarborSingleFeedAndRateAggregator_v2 implementationV2 =
-            new HarborSingleFeedAndRateAggregator_v2(address(mockWstEth), address(mockFxSave), address(0), address(0));
-
-        // Upgrade to V2
-        vm.prank(owner);
-        oracle.upgradeToAndCall(address(implementationV2), "");
+        // Deploy V2 implementation and upgrade
+        {
+            HarborSingleFeedAndRateAggregator_v2 implementationV2 = new HarborSingleFeedAndRateAggregator_v2(
+                address(mockWstEth),
+                address(mockFxSave),
+                address(0),
+                address(0)
+            );
+            vm.prank(owner);
+            oracle.upgradeToAndCall(address(implementationV2), "");
+        }
 
         // Verify all state is preserved
-        assertEq(oracle.oracleName(), oracleNameBefore, "Oracle name should be preserved");
+        assertEq(keccak256(bytes(oracle.oracleName())), oracleNameHash, "Oracle name should be preserved");
         assertEq(oracle.owner(), ownerBefore, "Owner should be preserved");
         assertEq(oracle.firstFeed(), firstFeedBefore, "First feed should be preserved");
         assertEq(oracle.firstFeedDecimals(), firstFeedDecimalsBefore, "First feed decimals should be preserved");
         assertEq(oracle.priceDivisor(), priceDivisorBefore, "Price divisor should be preserved");
         (uint64 maxAgeAfter, uint256 maxDevAfter) = oracle.getConstraints(1);
-        assertEq(maxAgeAfter, maxAgeBefore, "Max age should be preserved");
-        assertEq(maxDevAfter, maxDevBefore, "Max dev should be preserved");
+        assertEq(maxAgeAfter, newMaxAge, "Max age should be preserved");
+        assertEq(maxDevAfter, newMaxDev, "Max dev should be preserved");
     }
 }

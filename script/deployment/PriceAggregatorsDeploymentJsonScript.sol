@@ -162,7 +162,9 @@ abstract contract PriceAggregatorsDeploymentJsonScript is DeploymentJsonScript {
         string memory implementationName;
         bytes memory implementationCreationCode;
 
-        string memory implementationType = _getString(string.concat(contractKey, ".", PRICE_ORACLE_IMPLEMENTATION_TYPE));
+        string memory implementationType = _getString(
+            string.concat(contractKey, ".", PRICE_ORACLE_IMPLEMENTATION_TYPE)
+        );
 
         string memory rateSourceId = _getString(string.concat(contractKey, ".", PRICE_ORACLE_RATE_SOURCE)).upper();
         if (implementationType.eq("HarborSingleFeedAndRateAggregator_v2")) {

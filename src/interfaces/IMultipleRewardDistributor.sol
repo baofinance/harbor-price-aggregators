@@ -70,10 +70,9 @@ interface IMultipleRewardDistributor {
     /// @notice Return the list of historical reward tokens.
     function historicalRewardTokens() external view returns (address[] memory);
 
-    function rewardData(address token)
-        external
-        view
-        returns (uint256 lastUpdate, uint256 finishAt, uint256 rate, uint256 queued);
+    function rewardData(
+        address token
+    ) external view returns (uint256 lastUpdate, uint256 finishAt, uint256 rate, uint256 queued);
 
     /// @notice Return the amount of pending distributed rewards in current period.
     ///

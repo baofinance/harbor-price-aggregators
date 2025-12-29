@@ -42,7 +42,9 @@ contract MockAggregatorV3 is AggregatorV3Interface {
         return 1;
     }
 
-    function getRoundData(uint80)
+    function getRoundData(
+        uint80
+    )
         external
         view
         override

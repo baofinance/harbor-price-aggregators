@@ -40,6 +40,13 @@ contract OracleComparisonBase is BaoTest {
         uint256 maxRate;
     }
 
+    struct ComparisonStats {
+        uint256 mismatches;
+        uint256 skipped;
+        uint256 maxAbsPriceError;
+        uint256 maxRelPriceError;
+    }
+
     /*//////////////////////////////////////////////////////////////
                          CONFIGURATION
     //////////////////////////////////////////////////////////////*/
@@ -100,10 +107,12 @@ contract OracleComparisonBase is BaoTest {
     /// @param feed Chainlink price feed address
     /// @param divisor Price divisor (1 for most, 1e12 for MCAP)
     /// @param invertPrice Whether to invert the price (true for fxUSD oracles)
-    function _deploySingleFeed(string memory oracleName, address feed, uint256 divisor, bool invertPrice)
-        internal
-        returns (IWrappedPriceOracle)
-    {
+    function _deploySingleFeed(
+        string memory oracleName,
+        address feed,
+        uint256 divisor,
+        bool invertPrice
+    ) internal returns (IWrappedPriceOracle) {
         bytes memory initData = abi.encodeCall(
             HarborSingleFeedAndRateAggregator_v2.initialize,
             (
@@ -203,7 +212,7 @@ contract OracleComparisonBase is BaoTest {
         console.log("    Feed staleness check (block.timestamp=%d):", block.timestamp);
         for (uint256 i = 0; i < feeds.length; i++) {
             AggregatorV3Interface feed = AggregatorV3Interface(feeds[i]);
-            (, int256 answer,, uint256 updatedAt,) = feed.latestRoundData();
+            (, int256 answer, , uint256 updatedAt, ) = feed.latestRoundData();
             uint256 age = block.timestamp - updatedAt;
             bool stale = age > heartbeats[i];
             console.log("    %s: updatedAt=%d, age=%d", names[i], updatedAt, age);
@@ -260,8 +269,10 @@ contract OracleComparisonBase is BaoTest {
                 continue;
             }
 
-            bool match_ = (baseA.minPrice == candA.minPrice) && (baseA.maxPrice == candA.maxPrice)
-                && (baseA.minRate == candA.minRate) && (baseA.maxRate == candA.maxRate);
+            bool match_ = (baseA.minPrice == candA.minPrice) &&
+                (baseA.maxPrice == candA.maxPrice) &&
+                (baseA.minRate == candA.minRate) &&
+                (baseA.maxRate == candA.maxRate);
 
             if (!match_) {
                 mismatches++;
@@ -292,10 +303,7 @@ contract OracleComparisonBase is BaoTest {
         vm.rollFork(START_BLOCK);
 
         uint256 step = _blockStep();
-        uint256 mismatches = 0;
-        uint256 skipped = 0;
-        uint256 maxAbsPriceError = 0;
-        uint256 maxRelPriceError = 0;
+        ComparisonStats memory stats;
 
         console.log(
             "Comparing %s: blocks %s to %s",
@@ -306,68 +314,50 @@ contract OracleComparisonBase is BaoTest {
         console.log("  step: %d, iterations: %d", step, _iterations());
 
         for (uint256 i = 0; i <= _iterations(); i++) {
-            uint256 sampleBlock = START_BLOCK + (i * step);
-            vm.rollFork(sampleBlock);
+            vm.rollFork(START_BLOCK + (i * step));
 
             (bool baseOk, OracleAnswer memory baseA) = _tryLatest(base);
             (bool candOk, OracleAnswer memory candA) = _tryLatest(candidate);
 
-            // Skip if either oracle reverts (stale feed data)
             if (!baseOk || !candOk) {
-                skipped++;
+                stats.skipped++;
                 continue;
             }
 
-            {
-                uint256 absMin =
-                    baseA.minPrice > candA.minPrice ? baseA.minPrice - candA.minPrice : candA.minPrice - baseA.minPrice;
-                if (absMin > maxAbsPriceError) {
-                    maxAbsPriceError = absMin;
-                }
+            _updatePriceErrorStats(baseA.minPrice, candA.minPrice, stats);
+            _updatePriceErrorStats(baseA.maxPrice, candA.maxPrice, stats);
 
-                uint256 denomMin = baseA.minPrice > candA.minPrice ? baseA.minPrice : candA.minPrice;
-                if (denomMin > 0) {
-                    uint256 relMin = Math.mulDiv(absMin, 1e18, denomMin, Math.Rounding.Ceil);
-                    if (relMin > maxRelPriceError) {
-                        maxRelPriceError = relMin;
-                    }
-                }
-            }
-
-            {
-                uint256 absMax =
-                    baseA.maxPrice > candA.maxPrice ? baseA.maxPrice - candA.maxPrice : candA.maxPrice - baseA.maxPrice;
-                if (absMax > maxAbsPriceError) {
-                    maxAbsPriceError = absMax;
-                }
-
-                uint256 denomMax = baseA.maxPrice > candA.maxPrice ? baseA.maxPrice : candA.maxPrice;
-                if (denomMax > 0) {
-                    uint256 relMax = Math.mulDiv(absMax, 1e18, denomMax, Math.Rounding.Ceil);
-                    if (relMax > maxRelPriceError) {
-                        maxRelPriceError = relMax;
-                    }
-                }
-            }
-
-            bool priceMatch = isApprox(baseA.minPrice, candA.minPrice, absTolerance, relTolerance)
-                && isApprox(baseA.maxPrice, candA.maxPrice, absTolerance, relTolerance);
+            bool priceMatch = isApprox(baseA.minPrice, candA.minPrice, absTolerance, relTolerance) &&
+                isApprox(baseA.maxPrice, candA.maxPrice, absTolerance, relTolerance);
 
             bool rateMatch = (baseA.minRate == candA.minRate) && (baseA.maxRate == candA.maxRate);
 
             if (!(priceMatch && rateMatch)) {
-                mismatches++;
+                stats.mismatches++;
                 _logMismatch(name, baseA, candA);
             }
-
-            // NOTE: sampling schedule is fixed by (START_BLOCK, step, iterations)
         }
 
-        console.log("%s: COMPLETE - %d samples, %d skipped (stale)", name, _iterations() + 1, skipped);
-        console.log("  mismatches: %d", mismatches);
-        console.log("%s: maxAbsPriceError=%d", name, maxAbsPriceError);
-        console.log("%s: maxRelPriceError(1e18)=%d", name, maxRelPriceError);
+        console.log("%s: COMPLETE - %d samples, %d skipped (stale)", name, _iterations() + 1, stats.skipped);
+        console.log("  mismatches: %d", stats.mismatches);
+        console.log("%s: maxAbsPriceError=%d", name, stats.maxAbsPriceError);
+        console.log("%s: maxRelPriceError(1e18)=%d", name, stats.maxRelPriceError);
         vm.rollFork(originalBlock);
-        assertEq(mismatches, 0, string.concat(name, ": found mismatches"));
+        assertEq(stats.mismatches, 0, string.concat(name, ": found mismatches"));
+    }
+
+    /// @notice Update error stats with abs/rel price error
+    function _updatePriceErrorStats(uint256 basePrice, uint256 candPrice, ComparisonStats memory stats) internal pure {
+        uint256 absErr = basePrice > candPrice ? basePrice - candPrice : candPrice - basePrice;
+        if (absErr > stats.maxAbsPriceError) {
+            stats.maxAbsPriceError = absErr;
+        }
+        uint256 denom = basePrice > candPrice ? basePrice : candPrice;
+        if (denom > 0) {
+            uint256 relErr = Math.mulDiv(absErr, 1e18, denom, Math.Rounding.Ceil);
+            if (relErr > stats.maxRelPriceError) {
+                stats.maxRelPriceError = relErr;
+            }
+        }
     }
 }

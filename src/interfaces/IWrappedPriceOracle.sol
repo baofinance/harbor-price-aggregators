@@ -16,5 +16,10 @@ interface IWrappedPriceOracle is IPriceOracleErrors {
     function latestAnswer()
         external
         view
-        returns (uint256 minUnderlyingPrice, uint256 maxUnderlyingPrice, uint256 minWrappedRate, uint256 maxWrappedRate);
+        returns (
+            uint256 minUnderlyingPrice,
+            uint256 maxUnderlyingPrice,
+            uint256 minWrappedRate,
+            uint256 maxWrappedRate
+        );
 }

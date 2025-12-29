@@ -38,13 +38,15 @@ contract ChainlinkStalenessAnalysis is Test {
             vm.rollFork(sampleBlock);
 
             // ETH/USD (heartbeat 3600)
-            (,,, uint256 ethUpdatedAt,) = AggregatorV3Interface(MainnetOracleAddresses.ETH_USD_FEED).latestRoundData();
+            (, , , uint256 ethUpdatedAt, ) = AggregatorV3Interface(MainnetOracleAddresses.ETH_USD_FEED)
+                .latestRoundData();
             int256 ethOvershoot = int256(block.timestamp) - int256(ethUpdatedAt) - 3600;
             if (ethOvershoot > maxOvershootEthUsd) maxOvershootEthUsd = ethOvershoot;
             if (ethOvershoot > 0) staleCountEth++;
 
             // BTC/USD (heartbeat 3600)
-            (,,, uint256 btcUpdatedAt,) = AggregatorV3Interface(MainnetOracleAddresses.BTC_USD_FEED).latestRoundData();
+            (, , , uint256 btcUpdatedAt, ) = AggregatorV3Interface(MainnetOracleAddresses.BTC_USD_FEED)
+                .latestRoundData();
             int256 btcOvershoot = int256(block.timestamp) - int256(btcUpdatedAt) - 3600;
             if (btcOvershoot > maxOvershootBtcUsd) maxOvershootBtcUsd = btcOvershoot;
             if (btcOvershoot > 0) staleCountBtc++;
@@ -92,7 +94,8 @@ contract ChainlinkStalenessAnalysis is Test {
             vm.rollFork(blk);
 
             // BTC/USD (heartbeat 3600) - this was the stale feed
-            (,,, uint256 btcUpdatedAt,) = AggregatorV3Interface(MainnetOracleAddresses.BTC_USD_FEED).latestRoundData();
+            (, , , uint256 btcUpdatedAt, ) = AggregatorV3Interface(MainnetOracleAddresses.BTC_USD_FEED)
+                .latestRoundData();
             int256 btcAge = int256(block.timestamp) - int256(btcUpdatedAt);
             int256 overshoot = btcAge - 3600;
 

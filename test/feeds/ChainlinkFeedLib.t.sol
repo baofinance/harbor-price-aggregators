@@ -24,8 +24,11 @@ contract ChainlinkFeedLibTest is Test {
     function test_latestAnswerNormalized_basicNormalization() public {
         feed.setAnswer(PRICE, block.timestamp);
 
-        uint256 price =
-            ChainlinkFeedLib.latestAnswerNormalized(AggregatorV3Interface(address(feed)), DECIMALS, HEARTBEAT);
+        uint256 price = ChainlinkFeedLib.latestAnswerNormalized(
+            AggregatorV3Interface(address(feed)),
+            DECIMALS,
+            HEARTBEAT
+        );
 
         // Price should be normalized to 18 decimals: 2000e8 -> 2000e18
         assertEq(price, 2000e18);
@@ -36,12 +39,9 @@ contract ChainlinkFeedLibTest is Test {
         feed.setAnswer(-100e8, block.timestamp);
 
         bool reverted = false;
-        try this.callLatestAnswerNormalized(address(feed), DECIMALS) returns (
-            uint256
-        ) {
-        // Should not reach here
-        }
-        catch {
+        try this.callLatestAnswerNormalized(address(feed), DECIMALS) returns (uint256) {
+            // Should not reach here
+        } catch {
             reverted = true;
         }
         assertTrue(reverted, "Should revert on negative price");
@@ -51,8 +51,11 @@ contract ChainlinkFeedLibTest is Test {
     function test_latestAnswerNormalized_zeroPrice_succeeds() public {
         feed.setAnswer(0, block.timestamp);
 
-        uint256 price =
-            ChainlinkFeedLib.latestAnswerNormalized(AggregatorV3Interface(address(feed)), DECIMALS, HEARTBEAT);
+        uint256 price = ChainlinkFeedLib.latestAnswerNormalized(
+            AggregatorV3Interface(address(feed)),
+            DECIMALS,
+            HEARTBEAT
+        );
 
         assertEq(price, 0);
     }
