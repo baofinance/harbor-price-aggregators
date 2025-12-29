@@ -8,7 +8,7 @@ import {IHarborPriceAggregatorV3} from "@harbor-price/interfaces/IHarborPriceAgg
 /// @notice Shared base for v3 price aggregators.
 /// @dev Concrete implementations override `latestAnswer()` and implement identity getters.
 /// @custom:oz-upgrades-unsafe-allow constructor
-abstract contract HarborPriceAggregator_v3 is IHarborPriceAggregatorV3, UUPSUpgradeable, BaoFixedOwnable {
+abstract contract HarborAggregator_v3 is IHarborPriceAggregatorV3, UUPSUpgradeable, BaoFixedOwnable {
     address private constant _OWNER = 0x9bABfC1A1952a6ed2caC1922BFfE80c0506364a2;
 
     /// @dev initialises this to _OWNER immediately

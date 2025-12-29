@@ -4,7 +4,7 @@ pragma solidity 0.8.30;
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
 import {SignedMath} from "@openzeppelin/contracts/utils/math/SignedMath.sol";
 import {IPriceOracleErrors} from "@harbor-price/interfaces/IPriceOracleErrors.sol";
-import {ChainlinkFeedLib} from "./feeds/ChainlinkFeedLib.sol";
+import {ChainlinkFeedLib} from "@harbor-price/feeds/chainlink/ChainlinkFeedLib.sol";
 
 /// @title PriceOracle_v1
 /// @notice Library for validating Chainlink price feed data.
@@ -139,5 +139,4 @@ library PriceOracle_v1 {
             prevRoundId = roundId - 1; // this is safe because we know aggregatorRoundId > 1
         }
     }
-
 }

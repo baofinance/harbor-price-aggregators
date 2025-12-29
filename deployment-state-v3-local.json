@@ -1,0 +1,100 @@
+{
+  "version": "v3",
+  "network": "mainnet",
+  "chainId": 1,
+  "baoFactory": "0xD696E56b3A054734d4C6DCBD32E11a278b0EC458",
+  "implementations": {
+    "0xB4Ff66DA609AfF3EaD831b8b2428DbB2bEf969eb": {
+      "contractName": "Aggregator_fxUSD_ETH_mainnet",
+      "deployedAt": "2025-12-29T13:49:29Z"
+    },
+    "0x2B5757720f361559fe0C499C55eFa65bd6bC6cA3": {
+      "contractName": "Aggregator_fxUSD_BTC_mainnet",
+      "deployedAt": "2025-12-29T13:49:35Z"
+    },
+    "0xAbB1910DCFD0d7a0527Ad276b464324Dd4d2586B": {
+      "contractName": "Aggregator_fxUSD_EUR_mainnet",
+      "deployedAt": "2025-12-29T13:49:42Z"
+    },
+    "0x7914a8b73E11432953d9cCda060018EA1d9DCde9": {
+      "contractName": "Aggregator_fxUSD_XAU_mainnet",
+      "deployedAt": "2025-12-29T13:49:48Z"
+    },
+    "0xbf5d778c6E2040bDf3a0985ac2f386b624Ff5c7a": {
+      "contractName": "Aggregator_fxUSD_MCAP_mainnet",
+      "deployedAt": "2025-12-29T13:49:54Z"
+    },
+    "0xc462AB9A84A3eEDb1c594E2293238800EC053b92": {
+      "contractName": "Aggregator_stETH_BTC_mainnet",
+      "deployedAt": "2025-12-29T13:50:00Z"
+    },
+    "0x6F31ECf7D6a8aa3a0A6748FCaC25f213fF29EFe4": {
+      "contractName": "Aggregator_stETH_EUR_mainnet",
+      "deployedAt": "2025-12-29T13:50:06Z"
+    },
+    "0x33484BB3FE7fF72B043B4116A632A5487ad95Dd5": {
+      "contractName": "Aggregator_stETH_XAU_mainnet",
+      "deployedAt": "2025-12-29T13:50:12Z"
+    },
+    "0xE84412015297aFFfFf0064EfE0bbd732F4Ea22F8": {
+      "contractName": "Aggregator_stETH_MCAP_mainnet",
+      "deployedAt": "2025-12-29T13:50:18Z"
+    }
+  },
+  "proxies": {
+    "fxUSD_ETH": {
+      "salt": "harbor_v1::fxUSD::ETH::wrappedPriceAggregator",
+      "address": "0xea5292c58288DcE24C52C1dB13ca048275665EbC",
+      "implementation": "0xB4Ff66DA609AfF3EaD831b8b2428DbB2bEf969eb",
+      "deployedAt": "2025-12-29T13:49:34Z"
+    },
+    "fxUSD_BTC": {
+      "salt": "harbor_v1::fxUSD::BTC::wrappedPriceAggregator",
+      "address": "0xF7657CD7890904d108384E289997c993e2e2bBc0",
+      "implementation": "0x2B5757720f361559fe0C499C55eFa65bd6bC6cA3",
+      "deployedAt": "2025-12-29T13:49:41Z"
+    },
+    "fxUSD_EUR": {
+      "salt": "harbor_v1::fxUSD::EUR::wrappedPriceAggregator",
+      "address": "0x305454F8B46Aa3485D8B350D8E832459974F5e9F",
+      "implementation": "0xAbB1910DCFD0d7a0527Ad276b464324Dd4d2586B",
+      "deployedAt": "2025-12-29T13:49:47Z"
+    },
+    "fxUSD_XAU": {
+      "salt": "harbor_v1::fxUSD::XAU::wrappedPriceAggregator",
+      "address": "0xd71538769Af1c8f4D663BD0a5eA667D67E1623e2",
+      "implementation": "0x7914a8b73E11432953d9cCda060018EA1d9DCde9",
+      "deployedAt": "2025-12-29T13:49:53Z"
+    },
+    "fxUSD_MCAP": {
+      "salt": "harbor_v1::fxUSD::MCAP::wrappedPriceAggregator",
+      "address": "0x88430c0F09A6D603c43E2816F2EA9Ab45dB7e1a8",
+      "implementation": "0xbf5d778c6E2040bDf3a0985ac2f386b624Ff5c7a",
+      "deployedAt": "2025-12-29T13:49:59Z"
+    },
+    "stETH_BTC": {
+      "salt": "harbor_v1::stETH::BTC::wrappedPriceAggregator",
+      "address": "0x42018953e5174dC07058BeEE0618aa569fbFBE90",
+      "implementation": "0xc462AB9A84A3eEDb1c594E2293238800EC053b92",
+      "deployedAt": "2025-12-29T13:50:06Z"
+    },
+    "stETH_EUR": {
+      "salt": "harbor_v1::stETH::EUR::wrappedPriceAggregator",
+      "address": "0x5e27965689B4B8B425d98fbc676fE22d74caf7C7",
+      "implementation": "0x6F31ECf7D6a8aa3a0A6748FCaC25f213fF29EFe4",
+      "deployedAt": "2025-12-29T13:50:12Z"
+    },
+    "stETH_XAU": {
+      "salt": "harbor_v1::stETH::XAU::wrappedPriceAggregator",
+      "address": "0x2962ECcF1B9cc46FE1aFf7bfc0f7179Fc87939ee",
+      "implementation": "0x33484BB3FE7fF72B043B4116A632A5487ad95Dd5",
+      "deployedAt": "2025-12-29T13:50:17Z"
+    },
+    "stETH_MCAP": {
+      "salt": "harbor_v1::stETH::MCAP::wrappedPriceAggregator",
+      "address": "0x4fe6fa14db0D3C8a4709A4F3e37C1c862381859F",
+      "implementation": "0xE84412015297aFFfFf0064EfE0bbd732F4Ea22F8",
+      "deployedAt": "2025-12-29T13:50:23Z"
+    }
+  }
+}

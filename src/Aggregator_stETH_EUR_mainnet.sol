@@ -2,14 +2,14 @@
 pragma solidity 0.8.30;
 
 import {MainnetOracleAddresses} from "@harbor-price/price/MainnetOracleAddresses.sol";
-import {Oracle_stETH_EUR} from "@harbor-price/price/oracles/Oracle_stETH_EUR.sol";
+import {Aggregator_stETH_EUR} from "@harbor-price/oracles/Aggregator_stETH_EUR.sol";
 
 /// @notice Ethereum mainnet stETH/EUR oracle.
 /// @dev Hard-coded wiring for mainnet; deploy scripts select this bytecode by chain.
 /// @custom:oz-upgrades-unsafe-allow constructor
-contract Oracle_stETH_EUR_mainnet is Oracle_stETH_EUR {
+contract Aggregator_stETH_EUR_mainnet is Aggregator_stETH_EUR {
     constructor()
-        Oracle_stETH_EUR(
+        Aggregator_stETH_EUR(
             MainnetOracleAddresses.STETH,
             MainnetOracleAddresses.WSTETH,
             MainnetOracleAddresses.ETH_USD_FEED,

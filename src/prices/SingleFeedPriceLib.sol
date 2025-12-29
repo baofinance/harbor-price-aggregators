@@ -3,7 +3,7 @@ pragma solidity 0.8.30;
 
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
-import {ChainlinkFeedLib} from "../feeds/ChainlinkFeedLib.sol";
+import {ChainlinkFeedLib} from "@harbor-price/feeds/chainlink/ChainlinkFeedLib.sol";
 
 library SingleFeedPriceLib {
     function getPrice(

@@ -2,16 +2,16 @@
 pragma solidity 0.8.30;
 
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
-import {HarborPriceAggregator_v3} from "@harbor-price/price/HarborPriceAggregator_v3.sol";
+import {HarborAggregator_v3} from "@harbor-price/HarborAggregator_v3.sol";
 import {IWrappedPriceOracle} from "@harbor-price/interfaces/IWrappedPriceOracle.sol";
 import {IWstETH} from "@bao/interfaces/IWstETH.sol";
-import {WstETHRateLib} from "@harbor-price/price/rates/WstETHRateLib.sol";
-import {DoubleFeedPriceLib} from "@harbor-price/price/prices/DoubleFeedPriceLib.sol";
+import {WstETHRateLib} from "@harbor-price/rates/WstETHRateLib.sol";
+import {DoubleFeedPriceLib} from "@harbor-price/prices/DoubleFeedPriceLib.sol";
 
-/// @notice stETH/XAU oracle (rate: wstETH, price: (ETH/USD)/(XAU/USD)).
+/// @notice stETH/EUR oracle (rate: wstETH, price: (ETH/USD)/(EUR/USD)).
 /// @dev This is the formula contract; wiring (feeds/addresses) is provided via constructor.
 /// @custom:oz-upgrades-unsafe-allow state-variable-immutable constructor
-contract Oracle_stETH_XAU is HarborPriceAggregator_v3 {
+contract Aggregator_stETH_EUR is HarborAggregator_v3 {
     using WstETHRateLib for IWstETH;
 
     error InvalidAddress(address value);
@@ -59,9 +59,8 @@ contract Oracle_stETH_XAU is HarborPriceAggregator_v3 {
     function _baseName() internal pure override returns (string memory) {
         return "stETH";
     }
-
     function _quoteName() internal pure override returns (string memory) {
-        return "XAU";
+        return "EUR";
     }
 
     /// @inheritdoc IWrappedPriceOracle
