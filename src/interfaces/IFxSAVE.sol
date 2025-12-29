@@ -171,6 +171,8 @@ interface IFxSAVE is IERC20, IERC4626 {
      */
     function supportsInterface(bytes4 interfaceId) external view returns (bool);
 
+    function yieldToken() external view returns (address);
+
     // Events
     event Claim(address owner, address receiver);
     event EIP712DomainChanged();

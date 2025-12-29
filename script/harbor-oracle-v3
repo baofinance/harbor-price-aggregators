@@ -48,7 +48,6 @@ FORGE=forge
 CAST=cast
 
 BAO_FACTORY=0xD696E56b3A054734d4C6DCBD32E11a278b0EC458
-
 # Harbor multisig owner for v3 proxies
 OWNER=0x9bABfC1A1952a6ed2caC1922BFfE80c0506364a2
 
@@ -256,20 +255,6 @@ else
   DEPLOYER=""
 fi
 
-salt_string() {
-  local base=$1
-  local quote=$2
-
-  # The salt is an exact user-provided prefix; we do not attempt to normalize it.
-  # The script always appends ::<base>::<quote>.
-  echo "${SALT_PREFIX}::${base}::${quote}"
-}
-
-salt_bytes32() {
-  local salt_str=$1
-  "$CAST" keccak "$("$CAST" from-utf8 "$salt_str")"
-}
-
 predict_address() {
   local salt_b32=$1
   "$CAST" call "$BAO_FACTORY" "predictAddress(bytes32)(address)" "$salt_b32" --rpc-url "$RPC_NETWORK"
@@ -379,8 +364,9 @@ if [[ "$MODE" == "deploy" ]]; then
 fi
 echo ""
 
-salt_str=$(salt_string "$BASE" "$QUOTE")
-salt_b32=$(salt_bytes32 "$salt_str")
+salt_str="${SALT_PREFIX}::${BASE}::${QUOTE}"
+salt_b32=$("$CAST" keccak "$("$CAST" from-utf8 "$salt_str")")
+
 predicted=$(predict_address "$salt_b32")
 
 if [[ "$MODE" == "check" ]]; then

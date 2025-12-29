@@ -18,25 +18,18 @@ contract Oracle_fxUSD_MCAP is HarborPriceAggregator_v3 {
     error InvalidDivisor(uint256 divisor);
 
     IFxSAVE public immutable FXSAVE;
-    address public immutable BASE;
 
     AggregatorV3Interface public immutable PRICE_FEED;
     uint8 public immutable PRICE_FEED_DECIMALS;
     uint256 public immutable PRICE_DIVISOR;
     bool public immutable INVERT_PRICE;
 
-    constructor(
-        address fxsave_,
-        address priceFeed_,
-        uint256 priceDivisor_,
-        bool invertPrice_
-    ) {
+    constructor(address fxsave_, address priceFeed_, uint256 priceDivisor_, bool invertPrice_) {
         if (fxsave_ == address(0)) revert InvalidAddress(fxsave_);
         if (priceFeed_ == address(0)) revert InvalidAddress(priceFeed_);
         if (priceDivisor_ == 0) revert InvalidDivisor(priceDivisor_);
 
         FXSAVE = IFxSAVE(fxsave_);
-        BASE = IFxSAVE(fxsave_).asset();
 
         PRICE_FEED = AggregatorV3Interface(priceFeed_);
         PRICE_FEED_DECIMALS = PRICE_FEED.decimals();
@@ -44,32 +37,22 @@ contract Oracle_fxUSD_MCAP is HarborPriceAggregator_v3 {
         INVERT_PRICE = invertPrice_;
     }
 
-    function base() external view returns (address) {
-        return BASE;
-    }
-
     function rateProvider() external view returns (address) {
         return address(FXSAVE);
     }
 
-    function quoteName() external pure returns (string memory) {
-        return "MCAP";
+    function _baseName() internal pure override returns (string memory) {
+        return "fxUSD";
     }
-
-    function oracleName() external pure returns (string memory) {
-        return "fxUSD/MCAP";
+    function _quoteName() internal pure override returns (string memory) {
+        return "MCAP";
     }
 
     /// @inheritdoc IWrappedPriceOracle
     function latestAnswer() external view override(IWrappedPriceOracle) returns (uint256, uint256, uint256, uint256) {
         uint256 rate = FXSAVE.getRate();
 
-        uint256 price = SingleFeedPriceLib.getPrice(
-            PRICE_FEED,
-            PRICE_FEED_DECIMALS,
-            PRICE_DIVISOR,
-            INVERT_PRICE
-        );
+        uint256 price = SingleFeedPriceLib.getPrice(PRICE_FEED, PRICE_FEED_DECIMALS, PRICE_DIVISOR, INVERT_PRICE);
 
         return (price, price, rate, rate);
     }

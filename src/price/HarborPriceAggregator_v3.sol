@@ -14,9 +14,25 @@ abstract contract HarborPriceAggregator_v3 is IHarborPriceAggregatorV3, UUPSUpgr
     /// @dev initialises this to _OWNER immediately
     constructor() BaoFixedOwnable(address(0), _OWNER, 0) {}
 
+    function baseName() external pure returns (string memory) {
+        return _baseName();
+    }
+
+    function quoteName() external pure returns (string memory) {
+        return _quoteName();
+    }
+
+    function oracleName() external pure returns (string memory) {
+        return string.concat(_baseName(), "/", _quoteName());
+    }
+
     function version() external pure returns (uint256) {
         return 3;
     }
 
     function _authorizeUpgrade(address) internal override onlyOwner {}
+
+    function _baseName() internal pure virtual returns (string memory);
+
+    function _quoteName() internal pure virtual returns (string memory);
 }

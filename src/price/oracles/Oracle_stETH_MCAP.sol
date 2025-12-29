@@ -18,7 +18,6 @@ contract Oracle_stETH_MCAP is HarborPriceAggregator_v3 {
     error InvalidDivisor(uint256 divisor);
 
     IWstETH public immutable WSTETH;
-    address public immutable BASE;
 
     AggregatorV3Interface public immutable FIRST_FEED;
     uint8 public immutable FIRST_FEED_DECIMALS;
@@ -42,7 +41,6 @@ contract Oracle_stETH_MCAP is HarborPriceAggregator_v3 {
         if (secondFeed_ == address(0)) revert InvalidAddress(secondFeed_);
         if (priceDivisor_ == 0) revert InvalidDivisor(priceDivisor_);
 
-        BASE = steth_;
         WSTETH = IWstETH(wsteth_);
 
         FIRST_FEED = AggregatorV3Interface(firstFeed_);
@@ -54,20 +52,15 @@ contract Oracle_stETH_MCAP is HarborPriceAggregator_v3 {
         INVERT_PRICE = invertPrice_;
     }
 
-    function base() external view returns (address) {
-        return BASE;
-    }
-
     function rateProvider() external view returns (address) {
         return address(WSTETH);
     }
 
-    function quoteName() external pure returns (string memory) {
-        return "MCAP";
+    function _baseName() internal pure override returns (string memory) {
+        return "stETH";
     }
-
-    function oracleName() external pure returns (string memory) {
-        return "stETH/MCAP";
+    function _quoteName() internal pure override returns (string memory) {
+        return "MCAP";
     }
 
     /// @inheritdoc IWrappedPriceOracle
