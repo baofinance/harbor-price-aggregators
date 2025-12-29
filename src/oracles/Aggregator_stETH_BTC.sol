@@ -65,6 +65,7 @@ contract Aggregator_stETH_BTC is HarborAggregator_v3 {
     function _baseName() internal pure override returns (string memory) {
         return "stETH";
     }
+
     function _quoteName() internal pure override returns (string memory) {
         return "BTC";
     }

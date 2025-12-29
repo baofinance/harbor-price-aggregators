@@ -35,13 +35,13 @@ library ChainlinkFeedLib {
     /// @param decimals The number of decimals the feed reports
     /// @param heartbeat Maximum age in seconds before data is considered stale
     /// @return price The latest price normalized to 18 decimals
-    function latestAnswerNormalized(
-        AggregatorV3Interface feed,
-        uint8 decimals,
-        uint256 heartbeat
-    ) internal view returns (uint256 price) {
+    function latestAnswerNormalized(AggregatorV3Interface feed, uint8 decimals, uint256 heartbeat)
+        internal
+        view
+        returns (uint256 price)
+    {
         // slither-disable-next-line unused-return
-        (, int256 answer, , uint256 updatedAt, ) = feed.latestRoundData();
+        (, int256 answer,, uint256 updatedAt,) = feed.latestRoundData();
 
         // Validate feed has been updated at least once
         if (updatedAt == 0) {

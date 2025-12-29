@@ -94,9 +94,7 @@ interface IHarborCustomFeedAndRateAggregator is IWrappedPriceOracle {
     function feedDecimals(address feed) external view returns (uint8);
 
     /// @notice Feed validation constraints
-    function feedConstraints(
-        address feed
-    )
+    function feedConstraints(address feed)
         external
         view
         returns (

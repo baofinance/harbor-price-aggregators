@@ -2,7 +2,9 @@
 pragma solidity 0.8.30;
 
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
-import {ReentrancyGuardTransientUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardTransientUpgradeable.sol";
+import {
+    ReentrancyGuardTransientUpgradeable
+} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardTransientUpgradeable.sol";
 import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import {BaoOwnable} from "@bao/BaoOwnable.sol";
 import {IFxSAVE} from "@harbor-price/interfaces/IFxSAVE.sol";
@@ -165,12 +167,15 @@ contract HarborSingleFeedAndRateAggregator_v1 is
 
         // Validate rate source configuration
         if (rateSource_ == RateSource.WSTETH && WSTETH == address(0)) revert InvalidRateSource(WSTETH);
-        if (rateSource_ == RateSource.FXSAVE && address(FXSAVE) == address(0))
+        if (rateSource_ == RateSource.FXSAVE && address(FXSAVE) == address(0)) {
             revert InvalidRateSource(address(FXSAVE));
-        if (rateSource_ == RateSource.SUSDE_CHAINLINK && SUSDE_USDE_FEED == address(0))
+        }
+        if (rateSource_ == RateSource.SUSDE_CHAINLINK && SUSDE_USDE_FEED == address(0)) {
             revert InvalidRateSource(SUSDE_USDE_FEED);
-        if (rateSource_ == RateSource.WSTETH_CHAINLINK && WSTETH_STETH_FEED == address(0))
+        }
+        if (rateSource_ == RateSource.WSTETH_CHAINLINK && WSTETH_STETH_FEED == address(0)) {
             revert InvalidRateSource(WSTETH_STETH_FEED);
+        }
 
         // Set storage variables
         oracleName = oracleName_;
@@ -241,10 +246,8 @@ contract HarborSingleFeedAndRateAggregator_v1 is
     function _getPrice() internal view returns (uint256 price) {
         if (feedConstraints[firstFeed].maxAnswerAge == 0) revert ConstraintsNotSet(firstFeed);
 
-        PriceOracle_v1.Feed memory firstFeedData = PriceOracle_v1.Feed({
-            priceFeed: AggregatorV3Interface(firstFeed),
-            decimals: firstFeedDecimals
-        });
+        PriceOracle_v1.Feed memory firstFeedData =
+            PriceOracle_v1.Feed({priceFeed: AggregatorV3Interface(firstFeed), decimals: firstFeedDecimals});
 
         uint256 rate = _getRate();
 
@@ -278,7 +281,7 @@ contract HarborSingleFeedAndRateAggregator_v1 is
             // For SUSDE_CHAINLINK, get the sUSDE/USDE rate from Chainlink feed
             AggregatorV3Interface feed = AggregatorV3Interface(SUSDE_USDE_FEED);
             uint8 feedDecimals = feed.decimals();
-            (, int256 answer, , uint256 updatedAt, ) = feed.latestRoundData();
+            (, int256 answer,, uint256 updatedAt,) = feed.latestRoundData();
 
             // Validate answer is positive
             if (answer <= 0) revert InvalidPrice(SUSDE_USDE_FEED, answer);
@@ -302,7 +305,7 @@ contract HarborSingleFeedAndRateAggregator_v1 is
             // For WSTETH_CHAINLINK, get the wstETH/stETH rate from Chainlink feed
             AggregatorV3Interface feed = AggregatorV3Interface(WSTETH_STETH_FEED);
             uint8 feedDecimals = feed.decimals();
-            (, int256 answer, , uint256 updatedAt, ) = feed.latestRoundData();
+            (, int256 answer,, uint256 updatedAt,) = feed.latestRoundData();
 
             // Validate answer is positive
             if (answer <= 0) revert InvalidPrice(WSTETH_STETH_FEED, answer);

@@ -112,11 +112,7 @@ contract AllOracleComparisons is OracleComparisonBase {
         _compareOracle(
             IWrappedPriceOracle(DeployedAddresses.STETH_BTC),
             _deployDoubleFeed(
-                "StETHToBTC",
-                MainnetOracleAddresses.ETH_USD_FEED,
-                MainnetOracleAddresses.BTC_USD_FEED,
-                1,
-                false
+                "StETHToBTC", MainnetOracleAddresses.ETH_USD_FEED, MainnetOracleAddresses.BTC_USD_FEED, 1, false
             ),
             "STETH_BTC"
         );
@@ -133,11 +129,7 @@ contract AllOracleComparisons is OracleComparisonBase {
         // STETH / BTC (local v2 vs local v3)
         _compareOracle(
             _deployDoubleFeed(
-                "StETHToBTC",
-                MainnetOracleAddresses.STETH_USD_FEED,
-                MainnetOracleAddresses.BTC_USD_FEED,
-                1,
-                false
+                "StETHToBTC", MainnetOracleAddresses.STETH_USD_FEED, MainnetOracleAddresses.BTC_USD_FEED, 1, false
             ),
             _deployV3(address(new Aggregator_stETH_BTC_mainnet())),
             "STETH_BTC_v3_vs_v2"
@@ -147,11 +139,7 @@ contract AllOracleComparisons is OracleComparisonBase {
         _compareOracle(
             IWrappedPriceOracle(DeployedAddresses.STETH_EUR),
             _deployDoubleFeed(
-                "StETHToEUR",
-                MainnetOracleAddresses.ETH_USD_FEED,
-                MainnetOracleAddresses.EUR_USD_FEED,
-                1,
-                false
+                "StETHToEUR", MainnetOracleAddresses.ETH_USD_FEED, MainnetOracleAddresses.EUR_USD_FEED, 1, false
             ),
             "STETH_EUR"
         );
@@ -167,11 +155,7 @@ contract AllOracleComparisons is OracleComparisonBase {
         _compareOracle(
             IWrappedPriceOracle(DeployedAddresses.STETH_MCAP),
             _deployDoubleFeed(
-                "StETHToMCAP",
-                MainnetOracleAddresses.ETH_USD_FEED,
-                MainnetOracleAddresses.MCAP_USD_FEED,
-                1e12,
-                false
+                "StETHToMCAP", MainnetOracleAddresses.ETH_USD_FEED, MainnetOracleAddresses.MCAP_USD_FEED, 1e12, false
             ),
             "STETH_MCAP"
         );
@@ -187,11 +171,7 @@ contract AllOracleComparisons is OracleComparisonBase {
         _compareOracle(
             IWrappedPriceOracle(DeployedAddresses.STETH_XAU),
             _deployDoubleFeed(
-                "StETHToXAU",
-                MainnetOracleAddresses.ETH_USD_FEED,
-                MainnetOracleAddresses.XAU_USD_FEED,
-                1,
-                false
+                "StETHToXAU", MainnetOracleAddresses.ETH_USD_FEED, MainnetOracleAddresses.XAU_USD_FEED, 1, false
             ),
             "STETH_XAU"
         );

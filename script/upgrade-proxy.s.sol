@@ -67,12 +67,8 @@ contract UpgradeProxyScript is Script {
 
             console.log("Deploying new implementation...");
             vm.startBroadcast(owner);
-            HarborDoubleFeedAndRateAggregator_v1 newImplementation = new HarborDoubleFeedAndRateAggregator_v1(
-                wsteth,
-                fxsave,
-                susdeUsdeFeed,
-                wstethStethFeed
-            );
+            HarborDoubleFeedAndRateAggregator_v1 newImplementation =
+                new HarborDoubleFeedAndRateAggregator_v1(wsteth, fxsave, susdeUsdeFeed, wstethStethFeed);
             newImpl = address(newImplementation);
             vm.stopBroadcast();
             console.log("New Implementation Deployed:", newImpl);

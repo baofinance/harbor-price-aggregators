@@ -25,11 +25,9 @@ library LatestAnswerErrorClassifier {
     }
 
     function _isKnownConstraint(bytes4 selector) private pure returns (bool) {
-        return
-            (selector == IPriceOracleErrors.InvalidUnderlyingPrice.selector) ||
-            (selector == IPriceOracleErrors.StaleUnderlyingPrice.selector) ||
-            (selector == IPriceOracleErrors.UnderlyingPriceDeviation.selector) ||
-            (selector == SELECTOR_INVALID_RATE);
+        return (selector == IPriceOracleErrors.InvalidUnderlyingPrice.selector)
+            || (selector == IPriceOracleErrors.StaleUnderlyingPrice.selector)
+            || (selector == IPriceOracleErrors.UnderlyingPriceDeviation.selector) || (selector == SELECTOR_INVALID_RATE);
     }
 
     /// @notice Attempts latestAnswer() via staticcall and classifies failures for CSV output.
@@ -38,9 +36,7 @@ library LatestAnswerErrorClassifier {
     ///      - Empty returndata => (stop=true, hasData=false, error="NO_CODE")
     ///      - Revert with known-constraint selector => (stop=true, hasData=false, error=<label>)
     ///      - Any other revert => (stop=true, hasData=false, error="NO_CODE")
-    function tryLatestAnswer(
-        address oracle
-    )
+    function tryLatestAnswer(address oracle)
         internal
         view
         returns (

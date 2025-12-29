@@ -25,7 +25,13 @@ contract Aggregator_fxUSD_XAU is HarborAggregator_v3 {
     uint256 public immutable PRICE_DIVISOR;
     bool public immutable INVERT_PRICE;
 
-    constructor(address fxsave_, address priceFeed_, uint256 priceHeartbeat_, uint256 priceDivisor_, bool invertPrice_) {
+    constructor(
+        address fxsave_,
+        address priceFeed_,
+        uint256 priceHeartbeat_,
+        uint256 priceDivisor_,
+        bool invertPrice_
+    ) {
         if (fxsave_ == address(0)) revert InvalidAddress(fxsave_);
         if (priceFeed_ == address(0)) revert InvalidAddress(priceFeed_);
         if (priceDivisor_ == 0) revert InvalidDivisor(priceDivisor_);
@@ -46,6 +52,7 @@ contract Aggregator_fxUSD_XAU is HarborAggregator_v3 {
     function _baseName() internal pure override returns (string memory) {
         return "fxUSD";
     }
+
     function _quoteName() internal pure override returns (string memory) {
         return "XAU";
     }
@@ -54,8 +61,9 @@ contract Aggregator_fxUSD_XAU is HarborAggregator_v3 {
     function latestAnswer() external view override(IWrappedPriceOracle) returns (uint256, uint256, uint256, uint256) {
         uint256 rate = FXSAVE.getRate();
 
-        uint256 price =
-            SingleFeedPriceLib.getPrice(PRICE_FEED, PRICE_FEED_DECIMALS, PRICE_FEED_HEARTBEAT, PRICE_DIVISOR, INVERT_PRICE);
+        uint256 price = SingleFeedPriceLib.getPrice(
+            PRICE_FEED, PRICE_FEED_DECIMALS, PRICE_FEED_HEARTBEAT, PRICE_DIVISOR, INVERT_PRICE
+        );
 
         return (price, price, rate, rate);
     }

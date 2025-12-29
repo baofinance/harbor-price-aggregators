@@ -10,12 +10,9 @@ import {MockAggregatorV3} from "test/mock/MockAggregatorV3.sol";
 
 // V2 contract for upgrade testing - same as V1, used to verify upgrade works
 contract HarborDoubleFeedAndRateAggregator_v2 is HarborDoubleFeedAndRateAggregator_v1 {
-    constructor(
-        address wsteth_,
-        address fxsave_,
-        address susdeUsdeFeed_,
-        address wstethStethFeed_
-    ) HarborDoubleFeedAndRateAggregator_v1(wsteth_, fxsave_, susdeUsdeFeed_, wstethStethFeed_) {}
+    constructor(address wsteth_, address fxsave_, address susdeUsdeFeed_, address wstethStethFeed_)
+        HarborDoubleFeedAndRateAggregator_v1(wsteth_, fxsave_, susdeUsdeFeed_, wstethStethFeed_)
+    {}
 }
 
 contract HarborDoubleFeedAndRateAggregator_v1Test is Test {
@@ -253,7 +250,7 @@ contract HarborDoubleFeedAndRateAggregator_v1Test is Test {
         oracle = HarborDoubleFeedAndRateAggregator_v1(address(proxy));
 
         vm.prank(owner);
-        (uint256 minPrice, , uint256 minRate, ) = oracle.latestAnswer();
+        (uint256 minPrice,, uint256 minRate,) = oracle.latestAnswer();
 
         assertEq(minRate, rate, "Incorrect rate (fuzz)");
         assertTrue(minPrice > 0, "Price should be positive (fuzz)");
@@ -381,7 +378,7 @@ contract HarborDoubleFeedAndRateAggregator_v1Test is Test {
         oracle = HarborDoubleFeedAndRateAggregator_v1(address(proxy));
 
         vm.prank(owner);
-        (uint256 minPrice, , uint256 minRate, ) = oracle.latestAnswer();
+        (uint256 minPrice,, uint256 minRate,) = oracle.latestAnswer();
 
         assertEq(minRate, fuzzWstEthRate, "Incorrect wstETH rate (fuzz)");
         assertTrue(minPrice > 0, "MCAP price should be positive (fuzz)");
@@ -421,7 +418,7 @@ contract HarborDoubleFeedAndRateAggregator_v1Test is Test {
         oracle = HarborDoubleFeedAndRateAggregator_v1(address(proxy));
 
         vm.prank(owner);
-        (uint256 minPrice, , uint256 minRate, ) = oracle.latestAnswer();
+        (uint256 minPrice,, uint256 minRate,) = oracle.latestAnswer();
 
         assertEq(minRate, fxSaveRate, "Incorrect fxSAVE rate (fuzz)");
         assertTrue(minPrice > 0, "MCAP price should be positive (fuzz)");
@@ -433,12 +430,8 @@ contract HarborDoubleFeedAndRateAggregator_v1Test is Test {
 
     function test_Upgrade_Success() public {
         // Deploy V1 implementation and proxy
-        HarborDoubleFeedAndRateAggregator_v1 implementationV1 = new HarborDoubleFeedAndRateAggregator_v1(
-            address(mockWstEth),
-            address(mockFxSave),
-            address(0),
-            address(0)
-        );
+        HarborDoubleFeedAndRateAggregator_v1 implementationV1 =
+            new HarborDoubleFeedAndRateAggregator_v1(address(mockWstEth), address(mockFxSave), address(0), address(0));
 
         bytes memory initData = abi.encodeWithSelector(
             HarborDoubleFeedAndRateAggregator_v1.initialize.selector,
@@ -467,12 +460,8 @@ contract HarborDoubleFeedAndRateAggregator_v1Test is Test {
         assertEq(implV1, address(implementationV1), "V1 implementation should be set");
 
         // Deploy V2 implementation
-        HarborDoubleFeedAndRateAggregator_v2 implementationV2 = new HarborDoubleFeedAndRateAggregator_v2(
-            address(mockWstEth),
-            address(mockFxSave),
-            address(0),
-            address(0)
-        );
+        HarborDoubleFeedAndRateAggregator_v2 implementationV2 =
+            new HarborDoubleFeedAndRateAggregator_v2(address(mockWstEth), address(mockFxSave), address(0), address(0));
 
         // Upgrade to V2
         vm.expectEmit(true, false, false, false);
@@ -498,12 +487,8 @@ contract HarborDoubleFeedAndRateAggregator_v1Test is Test {
 
     function test_Upgrade_Revert_NonOwner() public {
         // Deploy V1 implementation and proxy
-        HarborDoubleFeedAndRateAggregator_v1 implementationV1 = new HarborDoubleFeedAndRateAggregator_v1(
-            address(mockWstEth),
-            address(mockFxSave),
-            address(0),
-            address(0)
-        );
+        HarborDoubleFeedAndRateAggregator_v1 implementationV1 =
+            new HarborDoubleFeedAndRateAggregator_v1(address(mockWstEth), address(mockFxSave), address(0), address(0));
 
         bytes memory initData = abi.encodeWithSelector(
             HarborDoubleFeedAndRateAggregator_v1.initialize.selector,
@@ -522,12 +507,8 @@ contract HarborDoubleFeedAndRateAggregator_v1Test is Test {
         oracle = HarborDoubleFeedAndRateAggregator_v1(address(proxy));
 
         // Deploy V2 implementation
-        HarborDoubleFeedAndRateAggregator_v2 implementationV2 = new HarborDoubleFeedAndRateAggregator_v2(
-            address(mockWstEth),
-            address(mockFxSave),
-            address(0),
-            address(0)
-        );
+        HarborDoubleFeedAndRateAggregator_v2 implementationV2 =
+            new HarborDoubleFeedAndRateAggregator_v2(address(mockWstEth), address(mockFxSave), address(0), address(0));
 
         // Try to upgrade as non-owner
         address nonOwner = address(0x1234);
@@ -538,12 +519,8 @@ contract HarborDoubleFeedAndRateAggregator_v1Test is Test {
 
     function test_Upgrade_PreservesState() public {
         // Deploy V1 implementation and proxy
-        HarborDoubleFeedAndRateAggregator_v1 implementationV1 = new HarborDoubleFeedAndRateAggregator_v1(
-            address(mockWstEth),
-            address(mockFxSave),
-            address(0),
-            address(0)
-        );
+        HarborDoubleFeedAndRateAggregator_v1 implementationV1 =
+            new HarborDoubleFeedAndRateAggregator_v1(address(mockWstEth), address(mockFxSave), address(0), address(0));
 
         bytes memory initData = abi.encodeWithSelector(
             HarborDoubleFeedAndRateAggregator_v1.initialize.selector,
@@ -581,12 +558,8 @@ contract HarborDoubleFeedAndRateAggregator_v1Test is Test {
         (uint64 maxAge2Before, uint256 maxDev2Before) = oracle.getConstraints(2);
 
         // Deploy V2 implementation
-        HarborDoubleFeedAndRateAggregator_v2 implementationV2 = new HarborDoubleFeedAndRateAggregator_v2(
-            address(mockWstEth),
-            address(mockFxSave),
-            address(0),
-            address(0)
-        );
+        HarborDoubleFeedAndRateAggregator_v2 implementationV2 =
+            new HarborDoubleFeedAndRateAggregator_v2(address(mockWstEth), address(mockFxSave), address(0), address(0));
 
         // Upgrade to V2
         vm.prank(owner);

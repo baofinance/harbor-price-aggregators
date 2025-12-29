@@ -37,9 +37,12 @@ library PriceOracle_v1 {
 
         // Get latest round data and normalize to 18 decimals in one step
         // slither-disable-next-line unused-return // startedAt isn't used, for now, and answeredInRound is deprecated
-        (uint80 roundId, int256 answer /* uint256 startedAt*/, , uint256 updatedAt /*uint256 answeredInRound*/, ) = feed
-            .priceFeed
-            .latestRoundData();
+        (
+            uint80 roundId,
+            int256 answer,
+            /* uint256 startedAt*/,
+            uint256 updatedAt, /*uint256 answeredInRound*/
+        ) = feed.priceFeed.latestRoundData();
         answer = ChainlinkFeedLib.normaliseTo18(answer, feed.decimals);
 
         // Basic validation
@@ -64,7 +67,7 @@ library PriceOracle_v1 {
         // Only perform deviation checks if there is a previous round in this phase
         if (prevRoundId > 0) {
             // slither-disable-next-line unused-return // just get the data needed for the check
-            (, int256 prevAnswer, , uint256 prevUpdatedAt, ) = feed.priceFeed.getRoundData(prevRoundId);
+            (, int256 prevAnswer,, uint256 prevUpdatedAt,) = feed.priceFeed.getRoundData(prevRoundId);
             prevAnswer = ChainlinkFeedLib.normaliseTo18(prevAnswer, feed.decimals);
 
             // Debug: log previous normalized answer and timestamp
@@ -74,10 +77,7 @@ library PriceOracle_v1 {
 
                 if (absoluteDeviation > constraints.maxAbsoluteDeviation) {
                     revert IPriceOracleErrors.UnderlyingPriceDeviation(
-                        feedAddress,
-                        int256(answer),
-                        int256(prevAnswer),
-                        constraints.maxAbsoluteDeviation
+                        feedAddress, int256(answer), int256(prevAnswer), constraints.maxAbsoluteDeviation
                     );
                 }
 
@@ -86,10 +86,7 @@ library PriceOracle_v1 {
 
                 if (relativeDeviation > constraints.maxPercentageDeviation) {
                     revert IPriceOracleErrors.UnderlyingPriceDeviation(
-                        feedAddress,
-                        int256(answer),
-                        int256(prevAnswer),
-                        constraints.maxPercentageDeviation
+                        feedAddress, int256(answer), int256(prevAnswer), constraints.maxPercentageDeviation
                     );
                 }
                 // Trend reversal check

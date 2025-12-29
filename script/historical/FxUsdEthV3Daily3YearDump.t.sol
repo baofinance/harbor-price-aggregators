@@ -53,12 +53,10 @@ contract FxUsdEthV3Daily3YearDump is Test {
         return ratioWad / int256(deltaDays);
     }
 
-    function _maxAbsMove24hWad(
-        address oracle,
-        uint256 startDaysAgo,
-        uint256 endDaysAgo,
-        uint256 startMid
-    ) private returns (uint256 maxAbsWad) {
+    function _maxAbsMove24hWad(address oracle, uint256 startDaysAgo, uint256 endDaysAgo, uint256 startMid)
+        private
+        returns (uint256 maxAbsWad)
+    {
         if (startMid == 0) return 0;
         if (endDaysAgo != startDaysAgo + 1) return 0;
 
@@ -70,8 +68,8 @@ contract FxUsdEthV3Daily3YearDump is Test {
         while (currentBlock >= endBlock) {
             vm.rollFork(currentBlock);
 
-            (bool stop, bool hasData, uint256 minPrice, uint256 maxPrice, , , ) = LatestAnswerErrorClassifier
-                .tryLatestAnswer(oracle);
+            (bool stop, bool hasData, uint256 minPrice, uint256 maxPrice,,,) =
+                LatestAnswerErrorClassifier.tryLatestAnswer(oracle);
             if (stop || !hasData) return 0;
 
             uint256 mid = (minPrice + maxPrice) / 2;
@@ -85,10 +83,7 @@ contract FxUsdEthV3Daily3YearDump is Test {
         }
     }
 
-    function _sample(
-        address oracle,
-        uint256 daysAgo
-    )
+    function _sample(address oracle, uint256 daysAgo)
         private
         returns (
             uint256 sampleBlock,
@@ -107,9 +102,7 @@ contract FxUsdEthV3Daily3YearDump is Test {
         vm.rollFork(sampleBlock);
         ts = block.timestamp;
 
-        (stop, hasData, minPrice, maxPrice, minRate, maxRate, err) = LatestAnswerErrorClassifier.tryLatestAnswer(
-            oracle
-        );
+        (stop, hasData, minPrice, maxPrice, minRate, maxRate, err) = LatestAnswerErrorClassifier.tryLatestAnswer(oracle);
 
         if (hasData) {
             mid = (minPrice + maxPrice) / 2;
@@ -198,18 +191,7 @@ contract FxUsdEthV3Daily3YearDump is Test {
 
         if (deltaDays == 1 || _abs(dailyMoveWad) <= REFINE_THRESHOLD_WAD) {
             _writeSample(
-                oracle,
-                filename,
-                sampleBlock,
-                ts,
-                minPrice,
-                maxPrice,
-                minRate,
-                maxRate,
-                mid,
-                endDaysAgo,
-                true,
-                err
+                oracle, filename, sampleBlock, ts, minPrice, maxPrice, minRate, maxRate, mid, endDaysAgo, true, err
             );
             return false;
         }
@@ -254,18 +236,7 @@ contract FxUsdEthV3Daily3YearDump is Test {
             ) = _sample(address(oracle), 0);
 
             _writeSample(
-                address(oracle),
-                filename,
-                sampleBlock,
-                ts,
-                minPrice,
-                maxPrice,
-                minRate,
-                maxRate,
-                mid,
-                0,
-                hasData,
-                err
+                address(oracle), filename, sampleBlock, ts, minPrice, maxPrice, minRate, maxRate, mid, 0, hasData, err
             );
             if (stop || !hasData) return;
         }

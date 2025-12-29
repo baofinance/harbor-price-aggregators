@@ -30,9 +30,12 @@ contract ChainlinkFeedLibHeartbeatTest is Test {
         feed.setAnswer(PRICE, staleTime);
 
         bool reverted = false;
-        try this.callLatestAnswerNormalized(address(feed), DECIMALS) returns (uint256) {
-            // Should not reach here once heartbeat checking is implemented
-        } catch {
+        try this.callLatestAnswerNormalized(address(feed), DECIMALS) returns (
+            uint256
+        ) {
+        // Should not reach here once heartbeat checking is implemented
+        }
+        catch {
             reverted = true;
         }
         assertTrue(reverted, "Stale data (7 days old) should be rejected");
@@ -44,9 +47,12 @@ contract ChainlinkFeedLibHeartbeatTest is Test {
         feed.setAnswer(PRICE, block.timestamp - HEARTBEAT - TOLERANCE - 1);
 
         bool reverted = false;
-        try this.callLatestAnswerNormalized(address(feed), DECIMALS) returns (uint256) {
-            // Should not reach here
-        } catch {
+        try this.callLatestAnswerNormalized(address(feed), DECIMALS) returns (
+            uint256
+        ) {
+        // Should not reach here
+        }
+        catch {
             reverted = true;
         }
         assertTrue(reverted, "Data past heartbeat + tolerance should be rejected");
@@ -57,11 +63,8 @@ contract ChainlinkFeedLibHeartbeatTest is Test {
         // Set price updated HEARTBEAT + (TOLERANCE - 1) seconds ago (within tolerance)
         feed.setAnswer(PRICE, block.timestamp - HEARTBEAT - TOLERANCE + 1);
 
-        uint256 price = ChainlinkFeedLib.latestAnswerNormalized(
-            AggregatorV3Interface(address(feed)),
-            DECIMALS,
-            HEARTBEAT
-        );
+        uint256 price =
+            ChainlinkFeedLib.latestAnswerNormalized(AggregatorV3Interface(address(feed)), DECIMALS, HEARTBEAT);
         assertEq(price, 2000e18, "Price within tolerance should be accepted");
     }
 
@@ -71,9 +74,12 @@ contract ChainlinkFeedLibHeartbeatTest is Test {
         // This is dangerous and should be rejected
 
         bool reverted = false;
-        try this.callLatestAnswerNormalized(address(feed), DECIMALS) returns (uint256) {
-            // Should not reach here
-        } catch {
+        try this.callLatestAnswerNormalized(address(feed), DECIMALS) returns (
+            uint256
+        ) {
+        // Should not reach here
+        }
+        catch {
             reverted = true;
         }
         assertTrue(reverted, "Feed with updatedAt=0 should be rejected");

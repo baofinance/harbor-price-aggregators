@@ -223,19 +223,15 @@ contract HarborSingleFeedAndRateAggregator_v2Test is Test {
         ERC1967Proxy proxy = new ERC1967Proxy(address(implementation), initData);
         oracle = HarborSingleFeedAndRateAggregator_v2(address(proxy));
 
-        (, , uint256 minRate, uint256 maxRate) = oracle.latestAnswer();
+        (,, uint256 minRate, uint256 maxRate) = oracle.latestAnswer();
         assertEq(minRate, rate, "Incorrect rate (fuzz)");
         assertEq(maxRate, rate, "Rate mismatch (fuzz)");
     }
 
     function test_V2_Price_NoRateMultiplication() public {
         // Test that V2 does NOT multiply by rate
-        HarborSingleFeedAndRateAggregator_v2 implementation = new HarborSingleFeedAndRateAggregator_v2(
-            address(mockWstEth),
-            address(mockFxSave),
-            address(0),
-            address(0)
-        );
+        HarborSingleFeedAndRateAggregator_v2 implementation =
+            new HarborSingleFeedAndRateAggregator_v2(address(mockWstEth), address(mockFxSave), address(0), address(0));
 
         bytes memory initData = abi.encodeWithSelector(
             HarborSingleFeedAndRateAggregator_v2.initialize.selector,
@@ -274,12 +270,8 @@ contract HarborSingleFeedAndRateAggregator_v2Test is Test {
         // Inverted: USD/ETH = 1/4000 = 0.00025 ETH per USD
         // Since fxUSD is pegged to USD, this gives us fxUSD/ETH
 
-        HarborSingleFeedAndRateAggregator_v2 implementation = new HarborSingleFeedAndRateAggregator_v2(
-            address(mockWstEth),
-            address(mockFxSave),
-            address(0),
-            address(0)
-        );
+        HarborSingleFeedAndRateAggregator_v2 implementation =
+            new HarborSingleFeedAndRateAggregator_v2(address(mockWstEth), address(mockFxSave), address(0), address(0));
 
         bytes memory initData = abi.encodeWithSelector(
             HarborSingleFeedAndRateAggregator_v2.initialize.selector,
@@ -312,12 +304,8 @@ contract HarborSingleFeedAndRateAggregator_v2Test is Test {
     }
 
     function test_SetInvertPrice() public {
-        HarborSingleFeedAndRateAggregator_v2 implementation = new HarborSingleFeedAndRateAggregator_v2(
-            address(mockWstEth),
-            address(mockFxSave),
-            address(0),
-            address(0)
-        );
+        HarborSingleFeedAndRateAggregator_v2 implementation =
+            new HarborSingleFeedAndRateAggregator_v2(address(mockWstEth), address(mockFxSave), address(0), address(0));
 
         bytes memory initData = abi.encodeWithSelector(
             HarborSingleFeedAndRateAggregator_v2.initialize.selector,

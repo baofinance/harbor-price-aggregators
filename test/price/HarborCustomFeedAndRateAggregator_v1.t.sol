@@ -11,12 +11,9 @@ import {MockAggregatorV3} from "test/mock/MockAggregatorV3.sol";
 
 // V2 contract for upgrade testing - same as V1, used to verify upgrade works
 contract HarborCustomFeedAndRateAggregator_v2 is HarborCustomFeedAndRateAggregator_v1 {
-    constructor(
-        address wsteth_,
-        address fxsave_,
-        address susdeUsdeFeed_,
-        address wstethStethFeed_
-    ) HarborCustomFeedAndRateAggregator_v1(wsteth_, fxsave_, susdeUsdeFeed_, wstethStethFeed_) {}
+    constructor(address wsteth_, address fxsave_, address susdeUsdeFeed_, address wstethStethFeed_)
+        HarborCustomFeedAndRateAggregator_v1(wsteth_, fxsave_, susdeUsdeFeed_, wstethStethFeed_)
+    {}
 }
 
 contract HarborCustomFeedAndRateAggregator_v1Test is Test {
@@ -105,12 +102,8 @@ contract HarborCustomFeedAndRateAggregator_v1Test is Test {
     }
 
     function test_GetPrice() public {
-        HarborCustomFeedAndRateAggregator_v1 implementation = new HarborCustomFeedAndRateAggregator_v1(
-            address(mockWstEth),
-            address(mockFxSave),
-            address(0),
-            address(0)
-        );
+        HarborCustomFeedAndRateAggregator_v1 implementation =
+            new HarborCustomFeedAndRateAggregator_v1(address(mockWstEth), address(mockFxSave), address(0), address(0));
 
         address[] memory customFeeds = new address[](mockStockFeeds.length);
         for (uint256 i = 0; i < mockStockFeeds.length; i++) {
@@ -134,7 +127,7 @@ contract HarborCustomFeedAndRateAggregator_v1Test is Test {
         oracle = HarborCustomFeedAndRateAggregator_v1(address(proxy));
 
         uint256 price = oracle.getPrice();
-        (uint256 minPrice, uint256 maxPrice, uint256 minRate, ) = oracle.latestAnswer();
+        (uint256 minPrice, uint256 maxPrice, uint256 minRate,) = oracle.latestAnswer();
 
         console.log("=== wstETH Custom Feed Price ===");
         console.log("Price (wstETH in aggregated stocks/USD):", price);
@@ -176,12 +169,8 @@ contract HarborCustomFeedAndRateAggregator_v1Test is Test {
     }
 
     function test_LatestAnswer() public {
-        HarborCustomFeedAndRateAggregator_v1 implementation = new HarborCustomFeedAndRateAggregator_v1(
-            address(mockWstEth),
-            address(mockFxSave),
-            address(0),
-            address(0)
-        );
+        HarborCustomFeedAndRateAggregator_v1 implementation =
+            new HarborCustomFeedAndRateAggregator_v1(address(mockWstEth), address(mockFxSave), address(0), address(0));
 
         address[] memory customFeeds = new address[](mockStockFeeds.length);
         for (uint256 i = 0; i < mockStockFeeds.length; i++) {
@@ -213,12 +202,8 @@ contract HarborCustomFeedAndRateAggregator_v1Test is Test {
     }
 
     function test_UpdateCustomFeedConstraints() public {
-        HarborCustomFeedAndRateAggregator_v1 implementation = new HarborCustomFeedAndRateAggregator_v1(
-            address(mockWstEth),
-            address(mockFxSave),
-            address(0),
-            address(0)
-        );
+        HarborCustomFeedAndRateAggregator_v1 implementation =
+            new HarborCustomFeedAndRateAggregator_v1(address(mockWstEth), address(mockFxSave), address(0), address(0));
 
         address[] memory customFeeds = new address[](mockStockFeeds.length);
         for (uint256 i = 0; i < mockStockFeeds.length; i++) {
@@ -256,12 +241,8 @@ contract HarborCustomFeedAndRateAggregator_v1Test is Test {
     }
 
     function test_UpdateUsdFeedConstraints() public {
-        HarborCustomFeedAndRateAggregator_v1 implementation = new HarborCustomFeedAndRateAggregator_v1(
-            address(mockWstEth),
-            address(mockFxSave),
-            address(0),
-            address(0)
-        );
+        HarborCustomFeedAndRateAggregator_v1 implementation =
+            new HarborCustomFeedAndRateAggregator_v1(address(mockWstEth), address(mockFxSave), address(0), address(0));
 
         address[] memory customFeeds = new address[](mockStockFeeds.length);
         for (uint256 i = 0; i < mockStockFeeds.length; i++) {
@@ -296,12 +277,8 @@ contract HarborCustomFeedAndRateAggregator_v1Test is Test {
     }
 
     function test_GetCustomFeed() public {
-        HarborCustomFeedAndRateAggregator_v1 implementation = new HarborCustomFeedAndRateAggregator_v1(
-            address(mockWstEth),
-            address(mockFxSave),
-            address(0),
-            address(0)
-        );
+        HarborCustomFeedAndRateAggregator_v1 implementation =
+            new HarborCustomFeedAndRateAggregator_v1(address(mockWstEth), address(mockFxSave), address(0), address(0));
 
         address[] memory customFeeds = new address[](mockStockFeeds.length);
         for (uint256 i = 0; i < mockStockFeeds.length; i++) {
@@ -335,12 +312,8 @@ contract HarborCustomFeedAndRateAggregator_v1Test is Test {
         uint256 rate = bound(rateInput, 1e18, 13e17);
         mockWstEth.setStEthPerToken(rate);
 
-        HarborCustomFeedAndRateAggregator_v1 implementation = new HarborCustomFeedAndRateAggregator_v1(
-            address(mockWstEth),
-            address(mockFxSave),
-            address(0),
-            address(0)
-        );
+        HarborCustomFeedAndRateAggregator_v1 implementation =
+            new HarborCustomFeedAndRateAggregator_v1(address(mockWstEth), address(mockFxSave), address(0), address(0));
 
         address[] memory customFeeds = new address[](mockStockFeeds.length);
         for (uint256 i = 0; i < mockStockFeeds.length; i++) {
@@ -363,7 +336,7 @@ contract HarborCustomFeedAndRateAggregator_v1Test is Test {
         ERC1967Proxy proxy = new ERC1967Proxy(address(implementation), initData);
         oracle = HarborCustomFeedAndRateAggregator_v1(address(proxy));
 
-        (, , uint256 minRate, uint256 maxRate) = oracle.latestAnswer();
+        (,, uint256 minRate, uint256 maxRate) = oracle.latestAnswer();
         assertEq(minRate, rate, "Incorrect rate (fuzz)");
         assertEq(maxRate, rate, "Rate mismatch (fuzz)");
     }
@@ -372,12 +345,8 @@ contract HarborCustomFeedAndRateAggregator_v1Test is Test {
         // Bound divisor to [1, 100]
         uint256 divisor = bound(divisorInput, 1, 100);
 
-        HarborCustomFeedAndRateAggregator_v1 implementation = new HarborCustomFeedAndRateAggregator_v1(
-            address(mockWstEth),
-            address(mockFxSave),
-            address(0),
-            address(0)
-        );
+        HarborCustomFeedAndRateAggregator_v1 implementation =
+            new HarborCustomFeedAndRateAggregator_v1(address(mockWstEth), address(mockFxSave), address(0), address(0));
 
         address[] memory customFeeds = new address[](mockStockFeeds.length);
         for (uint256 i = 0; i < mockStockFeeds.length; i++) {
@@ -407,12 +376,8 @@ contract HarborCustomFeedAndRateAggregator_v1Test is Test {
     }
 
     function test_GetRate() public {
-        HarborCustomFeedAndRateAggregator_v1 implementation = new HarborCustomFeedAndRateAggregator_v1(
-            address(mockWstEth),
-            address(mockFxSave),
-            address(0),
-            address(0)
-        );
+        HarborCustomFeedAndRateAggregator_v1 implementation =
+            new HarborCustomFeedAndRateAggregator_v1(address(mockWstEth), address(mockFxSave), address(0), address(0));
 
         address[] memory customFeeds = new address[](mockStockFeeds.length);
         for (uint256 i = 0; i < mockStockFeeds.length; i++) {
@@ -440,12 +405,8 @@ contract HarborCustomFeedAndRateAggregator_v1Test is Test {
     }
 
     function test_Decimals() public {
-        HarborCustomFeedAndRateAggregator_v1 implementation = new HarborCustomFeedAndRateAggregator_v1(
-            address(mockWstEth),
-            address(mockFxSave),
-            address(0),
-            address(0)
-        );
+        HarborCustomFeedAndRateAggregator_v1 implementation =
+            new HarborCustomFeedAndRateAggregator_v1(address(mockWstEth), address(mockFxSave), address(0), address(0));
 
         address[] memory customFeeds = new address[](mockStockFeeds.length);
         for (uint256 i = 0; i < mockStockFeeds.length; i++) {
@@ -472,12 +433,8 @@ contract HarborCustomFeedAndRateAggregator_v1Test is Test {
     }
 
     function test_InvalidRate_TooLow() public {
-        HarborCustomFeedAndRateAggregator_v1 implementation = new HarborCustomFeedAndRateAggregator_v1(
-            address(mockWstEth),
-            address(mockFxSave),
-            address(0),
-            address(0)
-        );
+        HarborCustomFeedAndRateAggregator_v1 implementation =
+            new HarborCustomFeedAndRateAggregator_v1(address(mockWstEth), address(mockFxSave), address(0), address(0));
 
         address[] memory customFeeds = new address[](mockStockFeeds.length);
         for (uint256 i = 0; i < mockStockFeeds.length; i++) {
@@ -508,12 +465,8 @@ contract HarborCustomFeedAndRateAggregator_v1Test is Test {
     }
 
     function test_InvalidRate_TooHigh() public {
-        HarborCustomFeedAndRateAggregator_v1 implementation = new HarborCustomFeedAndRateAggregator_v1(
-            address(mockWstEth),
-            address(mockFxSave),
-            address(0),
-            address(0)
-        );
+        HarborCustomFeedAndRateAggregator_v1 implementation =
+            new HarborCustomFeedAndRateAggregator_v1(address(mockWstEth), address(mockFxSave), address(0), address(0));
 
         address[] memory customFeeds = new address[](mockStockFeeds.length);
         for (uint256 i = 0; i < mockStockFeeds.length; i++) {
@@ -581,9 +534,7 @@ contract HarborCustomFeedAndRateAggregator_v1Test is Test {
 
         vm.expectRevert(
             abi.encodeWithSelector(
-                HarborCustomFeedAndRateAggregator_v1.StaleRateSource.selector,
-                address(mockRateFeed),
-                staleTimestamp
+                HarborCustomFeedAndRateAggregator_v1.StaleRateSource.selector, address(mockRateFeed), staleTimestamp
             )
         );
         oracle.latestAnswer();
@@ -595,12 +546,8 @@ contract HarborCustomFeedAndRateAggregator_v1Test is Test {
 
     function test_Upgrade_Success() public {
         // Deploy V1 implementation and proxy
-        HarborCustomFeedAndRateAggregator_v1 implementationV1 = new HarborCustomFeedAndRateAggregator_v1(
-            address(mockWstEth),
-            address(mockFxSave),
-            address(0),
-            address(0)
-        );
+        HarborCustomFeedAndRateAggregator_v1 implementationV1 =
+            new HarborCustomFeedAndRateAggregator_v1(address(mockWstEth), address(mockFxSave), address(0), address(0));
 
         address[] memory customFeeds = new address[](mockStockFeeds.length);
         for (uint256 i = 0; i < mockStockFeeds.length; i++) {
@@ -635,12 +582,8 @@ contract HarborCustomFeedAndRateAggregator_v1Test is Test {
         assertEq(implV1, address(implementationV1), "V1 implementation should be set");
 
         // Deploy V2 implementation
-        HarborCustomFeedAndRateAggregator_v2 implementationV2 = new HarborCustomFeedAndRateAggregator_v2(
-            address(mockWstEth),
-            address(mockFxSave),
-            address(0),
-            address(0)
-        );
+        HarborCustomFeedAndRateAggregator_v2 implementationV2 =
+            new HarborCustomFeedAndRateAggregator_v2(address(mockWstEth), address(mockFxSave), address(0), address(0));
 
         // Upgrade to V2
         vm.expectEmit(true, false, false, false);
@@ -667,12 +610,8 @@ contract HarborCustomFeedAndRateAggregator_v1Test is Test {
 
     function test_Upgrade_Revert_NonOwner() public {
         // Deploy V1 implementation and proxy
-        HarborCustomFeedAndRateAggregator_v1 implementationV1 = new HarborCustomFeedAndRateAggregator_v1(
-            address(mockWstEth),
-            address(mockFxSave),
-            address(0),
-            address(0)
-        );
+        HarborCustomFeedAndRateAggregator_v1 implementationV1 =
+            new HarborCustomFeedAndRateAggregator_v1(address(mockWstEth), address(mockFxSave), address(0), address(0));
 
         address[] memory customFeeds = new address[](mockStockFeeds.length);
         for (uint256 i = 0; i < mockStockFeeds.length; i++) {
@@ -696,12 +635,8 @@ contract HarborCustomFeedAndRateAggregator_v1Test is Test {
         oracle = HarborCustomFeedAndRateAggregator_v1(address(proxy));
 
         // Deploy V2 implementation
-        HarborCustomFeedAndRateAggregator_v2 implementationV2 = new HarborCustomFeedAndRateAggregator_v2(
-            address(mockWstEth),
-            address(mockFxSave),
-            address(0),
-            address(0)
-        );
+        HarborCustomFeedAndRateAggregator_v2 implementationV2 =
+            new HarborCustomFeedAndRateAggregator_v2(address(mockWstEth), address(mockFxSave), address(0), address(0));
 
         // Try to upgrade as non-owner
         address nonOwner = address(0x1234);
@@ -712,12 +647,8 @@ contract HarborCustomFeedAndRateAggregator_v1Test is Test {
 
     function test_Upgrade_PreservesState() public {
         // Deploy V1 implementation and proxy
-        HarborCustomFeedAndRateAggregator_v1 implementationV1 = new HarborCustomFeedAndRateAggregator_v1(
-            address(mockWstEth),
-            address(mockFxSave),
-            address(0),
-            address(0)
-        );
+        HarborCustomFeedAndRateAggregator_v1 implementationV1 =
+            new HarborCustomFeedAndRateAggregator_v1(address(mockWstEth), address(mockFxSave), address(0), address(0));
 
         address[] memory customFeeds = new address[](mockStockFeeds.length);
         for (uint256 i = 0; i < mockStockFeeds.length; i++) {
@@ -758,12 +689,8 @@ contract HarborCustomFeedAndRateAggregator_v1Test is Test {
         (uint64 maxAgeUsdBefore, uint256 maxDevUsdBefore) = oracle.getConstraints(100);
 
         // Deploy V2 implementation
-        HarborCustomFeedAndRateAggregator_v2 implementationV2 = new HarborCustomFeedAndRateAggregator_v2(
-            address(mockWstEth),
-            address(mockFxSave),
-            address(0),
-            address(0)
-        );
+        HarborCustomFeedAndRateAggregator_v2 implementationV2 =
+            new HarborCustomFeedAndRateAggregator_v2(address(mockWstEth), address(mockFxSave), address(0), address(0));
 
         // Upgrade to V2
         vm.prank(owner);

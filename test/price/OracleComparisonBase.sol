@@ -100,12 +100,10 @@ contract OracleComparisonBase is BaoTest {
     /// @param feed Chainlink price feed address
     /// @param divisor Price divisor (1 for most, 1e12 for MCAP)
     /// @param invertPrice Whether to invert the price (true for fxUSD oracles)
-    function _deploySingleFeed(
-        string memory oracleName,
-        address feed,
-        uint256 divisor,
-        bool invertPrice
-    ) internal returns (IWrappedPriceOracle) {
+    function _deploySingleFeed(string memory oracleName, address feed, uint256 divisor, bool invertPrice)
+        internal
+        returns (IWrappedPriceOracle)
+    {
         bytes memory initData = abi.encodeCall(
             HarborSingleFeedAndRateAggregator_v2.initialize,
             (
@@ -205,7 +203,7 @@ contract OracleComparisonBase is BaoTest {
         console.log("    Feed staleness check (block.timestamp=%d):", block.timestamp);
         for (uint256 i = 0; i < feeds.length; i++) {
             AggregatorV3Interface feed = AggregatorV3Interface(feeds[i]);
-            (, int256 answer, , uint256 updatedAt, ) = feed.latestRoundData();
+            (, int256 answer,, uint256 updatedAt,) = feed.latestRoundData();
             uint256 age = block.timestamp - updatedAt;
             bool stale = age > heartbeats[i];
             console.log("    %s: updatedAt=%d, age=%d", names[i], updatedAt, age);
@@ -262,10 +260,8 @@ contract OracleComparisonBase is BaoTest {
                 continue;
             }
 
-            bool match_ = (baseA.minPrice == candA.minPrice) &&
-                (baseA.maxPrice == candA.maxPrice) &&
-                (baseA.minRate == candA.minRate) &&
-                (baseA.maxRate == candA.maxRate);
+            bool match_ = (baseA.minPrice == candA.minPrice) && (baseA.maxPrice == candA.maxPrice)
+                && (baseA.minRate == candA.minRate) && (baseA.maxRate == candA.maxRate);
 
             if (!match_) {
                 mismatches++;
@@ -323,9 +319,8 @@ contract OracleComparisonBase is BaoTest {
             }
 
             {
-                uint256 absMin = baseA.minPrice > candA.minPrice
-                    ? baseA.minPrice - candA.minPrice
-                    : candA.minPrice - baseA.minPrice;
+                uint256 absMin =
+                    baseA.minPrice > candA.minPrice ? baseA.minPrice - candA.minPrice : candA.minPrice - baseA.minPrice;
                 if (absMin > maxAbsPriceError) {
                     maxAbsPriceError = absMin;
                 }
@@ -340,9 +335,8 @@ contract OracleComparisonBase is BaoTest {
             }
 
             {
-                uint256 absMax = baseA.maxPrice > candA.maxPrice
-                    ? baseA.maxPrice - candA.maxPrice
-                    : candA.maxPrice - baseA.maxPrice;
+                uint256 absMax =
+                    baseA.maxPrice > candA.maxPrice ? baseA.maxPrice - candA.maxPrice : candA.maxPrice - baseA.maxPrice;
                 if (absMax > maxAbsPriceError) {
                     maxAbsPriceError = absMax;
                 }
@@ -356,8 +350,8 @@ contract OracleComparisonBase is BaoTest {
                 }
             }
 
-            bool priceMatch = isApprox(baseA.minPrice, candA.minPrice, absTolerance, relTolerance) &&
-                isApprox(baseA.maxPrice, candA.maxPrice, absTolerance, relTolerance);
+            bool priceMatch = isApprox(baseA.minPrice, candA.minPrice, absTolerance, relTolerance)
+                && isApprox(baseA.maxPrice, candA.maxPrice, absTolerance, relTolerance);
 
             bool rateMatch = (baseA.minRate == candA.minRate) && (baseA.maxRate == candA.maxRate);
 

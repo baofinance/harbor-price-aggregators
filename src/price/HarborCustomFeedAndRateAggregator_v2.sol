@@ -2,7 +2,9 @@
 pragma solidity 0.8.30;
 
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
-import {ReentrancyGuardTransientUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardTransientUpgradeable.sol";
+import {
+    ReentrancyGuardTransientUpgradeable
+} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardTransientUpgradeable.sol";
 import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import {BaoOwnable} from "@bao/BaoOwnable.sol";
 import {IFxSAVE} from "@harbor-price/interfaces/IFxSAVE.sol";
@@ -255,12 +257,15 @@ contract HarborCustomFeedAndRateAggregator_v2 is
 
         // Validate rate source configuration
         if (rateSource_ == RateSource.WSTETH && WSTETH == address(0)) revert InvalidRateSource(WSTETH);
-        if (rateSource_ == RateSource.FXSAVE && address(FXSAVE) == address(0))
+        if (rateSource_ == RateSource.FXSAVE && address(FXSAVE) == address(0)) {
             revert InvalidRateSource(address(FXSAVE));
-        if (rateSource_ == RateSource.SUSDE_CHAINLINK && SUSDE_USDE_FEED == address(0))
+        }
+        if (rateSource_ == RateSource.SUSDE_CHAINLINK && SUSDE_USDE_FEED == address(0)) {
             revert InvalidRateSource(SUSDE_USDE_FEED);
-        if (rateSource_ == RateSource.WSTETH_CHAINLINK && WSTETH_STETH_FEED == address(0))
+        }
+        if (rateSource_ == RateSource.WSTETH_CHAINLINK && WSTETH_STETH_FEED == address(0)) {
             revert InvalidRateSource(WSTETH_STETH_FEED);
+        }
     }
 
     function _authorizeUpgrade(address newImpl) internal override onlyOwner {
@@ -335,10 +340,8 @@ contract HarborCustomFeedAndRateAggregator_v2 is
 
         for (uint256 i = 0; i < customFeeds.length; i++) {
             AggregatorV3Interface feedInterface = AggregatorV3Interface(customFeeds[i]);
-            PriceOracle_v1.Feed memory feedData = PriceOracle_v1.Feed({
-                priceFeed: feedInterface,
-                decimals: feedDecimals[customFeeds[i]]
-            });
+            PriceOracle_v1.Feed memory feedData =
+                PriceOracle_v1.Feed({priceFeed: feedInterface, decimals: feedDecimals[customFeeds[i]]});
 
             uint256 feedPrice = feedData.latestAnswer(feedConstraints[customFeeds[i]]);
             // forge-lint: disable-next-line(unsafe-typecast) // Safe: only checking for zero
@@ -351,10 +354,8 @@ contract HarborCustomFeedAndRateAggregator_v2 is
         uint256 normalizedAggregatedPrice = aggregatedPrice / aggregationDivisor;
 
         // Get USD feed price
-        PriceOracle_v1.Feed memory usdFeedData = PriceOracle_v1.Feed({
-            priceFeed: usdFeedInterface,
-            decimals: usdFeedDecimals
-        });
+        PriceOracle_v1.Feed memory usdFeedData =
+            PriceOracle_v1.Feed({priceFeed: usdFeedInterface, decimals: usdFeedDecimals});
 
         uint256 usdFeedPrice = usdFeedData.latestAnswer(feedConstraints[usdFeed]);
         // forge-lint: disable-next-line(unsafe-typecast) // Safe: only checking for zero
@@ -391,7 +392,7 @@ contract HarborCustomFeedAndRateAggregator_v2 is
             // For SUSDE_CHAINLINK, get the sUSDE/USDE rate from Chainlink feed
             AggregatorV3Interface feed = AggregatorV3Interface(SUSDE_USDE_FEED);
             uint8 feedDecimalsValue = feed.decimals();
-            (, int256 answer, , uint256 updatedAt, ) = feed.latestRoundData();
+            (, int256 answer,, uint256 updatedAt,) = feed.latestRoundData();
 
             // Validate answer is positive
             if (answer <= 0) revert InvalidPrice(SUSDE_USDE_FEED, answer);
@@ -415,7 +416,7 @@ contract HarborCustomFeedAndRateAggregator_v2 is
             // For WSTETH_CHAINLINK, get the wstETH/stETH rate from Chainlink feed
             AggregatorV3Interface feed = AggregatorV3Interface(WSTETH_STETH_FEED);
             uint8 feedDecimalsValue = feed.decimals();
-            (, int256 answer, , uint256 updatedAt, ) = feed.latestRoundData();
+            (, int256 answer,, uint256 updatedAt,) = feed.latestRoundData();
 
             // Validate answer is positive
             if (answer <= 0) revert InvalidPrice(WSTETH_STETH_FEED, answer);
