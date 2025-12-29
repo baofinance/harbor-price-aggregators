@@ -16,24 +16,31 @@ usage() {
   cat <<EOF
 Usage:
   $0 --network <network-name> [--local] [--salt <salt-prefix>] --base <base-name> --quote <quote-name> \\
-    [--account <account>] [--etherscan-api-key <key>] \\
-    [--deploy|--deploy-impl|--check|--verify-impl|--verify|--validate-args]
+    [--account <account>] [--etherscan-api-key <key>] <mode>
 
-Notes:
-  - --network is required and determines the contract name suffix.
-  - --network must be a key in foundry.toml [rpc_endpoints] (no raw URLs).
-  - --local overrides the RPC to use local anvil (for testing mainnet contracts locally).
-  - --salt defaults to "harbor_v1".
-  - --salt is a UTF-8 string prefix (used as-is; not normalized). The script appends "::<base-name>::<quote-name>".
-  - --local triggers local-only behavior (BaoFactory operator setup).
+Modes:
+  --deploy         Deploy implementation + proxy via BaoFactory (full deployment)
+  --deploy-impl    Deploy new implementation only (for upgrades; outputs Safe tx)
+  --check          Verify deployment: checks code exists, calls oracleName/latestAnswer
+  --verify-impl    Verify implementation contract on Etherscan
+  --verify         Verify both implementation and proxy on Etherscan
+  --validate-args  Validate arguments without deploying (dry-run checks)
+
+Options:
+  --network        Required. Network name (must match foundry.toml rpc_endpoints key)
+  --local          Use local anvil RPC (enables auto-impersonate for operator/owner)
+  --salt           Salt prefix for CREATE3 address (default: "harbor_v1")
+  --base           Base asset name (e.g., fxUSD, stETH)
+  --quote          Quote asset name (e.g., ETH, BTC, EUR)
+  --account        Foundry keystore account name (required for non-local deploys)
+  --etherscan-api-key  Required for --verify / --verify-impl
 
 Contract resolution:
-  - The script deploys the contract id:
-      src/Oracle_<base-name>_<quote-name>_<network>.sol:Oracle_<base-name>_<quote-name>_<network>
-  - It fails fast if that file or contract definition does not exist.
+  Deploys: src/Oracle_<base>_<quote>_<network>.sol:Oracle_<base>_<quote>_<network>
+  Salt:    <salt-prefix>::<base>::<quote>
 
-Verify:
-  - --verify-impl / --verify require --etherscan-api-key.
+State file:
+  Deployments are recorded in deployment-state-v3-<network>.json
 EOF
 }
 
@@ -50,6 +57,10 @@ CAST=cast
 BAO_FACTORY=0xD696E56b3A054734d4C6DCBD32E11a278b0EC458
 # Harbor multisig owner for v3 proxies
 OWNER=0x9bABfC1A1952a6ed2caC1922BFfE80c0506364a2
+
+# State file for tracking deployments (set per-network after parsing args)
+STATE_FILE=""
+STATE_VERSION="v3"
 
 RPC_NETWORK=""
 NETWORK=""
@@ -220,9 +231,9 @@ elif [[ "$USE_LOCAL" == true ]]; then
   SIGNER_ARGS=(--private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80)
 fi
 
-EXPECTED_NETWORK_NAME=$(node -e 'const { ethers } = require("ethers"); const n = ethers.Network.from(process.argv[1]); console.log(n.name);' "$NETWORK" 2>/dev/null || echo "")
-if [[ -z "$EXPECTED_NETWORK_NAME" ]]; then
+if ! EXPECTED_NETWORK_NAME=$(node -e 'const { ethers } = require("ethers"); const n = ethers.Network.from(process.argv[1]); console.log(n.name);' "$NETWORK" 2>&1); then
   echo "❌ --network '$NETWORK' is not supported by ethers.Network.from(name)" >&2
+  [[ -n "$EXPECTED_NETWORK_NAME" ]] && echo "   $EXPECTED_NETWORK_NAME" >&2
   exit 1
 fi
 if [[ "$EXPECTED_NETWORK_NAME" != "$NETWORK" ]]; then
@@ -230,21 +241,24 @@ if [[ "$EXPECTED_NETWORK_NAME" != "$NETWORK" ]]; then
   exit 1
 fi
 
-EXPECTED_CHAIN_ID=$(node -e 'const { ethers } = require("ethers"); const n = ethers.Network.from(process.argv[1]); console.log(n.chainId.toString());' "$NETWORK" 2>/dev/null || echo "")
-if [[ -z "$EXPECTED_CHAIN_ID" ]]; then
+if ! EXPECTED_CHAIN_ID=$(node -e 'const { ethers } = require("ethers"); const n = ethers.Network.from(process.argv[1]); console.log(n.chainId.toString());' "$NETWORK" 2>&1); then
   echo "❌ Failed to derive expected chainId for --network '$NETWORK'" >&2
+  [[ -n "$EXPECTED_CHAIN_ID" ]] && echo "   $EXPECTED_CHAIN_ID" >&2
   exit 1
 fi
 
-CHAIN_ID=$("$CAST" chain-id --rpc-url "$RPC_NETWORK" 2>/dev/null || echo "")
-if [[ -z "$CHAIN_ID" ]]; then
+if ! CHAIN_ID=$("$CAST" chain-id --rpc-url "$RPC_NETWORK" 2>&1); then
   echo "❌ Failed to fetch chainId from --rpc-url '$RPC_NETWORK'" >&2
+  [[ -n "$CHAIN_ID" ]] && echo "   $CHAIN_ID" >&2
   exit 1
 fi
 if [[ "$CHAIN_ID" != "$EXPECTED_CHAIN_ID" ]]; then
   echo "❌ ChainId mismatch: --network '$NETWORK' expects $EXPECTED_CHAIN_ID, but --rpc-url '$RPC_NETWORK' returned $CHAIN_ID" >&2
   exit 1
 fi
+
+# Set state file path
+STATE_FILE="deployment-state-v3-${NETWORK}.json"
 
 DEPLOYER=""
 if [[ -n "$ACCOUNT_NAME" ]]; then
@@ -272,7 +286,7 @@ erc1967_impl_address() {
   local slot=0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc
 
   local word
-  word=$("$CAST" storage "$proxy" "$slot" --rpc-url "$RPC_NETWORK" 2>/dev/null || echo "")
+  word=$("$CAST" storage "$proxy" "$slot" --rpc-url "$RPC_NETWORK" 2>/dev/null)
   if [[ -z "$word" ]]; then
     echo ""
     return 1
@@ -287,6 +301,76 @@ erc1967_impl_address() {
   echo "0x${word: -40}"
 }
 
+# Initialize state file with base structure if it doesn't exist
+init_state_file() {
+  if [[ -z "$STATE_FILE" ]]; then
+    return
+  fi
+  if [[ ! -f "$STATE_FILE" ]]; then
+    jq -n \
+      --arg version "$STATE_VERSION" \
+      --arg network "$NETWORK" \
+      --arg chainId "$CHAIN_ID" \
+      --arg baoFactory "$BAO_FACTORY" \
+      '{
+        version: $version,
+        network: $network,
+        chainId: ($chainId | tonumber),
+        baoFactory: $baoFactory,
+        implementations: {},
+        proxies: {}
+      }' >"$STATE_FILE"
+  fi
+}
+
+# Record an implementation deployment
+# Usage: record_implementation <contract_name> <address>
+record_implementation() {
+  local contract_name=$1
+  local address=$2
+  local timestamp
+  timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+  if [[ -z "$STATE_FILE" ]]; then
+    return
+  fi
+
+  local tmp
+  tmp=$(mktemp)
+  jq \
+    --arg name "$contract_name" \
+    --arg addr "$address" \
+    --arg ts "$timestamp" \
+    '.implementations[$addr] = {contractName: $name, deployedAt: $ts}' \
+    "$STATE_FILE" >"$tmp" && mv "$tmp" "$STATE_FILE"
+}
+
+# Record a proxy deployment
+# Usage: record_proxy <key> <salt> <address> <impl_address>
+record_proxy() {
+  local key=$1
+  local salt=$2
+  local address=$3
+  local impl_address=$4
+  local timestamp
+  timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+  if [[ -z "$STATE_FILE" ]]; then
+    return
+  fi
+
+  local tmp
+  tmp=$(mktemp)
+  jq \
+    --arg key "$key" \
+    --arg salt "$salt" \
+    --arg addr "$address" \
+    --arg impl "$impl_address" \
+    --arg ts "$timestamp" \
+    '.proxies[$key] = {salt: $salt, address: $addr, implementation: $impl, deployedAt: $ts}' \
+    "$STATE_FILE" >"$tmp" && mv "$tmp" "$STATE_FILE"
+}
+
 deploy_implementation() {
   echo "── Deploy Implementation ────────────────────────" >&2
   echo "  Contract: $CONTRACT_ID" >&2
@@ -299,6 +383,7 @@ deploy_implementation() {
   fi
 
   echo "  ✓ Deployed: $impl" >&2
+  record_implementation "$CONTRACT_NAME" "$impl"
   echo "$impl"
 }
 
@@ -331,7 +416,7 @@ echo "  Owner:      $OWNER"
 # Check operator status (needed for --deploy mode)
 IS_OP=""
 if [[ "$MODE" == "deploy" ]]; then
-  IS_OP=$("$CAST" call "$BAO_FACTORY" "isCurrentOperator(address)(bool)" "$DEPLOYER" --rpc-url "$RPC_NETWORK" 2>/dev/null || echo "")
+  IS_OP=$("$CAST" call "$BAO_FACTORY" "isCurrentOperator(address)(bool)" "$DEPLOYER" --rpc-url "$RPC_NETWORK" 2>/dev/null)
   echo "  Operator:   $IS_OP"
 
   if [[ "$IS_OP" != "true" ]]; then
@@ -380,26 +465,50 @@ if [[ "$MODE" == "check" ]]; then
     exit 1
   fi
 
-  name=$("$CAST" call "$predicted" "oracleName()(string)" --rpc-url "$RPC_NETWORK" 2>/dev/null | tr -d '"' || echo "")
-  if [[ -z "$name" ]]; then
-    echo "❌ Deployed but oracleName() failed" >&2
+  if ! name=$("$CAST" call "$predicted" "oracleName()(string)" --rpc-url "$RPC_NETWORK" 2>&1); then
+    echo "❌ oracleName() call failed" >&2
+    [[ -n "$name" ]] && echo "   $name" >&2
+    exit 1
+  fi
+  name=$(tr -d '"' <<<"$name")
+
+  if ! base_name=$("$CAST" call "$predicted" "baseName()(string)" --rpc-url "$RPC_NETWORK" 2>&1); then
+    echo "❌ baseName() call failed" >&2
+    [[ -n "$base_name" ]] && echo "   $base_name" >&2
+    exit 1
+  fi
+  base_name=$(tr -d '"' <<<"$base_name")
+
+  if ! quote_name=$("$CAST" call "$predicted" "quoteName()(string)" --rpc-url "$RPC_NETWORK" 2>&1); then
+    echo "❌ quoteName() call failed" >&2
+    [[ -n "$quote_name" ]] && echo "   $quote_name" >&2
+    exit 1
+  fi
+  quote_name=$(tr -d '"' <<<"$quote_name")
+
+  if ! owner_addr=$("$CAST" call "$predicted" "owner()(address)" --rpc-url "$RPC_NETWORK" 2>&1); then
+    echo "❌ owner() call failed" >&2
+    [[ -n "$owner_addr" ]] && echo "   $owner_addr" >&2
     exit 1
   fi
 
-  base_addr=$("$CAST" call "$predicted" "base()(address)" --rpc-url "$RPC_NETWORK" 2>/dev/null || echo "")
-  base_symbol=""
-  if [[ -n "$base_addr" ]] && [[ "$base_addr" != "0x0000000000000000000000000000000000000000" ]]; then
-    base_symbol=$("$CAST" call "$base_addr" "symbol()(string)" --rpc-url "$RPC_NETWORK" 2>/dev/null | tr -d '"' || echo "")
+  if ! latest_answer=$("$CAST" call "$predicted" "latestAnswer()(int256)" --rpc-url "$RPC_NETWORK" 2>&1); then
+    echo "❌ latestAnswer() call failed" >&2
+    [[ -n "$latest_answer" ]] && echo "   $latest_answer" >&2
+    exit 1
   fi
 
-  quote_name=$("$CAST" call "$predicted" "quoteName()(string)" --rpc-url "$RPC_NETWORK" 2>/dev/null | tr -d '"' || echo "")
-  owner_addr=$("$CAST" call "$predicted" "owner()(address)" --rpc-url "$RPC_NETWORK" 2>/dev/null || echo "")
+  if [[ "$latest_answer" == "0" ]]; then
+    echo "❌ latestAnswer() returned zero" >&2
+    exit 1
+  fi
 
   echo "  ✅ Deployed"
-  echo "     oracleName: $name"
-  echo "     base:       $base_addr ($base_symbol)"
-  echo "     quoteName:  $quote_name"
-  echo "     owner:      $owner_addr"
+  echo "     oracleName:    $name"
+  echo "     baseName:      $base_name"
+  echo "     quoteName:     $quote_name"
+  echo "     owner:         $owner_addr"
+  echo "     latestAnswer:  $latest_answer"
   exit 0
 fi
 
@@ -487,6 +596,7 @@ fi
 
 if [[ "$MODE" == "deploy-impl" ]]; then
   echo "── Deploy Implementation Only ───────────────────"
+  init_state_file
   impl=$(deploy_implementation)
 
   echo ""
@@ -501,7 +611,7 @@ if [[ "$MODE" == "deploy-impl" ]]; then
     exit 1
   fi
 
-  proxy_owner=$("$CAST" call "$predicted" "owner()(address)" --rpc-url "$RPC_NETWORK" 2>/dev/null || echo "")
+  proxy_owner=$("$CAST" call "$predicted" "owner()(address)" --rpc-url "$RPC_NETWORK" 2>/dev/null)
   if [[ -n "$proxy_owner" ]]; then
     echo "  Onchain owner: $proxy_owner"
     if [[ "${proxy_owner,,}" != "${OWNER,,}" ]]; then
@@ -526,8 +636,11 @@ if [[ "$MODE" == "deploy-impl" ]]; then
     new_impl=$(erc1967_impl_address "$predicted")
     echo "  New implementation: $new_impl"
 
-    name=$("$CAST" call "$predicted" "oracleName()(string)" --rpc-url "$RPC_NETWORK" 2>/dev/null | tr -d '"' || echo "")
+    name=$("$CAST" call "$predicted" "oracleName()(string)" --rpc-url "$RPC_NETWORK" 2>/dev/null | tr -d '"')
     echo "  oracleName: $name"
+    if [[ -n "$STATE_FILE" ]]; then
+      echo "  State file: $STATE_FILE"
+    fi
     echo ""
     echo "  ✅ Done"
   else
@@ -554,7 +667,7 @@ if has_code "$predicted"; then
   if [[ -n "$current_impl" ]]; then
     echo "  Current implementation: $current_impl"
   fi
-  name=$("$CAST" call "$predicted" "oracleName()(string)" --rpc-url "$RPC_NETWORK" 2>/dev/null | tr -d '"' || echo "")
+  name=$("$CAST" call "$predicted" "oracleName()(string)" --rpc-url "$RPC_NETWORK" 2>/dev/null | tr -d '"')
   echo "  oracleName: $name"
   echo ""
   echo "  ❌ Proxy already deployed at $predicted" >&2
@@ -562,6 +675,7 @@ if has_code "$predicted"; then
   exit 1
 fi
 
+init_state_file
 impl=$(deploy_implementation)
 
 echo ""
@@ -584,7 +698,7 @@ echo "  Deploying proxy..."
 tx=$("$CAST" send "$BAO_FACTORY" "deploy(bytes,bytes32)(address)" "$init_code" "$salt_b32" \
   --rpc-url "$RPC_NETWORK" "${SIGNER_ARGS[@]}" --json)
 
-tx_hash=$(jq -r '.transactionHash // empty' <<<"$tx" 2>/dev/null || echo "")
+tx_hash=$(jq -r '.transactionHash // empty' <<<"$tx" 2>/dev/null)
 if [[ -n "$tx_hash" ]]; then
   echo "  ✓ Tx: $tx_hash"
 fi
@@ -598,10 +712,15 @@ if ! has_code "$predicted"; then
 fi
 
 echo "  ✓ Deployed proxy: $predicted"
+record_proxy "$KEY" "$salt_str" "$predicted" "$impl"
 
 echo ""
-name=$("$CAST" call "$proxy" "oracleName()(string)" --rpc-url "$RPC_NETWORK" 2>/dev/null | tr -d '"' || echo "")
+name=$("$CAST" call "$proxy" "oracleName()(string)" --rpc-url "$RPC_NETWORK" 2>/dev/null | tr -d '"')
 echo "  oracleName: $name"
+
+if [[ -n "$STATE_FILE" ]]; then
+  echo "  State file: $STATE_FILE"
+fi
 
 echo ""
 echo "  ✅ Done"
