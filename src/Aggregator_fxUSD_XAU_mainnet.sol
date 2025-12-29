@@ -8,6 +8,7 @@ import {Aggregator_fxUSD_XAU} from "@harbor-price/oracles/Aggregator_fxUSD_XAU.s
 /// @notice Ethereum mainnet fxUSD/XAU oracle.
 /// @dev Hard-coded wiring for mainnet; deploy scripts select this bytecode by chain.
 /// @custom:oz-upgrades-unsafe-allow constructor
+// solhint-disable-next-line contract-name-capwords
 contract Aggregator_fxUSD_XAU_mainnet is Aggregator_fxUSD_XAU {
     constructor() Aggregator_fxUSD_XAU(MainnetRateSources.FXSAVE, XAU_USD.FEED, XAU_USD.HEARTBEAT, 1, true) {}
 }

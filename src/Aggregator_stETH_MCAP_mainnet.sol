@@ -9,6 +9,7 @@ import {Aggregator_stETH_MCAP} from "@harbor-price/oracles/Aggregator_stETH_MCAP
 /// @notice Ethereum mainnet stETH/MCAP oracle.
 /// @dev Hard-coded wiring for mainnet; deploy scripts select this bytecode by chain.
 /// @custom:oz-upgrades-unsafe-allow constructor
+// solhint-disable-next-line contract-name-capwords
 contract Aggregator_stETH_MCAP_mainnet is Aggregator_stETH_MCAP {
     constructor()
         Aggregator_stETH_MCAP(

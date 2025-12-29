@@ -11,6 +11,7 @@ import {DoubleFeedPriceLib} from "@harbor-price/prices/DoubleFeedPriceLib.sol";
 /// @notice stETH/MCAP oracle (rate: wstETH, price: (ETH/USD)/(MCAP/USD)).
 /// @dev This is the formula contract; wiring (feeds/addresses) is provided via constructor.
 /// @custom:oz-upgrades-unsafe-allow state-variable-immutable constructor
+// solhint-disable-next-line contract-name-capwords
 contract Aggregator_stETH_MCAP is HarborAggregator_v3 {
     using WstETHRateLib for IWstETH;
 

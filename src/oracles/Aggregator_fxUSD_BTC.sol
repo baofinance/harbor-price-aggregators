@@ -11,6 +11,7 @@ import {SingleFeedPriceLib} from "@harbor-price/prices/SingleFeedPriceLib.sol";
 /// @notice fxUSD/BTC oracle (rate: fxSAVE, price: inverted BTC/USD).
 /// @dev This is the formula contract; wiring (feeds/addresses) is provided via constructor.
 /// @custom:oz-upgrades-unsafe-allow state-variable-immutable constructor
+// solhint-disable-next-line contract-name-capwords
 contract Aggregator_fxUSD_BTC is HarborAggregator_v3 {
     using FxSaveRateLib for IFxSAVE;
 

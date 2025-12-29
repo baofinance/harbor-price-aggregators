@@ -11,6 +11,7 @@ import {DoubleFeedPriceLib} from "@harbor-price/prices/DoubleFeedPriceLib.sol";
 /// @notice stETH/XAU oracle (rate: wstETH, price: (ETH/USD)/(XAU/USD)).
 /// @dev This is the formula contract; wiring (feeds/addresses) is provided via constructor.
 /// @custom:oz-upgrades-unsafe-allow state-variable-immutable constructor
+// solhint-disable-next-line contract-name-capwords
 contract Aggregator_stETH_XAU is HarborAggregator_v3 {
     using WstETHRateLib for IWstETH;
 

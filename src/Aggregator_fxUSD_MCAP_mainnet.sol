@@ -8,6 +8,7 @@ import {Aggregator_fxUSD_MCAP} from "@harbor-price/oracles/Aggregator_fxUSD_MCAP
 /// @notice Ethereum mainnet fxUSD/MCAP oracle.
 /// @dev Hard-coded wiring for mainnet; deploy scripts select this bytecode by chain.
 /// @custom:oz-upgrades-unsafe-allow constructor
+// solhint-disable-next-line contract-name-capwords
 contract Aggregator_fxUSD_MCAP_mainnet is Aggregator_fxUSD_MCAP {
     constructor() Aggregator_fxUSD_MCAP(MainnetRateSources.FXSAVE, MCAP_USD.FEED, MCAP_USD.HEARTBEAT, 1e12, true) {}
 }

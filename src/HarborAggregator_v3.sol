@@ -8,6 +8,7 @@ import {IHarborPriceAggregatorV3} from "@harbor-price/interfaces/IHarborPriceAgg
 /// @notice Shared base for v3 price aggregators.
 /// @dev Concrete implementations override `latestAnswer()` and implement identity getters.
 /// @custom:oz-upgrades-unsafe-allow constructor
+// solhint-disable-next-line contract-name-capwords
 abstract contract HarborAggregator_v3 is IHarborPriceAggregatorV3, UUPSUpgradeable, BaoFixedOwnable {
     address private constant _OWNER = 0x9bABfC1A1952a6ed2caC1922BFfE80c0506364a2;
 
@@ -30,7 +31,7 @@ abstract contract HarborAggregator_v3 is IHarborPriceAggregatorV3, UUPSUpgradeab
         return 3;
     }
 
-    function _authorizeUpgrade(address) internal override onlyOwner {}
+    function _authorizeUpgrade(address) internal override onlyOwner {} // solhint-disable-line no-empty-blocks
 
     function _baseName() internal pure virtual returns (string memory);
 

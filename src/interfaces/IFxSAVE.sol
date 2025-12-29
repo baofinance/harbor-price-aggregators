@@ -16,18 +16,21 @@ interface IFxSAVE is IERC20, IERC4626 {
      * @notice Role identifier for claiming on behalf of others
      * @return The bytes32 role identifier
      */
+    // solhint-disable-next-line func-name-mixedcase
     function CLAIM_FOR_ROLE() external view returns (bytes32);
 
     /**
      * @notice Role identifier for the default admin role
      * @return The bytes32 role identifier
      */
+    // solhint-disable-next-line func-name-mixedcase
     function DEFAULT_ADMIN_ROLE() external view returns (bytes32);
 
     /**
      * @notice Get the EIP-712 domain separator
      * @return The domain separator
      */
+    // solhint-disable-next-line func-name-mixedcase
     function DOMAIN_SEPARATOR() external view returns (bytes32);
 
     /**
@@ -144,7 +147,7 @@ interface IFxSAVE is IERC20, IERC4626 {
     /**
      * @notice Get the EIP-712 domain information
      * @return fields The EIP-712 domain fields
-     * @return name The name of the contract
+     * @return name_ The name of the contract
      * @return version The version of the contract
      * @return chainId The chain ID
      * @return verifyingContract The verifying contract address
@@ -156,7 +159,7 @@ interface IFxSAVE is IERC20, IERC4626 {
         view
         returns (
             bytes1 fields,
-            string memory name,
+            string memory name_,
             string memory version,
             uint256 chainId,
             address verifyingContract,
