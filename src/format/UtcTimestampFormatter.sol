@@ -4,6 +4,7 @@ pragma solidity 0.8.30;
 /// @notice Deterministic UTC timestamp formatting for scripts/tests.
 library UtcTimestampFormatter {
     /// @notice Formats a unix timestamp (seconds) as UTC "YYYY-MM-DD HH:MM:SS UTC".
+    // slither-disable-next-line divide-before-multiply
     function format(uint256 timestamp) internal pure returns (string memory) {
         unchecked {
             // Date (civil_from_days, Howard Hinnant)

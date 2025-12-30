@@ -255,12 +255,15 @@ contract HarborCustomFeedAndRateAggregator_v2 is
 
         // Validate rate source configuration
         if (rateSource_ == RateSource.WSTETH && WSTETH == address(0)) revert InvalidRateSource(WSTETH);
-        if (rateSource_ == RateSource.FXSAVE && address(FXSAVE) == address(0))
+        if (rateSource_ == RateSource.FXSAVE && address(FXSAVE) == address(0)) {
             revert InvalidRateSource(address(FXSAVE));
-        if (rateSource_ == RateSource.SUSDE_CHAINLINK && SUSDE_USDE_FEED == address(0))
+        }
+        if (rateSource_ == RateSource.SUSDE_CHAINLINK && SUSDE_USDE_FEED == address(0)) {
             revert InvalidRateSource(SUSDE_USDE_FEED);
-        if (rateSource_ == RateSource.WSTETH_CHAINLINK && WSTETH_STETH_FEED == address(0))
+        }
+        if (rateSource_ == RateSource.WSTETH_CHAINLINK && WSTETH_STETH_FEED == address(0)) {
             revert InvalidRateSource(WSTETH_STETH_FEED);
+        }
     }
 
     function _authorizeUpgrade(address newImpl) internal override onlyOwner {

@@ -1,107 +1,30 @@
 # Harbor Price Aggregators
 
-Generic price oracle aggregators for Harbor Protocol, supporting single, double, and custom feed aggregations with configurable rate sources.
+Price oracle aggregators for Harbor Protocol.
 
 ## Overview
 
-This repository contains v3 price oracle aggregators built on a modular, immutable architecture. The v3 design separates formula logic (price calculations) from chain-specific wiring (addresses and feeds), enabling clean, upgradeable, and secure oracle implementations.
+The v3 aggregators use an immutable architecture: each oracle is a concrete contract with configuration baked in at construction time. Network-specific "wiring" files (`src/Aggregator_*_mainnet.sol`) extend formula contracts (`src/oracles/Aggregator_*.sol`) and pass chain-specific feed addresses and heartbeats to the constructor.
 
-**Architecture:**
+**Architecture highlights:**
 
-- **Formula Contracts** (`src/price/oracles/`): Contain immutable price calculation logic
-- **Wiring Contracts** (`src/mainnet/`, `src/arbitrum/`, `src/base/`): Wire formula contracts with chain-specific addresses
-- **Utility Libraries**: Reusable price calculation libraries (SingleFeedPriceLib, DoubleFeedPriceLib, MultiFeedPriceLib, etc.)
-- **Rate Libraries**: Rate fetching libraries (FxSaveRateLib, WstETHRateLib, ChainlinkRateLib)
+- **Immutable configuration**: Feed addresses, heartbeats, and rate sources are constructor parameters (no `initialize()` or storage slots)
+- **Heartbeat validation**: `ChainlinkFeedLib` validates feed freshness with a 42-second tolerance to account for block timing variance
+- **UUPS Upgradeable**: Proxy pattern via BaoFactory with fixed owner
 
-## Features
+## Mainnet v3 Oracles
 
-- **Immutable Configuration**: All oracle parameters are set at construction time, ensuring security and predictability
-- **Modular Design**: Formula contracts are chain-agnostic; wiring contracts provide chain-specific configuration
-- **Multi-Chain Support**: Deployed on Ethereum Mainnet, Arbitrum, and Base
-- **Library-Based Calculations**: Price calculations use embedded library functions (no separate deployments)
-- **Rate Source Support**: 
-  - Direct contract calls: fxSAVE, wstETH
-  - Chainlink feeds: wstETH/stETH, sUSDE/USDE
-- **Oracle Types**:
-  - **Single Feed**: Direct price conversions (e.g., fxUSD/BTC, fxUSD/ETH)
-  - **Double Feed**: Cross-currency conversions (e.g., stETH/BTC, stETH/EUR)
-  - **Multi-Feed Average**: Average of multiple feeds (e.g., stETH/MAG7 - 7 stock average)
-  - **Multi-Feed Indexed**: Indexed multi-feed with baseline normalization (e.g., stETH/MAG7.i26)
-  - **Multi-Feed Normalized**: Multi-feed with per-feed normalization factors (e.g., stETH/BOM5 - meme coin basket)
-- **UUPS Upgradeable**: Upgradeable proxy pattern for future improvements
-- **Comprehensive Testing**: Full test coverage including fork tests for live chain validation
-
-## Oracle Types
-
-### Single Feed Oracles
-
-Single feed oracles use one Chainlink price feed with optional price inversion.
-
-**Examples:**
-- `Oracle_fxUSD_BTC`: fxUSD/BTC (inverted BTC/USD feed)
-- `Oracle_fxUSD_ETH`: fxUSD/ETH (ETH/USD feed)
-- `Oracle_fxUSD_EUR`: fxUSD/EUR (EUR/USD feed)
-
-**Formula Contract Structure:**
-- Uses `SingleFeedPriceLib` for price calculation
-- Rate from fxSAVE or wstETH contract
-- Immutable feed address, decimals, divisor, and inversion flag
-
-### Double Feed Oracles
-
-Double feed oracles combine two Chainlink feeds to calculate cross-currency prices.
-
-**Examples:**
-- `Oracle_stETH_BTC`: stETH/BTC = (stETH/USD) / (BTC/USD)
-- `Oracle_stETH_EUR`: stETH/EUR = (stETH/USD) / (EUR/USD)
-- `Oracle_stETH_XAU`: stETH/XAU = (stETH/USD) / (XAU/USD)
-
-**Formula Contract Structure:**
-- Uses `DoubleFeedPriceLib` for price calculation
-- Rate from wstETH contract or Chainlink feed
-- Immutable first feed, second feed, decimals, divisor, and inversion flag
-
-### Multi-Feed Average Oracles
-
-Multi-feed average oracles calculate the average of multiple feeds, then convert to base asset terms.
-
-**Examples:**
-- `Oracle_stETH_MAG7`: stETH/MAG7 = (stETH/USD) / (average of 7 stock feeds)
-- `Oracle_USDE_MAG7`: USDE/MAG7 = (USDE/USD) / (average of 7 stock feeds)
-
-**Formula Contract Structure:**
-- Uses `MultiFeedDivPriceLib` to sum feeds and divide by feed count
-- Rate from Chainlink feed (wstETH/stETH or sUSDE/USDE)
-- Immutable array of feed addresses and decimals
-
-### Multi-Feed Indexed Oracles
-
-Multi-feed indexed oracles normalize a multi-feed sum against a baseline index price.
-
-**Examples:**
-- `Oracle_stETH_MAG7i26`: stETH/MAG7.i26 = (stETH/USD) / (indexed MAG7 value)
-  - Indexed value = (current sum of 7 stocks) / (baseline sum from 1-1-2026)
-- `Oracle_USDE_MAG7i26`: USDE/MAG7.i26 = (USDE/USD) / (indexed MAG7 value)
-
-**Formula Contract Structure:**
-- Uses `MultiFeedSumPriceLib` to sum feeds
-- Calculates indexed value: `(currentSum * 1e18) / indexPrice`
-- Immutable index price baseline
-
-### Multi-Feed Normalized Oracles
-
-Multi-feed normalized oracles apply per-feed normalization factors before summing.
-
-**Examples:**
-- `Oracle_stETH_BOM5`: stETH/BOM5 = (stETH/USD) / (normalized basket sum)
-  - Basket: DOGE, SHIB, PEPE, TRUMP, WIF
-  - Each feed price is multiplied by its normalization factor (supply normalization)
-  - Sum of normalized prices represents the basket value
-
-**Formula Contract Structure:**
-- Uses `MultiFeedNormalizedPriceLib` for per-feed normalization
-- Each feed has an immutable normalization factor (18 decimals)
-- Normalization factors normalize prices to a common supply base (e.g., WIF's total supply)
+| Oracle | Rate Source | Feeds |
+|--------|-------------|-------|
+| fxUSD/ETH | fxSAVE | ETH/USD (inverted) |
+| fxUSD/BTC | fxSAVE | BTC/USD |
+| fxUSD/EUR | fxSAVE | EUR/USD (inverted) |
+| fxUSD/XAU | fxSAVE | XAU/USD |
+| fxUSD/MCAP | fxSAVE | MCAP/USD |
+| stETH/BTC | wstETH | ETH/USD, BTC/USD |
+| stETH/EUR | wstETH | ETH/USD, EUR/USD (inverted) |
+| stETH/XAU | wstETH | ETH/USD, XAU/USD |
+| stETH/MCAP | wstETH | ETH/USD, MCAP/USD |
 
 ## Installation
 
@@ -116,51 +39,9 @@ forge install
 
 ## Testing
 
-### Prerequisites
-
-**Important**: Before running tests, you must set the required RPC URLs in your `.env` file:
-
-```bash
-# Required RPC URLs for fork tests
-MAINNET_RPC_URL=https://eth-mainnet.g.alchemy.com/v2/YOUR_KEY
-ARBITRUM_RPC_URL=https://arb-mainnet.g.alchemy.com/v2/YOUR_KEY
-BASE_RPC_URL=https://base-mainnet.g.alchemy.com/v2/YOUR_KEY
-```
-
-These are used by fork tests to test oracles against live on-chain data.
-
-### Running Tests
-
-**Run all tests:**
 ```bash
 forge test
 ```
-
-**Run specific test suites:**
-
-- **Mainnet v3 Oracle Tests:**
-  ```bash
-  forge test --match-path "test/price/*.t.sol" -vvv
-  ```
-
-- **Arbitrum Oracle Fork Tests:**
-  ```bash
-  # All Arbitrum tests
-  forge test --match-path "test/arbitrum/*.t.sol" --fork-url $arbitrum -vvv
-  
-  # Specific test suites
-  forge test --match-path "test/arbitrum/ArbitrumOraclesFork.t.sol" --fork-url $arbitrum -vvv
-  forge test --match-path "test/arbitrum/ArbitrumSUSDEOraclesFork.t.sol" --fork-url $arbitrum -vvv
-  forge test --match-path "test/arbitrum/ArbitrumMAG7OraclesFork.t.sol" --fork-url $arbitrum -vvv
-  forge test --match-path "test/arbitrum/ArbitrumMAG7i26OraclesFork.t.sol" --fork-url $arbitrum -vvv
-  ```
-
-- **Base Oracle Fork Tests:**
-  ```bash
-  forge test --match-path "test/base/*.t.sol" --fork-url $base -vvv
-  ```
-
-**Note**: Fork tests require the corresponding RPC URLs to be set in your `.env` file. See `test/arbitrum/README.md` and `test/base/README.md` for more details.
 
 ## Off-chain market data (offchain_feeds)
 
@@ -321,87 +202,54 @@ yarn offchain:stats --market MCAP-USD  --measure close_return --top 20
 
 ### Prerequisites
 
-1. **Set required environment variables** (choose one method):
+1. **Configure foundry.toml RPC endpoints**:
+   Add your RPC URLs to `foundry.toml` under `[rpc_endpoints]`:
 
-   **Option A: Create a `.env.local` or `.env` file** in the project root:
-
-   ```bash
-   # .env.local (recommended - typically gitignored)
-   RPC_URL=https://eth-mainnet.g.alchemy.com/v2/YOUR_ALCHEMY_KEY
-   ETHERSCAN_API_KEY=your_etherscan_api_key
-   PRIVATE_KEY=your_private_key
-   OWNER=your_owner_address  # Set to your deployer address
+   ```toml
+   [rpc_endpoints]
+   mainnet = "https://eth-mainnet.g.alchemy.com/v2/YOUR_KEY"
+   local = "http://127.0.0.1:8545"
    ```
 
-   **Option B: Export environment variables**:
+2. **Set up a Foundry keystore account** (for non-local deploys):
 
    ```bash
-   export RPC_URL="https://eth-mainnet.g.alchemy.com/v2/YOUR_ALCHEMY_KEY"
-   export ETHERSCAN_API_KEY="your_etherscan_api_key"
-   export PRIVATE_KEY="your_private_key"
-   export OWNER="your_owner_address"  # Set to your deployer address
+   cast wallet import deployer --interactive
    ```
-
-   **Note**: The scripts will automatically load from `.env.local` (if exists) or `.env` (if exists). Priority order:
-   1. Environment variables (exported)
-   2. `.env.local` file
-   3. `.env` file
-
-2. **Get API keys**:
-   - **RPC URL**: Get an Alchemy/Infura API key for your target network
-   - **Etherscan API Key**: Get from [Etherscan](https://etherscan.io/apis) (works for both mainnet and Arbitrum via their multichain API v2)
 
 3. **Optional: Use Anvil fork for testing**:
-   For local testing with real mainnet data, you can use Anvil:
 
    ```bash
-   # Fork Ethereum mainnet
-   anvil --fork-url https://eth-mainnet.g.alchemy.com/v2/YOUR_ALCHEMY_KEY --host 0.0.0.0 --port 8545
-
-   # Fork Arbitrum
-   anvil --fork-url https://arb-mainnet.g.alchemy.com/v2/YOUR_ALCHEMY_KEY --host 0.0.0.0 --port 8545
+   anvil -f mainnet --auto-impersonate
    ```
 
-   Then set `RPC_URL=http://localhost:8545` in your `.env.local` or export it.
+### Deploy v3 Mainnet Oracles
 
-### Deploy to Ethereum Mainnet
-
-Deploy the new mainnet oracle contracts:
+Deploy individual oracles using `script/harbor-aggregators-v3`:
 
 ```bash
-./script/deploy-harbor-oracles-v2-mainnet-new
-```
+# Deploy fxUSD/ETH to mainnet
+./script/harbor-aggregators-v3 --network mainnet --base fxUSD --quote ETH --account deployer --deploy
 
-This will deploy:
-
-- 1 Double Feed implementation contract
-- 10 proxy contracts:
-  - fxsave→ETH, fxsave→BTC, fxsave→EUR, fxsave→XAU, fxsave→MCAP
-  - wstETH→BTC, wstETH→EUR, wstETH→XAU, wstETH→MCAP
-
-**Deployment Modes:**
-
-- `MODE=deploy` (default): Deploy all contracts
-- `MODE=check`: Check deployment status
-- `MODE=retry`: Retry initialization of failed contracts
-- `MODE=init`: Initialize contracts only
-- `MODE=verify`: Verify all contracts on Etherscan
-
-**Examples:**
-
-```bash
-# Deploy all contracts
-./script/deploy-harbor-oracles-v2-mainnet-new
+# Deploy with local anvil fork (for testing)
+./script/harbor-aggregators-v3 --network mainnet --local --base fxUSD --quote ETH --deploy
 
 # Check deployment status
-MODE=check ./script/deploy-harbor-oracles-v2-mainnet-new
+./script/harbor-aggregators-v3 --network mainnet --base fxUSD --quote ETH --check
 
-# Verify all contracts
-MODE=verify ./script/deploy-harbor-oracles-v2-mainnet-new
-
-# Skip rate source configuration
-SKIP_RATE_CONFIG=true ./script/deploy-harbor-oracles-v2-mainnet-new
+# Verify on Etherscan
+./script/harbor-aggregators-v3 --network mainnet --base fxUSD --quote ETH --etherscan-api-key YOUR_KEY --verify
 ```
+
+**Modes:**
+
+- `--deploy`: Deploy implementation + proxy via BaoFactory
+- `--deploy-impl`: Deploy new implementation only (for upgrades; outputs Safe tx)
+- `--check`: Verify deployment exists and returns valid data
+- `--verify`: Verify both implementation and proxy on Etherscan
+- `--validate-args`: Dry-run validation
+
+Deployments are recorded in `deployment-state-v3-<network>.json`.
 
 ### Deploy to Arbitrum
 
@@ -447,28 +295,6 @@ SKIP_RATE_CONFIG=true ./script/deploy-arbitrum-oracles
 
 - `RPC_URL` to an Arbitrum RPC endpoint (e.g., `https://arb-mainnet.g.alchemy.com/v2/YOUR_KEY`)
 - `ETHERSCAN_API_KEY` to your Etherscan API key (same key works for both mainnet and Arbitrum)
-
-## Rate Sources
-
-The contracts support four rate source types:
-
-1. **WSTETH** (0): Direct call to `IWstETH.getStETHByWstETH()` - always current, no staleness check
-2. **FXSAVE** (1): Direct call to `IFxSAVE.convertToAssets()` - always current, no staleness check
-3. **SUSDE_CHAINLINK** (2): Chainlink feed for sUSDE/USDE rate - configurable staleness check
-4. **WSTETH_CHAINLINK** (3): Chainlink feed for wstETH/stETH rate - configurable staleness check
-
-For Chainlink rate sources, use `setMaxRateSourceAge()` to configure the maximum acceptable age (default: 1 day, typically set to 7 days in production). If a Chainlink rate feed goes stale beyond this threshold, the oracle will revert to prevent using outdated conversion rates.
-
-**Rate Validation:**
-
-- **WSTETH**: Rate must be between 1.0 and 2.0 (wstETH/stETH conversion)
-- **FXSAVE**: Rate must be >= 0.9x underlying
-- **SUSDE_CHAINLINK**: Rate must be >= 0.9x (no upper bound, matches fxSAVE pattern)
-- **WSTETH_CHAINLINK**: Rate must be between 1.0 and 2.0 (wstETH/stETH conversion)
-
-### Deployment Output
-
-The script will output all deployed contract addresses and verify they're working with live price data.
 
 ## License
 
