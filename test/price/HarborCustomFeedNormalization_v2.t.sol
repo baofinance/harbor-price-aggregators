@@ -24,11 +24,11 @@ contract HarborCustomFeedNormalization_v2Test is Test {
     // Test data - meme coin prices in USD (8 decimals)
     // These represent current market prices (based on max supply normalization)
     int256[5] memePrices = [
-        int256(13300000),     // DOGE: $0.133 (8 decimals) - will normalize to ~$22.33
-        int256(75),           // SHIB: $0.0000075 (8 decimals, very small) - will normalize to ~$4.41
-        int256(41),           // PEPE: $0.0000041 (8 decimals, very small) - will normalize to ~$1.70
-        int256(510000000),    // TRUMP: $5.10 (8 decimals) - minimal change, stays ~$5.10
-        int256(348000000)     // WIF: $0.348 (8 decimals) - reference, no change
+        int256(13300000), // DOGE: $0.133 (8 decimals) - will normalize to ~$22.33
+        int256(75), // SHIB: $0.0000075 (8 decimals, very small) - will normalize to ~$4.41
+        int256(41), // PEPE: $0.0000041 (8 decimals, very small) - will normalize to ~$1.70
+        int256(510000000), // TRUMP: $5.10 (8 decimals) - minimal change, stays ~$5.10
+        int256(348000000) // WIF: $0.348 (8 decimals) - reference, no change
     ];
 
     // Normalization factors (in 18 decimals) - multipliers to normalize to WIF max supply (~998.84M)
@@ -39,11 +39,11 @@ contract HarborCustomFeedNormalization_v2Test is Test {
     // TRUMP: Max = 1B, factor = ~0.99884e18 (minimal change, ~$5.10 stays ~$5.10)
     // WIF: Max = ~998.84M, factor = 1e18 (reference, no change)
     uint256[5] normalizationFactors = [
-        168200000000000000000,  // DOGE: 168.2e18
-        589500000000000000000000,  // SHIB: 589500e18 (corrected: 1000x larger)
-        421000000000000000000000,  // PEPE: 421000e18 (corrected: 1000x larger)
-        998840000000000000,     // TRUMP: ~0.99884e18 (minimal change)
-        1000000000000000000     // WIF: 1e18 (no change)
+        168200000000000000000, // DOGE: 168.2e18
+        589500000000000000000000, // SHIB: 589500e18 (corrected: 1000x larger)
+        421000000000000000000000, // PEPE: 421000e18 (corrected: 1000x larger)
+        998840000000000000, // TRUMP: ~0.99884e18 (minimal change)
+        1000000000000000000 // WIF: 1e18 (no change)
     ];
 
     // Expected normalized prices (in 18 decimals) after applying factors based on max supply
@@ -52,7 +52,7 @@ contract HarborCustomFeedNormalization_v2Test is Test {
     // PEPE: $0.0000041 * 421,000 = ~$1.70
     // TRUMP: $5.10 * 0.99884 ≈ $5.10 (minimal change)
     // WIF: $0.348 * 1 = $0.348 (no change)
-    
+
     int256 stethUsdPrice = 283214000000; // 2832.14 USD/stETH with 8 decimals
     uint256 wstethStethRate = 1208351172000448378; // 1.208... stETH/wstETH (18 decimals)
     uint8 feedDecimals = 8;
@@ -160,7 +160,7 @@ contract HarborCustomFeedNormalization_v2Test is Test {
 
         // Calculate expected normalized prices manually
         // All prices are normalized to 18 decimals first, then normalized by factor
-        
+
         // DOGE: $0.133 (8 decimals) -> 0.133e18 (18 decimals) -> 0.133e18 * 168.2e18 / 1e18
         uint256 dogePrice18 = uint256(memePrices[0]) * 1e10; // Convert 8 to 18 decimals
         uint256 dogeNormalized = Math.mulDiv(dogePrice18, normalizationFactors[0], 1e18);
@@ -187,7 +187,11 @@ contract HarborCustomFeedNormalization_v2Test is Test {
         console.log("WIF normalized:", wifNormalized);
 
         // Sum normalized prices
-        uint256 aggregatedNormalized = dogeNormalized + shibNormalized + pepeNormalized + trumpNormalized + wifNormalized;
+        uint256 aggregatedNormalized = dogeNormalized +
+            shibNormalized +
+            pepeNormalized +
+            trumpNormalized +
+            wifNormalized;
         console.log("Aggregated normalized:", aggregatedNormalized);
 
         // Average (divide by 5)
@@ -309,7 +313,7 @@ contract HarborCustomFeedNormalization_v2Test is Test {
         uint256 rate = oracle.getRate();
         console.log("Rate (wstETH/stETH):", rate);
         console.log("Rate (wstETH/stETH) formatted:", rate / 1e15, "e15");
-        
+
         (uint256 minPrice, uint256 maxPrice, uint256 minRate, uint256 maxRate) = oracle.latestAnswer();
         assertEq(rate, wstethStethRate, "Rate should match wstETH/stETH feed");
         assertEq(minRate, wstethStethRate, "Rate should match wstETH/stETH feed");
@@ -359,36 +363,37 @@ contract HarborCustomFeedNormalization_v2Test is Test {
         for (uint256 i = 0; i < customFeeds.length; i++) {
             address feed = customFeeds[i];
             uint256 normalizedPrice = oracle.getNormalizedFeedPrice(feed);
-            
+
             // Calculate expected normalized price
             int256 feedPrice = memePrices[i];
             uint256 feedPrice18 = uint256(feedPrice) * 1e10; // Convert 8 decimals to 18
             uint256 expectedNormalized = Math.mulDiv(feedPrice18, normalizationFactors[i], 1e18);
-            
+
             // Calculate dollar prices (in 18 decimals)
             // Raw price is already in 18 decimals from feedPrice18
             // Normalized price is already in 18 decimals
-            
+
             // Convert to dollar representation (divide by 1e18 to get dollar value)
             // For display, we'll show integer and fractional parts separately
             uint256 rawDollarsInt = feedPrice18 / 1e18;
             uint256 rawDollarsFrac = (feedPrice18 % 1e18) / 1e12; // 6 decimal places for display
-            
+
             uint256 normDollarsInt = normalizedPrice / 1e18;
             uint256 normDollarsFrac = (normalizedPrice % 1e18) / 1e12; // 6 decimal places for display
-            
+
             // Log feed name by index with expected normalized price (based on max supply normalization)
             if (i == 0) console.log("DOGE: normalized from $0.133 to ~$22.33 (max supply normalization)");
             else if (i == 1) console.log("SHIB: normalized from $0.0000075 to ~$4.41 (max supply normalization)");
             else if (i == 2) console.log("PEPE: normalized from $0.0000041 to ~$1.70 (max supply normalization)");
-            else if (i == 3) console.log("TRUMP: normalized from $5.10 to ~$5.10 (minimal change, max supply normalization)");
+            else if (i == 3)
+                console.log("TRUMP: normalized from $5.10 to ~$5.10 (minimal change, max supply normalization)");
             else if (i == 4) console.log("WIF: normalized from $0.348 to ~$0.348 (reference, no change)");
-            
+
             console.log("  Raw price (18 decimals):", feedPrice18);
             console.log("  Raw price ($):", rawDollarsInt, ".", rawDollarsFrac);
             console.log("  Normalized price (18 decimals):", normalizedPrice);
             console.log("  Normalized price ($):", normDollarsInt, ".", normDollarsFrac);
-            
+
             // Allow small tolerance for rounding
             uint256 tolerance = expectedNormalized / 10000; // 0.01%
             assertApproxEqAbs(normalizedPrice, expectedNormalized, tolerance, "Normalized price mismatch");
@@ -441,4 +446,3 @@ contract HarborCustomFeedNormalization_v2Test is Test {
         assertEq(updatedFactor, newFactor, "Normalization factor should be updated");
     }
 }
-

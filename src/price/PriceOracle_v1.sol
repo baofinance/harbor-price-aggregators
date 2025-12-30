@@ -139,5 +139,4 @@ library PriceOracle_v1 {
             prevRoundId = roundId - 1; // this is safe because we know aggregatorRoundId > 1
         }
     }
-
 }

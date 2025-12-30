@@ -70,13 +70,7 @@ contract OracleDeployDumpV2 is Test {
             } else {
                 vm.writeLine(
                     filename,
-                    string.concat(
-                        vm.toString(currentBlock),
-                        ",",
-                        vm.toString(block.timestamp),
-                        ",0,0,0,0,",
-                        err
-                    )
+                    string.concat(vm.toString(currentBlock), ",", vm.toString(block.timestamp), ",0,0,0,0,", err)
                 );
             }
 

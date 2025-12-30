@@ -16,7 +16,12 @@ import {IWstETH} from "@bao/interfaces/IWstETH.sol";
 /// @dev Each feed can have its own normalization factor applied before aggregation
 ///      V2: Price calculation does NOT multiply by rate - uses feed prices directly
 /// @custom:oz-upgrades-unsafe-allow external-library-linking
-contract HarborCustomFeedNormalization_v2 is IWrappedPriceOracle, UUPSUpgradeable, ReentrancyGuardTransientUpgradeable, BaoOwnable {
+contract HarborCustomFeedNormalization_v2 is
+    IWrappedPriceOracle,
+    UUPSUpgradeable,
+    ReentrancyGuardTransientUpgradeable,
+    BaoOwnable
+{
     using PriceOracle_v1 for PriceOracle_v1.Feed;
 
     /*//////////////////////////////////////////////////////////////
@@ -190,25 +195,29 @@ contract HarborCustomFeedNormalization_v2 is IWrappedPriceOracle, UUPSUpgradeabl
         __UUPSUpgradeable_init();
         __ReentrancyGuardTransient_init();
         _initializeOwner(owner_);
-        
+
         // Validate inputs
         if (bytes(oracleName_).length == 0) revert("Invalid oracle name");
         if (customFeeds_.length == 0) revert EmptyCustomFeeds();
         if (customFeeds_.length > 50) revert InvalidCustomFeedCount(customFeeds_.length);
-        if (customFeeds_.length != normalizationFactors_.length) revert NormalizationFactorMismatch(customFeeds_.length, normalizationFactors_.length);
+        if (customFeeds_.length != normalizationFactors_.length)
+            revert NormalizationFactorMismatch(customFeeds_.length, normalizationFactors_.length);
         if (usdFeed_ == address(0)) revert InvalidPriceSource(usdFeed_);
         if (aggregationDivisor_ == 0) revert InvalidAggregationDivisor(aggregationDivisor_);
         if (customFeedMaxAge_ == 0) revert InvalidMaxPriceAge(customFeedMaxAge_);
         if (usdFeedMaxAge_ == 0) revert InvalidMaxPriceAge(usdFeedMaxAge_);
         if (customFeedMaxDev_ == 0 || customFeedMaxDev_ > 1e18) revert InvalidMaxRelativeDeviation(customFeedMaxDev_);
         if (usdFeedMaxDev_ == 0 || usdFeedMaxDev_ > 1e18) revert InvalidMaxRelativeDeviation(usdFeedMaxDev_);
-        
+
         // Validate rate source configuration
         if (rateSource_ == RateSource.WSTETH && WSTETH == address(0)) revert InvalidRateSource(WSTETH);
-        if (rateSource_ == RateSource.FXSAVE && address(FXSAVE) == address(0)) revert InvalidRateSource(address(FXSAVE));
-        if (rateSource_ == RateSource.SUSDE_CHAINLINK && SUSDE_USDE_FEED == address(0)) revert InvalidRateSource(SUSDE_USDE_FEED);
-        if (rateSource_ == RateSource.WSTETH_CHAINLINK && WSTETH_STETH_FEED == address(0)) revert InvalidRateSource(WSTETH_STETH_FEED);
-        
+        if (rateSource_ == RateSource.FXSAVE && address(FXSAVE) == address(0))
+            revert InvalidRateSource(address(FXSAVE));
+        if (rateSource_ == RateSource.SUSDE_CHAINLINK && SUSDE_USDE_FEED == address(0))
+            revert InvalidRateSource(SUSDE_USDE_FEED);
+        if (rateSource_ == RateSource.WSTETH_CHAINLINK && WSTETH_STETH_FEED == address(0))
+            revert InvalidRateSource(WSTETH_STETH_FEED);
+
         // Set storage variables
         oracleName = oracleName_;
         rateSource = rateSource_;
@@ -216,37 +225,37 @@ contract HarborCustomFeedNormalization_v2 is IWrappedPriceOracle, UUPSUpgradeabl
         usdFeed = usdFeed_;
         aggregationDivisor = aggregationDivisor_;
         invertPrice = invertPrice_;
-        
+
         // Validate and set custom feeds with normalization factors
         for (uint256 i = 0; i < customFeeds_.length; i++) {
             address feed = customFeeds_[i];
             uint256 factor = normalizationFactors_[i];
-            
+
             if (feed == address(0)) revert InvalidPriceSource(feed);
             if (factor == 0) revert InvalidNormalizationFactor(feed, factor);
-            
+
             AggregatorV3Interface feedInterface = AggregatorV3Interface(feed);
             uint8 feedDecimalsValue = feedInterface.decimals();
             if (feedDecimalsValue == 0) revert InvalidFeedDecimals(feed);
-            
+
             feedDecimals[feed] = feedDecimalsValue;
             feedNormalizationFactors[feed] = factor;
             feedIdentifiers[uint8(i + 1)] = feed;
         }
-        
+
         // Validate and set USD feed
         AggregatorV3Interface usdFeedInterface = AggregatorV3Interface(usdFeed_);
         uint8 usdDecimals = usdFeedInterface.decimals();
         if (usdDecimals == 0) revert InvalidFeedDecimals(usdFeed_);
         usdFeedDecimals = usdDecimals;
         feedIdentifiers[100] = usdFeed_;
-        
+
         // Set initial constraints for all feeds
         for (uint256 i = 0; i < customFeeds_.length; i++) {
             _setFeedConstraints(customFeeds_[i], customFeedMaxAge_, customFeedMaxDev_);
         }
         _setFeedConstraints(usdFeed_, usdFeedMaxAge_, usdFeedMaxDev_);
-        
+
         emit Initialized(owner_);
     }
 
@@ -304,25 +313,25 @@ contract HarborCustomFeedNormalization_v2 is IWrappedPriceOracle, UUPSUpgradeabl
             }
         }
         if (!isCustomFeed) revert InvalidPriceSource(feedAddress);
-        
+
         // Validate constraints are set
         if (feedConstraints[feedAddress].maxAnswerAge == 0) revert ConstraintsNotSet(feedAddress);
-        
+
         // Get feed price
         AggregatorV3Interface feedInterface = AggregatorV3Interface(feedAddress);
         PriceOracle_v1.Feed memory feedData = PriceOracle_v1.Feed({
             priceFeed: feedInterface,
             decimals: feedDecimals[feedAddress]
         });
-        
+
         uint256 feedPrice = feedData.latestAnswer(feedConstraints[feedAddress]);
         // forge-lint: disable-next-line(unsafe-typecast) // Safe: only checking for zero
         if (feedPrice == 0) revert InvalidPrice(feedAddress, int256(feedPrice));
-        
-            // Apply normalization factor
-            uint256 normalizationFactor = feedNormalizationFactors[feedAddress];
-            normalizedPrice = Math.mulDiv(feedPrice, normalizationFactor, 1e18);
-        
+
+        // Apply normalization factor
+        uint256 normalizationFactor = feedNormalizationFactors[feedAddress];
+        normalizedPrice = Math.mulDiv(feedPrice, normalizationFactor, 1e18);
+
         return normalizedPrice;
     }
 
@@ -339,10 +348,10 @@ contract HarborCustomFeedNormalization_v2 is IWrappedPriceOracle, UUPSUpgradeabl
         for (uint256 i = 0; i < customFeeds.length; i++) {
             if (feedConstraints[customFeeds[i]].maxAnswerAge == 0) revert ConstraintsNotSet(customFeeds[i]);
         }
-        
+
         // Aggregate all custom feed prices with per-feed normalization
         uint256 aggregatedPrice = 0;
-        
+
         for (uint256 i = 0; i < customFeeds.length; i++) {
             address feed = customFeeds[i];
             AggregatorV3Interface feedInterface = AggregatorV3Interface(feed);
@@ -350,18 +359,18 @@ contract HarborCustomFeedNormalization_v2 is IWrappedPriceOracle, UUPSUpgradeabl
                 priceFeed: feedInterface,
                 decimals: feedDecimals[feed]
             });
-            
+
             uint256 feedPrice = feedData.latestAnswer(feedConstraints[feed]);
             // forge-lint: disable-next-line(unsafe-typecast) // Safe: only checking for zero
             if (feedPrice == 0) revert InvalidPrice(feed, int256(feedPrice));
-            
+
             // Apply normalization factor
             uint256 normalizationFactor = feedNormalizationFactors[feed];
             uint256 normalizedPrice = Math.mulDiv(feedPrice, normalizationFactor, 1e18);
-            
+
             aggregatedPrice += normalizedPrice;
         }
-        
+
         // Divide aggregated price by divisor to get average
         normalizedAggregatedPrice = aggregatedPrice / aggregationDivisor;
     }
@@ -377,11 +386,11 @@ contract HarborCustomFeedNormalization_v2 is IWrappedPriceOracle, UUPSUpgradeabl
             if (feedConstraints[customFeeds[i]].maxAnswerAge == 0) revert ConstraintsNotSet(customFeeds[i]);
         }
         if (feedConstraints[usdFeed].maxAnswerAge == 0) revert ConstraintsNotSet(usdFeed);
-        
+
         // Aggregate all custom feed prices with per-feed normalization
         uint256 aggregatedPrice = 0;
         AggregatorV3Interface usdFeedInterface = AggregatorV3Interface(usdFeed);
-        
+
         for (uint256 i = 0; i < customFeeds.length; i++) {
             address feed = customFeeds[i];
             AggregatorV3Interface feedInterface = AggregatorV3Interface(feed);
@@ -389,11 +398,11 @@ contract HarborCustomFeedNormalization_v2 is IWrappedPriceOracle, UUPSUpgradeabl
                 priceFeed: feedInterface,
                 decimals: feedDecimals[feed]
             });
-            
+
             uint256 feedPrice = feedData.latestAnswer(feedConstraints[feed]);
             // forge-lint: disable-next-line(unsafe-typecast) // Safe: only checking for zero
             if (feedPrice == 0) revert InvalidPrice(feed, int256(feedPrice));
-            
+
             // Apply normalization factor
             // Factor represents the multiplier to normalize to WIF supply
             // Formula: normalizedPrice = (feedPrice * normalizationFactor) / 1e18
@@ -402,23 +411,23 @@ contract HarborCustomFeedNormalization_v2 is IWrappedPriceOracle, UUPSUpgradeabl
             // Since we store multipliers directly, use: normalizedPrice = (feedPrice * normalizationFactor) / 1e18
             uint256 normalizationFactor = feedNormalizationFactors[feed];
             uint256 normalizedPrice = Math.mulDiv(feedPrice, normalizationFactor, 1e18);
-            
+
             aggregatedPrice += normalizedPrice;
         }
-        
+
         // Divide aggregated price by divisor to get average
         uint256 normalizedAggregatedPrice = aggregatedPrice / aggregationDivisor;
-        
+
         // Get USD feed price
         PriceOracle_v1.Feed memory usdFeedData = PriceOracle_v1.Feed({
             priceFeed: usdFeedInterface,
             decimals: usdFeedDecimals
         });
-        
+
         uint256 usdFeedPrice = usdFeedData.latestAnswer(feedConstraints[usdFeed]);
         // forge-lint: disable-next-line(unsafe-typecast) // Safe: only checking for zero
         if (usdFeedPrice == 0) revert InvalidPrice(usdFeed, int256(usdFeedPrice));
-        
+
         uint256 finalPrice;
         if (invertPrice) {
             // Invert: Calculate units of USD per 1 aggregated basket
@@ -429,7 +438,7 @@ contract HarborCustomFeedNormalization_v2 is IWrappedPriceOracle, UUPSUpgradeabl
             // Formula: (usdFeedPrice * 1e18) / normalizedAggregatedPrice
             finalPrice = Math.mulDiv(usdFeedPrice, 1e18, normalizedAggregatedPrice);
         }
-        
+
         return finalPrice;
     }
 
@@ -451,14 +460,14 @@ contract HarborCustomFeedNormalization_v2 is IWrappedPriceOracle, UUPSUpgradeabl
             AggregatorV3Interface feed = AggregatorV3Interface(SUSDE_USDE_FEED);
             uint8 rateFeedDecimals = feed.decimals();
             (, int256 answer, , uint256 updatedAt, ) = feed.latestRoundData();
-            
+
             // Validate answer is positive
             if (answer <= 0) revert InvalidPrice(SUSDE_USDE_FEED, answer);
-            
+
             // Validate feed is not stale (uses configurable maxRateSourceAge)
             // slither-disable-next-line timestamp
             if (block.timestamp - updatedAt > maxRateSourceAge) revert StaleRateSource(SUSDE_USDE_FEED, updatedAt);
-            
+
             // Normalize to 18 decimals
             uint256 rate;
             if (rateFeedDecimals <= 18) {
@@ -466,7 +475,7 @@ contract HarborCustomFeedNormalization_v2 is IWrappedPriceOracle, UUPSUpgradeabl
             } else {
                 rate = uint256(answer) / (10 ** (rateFeedDecimals - 18));
             }
-            
+
             // Validate rate is within sane bounds (sUSDE/USDE should be >= 0.9x)
             if (rate < 9e17) revert InvalidRate(rate);
             return rate;
@@ -475,14 +484,14 @@ contract HarborCustomFeedNormalization_v2 is IWrappedPriceOracle, UUPSUpgradeabl
             AggregatorV3Interface feed = AggregatorV3Interface(WSTETH_STETH_FEED);
             uint8 rateFeedDecimals = feed.decimals();
             (, int256 answer, , uint256 updatedAt, ) = feed.latestRoundData();
-            
+
             // Validate answer is positive
             if (answer <= 0) revert InvalidPrice(WSTETH_STETH_FEED, answer);
-            
+
             // Validate feed is not stale (uses configurable maxRateSourceAge)
             // slither-disable-next-line timestamp
             if (block.timestamp - updatedAt > maxRateSourceAge) revert StaleRateSource(WSTETH_STETH_FEED, updatedAt);
-            
+
             // Normalize to 18 decimals
             uint256 rate;
             if (rateFeedDecimals <= 18) {
@@ -490,7 +499,7 @@ contract HarborCustomFeedNormalization_v2 is IWrappedPriceOracle, UUPSUpgradeabl
             } else {
                 rate = uint256(answer) / (10 ** (rateFeedDecimals - 18));
             }
-            
+
             // Validate rate is within sane bounds (wstETH/stETH should be between 1.0 and 2.0)
             if (rate < 1e18 || rate > 2e18) revert InvalidRate(rate);
             return rate;
@@ -534,7 +543,7 @@ contract HarborCustomFeedNormalization_v2 is IWrappedPriceOracle, UUPSUpgradeabl
         }
         if (!isCustomFeed) revert InvalidPriceSource(feed);
         if (factor == 0) revert InvalidNormalizationFactor(feed, factor);
-        
+
         feedNormalizationFactors[feed] = factor;
         emit NormalizationFactorUpdated(feed, factor);
     }
@@ -566,10 +575,10 @@ contract HarborCustomFeedNormalization_v2 is IWrappedPriceOracle, UUPSUpgradeabl
             }
         }
         if (!isValidFeed) revert InvalidPriceSource(feed);
-        
+
         if (maxAge == 0) revert InvalidMaxPriceAge(maxAge);
         if (maxDev == 0 || maxDev > 1e18) revert InvalidMaxRelativeDeviation(maxDev);
-        
+
         feedConstraints[feed].maxAnswerAge = maxAge;
         feedConstraints[feed].maxPercentageDeviation = maxDev;
         feedConstraints[feed].maxAbsoluteDeviation = type(uint256).max; // Disable absolute deviation checks (use percentage instead)
@@ -577,4 +586,3 @@ contract HarborCustomFeedNormalization_v2 is IWrappedPriceOracle, UUPSUpgradeabl
         emit ConstraintsUpdated(feed, maxAge, maxDev);
     }
 }
-

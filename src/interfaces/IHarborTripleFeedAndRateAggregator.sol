@@ -21,5 +21,3 @@ interface IHarborTripleFeedAndRateAggregator {
     function getPrice() external view returns (uint256);
     function latestAnswer() external view returns (uint256, uint256, uint256, uint256);
 }
-
-

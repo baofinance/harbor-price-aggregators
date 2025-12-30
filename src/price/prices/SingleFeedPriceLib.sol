@@ -16,7 +16,11 @@ library SingleFeedPriceLib {
         return computeFromValidatedFeedPrice(feedPrice, divisor, invert);
     }
 
-    function computeFromValidatedFeedPrice(uint256 feedPrice, uint256 divisor, bool invert) internal pure returns (uint256) {
+    function computeFromValidatedFeedPrice(
+        uint256 feedPrice,
+        uint256 divisor,
+        bool invert
+    ) internal pure returns (uint256) {
         if (invert) {
             // 1e36 * divisor / feedPrice
             return Math.mulDiv(1e18 * divisor, 1e18, feedPrice);
