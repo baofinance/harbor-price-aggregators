@@ -13,7 +13,11 @@ abstract contract HarborAggregator_v3 is IHarborPriceAggregatorV3, UUPSUpgradeab
     address private constant _OWNER = 0x9bABfC1A1952a6ed2caC1922BFfE80c0506364a2;
 
     /// @dev initialises this to _OWNER immediately
-    constructor() BaoFixedOwnable(address(0), _OWNER, 0) {}
+    constructor() BaoFixedOwnable(address(0), _OWNER, 0) {
+        // this may not be strictly necessary but is safer to put in place because we derive from
+        // UUPSUpgradeable which derives from Initializable :-/
+        _disableInitializers();
+    }
 
     function baseName() external pure returns (string memory) {
         return _baseName();

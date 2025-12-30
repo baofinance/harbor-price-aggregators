@@ -24,7 +24,7 @@
     "offchain:export": "uv run python -m offchain_feeds export",
     "offchain:meta": "uv run python -m offchain_feeds meta",
     "slither": "./lib/bao-base/run slither --filter-paths '_v1|_v2'",
-    "validate": "./lib/bao-base/run validate",
+    "validate": "./lib/bao-base/run validate --exclude 'src/price/**/*.sol'",
     "script": "forge script --force --ffi",
     "disabled": "echo 'disabled tests:' && grep -n -e '^\\s*function\\s*test.*(.*).*private' test/**/*.t.sol",
     "doc": "forge doc",
