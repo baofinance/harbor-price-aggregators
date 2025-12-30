@@ -191,12 +191,15 @@ contract HarborDoubleFeedAndRateAggregator_v2 is
 
         // Validate rate source configuration
         if (rateSource_ == RateSource.WSTETH && WSTETH == address(0)) revert InvalidRateSource(WSTETH);
-        if (rateSource_ == RateSource.FXSAVE && address(FXSAVE) == address(0))
+        if (rateSource_ == RateSource.FXSAVE && address(FXSAVE) == address(0)) {
             revert InvalidRateSource(address(FXSAVE));
-        if (rateSource_ == RateSource.SUSDE_CHAINLINK && SUSDE_USDE_FEED == address(0))
+        }
+        if (rateSource_ == RateSource.SUSDE_CHAINLINK && SUSDE_USDE_FEED == address(0)) {
             revert InvalidRateSource(SUSDE_USDE_FEED);
-        if (rateSource_ == RateSource.WSTETH_CHAINLINK && WSTETH_STETH_FEED == address(0))
+        }
+        if (rateSource_ == RateSource.WSTETH_CHAINLINK && WSTETH_STETH_FEED == address(0)) {
             revert InvalidRateSource(WSTETH_STETH_FEED);
+        }
 
         // Set storage variables
         oracleName = oracleName_;
@@ -235,7 +238,9 @@ contract HarborDoubleFeedAndRateAggregator_v2 is
         uint64 secondFeedMaxAge,
         uint256 secondFeedMaxDev
     ) external onlyOwner {
-        if (feedIdentifiers[1] != address(0) || feedIdentifiers[2] != address(0)) revert("Feeds already initialized");
+        if (feedIdentifiers[1] != address(0) || feedIdentifiers[2] != address(0)) {
+            revert("Feeds already initialized");
+        }
         if (firstFeed == address(0)) revert InvalidPriceSource(firstFeed);
         if (secondFeed == address(0)) revert InvalidConversionFeed(secondFeed);
         feedIdentifiers[1] = firstFeed;

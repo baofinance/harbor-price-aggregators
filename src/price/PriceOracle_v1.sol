@@ -4,7 +4,7 @@ pragma solidity 0.8.30;
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
 import {SignedMath} from "@openzeppelin/contracts/utils/math/SignedMath.sol";
 import {IPriceOracleErrors} from "@harbor-price/interfaces/IPriceOracleErrors.sol";
-import {ChainlinkFeedLib} from "./feeds/ChainlinkFeedLib.sol";
+import {ChainlinkFeedLib} from "@harbor-price/feeds/chainlink/ChainlinkFeedLib.sol";
 
 /// @title PriceOracle_v1
 /// @notice Library for validating Chainlink price feed data.
@@ -37,7 +37,7 @@ library PriceOracle_v1 {
 
         // Get latest round data and normalize to 18 decimals in one step
         // slither-disable-next-line unused-return // startedAt isn't used, for now, and answeredInRound is deprecated
-        (uint80 roundId, int256 answer /* uint256 startedAt*/, , uint256 updatedAt /*uint256 answeredInRound*/, ) = feed
+        (uint80 roundId, int256 answer, , /* uint256 startedAt*/ uint256 updatedAt,  /*uint256 answeredInRound*/) = feed
             .priceFeed
             .latestRoundData();
         answer = ChainlinkFeedLib.normaliseTo18(answer, feed.decimals);

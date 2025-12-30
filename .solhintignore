@@ -1,0 +1,7 @@
+# .solhintignore
+
+src/price/
+
+src/interfaces/IHarborSingleFeedAndRateAggregator.sol
+src/interfaces/IHarborDoubleFeedAndRateAggregator.sol
+src/interfaces/IHarborCustomFeedAndRateAggregator.sol

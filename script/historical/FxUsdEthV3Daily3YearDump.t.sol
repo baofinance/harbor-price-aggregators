@@ -3,9 +3,10 @@ pragma solidity 0.8.30;
 
 import "forge-std/Test.sol";
 import {IWrappedPriceOracle} from "@harbor-price/interfaces/IWrappedPriceOracle.sol";
-import {HarborPriceAggregator_v3} from "@harbor-price/price/HarborPriceAggregator_v3.sol";
-import {MainnetOracleAddresses} from "@harbor-price/price/MainnetOracleAddresses.sol";
-import {Oracle_fxUSD_ETH} from "@harbor-price/price/oracles/Oracle_fxUSD_ETH.sol";
+import {HarborAggregator_v3} from "@harbor-price/HarborAggregator_v3.sol";
+import {MainnetRateSources} from "@harbor-price/rates/mainnet/MainnetRateSources.sol";
+import {ETH_USD} from "@harbor-price/feeds/chainlink/mainnet/ETH_USD.sol";
+import {Aggregator_fxUSD_ETH} from "@harbor-price/oracles/Aggregator_fxUSD_ETH.sol";
 import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import {LatestAnswerErrorClassifier} from "./LatestAnswerErrorClassifier.sol";
 import {UtcTimestampFormatter} from "@harbor-price/format/UtcTimestampFormatter.sol";
@@ -224,9 +225,10 @@ contract FxUsdEthV3Daily3YearDump is Test {
         vm.createSelectFork("mainnet", END_BLOCK);
 
         // Deploy a fresh v3 implementation + proxy (do not use already-deployed proxies).
-        Oracle_fxUSD_ETH impl = new Oracle_fxUSD_ETH(
-            MainnetOracleAddresses.FXSAVE,
-            MainnetOracleAddresses.ETH_USD_FEED,
+        Aggregator_fxUSD_ETH impl = new Aggregator_fxUSD_ETH(
+            MainnetRateSources.FXSAVE,
+            ETH_USD.FEED,
+            ETH_USD.HEARTBEAT,
             1,
             true
         );

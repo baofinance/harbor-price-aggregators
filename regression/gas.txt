@@ -1,0 +1,220 @@
+src/oracles/Aggregator_fxUSD_BTC.sol:Aggregator_fxUSD_BTC
+| function name        |       max |
+|----------------------|-----------|
+| FXSAVE               | 3.690e+02 |
+| INVERT_PRICE         | 4.230e+02 |
+| PRICE_DIVISOR        | 5.020e+02 |
+| PRICE_FEED           | 2.370e+02 |
+| PRICE_FEED_DECIMALS  | 2.470e+02 |
+| PRICE_FEED_HEARTBEAT | 4.830e+02 |
+| baseName             | 4.900e+02 |
+| latestAnswer         | 1.611e+04 |
+| oracleName           | 1.121e+03 |
+| proxiableUUID        | 3.460e+02 |
+| quoteName            | 5.120e+02 |
+| rateProvider         | 4.570e+02 |
+| upgradeToAndCall     | 8.500e+03 |
+| version              | 3.290e+02 |
+
+src/oracles/Aggregator_fxUSD_ETH.sol:Aggregator_fxUSD_ETH
+| function name    |       max |
+|------------------|-----------|
+| baseName         | 4.900e+02 |
+| latestAnswer     | 1.611e+04 |
+| oracleName       | 1.121e+03 |
+| proxiableUUID    | 3.460e+02 |
+| quoteName        | 5.120e+02 |
+| rateProvider     | 4.570e+02 |
+| upgradeToAndCall | 8.500e+03 |
+| version          | 3.290e+02 |
+
+src/oracles/Aggregator_fxUSD_EUR.sol:Aggregator_fxUSD_EUR
+| function name    |       max |
+|------------------|-----------|
+| baseName         | 4.900e+02 |
+| latestAnswer     | 1.611e+04 |
+| oracleName       | 1.121e+03 |
+| proxiableUUID    | 3.460e+02 |
+| quoteName        | 5.120e+02 |
+| rateProvider     | 4.570e+02 |
+| upgradeToAndCall | 8.500e+03 |
+| version          | 3.290e+02 |
+
+src/oracles/Aggregator_fxUSD_MCAP.sol:Aggregator_fxUSD_MCAP
+| function name    |       max |
+|------------------|-----------|
+| baseName         | 4.900e+02 |
+| latestAnswer     | 1.611e+04 |
+| oracleName       | 1.121e+03 |
+| proxiableUUID    | 3.460e+02 |
+| quoteName        | 5.120e+02 |
+| rateProvider     | 4.570e+02 |
+| upgradeToAndCall | 8.500e+03 |
+| version          | 3.290e+02 |
+
+src/oracles/Aggregator_fxUSD_XAU.sol:Aggregator_fxUSD_XAU
+| function name    |       max |
+|------------------|-----------|
+| baseName         | 4.900e+02 |
+| latestAnswer     | 1.611e+04 |
+| oracleName       | 1.121e+03 |
+| proxiableUUID    | 3.460e+02 |
+| quoteName        | 5.120e+02 |
+| rateProvider     | 4.570e+02 |
+| upgradeToAndCall | 8.500e+03 |
+| version          | 3.290e+02 |
+
+src/oracles/Aggregator_stETH_BTC.sol:Aggregator_stETH_BTC
+| function name         |       max |
+|-----------------------|-----------|
+| FIRST_FEED            | 2.150e+02 |
+| FIRST_FEED_DECIMALS   | 3.790e+02 |
+| FIRST_FEED_HEARTBEAT  | 4.170e+02 |
+| INVERT_PRICE          | 4.670e+02 |
+| PRICE_DIVISOR         | 5.680e+02 |
+| SECOND_FEED           | 5.450e+02 |
+| SECOND_FEED_DECIMALS  | 1.810e+02 |
+| SECOND_FEED_HEARTBEAT | 2.630e+02 |
+| WSTETH                | 5.670e+02 |
+| baseName              | 5.340e+02 |
+| latestAnswer          | 2.667e+04 |
+| oracleName            | 1.143e+03 |
+| proxiableUUID         | 3.680e+02 |
+| quoteName             | 5.560e+02 |
+| rateProvider          | 5.010e+02 |
+| upgradeToAndCall      | 8.544e+03 |
+| version               | 3.510e+02 |
+
+src/oracles/Aggregator_stETH_EUR.sol:Aggregator_stETH_EUR
+| function name    |       max |
+|------------------|-----------|
+| baseName         | 5.340e+02 |
+| latestAnswer     | 2.666e+04 |
+| oracleName       | 1.143e+03 |
+| proxiableUUID    | 3.680e+02 |
+| quoteName        | 5.560e+02 |
+| rateProvider     | 5.010e+02 |
+| upgradeToAndCall | 8.544e+03 |
+| version          | 3.510e+02 |
+
+src/oracles/Aggregator_stETH_MCAP.sol:Aggregator_stETH_MCAP
+| function name    |       max |
+|------------------|-----------|
+| baseName         | 5.340e+02 |
+| latestAnswer     | 2.666e+04 |
+| oracleName       | 1.143e+03 |
+| proxiableUUID    | 3.680e+02 |
+| quoteName        | 5.560e+02 |
+| rateProvider     | 5.010e+02 |
+| upgradeToAndCall | 8.544e+03 |
+| version          | 3.510e+02 |
+
+src/oracles/Aggregator_stETH_XAU.sol:Aggregator_stETH_XAU
+| function name    |       max |
+|------------------|-----------|
+| baseName         | 5.340e+02 |
+| latestAnswer     | 2.666e+04 |
+| oracleName       | 1.143e+03 |
+| proxiableUUID    | 3.680e+02 |
+| quoteName        | 5.560e+02 |
+| rateProvider     | 5.010e+02 |
+| upgradeToAndCall | 8.544e+03 |
+| version          | 3.510e+02 |
+
+src/price/HarborCustomFeedAndRateAggregator_v1.sol:HarborCustomFeedAndRateAggregator_v1
+| function name               |       max |
+|-----------------------------|-----------|
+| aggregationDivisor          | 2.366e+03 |
+| decimals                    | 2.190e+02 |
+| getConstraints              | 1.129e+04 |
+| getCustomFeed               | 5.356e+03 |
+| getCustomFeedCount          | 2.586e+03 |
+| getPrice                    | 1.959e+05 |
+| getRate                     | 8.182e+03 |
+| initialize                  | 1.311e+06 |
+| latestAnswer                | 1.968e+05 |
+| oracleName                  | 3.205e+03 |
+| owner                       | 2.758e+03 |
+| updateCustomFeedConstraints | 1.316e+05 |
+| updateUsdFeedConstraints    | 2.163e+04 |
+| upgradeToAndCall            | 1.194e+04 |
+| usdFeed                     | 2.318e+03 |
+
+src/price/HarborCustomFeedAndRateAggregator_v2.sol:HarborCustomFeedAndRateAggregator_v2
+| function name               |       max |
+|-----------------------------|-----------|
+| aggregationDivisor          | 2.344e+03 |
+| getConstraints              | 1.127e+04 |
+| getCustomFeed               | 5.400e+03 |
+| getCustomFeedCount          | 2.586e+03 |
+| getPrice                    | 1.903e+05 |
+| getRate                     | 8.182e+03 |
+| initialize                  | 1.294e+06 |
+| latestAnswer                | 1.976e+05 |
+| oracleName                  | 3.205e+03 |
+| owner                       | 2.780e+03 |
+| updateCustomFeedConstraints | 1.317e+05 |
+| updateUsdFeedConstraints    | 2.163e+04 |
+| version                     | 4.170e+02 |
+
+src/price/HarborDoubleFeedAndRateAggregator_v1.sol:HarborDoubleFeedAndRateAggregator_v1
+| function name         |       max |
+|-----------------------|-----------|
+| firstFeed             | 2.874e+03 |
+| firstFeedDecimals     | 2.290e+03 |
+| getConstraints        | 1.125e+04 |
+| getPrice              | 5.998e+04 |
+| initialize            | 3.984e+05 |
+| latestAnswer          | 6.084e+04 |
+| oracleName            | 3.205e+03 |
+| owner                 | 2.758e+03 |
+| priceDivisor          | 2.894e+03 |
+| secondFeed            | 2.648e+03 |
+| secondFeedDecimals    | 2.664e+03 |
+| updateBothConstraints | 4.069e+04 |
+| upgradeToAndCall      | 1.185e+04 |
+
+src/price/HarborDoubleFeedAndRateAggregator_v2.sol:HarborDoubleFeedAndRateAggregator_v2
+| function name         |       max |
+|-----------------------|-----------|
+| getConstraints        | 1.125e+04 |
+| getPrice              | 5.443e+04 |
+| getRate               | 7.964e+03 |
+| initialize            | 4.209e+05 |
+| invertPrice           | 2.692e+03 |
+| latestAnswer          | 6.151e+04 |
+| oracleName            | 3.183e+03 |
+| owner                 | 2.758e+03 |
+| setInvertPrice        | 2.607e+04 |
+| updateBothConstraints | 4.069e+04 |
+| version               | 3.950e+02 |
+
+src/price/HarborSingleFeedAndRateAggregator_v1.sol:HarborSingleFeedAndRateAggregator_v1
+| function name      |       max |
+|--------------------|-----------|
+| firstFeed          | 2.786e+03 |
+| firstFeedDecimals  | 2.290e+03 |
+| getConstraints     | 1.125e+04 |
+| getPrice           | 3.335e+04 |
+| initialize         | 2.580e+05 |
+| latestAnswer       | 3.400e+04 |
+| oracleName         | 3.139e+03 |
+| owner              | 2.670e+03 |
+| priceDivisor       | 2.806e+03 |
+| setFeedConstraints | 2.345e+04 |
+| upgradeToAndCall   | 1.185e+04 |
+
+src/price/HarborSingleFeedAndRateAggregator_v2.sol:HarborSingleFeedAndRateAggregator_v2
+| function name      |       max |
+|--------------------|-----------|
+| getConstraints     | 1.127e+04 |
+| getPrice           | 2.988e+04 |
+| getRate            | 8.138e+03 |
+| initialize         | 2.796e+05 |
+| invertPrice        | 2.670e+03 |
+| latestAnswer       | 3.499e+04 |
+| oracleName         | 3.161e+03 |
+| owner              | 2.714e+03 |
+| setFeedConstraints | 2.347e+04 |
+| setInvertPrice     | 2.602e+04 |
+| version            | 4.170e+02 |

@@ -3,252 +3,11 @@ pragma solidity 0.8.30;
 
 import {Test} from "forge-std/Test.sol";
 import {HarborSingleFeedAndRateAggregator_v1} from "@harbor-price/price/HarborSingleFeedAndRateAggregator_v1.sol";
-import {IFxSAVE} from "@harbor-price/interfaces/IFxSAVE.sol";
-import {IWstETH} from "@bao/interfaces/IWstETH.sol";
-import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
 import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
-
-contract MockWstETH is IWstETH {
-    uint256 private _stEthPerToken;
-
-    function setStEthPerToken(uint256 rate) external {
-        _stEthPerToken = rate;
-    }
-
-    function stEthPerToken() external view override returns (uint256) {
-        return _stEthPerToken;
-    }
-
-    function getStETHByWstETH(uint256 wstETHAmount) external view override returns (uint256) {
-        return (wstETHAmount * _stEthPerToken) / 1e18;
-    }
-
-    function getWstETHByStETH(uint256 stETHAmount) external view override returns (uint256) {
-        return (stETHAmount * 1e18) / _stEthPerToken;
-    }
-
-    function tokensPerStEth() external view override returns (uint256) {
-        return _stEthPerToken;
-    }
-
-    function allowance(address, address) external pure override returns (uint256) {
-        return 0;
-    }
-    function approve(address, uint256) external pure override returns (bool) {
-        return true;
-    }
-    function balanceOf(address) external pure override returns (uint256) {
-        return 0;
-    }
-    function totalSupply() external pure override returns (uint256) {
-        return 0;
-    }
-    function transfer(address, uint256) external pure override returns (bool) {
-        return true;
-    }
-    function transferFrom(address, address, uint256) external pure override returns (bool) {
-        return true;
-    }
-}
-
-contract MockFxSAVE is IFxSAVE {
-    uint256 private _assetsPerShare;
-
-    function setAssetsPerShare(uint256 rate) external {
-        _assetsPerShare = rate;
-    }
-
-    function convertToAssets(uint256 shares) external view override returns (uint256) {
-        return (shares * _assetsPerShare) / 1e18;
-    }
-
-    // IERC4626 functions (stubs)
-    function asset() external pure override returns (address) {
-        return address(0);
-    }
-    function convertToShares(uint256) external pure override returns (uint256) {
-        return 0;
-    }
-    function deposit(uint256, address) external pure override returns (uint256) {
-        return 0;
-    }
-    function maxDeposit(address) external pure override returns (uint256) {
-        return 0;
-    }
-    function maxMint(address) external pure override returns (uint256) {
-        return 0;
-    }
-    function maxRedeem(address) external pure override returns (uint256) {
-        return 0;
-    }
-    function maxWithdraw(address) external pure override returns (uint256) {
-        return 0;
-    }
-    function mint(uint256, address) external pure override returns (uint256) {
-        return 0;
-    }
-    function previewDeposit(uint256) external pure override returns (uint256) {
-        return 0;
-    }
-    function previewMint(uint256) external pure override returns (uint256) {
-        return 0;
-    }
-    function previewRedeem(uint256) external pure override returns (uint256) {
-        return 0;
-    }
-    function previewWithdraw(uint256) external pure override returns (uint256) {
-        return 0;
-    }
-    function redeem(uint256, address, address) external pure override returns (uint256) {
-        return 0;
-    }
-    function totalAssets() external pure override returns (uint256) {
-        return 0;
-    }
-    function withdraw(uint256, address, address) external pure override returns (uint256) {
-        return 0;
-    }
-
-    // IERC20Metadata stubs
-    function name() external pure override returns (string memory) {
-        return "";
-    }
-    function symbol() external pure override returns (string memory) {
-        return "";
-    }
-    function decimals() external pure override returns (uint8) {
-        return 18;
-    }
-
-    // IERC20 stubs
-    function allowance(address, address) external pure override returns (uint256) {
-        return 0;
-    }
-    function approve(address, uint256) external pure override returns (bool) {
-        return true;
-    }
-    function balanceOf(address) external pure override returns (uint256) {
-        return 0;
-    }
-    function totalSupply() external pure override returns (uint256) {
-        return 0;
-    }
-    function transfer(address, uint256) external pure override returns (bool) {
-        return true;
-    }
-    function transferFrom(address, address, uint256) external pure override returns (bool) {
-        return true;
-    }
-
-    // IFxSAVE-specific stubs
-    function CLAIM_FOR_ROLE() external pure override returns (bytes32) {
-        return bytes32(0);
-    }
-    function DEFAULT_ADMIN_ROLE() external pure override returns (bytes32) {
-        return bytes32(0);
-    }
-    function DOMAIN_SEPARATOR() external pure override returns (bytes32) {
-        return bytes32(0);
-    }
-    function base() external pure override returns (address) {
-        return address(0);
-    }
-    function gauge() external pure override returns (address) {
-        return address(0);
-    }
-    function getExpenseRatio() external pure override returns (uint256) {
-        return 0;
-    }
-    function getHarvesterRatio() external pure override returns (uint256) {
-        return 0;
-    }
-    function getRoleAdmin(bytes32) external pure override returns (bytes32) {
-        return bytes32(0);
-    }
-    function getThreshold() external pure override returns (uint256) {
-        return 0;
-    }
-    function harvester() external pure override returns (address) {
-        return address(0);
-    }
-    function hasRole(bytes32, address) external pure override returns (bool) {
-        return false;
-    }
-    function lockedProxy(address) external pure override returns (address) {
-        return address(0);
-    }
-    function nav() external pure override returns (uint256) {
-        return 0;
-    }
-    function nonces(address) external pure override returns (uint256) {
-        return 0;
-    }
-    function supportsInterface(bytes4) external pure override returns (bool) {
-        return false;
-    }
-    function treasury() external pure override returns (address) {
-        return address(0);
-    }
-    function vault() external pure override returns (address) {
-        return address(0);
-    }
-    function eip712Domain()
-        external
-        pure
-        override
-        returns (bytes1, string memory, string memory, uint256, address, bytes32, uint256[] memory)
-    {
-        return (bytes1(0), "", "", 0, address(0), bytes32(0), new uint256[](0));
-    }
-}
-
-contract MockAggregatorV3 is AggregatorV3Interface {
-    uint8 private _decimals;
-    int256 private _answer;
-    uint80 private _roundId;
-    uint256 private _updatedAt;
-
-    constructor(uint8 decimals_) {
-        _decimals = decimals_;
-    }
-
-    function setAnswer(int256 answer_, uint256 updatedAt_) external {
-        _answer = answer_;
-        _updatedAt = updatedAt_;
-        _roundId++;
-    }
-
-    function decimals() external view override returns (uint8) {
-        return _decimals;
-    }
-
-    function latestRoundData()
-        external
-        view
-        override
-        returns (uint80 roundId, int256 answer, uint256 startedAt, uint256 updatedAt, uint80 answeredInRound)
-    {
-        return (_roundId, _answer, 0, _updatedAt, _roundId);
-    }
-
-    function description() external pure override returns (string memory) {
-        return "";
-    }
-    function version() external pure override returns (uint256) {
-        return 1;
-    }
-    function getRoundData(
-        uint80
-    )
-        external
-        view
-        override
-        returns (uint80 roundId, int256 answer, uint256 startedAt, uint256 updatedAt, uint80 answeredInRound)
-    {
-        return (_roundId, _answer, 0, _updatedAt, _roundId);
-    }
-}
+import {MockWstETH} from "test/mock/MockWstETH.sol";
+import {MockFxSAVE} from "test/mock/MockFxSAVE.sol";
+import {MockAggregatorV3} from "test/mock/MockAggregatorV3.sol";
 
 // V2 contract for upgrade testing - same as V1, used to verify upgrade works
 contract HarborSingleFeedAndRateAggregator_v2 is HarborSingleFeedAndRateAggregator_v1 {
@@ -604,34 +363,33 @@ contract HarborSingleFeedAndRateAggregator_v1Test is Test {
         vm.prank(owner);
         oracle.setFeedConstraints(1, newMaxAge, newMaxDev);
 
-        // Store state values
-        string memory oracleNameBefore = oracle.oracleName();
+        // Capture pre-upgrade state in a struct-like pattern using scoped storage
+        bytes32 oracleNameHash = keccak256(bytes(oracle.oracleName()));
         address ownerBefore = oracle.owner();
         address firstFeedBefore = oracle.firstFeed();
         uint8 firstFeedDecimalsBefore = oracle.firstFeedDecimals();
         uint256 priceDivisorBefore = oracle.priceDivisor();
-        (uint64 maxAgeBefore, uint256 maxDevBefore) = oracle.getConstraints(1);
 
-        // Deploy V2 implementation
-        HarborSingleFeedAndRateAggregator_v2 implementationV2 = new HarborSingleFeedAndRateAggregator_v2(
-            address(mockWstEth),
-            address(mockFxSave),
-            address(0),
-            address(0)
-        );
-
-        // Upgrade to V2
-        vm.prank(owner);
-        oracle.upgradeToAndCall(address(implementationV2), "");
+        // Deploy V2 implementation and upgrade
+        {
+            HarborSingleFeedAndRateAggregator_v2 implementationV2 = new HarborSingleFeedAndRateAggregator_v2(
+                address(mockWstEth),
+                address(mockFxSave),
+                address(0),
+                address(0)
+            );
+            vm.prank(owner);
+            oracle.upgradeToAndCall(address(implementationV2), "");
+        }
 
         // Verify all state is preserved
-        assertEq(oracle.oracleName(), oracleNameBefore, "Oracle name should be preserved");
+        assertEq(keccak256(bytes(oracle.oracleName())), oracleNameHash, "Oracle name should be preserved");
         assertEq(oracle.owner(), ownerBefore, "Owner should be preserved");
         assertEq(oracle.firstFeed(), firstFeedBefore, "First feed should be preserved");
         assertEq(oracle.firstFeedDecimals(), firstFeedDecimalsBefore, "First feed decimals should be preserved");
         assertEq(oracle.priceDivisor(), priceDivisorBefore, "Price divisor should be preserved");
         (uint64 maxAgeAfter, uint256 maxDevAfter) = oracle.getConstraints(1);
-        assertEq(maxAgeAfter, maxAgeBefore, "Max age should be preserved");
-        assertEq(maxDevAfter, maxDevBefore, "Max dev should be preserved");
+        assertEq(maxAgeAfter, newMaxAge, "Max age should be preserved");
+        assertEq(maxDevAfter, newMaxDev, "Max dev should be preserved");
     }
 }
