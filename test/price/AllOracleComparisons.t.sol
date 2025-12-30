@@ -20,7 +20,6 @@ import {Aggregator_stETH_MCAP_mainnet} from "@harbor-price/Aggregator_stETH_MCAP
 
 contract AllOracleComparisons is OracleComparisonBase {
     function test_compare_all() public {
-        vm.skip(true);
         console.log("=== All Oracle Comparisons ===");
         console.log("  deployment block: %d", START_BLOCK);
         console.log("  end: %s", _formatBlock(endBlock, endTimestamp));
