@@ -1,0 +1,10 @@
+{
+  "library": "0x90e877e9660a52443cBabD86CA0871A1D60f27e1",
+  "implementations": {
+    "NORMALIZATION": "0x54314fa695b4943b95B50B5f0979d0d1B3191D60"
+  },
+  "proxies": {
+    "STETH_BAGM": "0x76D5EbFE459643326149B488841A0228bD67d0D7"
+  },
+  "deployment_time": "2025-12-21T01:42:14Z"
+}
