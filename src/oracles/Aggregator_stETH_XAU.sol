@@ -31,7 +31,6 @@ contract Aggregator_stETH_XAU is HarborAggregator_v3 {
     bool public immutable INVERT_PRICE;
 
     constructor(
-        address steth_,
         address wsteth_,
         address firstFeed_,
         uint256 firstHeartbeat_,
@@ -40,7 +39,6 @@ contract Aggregator_stETH_XAU is HarborAggregator_v3 {
         uint256 priceDivisor_,
         bool invertPrice_
     ) {
-        if (steth_ == address(0)) revert InvalidAddress(steth_);
         if (wsteth_ == address(0)) revert InvalidAddress(wsteth_);
         if (firstFeed_ == address(0)) revert InvalidAddress(firstFeed_);
         if (secondFeed_ == address(0)) revert InvalidAddress(secondFeed_);

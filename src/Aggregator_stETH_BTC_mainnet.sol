@@ -13,7 +13,6 @@ import {Aggregator_stETH_BTC} from "@harbor-price/oracles/Aggregator_stETH_BTC.s
 contract Aggregator_stETH_BTC_mainnet is Aggregator_stETH_BTC {
     constructor()
         Aggregator_stETH_BTC(
-            MainnetRateSources.STETH,
             MainnetRateSources.WSTETH,
             STETH_USD.FEED,
             STETH_USD.HEARTBEAT,

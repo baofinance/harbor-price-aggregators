@@ -17,6 +17,7 @@ out/
 lcov.info
 log/
 tmp/
+coverage_html/
 
 # yarn files (see https://yarnpkg.com/getting-started/qa#which-files-should-be-gitignored)
 .pnp.*

@@ -13,7 +13,6 @@ import {Aggregator_stETH_MCAP} from "@harbor-price/oracles/Aggregator_stETH_MCAP
 contract Aggregator_stETH_MCAP_mainnet is Aggregator_stETH_MCAP {
     constructor()
         Aggregator_stETH_MCAP(
-            MainnetRateSources.STETH,
             MainnetRateSources.WSTETH,
             ETH_USD.FEED,
             ETH_USD.HEARTBEAT,

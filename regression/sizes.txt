@@ -10,13 +10,13 @@
 | Aggregator_fxUSD_MCAP_mainnet        |              3,333 |               21,243 |               4,064 |      707,240 |             70.72 |
 | Aggregator_fxUSD_XAU                 |              3,332 |               21,244 |               4,185 |      708,250 |             70.83 |
 | Aggregator_fxUSD_XAU_mainnet         |              3,332 |               21,244 |               4,059 |      706,990 |             70.70 |
-| Aggregator_stETH_BTC                 |              3,762 |               20,814 |               4,862 |      801,020 |             80.10 |
+| Aggregator_stETH_BTC                 |              3,762 |               20,814 |               4,815 |      800,550 |             80.06 |
 | Aggregator_stETH_BTC_mainnet         |              3,762 |               20,814 |               4,690 |      799,300 |             79.93 |
-| Aggregator_stETH_EUR                 |              3,762 |               20,814 |               4,862 |      801,020 |             80.10 |
+| Aggregator_stETH_EUR                 |              3,762 |               20,814 |               4,815 |      800,550 |             80.06 |
 | Aggregator_stETH_EUR_mainnet         |              3,762 |               20,814 |               4,690 |      799,300 |             79.93 |
-| Aggregator_stETH_MCAP                |              3,763 |               20,813 |               4,863 |      801,230 |             80.12 |
+| Aggregator_stETH_MCAP                |              3,763 |               20,813 |               4,816 |      800,760 |             80.08 |
 | Aggregator_stETH_MCAP_mainnet        |              3,763 |               20,813 |               4,695 |      799,550 |             79.95 |
-| Aggregator_stETH_XAU                 |              3,762 |               20,814 |               4,862 |      801,020 |             80.10 |
+| Aggregator_stETH_XAU                 |              3,762 |               20,814 |               4,815 |      800,550 |             80.06 |
 | Aggregator_stETH_XAU_mainnet         |              3,762 |               20,814 |               4,690 |      799,300 |             79.93 |
 | BTC_USD                              |                 57 |               24,519 |                  85 |       12,250 |              1.23 |
 | ChainlinkFeedLib                     |                 57 |               24,519 |                  85 |       12,250 |              1.23 |

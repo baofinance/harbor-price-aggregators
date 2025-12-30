@@ -13,7 +13,6 @@ import {Aggregator_stETH_EUR} from "@harbor-price/oracles/Aggregator_stETH_EUR.s
 contract Aggregator_stETH_EUR_mainnet is Aggregator_stETH_EUR {
     constructor()
         Aggregator_stETH_EUR(
-            MainnetRateSources.STETH,
             MainnetRateSources.WSTETH,
             ETH_USD.FEED,
             ETH_USD.HEARTBEAT,

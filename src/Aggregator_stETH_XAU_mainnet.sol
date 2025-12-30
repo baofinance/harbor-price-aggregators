@@ -13,7 +13,6 @@ import {Aggregator_stETH_XAU} from "@harbor-price/oracles/Aggregator_stETH_XAU.s
 contract Aggregator_stETH_XAU_mainnet is Aggregator_stETH_XAU {
     constructor()
         Aggregator_stETH_XAU(
-            MainnetRateSources.STETH,
             MainnetRateSources.WSTETH,
             ETH_USD.FEED,
             ETH_USD.HEARTBEAT,
