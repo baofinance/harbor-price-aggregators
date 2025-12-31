@@ -3,7 +3,8 @@ pragma solidity 0.8.30;
 
 import "forge-std/Test.sol";
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
-import {MainnetOracleAddresses} from "@harbor-price/price/MainnetOracleAddresses.sol";
+import {ETH_USD} from "@harbor-price/feeds/chainlink/mainnet/ETH_USD.sol";
+import {BTC_USD} from "@harbor-price/feeds/chainlink/mainnet/BTC_USD.sol";
 import {DeployedAddresses} from "@harbor-test/DeployedAddresses.sol";
 
 /// @title Chainlink Staleness Analysis
@@ -38,15 +39,13 @@ contract ChainlinkStalenessAnalysis is Test {
             vm.rollFork(sampleBlock);
 
             // ETH/USD (heartbeat 3600)
-            (, , , uint256 ethUpdatedAt, ) = AggregatorV3Interface(MainnetOracleAddresses.ETH_USD_FEED)
-                .latestRoundData();
+            (, , , uint256 ethUpdatedAt, ) = AggregatorV3Interface(ETH_USD.FEED).latestRoundData();
             int256 ethOvershoot = int256(block.timestamp) - int256(ethUpdatedAt) - 3600;
             if (ethOvershoot > maxOvershootEthUsd) maxOvershootEthUsd = ethOvershoot;
             if (ethOvershoot > 0) staleCountEth++;
 
             // BTC/USD (heartbeat 3600)
-            (, , , uint256 btcUpdatedAt, ) = AggregatorV3Interface(MainnetOracleAddresses.BTC_USD_FEED)
-                .latestRoundData();
+            (, , , uint256 btcUpdatedAt, ) = AggregatorV3Interface(BTC_USD.FEED).latestRoundData();
             int256 btcOvershoot = int256(block.timestamp) - int256(btcUpdatedAt) - 3600;
             if (btcOvershoot > maxOvershootBtcUsd) maxOvershootBtcUsd = btcOvershoot;
             if (btcOvershoot > 0) staleCountBtc++;
@@ -94,8 +93,7 @@ contract ChainlinkStalenessAnalysis is Test {
             vm.rollFork(blk);
 
             // BTC/USD (heartbeat 3600) - this was the stale feed
-            (, , , uint256 btcUpdatedAt, ) = AggregatorV3Interface(MainnetOracleAddresses.BTC_USD_FEED)
-                .latestRoundData();
+            (, , , uint256 btcUpdatedAt, ) = AggregatorV3Interface(BTC_USD.FEED).latestRoundData();
             int256 btcAge = int256(block.timestamp) - int256(btcUpdatedAt);
             int256 overshoot = btcAge - 3600;
 

@@ -6,12 +6,16 @@ import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 import "forge-std/console.sol";
 import {IWrappedPriceOracle} from "@harbor-price/interfaces/IWrappedPriceOracle.sol";
 import {DeployedAddresses} from "../DeployedAddresses.sol";
-import {MainnetOracleAddresses} from "@harbor-price/price/MainnetOracleAddresses.sol";
-import {HarborSingleFeedAndRateAggregator_v2} from "@harbor-price/price/HarborSingleFeedAndRateAggregator_v2.sol";
-import {HarborDoubleFeedAndRateAggregator_v2} from "@harbor-price/price/HarborDoubleFeedAndRateAggregator_v2.sol";
 import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import {UtcTimestampFormatter} from "@harbor-price/format/UtcTimestampFormatter.sol";
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
+
+// Chainlink feed addresses for staleness checks
+import {ETH_USD} from "@harbor-price/feeds/chainlink/mainnet/ETH_USD.sol";
+import {BTC_USD} from "@harbor-price/feeds/chainlink/mainnet/BTC_USD.sol";
+import {EUR_USD} from "@harbor-price/feeds/chainlink/mainnet/EUR_USD.sol";
+import {XAU_USD} from "@harbor-price/feeds/chainlink/mainnet/XAU_USD.sol";
+import {STETH_USD} from "@harbor-price/feeds/chainlink/mainnet/STETH_USD.sol";
 
 /// @title Oracle Comparison Base
 /// @notice Shared comparison engine for forked mainnet oracle parity checks
@@ -27,10 +31,6 @@ contract OracleComparisonBase is BaoTest {
     // End block captured at setUp time (fixed mainnet block)
     uint256 endTimestamp;
     uint256 endBlock;
-
-    // Implementations - deployed once per test after initial rollFork
-    HarborSingleFeedAndRateAggregator_v2 singleImpl;
-    HarborDoubleFeedAndRateAggregator_v2 doubleImpl;
 
     struct OracleAnswer {
         uint256 minPrice;
@@ -80,90 +80,17 @@ contract OracleComparisonBase is BaoTest {
         endTimestamp = block.timestamp;
     }
 
-    /// @notice Deploy implementations at the current block
-    /// @dev Must be called after rollFork to START_BLOCK
-    function _deployImplementations() internal {
-        singleImpl = new HarborSingleFeedAndRateAggregator_v2(
-            MainnetOracleAddresses.WSTETH,
-            MainnetOracleAddresses.FXSAVE,
-            MainnetOracleAddresses.SUSDE_USDE_FEED,
-            MainnetOracleAddresses.WSTETH_STETH_FEED
-        );
-        doubleImpl = new HarborDoubleFeedAndRateAggregator_v2(
-            MainnetOracleAddresses.WSTETH,
-            MainnetOracleAddresses.FXSAVE,
-            MainnetOracleAddresses.SUSDE_USDE_FEED,
-            MainnetOracleAddresses.WSTETH_STETH_FEED
-        );
+    /// @notice Prepare fork state for comparison
+    /// @dev Rolls fork to START_BLOCK
+    function _prepareForComparison() internal {
+        vm.rollFork(START_BLOCK);
     }
 
     /*//////////////////////////////////////////////////////////////
                            FACTORY FUNCTIONS
     //////////////////////////////////////////////////////////////*/
 
-    /// @notice Deploy single feed oracle proxy
-    /// @param oracleName Name for the oracle
-    /// @param feed Chainlink price feed address
-    /// @param divisor Price divisor (1 for most, 1e12 for MCAP)
-    /// @param invertPrice Whether to invert the price (true for fxUSD oracles)
-    function _deploySingleFeed(
-        string memory oracleName,
-        address feed,
-        uint256 divisor,
-        bool invertPrice
-    ) internal returns (IWrappedPriceOracle) {
-        bytes memory initData = abi.encodeCall(
-            HarborSingleFeedAndRateAggregator_v2.initialize,
-            (
-                address(this),
-                oracleName,
-                HarborSingleFeedAndRateAggregator_v2.RateSource.FXSAVE,
-                feed,
-                divisor,
-                MainnetOracleAddresses.MAX_AGE,
-                MainnetOracleAddresses.MAX_DEV,
-                invertPrice
-            )
-        );
-
-        ERC1967Proxy proxy = new ERC1967Proxy(address(singleImpl), initData);
-        return IWrappedPriceOracle(address(proxy));
-    }
-
-    /// @notice Deploy double feed oracle proxy
-    /// @param oracleName Name for the oracle
-    /// @param firstFeed First Chainlink price feed (e.g., ETH/USD)
-    /// @param secondFeed Second Chainlink price feed (e.g., BTC/USD)
-    /// @param divisor Price divisor (1 for most, 1e12 for MCAP)
-    /// @param invertPrice Whether to invert the price
-    function _deployDoubleFeed(
-        string memory oracleName,
-        address firstFeed,
-        address secondFeed,
-        uint256 divisor,
-        bool invertPrice
-    ) internal returns (IWrappedPriceOracle) {
-        bytes memory initData = abi.encodeCall(
-            HarborDoubleFeedAndRateAggregator_v2.initialize,
-            (
-                address(this),
-                oracleName,
-                HarborDoubleFeedAndRateAggregator_v2.RateSource.WSTETH,
-                firstFeed,
-                secondFeed,
-                divisor,
-                MainnetOracleAddresses.MAX_AGE,
-                MainnetOracleAddresses.MAX_DEV,
-                MainnetOracleAddresses.MAX_AGE,
-                MainnetOracleAddresses.MAX_DEV,
-                invertPrice
-            )
-        );
-
-        ERC1967Proxy proxy = new ERC1967Proxy(address(doubleImpl), initData);
-        return IWrappedPriceOracle(address(proxy));
-    }
-
+    /// @notice Deploy a v3 aggregator behind a proxy
     function _deployV3(address impl) internal returns (IWrappedPriceOracle) {
         // BaoFixedOwnable has no initialize - owner is set via constructor immutables
         ERC1967Proxy proxy = new ERC1967Proxy(impl, "");
@@ -199,14 +126,20 @@ contract OracleComparisonBase is BaoTest {
     function _logFeedStaleness(IWrappedPriceOracle) internal view {
         // Query common Chainlink feeds to understand staleness
         address[] memory feeds = new address[](5);
-        feeds[0] = MainnetOracleAddresses.ETH_USD_FEED;
-        feeds[1] = MainnetOracleAddresses.BTC_USD_FEED;
-        feeds[2] = MainnetOracleAddresses.EUR_USD_FEED;
-        feeds[3] = MainnetOracleAddresses.XAU_USD_FEED;
-        feeds[4] = MainnetOracleAddresses.STETH_USD_FEED;
+        feeds[0] = ETH_USD.FEED;
+        feeds[1] = BTC_USD.FEED;
+        feeds[2] = EUR_USD.FEED;
+        feeds[3] = XAU_USD.FEED;
+        feeds[4] = STETH_USD.FEED;
 
         string[5] memory names = ["ETH/USD", "BTC/USD", "EUR/USD", "XAU/USD", "STETH/USD"];
-        uint256[5] memory heartbeats = [uint256(3600), uint256(3600), uint256(86400), uint256(86400), uint256(86400)];
+        uint256[5] memory heartbeats = [
+            ETH_USD.HEARTBEAT,
+            BTC_USD.HEARTBEAT,
+            EUR_USD.HEARTBEAT,
+            XAU_USD.HEARTBEAT,
+            STETH_USD.HEARTBEAT
+        ];
 
         console.log("    Feed staleness check (block.timestamp=%d):", block.timestamp);
         for (uint256 i = 0; i < feeds.length; i++) {
@@ -227,13 +160,6 @@ contract OracleComparisonBase is BaoTest {
     /*//////////////////////////////////////////////////////////////
                           COMPARISON LOGIC
     //////////////////////////////////////////////////////////////*/
-
-    /// @notice Prepare fork state for comparison
-    /// @dev Rolls fork to START_BLOCK and deploys implementations
-    function _prepareForComparison() internal {
-        vm.rollFork(START_BLOCK);
-        _deployImplementations();
-    }
 
     /// @notice Compare base vs candidate oracle across the block range
     function _compareOracle(IWrappedPriceOracle base, IWrappedPriceOracle candidate, string memory name) internal {
