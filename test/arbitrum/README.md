@@ -24,7 +24,6 @@ Unit tests are fast, deterministic, and don't require an RPC endpoint. They test
 Fork tests run against live Arbitrum mainnet and test the actual wiring contracts:
 - **Double-feed oracles**: `ArbitrumOraclesFork.t.sol`, `ArbitrumSUSDEOraclesFork.t.sol`
 - **Multi-feed oracles**: `ArbitrumMAG7OraclesFork.t.sol`, `ArbitrumMAG7i26OraclesFork_stETH.t.sol`, `ArbitrumMAG7i26OraclesFork_USDE.t.sol`
-- **Utility**: `GetMAG7IndexPrice.t.sol` (calculates MAG7 index price)
 
 Fork tests verify that the deployed contracts work correctly with real Chainlink feeds on Arbitrum.
 
@@ -86,6 +85,13 @@ forge test --match-path "test/arbitrum/ArbitrumMAG7i26OraclesFork_USDE.t.sol" --
 ```
 
 **Note:** Make sure to set `ARBITRUM_RPC_URL` in your `.env` file (see `.env.example` for reference).
+
+### Utility Scripts
+
+Get MAG7 index price (sum of 7 stock feeds):
+```bash
+forge script script/GetMAG7IndexPrice.s.sol:GetMAG7IndexPrice --rpc-url $arbitrum -vvv
+```
 
 ## Test Output
 

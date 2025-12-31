@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.30;
 
-import {Test, console} from "forge-std/Test.sol";
+import {Script, console} from "forge-std/Script.sol";
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
 import {ChainlinkFeedLib} from "@harbor-price/feeds/chainlink/ChainlinkFeedLib.sol";
 import {AAPL_USD} from "@harbor-price/feeds/chainlink/arbitrum/AAPL_USD.sol";
@@ -12,17 +12,10 @@ import {META_USD} from "@harbor-price/feeds/chainlink/arbitrum/META_USD.sol";
 import {AMZN_USD} from "@harbor-price/feeds/chainlink/arbitrum/AMZN_USD.sol";
 import {NVDA_USD} from "@harbor-price/feeds/chainlink/arbitrum/NVDA_USD.sol";
 
-/// @notice Utility test to calculate MAG7 index price (sum of 7 stock feeds)
-/// @dev Run with: forge test --match-path "test/arbitrum/GetMAG7IndexPrice.t.sol" --fork-url $arbitrum -vvv
-contract GetMAG7IndexPriceTest is Test {
-    function setUp() public {
-        // Create fork - skip if RPC URL not available
-        try vm.createSelectFork("arbitrum") {} catch {
-            vm.skip(true);
-        }
-    }
-
-    function test_GetMAG7Sum() public view {
+/// @notice Utility script to calculate MAG7 index price (sum of 7 stock feeds)
+/// @dev Run with: forge script script/GetMAG7IndexPrice.s.sol:GetMAG7IndexPrice --rpc-url $arbitrum -vvv
+contract GetMAG7IndexPrice is Script {
+    function run() public view {
         AggregatorV3Interface aapl = AggregatorV3Interface(AAPL_USD.FEED);
         AggregatorV3Interface msft = AggregatorV3Interface(MSFT_USD.FEED);
         AggregatorV3Interface tsla = AggregatorV3Interface(TSLA_USD.FEED);
@@ -52,3 +45,4 @@ contract GetMAG7IndexPriceTest is Test {
         console.log("SUM (human readable):", sum / 1e18);
     }
 }
+
