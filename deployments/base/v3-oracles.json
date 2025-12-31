@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "chainId": 8453,
+  "chainName": "Base",
+  "deploymentTime": "2025-12-31T09:34:55Z",
+  "oracles": {
+    "STETH_BOM5": {
+      "name": "stETH/BOM5",
+      "address": "0x2877330d6fbA9BC0299588BcBaf16bA42d12b05a",
+      "contractPath": "src/base/Aggregator_stETH_BOM5_base.sol:Aggregator_stETH_BOM5_base"
+    }
+  }
+}

@@ -1,3 +1,133 @@
+src/arbitrum/Aggregator_USDE_AAPL_arbitrum.sol:Aggregator_USDE_AAPL_arbitrum
+| function name   |       max |
+|-----------------|-----------|
+| latestAnswer    | 6.013e+04 |
+| oracleName      | 1.143e+03 |
+| quoteName       | 5.560e+02 |
+| rateProvider    | 5.010e+02 |
+
+src/arbitrum/Aggregator_USDE_AMZN_arbitrum.sol:Aggregator_USDE_AMZN_arbitrum
+| function name   |       max |
+|-----------------|-----------|
+| latestAnswer    | 6.013e+04 |
+
+src/arbitrum/Aggregator_USDE_GOOGL_arbitrum.sol:Aggregator_USDE_GOOGL_arbitrum
+| function name   |       max |
+|-----------------|-----------|
+| latestAnswer    | 6.013e+04 |
+
+src/arbitrum/Aggregator_USDE_MAG7_arbitrum.sol:Aggregator_USDE_MAG7_arbitrum
+| function name   |       max |
+|-----------------|-----------|
+| FEED_COUNT      | 7.330e+02 |
+| latestAnswer    | 1.821e+05 |
+| oracleName      | 1.356e+03 |
+| quoteName       | 6.490e+02 |
+| rateProvider    | 6.850e+02 |
+
+src/arbitrum/Aggregator_USDE_MAG7i26_arbitrum.sol:Aggregator_USDE_MAG7i26_arbitrum
+| function name   |       max |
+|-----------------|-----------|
+| latestAnswer    | 1.822e+05 |
+| oracleName      | 1.356e+03 |
+| quoteName       | 6.490e+02 |
+| rateProvider    | 6.850e+02 |
+
+src/arbitrum/Aggregator_USDE_META_arbitrum.sol:Aggregator_USDE_META_arbitrum
+| function name   |       max |
+|-----------------|-----------|
+| latestAnswer    | 6.044e+04 |
+
+src/arbitrum/Aggregator_USDE_MSFT_arbitrum.sol:Aggregator_USDE_MSFT_arbitrum
+| function name   |       max |
+|-----------------|-----------|
+| latestAnswer    | 6.013e+04 |
+
+src/arbitrum/Aggregator_USDE_NVDA_arbitrum.sol:Aggregator_USDE_NVDA_arbitrum
+| function name   |       max |
+|-----------------|-----------|
+| latestAnswer    | 6.044e+04 |
+
+src/arbitrum/Aggregator_USDE_SPY_arbitrum.sol:Aggregator_USDE_SPY_arbitrum
+| function name   |       max |
+|-----------------|-----------|
+| latestAnswer    | 6.013e+04 |
+
+src/arbitrum/Aggregator_USDE_TSLA_arbitrum.sol:Aggregator_USDE_TSLA_arbitrum
+| function name   |       max |
+|-----------------|-----------|
+| latestAnswer    | 6.013e+04 |
+
+src/arbitrum/Aggregator_stETH_AAPL_arbitrum.sol:Aggregator_stETH_AAPL_arbitrum
+| function name   |       max |
+|-----------------|-----------|
+| latestAnswer    | 5.997e+04 |
+| oracleName      | 1.143e+03 |
+| quoteName       | 5.560e+02 |
+| rateProvider    | 5.010e+02 |
+
+src/arbitrum/Aggregator_stETH_AMZN_arbitrum.sol:Aggregator_stETH_AMZN_arbitrum
+| function name   |       max |
+|-----------------|-----------|
+| latestAnswer    | 5.997e+04 |
+
+src/arbitrum/Aggregator_stETH_GOOGL_arbitrum.sol:Aggregator_stETH_GOOGL_arbitrum
+| function name   |       max |
+|-----------------|-----------|
+| latestAnswer    | 5.997e+04 |
+
+src/arbitrum/Aggregator_stETH_MAG7_arbitrum.sol:Aggregator_stETH_MAG7_arbitrum
+| function name   |       max |
+|-----------------|-----------|
+| FEED_COUNT      | 7.330e+02 |
+| latestAnswer    | 1.819e+05 |
+| oracleName      | 1.356e+03 |
+| quoteName       | 6.490e+02 |
+| rateProvider    | 6.850e+02 |
+
+src/arbitrum/Aggregator_stETH_MAG7i26_arbitrum.sol:Aggregator_stETH_MAG7i26_arbitrum
+| function name   |       max |
+|-----------------|-----------|
+| latestAnswer    | 1.821e+05 |
+| oracleName      | 1.356e+03 |
+| quoteName       | 6.490e+02 |
+| rateProvider    | 6.850e+02 |
+
+src/arbitrum/Aggregator_stETH_META_arbitrum.sol:Aggregator_stETH_META_arbitrum
+| function name   |       max |
+|-----------------|-----------|
+| latestAnswer    | 6.028e+04 |
+
+src/arbitrum/Aggregator_stETH_MSFT_arbitrum.sol:Aggregator_stETH_MSFT_arbitrum
+| function name   |       max |
+|-----------------|-----------|
+| latestAnswer    | 5.997e+04 |
+
+src/arbitrum/Aggregator_stETH_NVDA_arbitrum.sol:Aggregator_stETH_NVDA_arbitrum
+| function name   |       max |
+|-----------------|-----------|
+| latestAnswer    | 6.028e+04 |
+
+src/arbitrum/Aggregator_stETH_SPY_arbitrum.sol:Aggregator_stETH_SPY_arbitrum
+| function name   |       max |
+|-----------------|-----------|
+| latestAnswer    | 5.997e+04 |
+
+src/arbitrum/Aggregator_stETH_TSLA_arbitrum.sol:Aggregator_stETH_TSLA_arbitrum
+| function name   |       max |
+|-----------------|-----------|
+| latestAnswer    | 5.997e+04 |
+
+src/base/Aggregator_stETH_BOM5_base.sol:Aggregator_stETH_BOM5_base
+| function name   |       max |
+|-----------------|-----------|
+| FEED_COUNT      | 7.110e+02 |
+| baseName        | 6.270e+02 |
+| latestAnswer    | 1.432e+05 |
+| oracleName      | 1.334e+03 |
+| quoteName       | 6.490e+02 |
+| rateProvider    | 6.630e+02 |
+
 src/oracles/Aggregator_fxUSD_BTC.sol:Aggregator_fxUSD_BTC
 | function name        |       max |
 |----------------------|-----------|
@@ -41,6 +171,18 @@ src/oracles/Aggregator_fxUSD_EUR.sol:Aggregator_fxUSD_EUR
 | version          | 3.290e+02 |
 
 src/oracles/Aggregator_fxUSD_MCAP.sol:Aggregator_fxUSD_MCAP
+| function name    |       max |
+|------------------|-----------|
+| baseName         | 4.900e+02 |
+| latestAnswer     | 1.611e+04 |
+| oracleName       | 1.121e+03 |
+| proxiableUUID    | 3.460e+02 |
+| quoteName        | 5.120e+02 |
+| rateProvider     | 4.570e+02 |
+| upgradeToAndCall | 8.500e+03 |
+| version          | 3.290e+02 |
+
+src/oracles/Aggregator_fxUSD_XAG.sol:Aggregator_fxUSD_XAG
 | function name    |       max |
 |------------------|-----------|
 | baseName         | 4.900e+02 |
@@ -98,6 +240,18 @@ src/oracles/Aggregator_stETH_EUR.sol:Aggregator_stETH_EUR
 | version          | 3.510e+02 |
 
 src/oracles/Aggregator_stETH_MCAP.sol:Aggregator_stETH_MCAP
+| function name    |       max |
+|------------------|-----------|
+| baseName         | 5.340e+02 |
+| latestAnswer     | 2.666e+04 |
+| oracleName       | 1.143e+03 |
+| proxiableUUID    | 3.680e+02 |
+| quoteName        | 5.560e+02 |
+| rateProvider     | 5.010e+02 |
+| upgradeToAndCall | 8.544e+03 |
+| version          | 3.510e+02 |
+
+src/oracles/Aggregator_stETH_XAG.sol:Aggregator_stETH_XAG
 | function name    |       max |
 |------------------|-----------|
 | baseName         | 5.340e+02 |
