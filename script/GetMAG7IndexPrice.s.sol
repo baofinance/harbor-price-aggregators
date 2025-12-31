@@ -45,4 +45,3 @@ contract GetMAG7IndexPrice is Script {
         console.log("SUM (human readable):", sum / 1e18);
     }
 }
-
