@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Deploy all Arbitrum v3 oracles
+# Deploy Base v3 oracles
 # These are direct deployments (no proxies) with hardcoded wiring
 
 # Use full path to forge/cast
@@ -16,9 +16,9 @@ if [[ -f .env ]]; then
 fi
 
 # Required environment variables
-if [[ -z "${ARBITRUM_RPC_URL:-}" ]]; then
-  echo "❌ ERROR: ARBITRUM_RPC_URL is not set"
-  echo "   Set it via: export ARBITRUM_RPC_URL='your_rpc_url'"
+if [[ -z "${BASE_RPC_URL:-}" ]]; then
+  echo "❌ ERROR: BASE_RPC_URL is not set"
+  echo "   Set it via: export BASE_RPC_URL='your_rpc_url'"
   echo "   Or add it to a .env file in the project root"
   exit 1
 fi
@@ -30,14 +30,6 @@ if [[ -z "${PRIVATE_KEY:-}" ]]; then
   exit 1
 fi
 
-# Check for verify-only mode
-if [[ "${1:-}" == "verify" ]] || [[ "${MODE:-}" == "verify" ]]; then
-  echo "=== VERIFY-ONLY MODE ==="
-  echo "Running verification for all deployed contracts..."
-  echo ""
-  exec ./script/verify-arbitrum-v3-oracles.sh
-fi
-
 VERIFY=${VERIFY:-true}
 if [[ -z "${ETHERSCAN_API_KEY:-}" ]]; then
   echo "⚠️  WARNING: ETHERSCAN_API_KEY is not set"
@@ -46,30 +38,30 @@ if [[ -z "${ETHERSCAN_API_KEY:-}" ]]; then
 fi
 
 # Check network
-CHAIN_ID=$("$CAST" chain-id --rpc-url "$ARBITRUM_RPC_URL" 2>/dev/null || echo "unknown")
+CHAIN_ID=$("$CAST" chain-id --rpc-url "$BASE_RPC_URL" 2>/dev/null || echo "unknown")
 echo "=== Network Check ==="
-echo "RPC URL: $ARBITRUM_RPC_URL"
+echo "RPC URL: $BASE_RPC_URL"
 echo "Chain ID: $CHAIN_ID"
-if [[ "$CHAIN_ID" != "0xa4b1" ]] && [[ "$CHAIN_ID" != "42161" ]]; then
-  echo "⚠️  WARNING: Expected Arbitrum chain ID (42161), got: $CHAIN_ID"
+if [[ "$CHAIN_ID" != "0x2105" ]] && [[ "$CHAIN_ID" != "8453" ]]; then
+  echo "⚠️  WARNING: Expected Base chain ID (8453), got: $CHAIN_ID"
   echo "   Press Ctrl+C to cancel, or wait 5 seconds to continue..."
   sleep 5
 fi
 echo ""
 
 # Create deployments directory if it doesn't exist
-mkdir -p deployments/arbitrum
+mkdir -p deployments/base
 
 # Deployment state file
-DEPLOYMENT_FILE="deployments/arbitrum/v3-oracles.json"
+DEPLOYMENT_FILE="deployments/base/v3-oracles.json"
 
 # Initialize deployment JSON if it doesn't exist
 if [[ ! -f "$DEPLOYMENT_FILE" ]]; then
   cat > "$DEPLOYMENT_FILE" <<EOF
 {
   "schemaVersion": 1,
-  "chainId": 42161,
-  "chainName": "Arbitrum",
+  "chainId": 8453,
+  "chainName": "Base",
   "deploymentTime": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
   "oracles": {}
 }
@@ -92,7 +84,7 @@ deploy_contract() {
   echo "Deploying $contract_name..."
   
   DEPLOY_OUT=$("$FORGE" create "$contract_path" \
-    --rpc-url "$ARBITRUM_RPC_URL" \
+    --rpc-url "$BASE_RPC_URL" \
     --private-key "$PRIVATE_KEY" \
     --broadcast 2>&1)
   
@@ -153,7 +145,7 @@ verify_contract() {
   
   echo "  Verifying $contract_name..."
   
-  # Submit verification request (non-blocking - removed --watch to prevent hanging)
+  # Submit verification request (non-blocking)
   local verify_output
   verify_output=$("$FORGE" verify-contract \
     "$address" \
@@ -161,20 +153,19 @@ verify_contract() {
     --verifier etherscan \
     --etherscan-api-key "$ETHERSCAN_API_KEY" \
     --compiler-version 0.8.30 \
-    --chain arbitrum 2>&1 || echo "VERIFY_ERROR")
+    --chain base 2>&1 || echo "VERIFY_ERROR")
   
   if echo "$verify_output" | grep -q "Contract successfully verified"; then
     echo "  ✅ Verified successfully"
     return 0
   elif echo "$verify_output" | grep -qi "already verified"; then
-    echo "  ✅ Already verified on Arbiscan"
+    echo "  ✅ Already verified on Basescan"
     return 0
   elif echo "$verify_output" | grep -qi "submitted\|pending\|waiting"; then
-    echo "  ⏳ Verification submitted (check Arbiscan in a few minutes)"
+    echo "  ⏳ Verification submitted (check Basescan in a few minutes)"
     return 0
   elif echo "$verify_output" | grep -qi "VERIFY_ERROR\|Error\|error"; then
     echo "  ⚠️  Verification submission failed (will retry later)"
-    echo "  💡 Run './script/verify-arbitrum-v3-oracles.sh' to verify later"
     return 0  # Don't fail deployment
   else
     echo "  ⏳ Verification request submitted"
@@ -187,8 +178,8 @@ test_oracle() {
   local address=$1
   local name=$2
   
-  local oracle_name=$("$CAST" call "$address" "oracleName()(string)" --rpc-url "$ARBITRUM_RPC_URL" 2>/dev/null || echo "")
-  local base_name=$("$CAST" call "$address" "baseName()(string)" --rpc-url "$ARBITRUM_RPC_URL" 2>/dev/null || echo "")
+  local oracle_name=$("$CAST" call "$address" "oracleName()(string)" --rpc-url "$BASE_RPC_URL" 2>/dev/null || echo "")
+  local base_name=$("$CAST" call "$address" "baseName()(string)" --rpc-url "$BASE_RPC_URL" 2>/dev/null || echo "")
   
   if [[ -n "$oracle_name" ]] && [[ "$oracle_name" != "" ]]; then
     echo "  ✅ $name: $oracle_name (base: $base_name)"
@@ -199,34 +190,12 @@ test_oracle() {
   fi
 }
 
-echo "=== Deploying Arbitrum v3 Oracles ==="
+echo "=== Deploying Base v3 Oracles ==="
 echo ""
 
 # Define all oracles to deploy
 declare -a ORACLES=(
-  # USDE Stock Oracles
-  "src/arbitrum/Aggregator_USDE_AAPL_arbitrum.sol:Aggregator_USDE_AAPL_arbitrum|USDE_AAPL|USDE/AAPL"
-  "src/arbitrum/Aggregator_USDE_AMZN_arbitrum.sol:Aggregator_USDE_AMZN_arbitrum|USDE_AMZN|USDE/AMZN"
-  "src/arbitrum/Aggregator_USDE_GOOGL_arbitrum.sol:Aggregator_USDE_GOOGL_arbitrum|USDE_GOOGL|USDE/GOOGL"
-  "src/arbitrum/Aggregator_USDE_META_arbitrum.sol:Aggregator_USDE_META_arbitrum|USDE_META|USDE/META"
-  "src/arbitrum/Aggregator_USDE_MSFT_arbitrum.sol:Aggregator_USDE_MSFT_arbitrum|USDE_MSFT|USDE/MSFT"
-  "src/arbitrum/Aggregator_USDE_NVDA_arbitrum.sol:Aggregator_USDE_NVDA_arbitrum|USDE_NVDA|USDE/NVDA"
-  "src/arbitrum/Aggregator_USDE_SPY_arbitrum.sol:Aggregator_USDE_SPY_arbitrum|USDE_SPY|USDE/SPY"
-  "src/arbitrum/Aggregator_USDE_TSLA_arbitrum.sol:Aggregator_USDE_TSLA_arbitrum|USDE_TSLA|USDE/TSLA"
-  "src/arbitrum/Aggregator_USDE_MAG7_arbitrum.sol:Aggregator_USDE_MAG7_arbitrum|USDE_MAG7|USDE/MAG7"
-  "src/arbitrum/Aggregator_USDE_MAG7i26_arbitrum.sol:Aggregator_USDE_MAG7i26_arbitrum|USDE_MAG7i26|USDE/MAG7.i26"
-  
-  # stETH Stock Oracles
-  "src/arbitrum/Aggregator_stETH_AAPL_arbitrum.sol:Aggregator_stETH_AAPL_arbitrum|STETH_AAPL|stETH/AAPL"
-  "src/arbitrum/Aggregator_stETH_AMZN_arbitrum.sol:Aggregator_stETH_AMZN_arbitrum|STETH_AMZN|stETH/AMZN"
-  "src/arbitrum/Aggregator_stETH_GOOGL_arbitrum.sol:Aggregator_stETH_GOOGL_arbitrum|STETH_GOOGL|stETH/GOOGL"
-  "src/arbitrum/Aggregator_stETH_META_arbitrum.sol:Aggregator_stETH_META_arbitrum|STETH_META|stETH/META"
-  "src/arbitrum/Aggregator_stETH_MSFT_arbitrum.sol:Aggregator_stETH_MSFT_arbitrum|STETH_MSFT|stETH/MSFT"
-  "src/arbitrum/Aggregator_stETH_NVDA_arbitrum.sol:Aggregator_stETH_NVDA_arbitrum|STETH_NVDA|stETH/NVDA"
-  "src/arbitrum/Aggregator_stETH_SPY_arbitrum.sol:Aggregator_stETH_SPY_arbitrum|STETH_SPY|stETH/SPY"
-  "src/arbitrum/Aggregator_stETH_TSLA_arbitrum.sol:Aggregator_stETH_TSLA_arbitrum|STETH_TSLA|stETH/TSLA"
-  "src/arbitrum/Aggregator_stETH_MAG7_arbitrum.sol:Aggregator_stETH_MAG7_arbitrum|STETH_MAG7|stETH/MAG7"
-  "src/arbitrum/Aggregator_stETH_MAG7i26_arbitrum.sol:Aggregator_stETH_MAG7i26_arbitrum|STETH_MAG7i26|stETH/MAG7.i26"
+  "src/base/Aggregator_stETH_BOM5_base.sol:Aggregator_stETH_BOM5_base|STETH_BOM5|stETH/BOM5"
 )
 
 TOTAL=${#ORACLES[@]}
@@ -249,7 +218,7 @@ for oracle_info in "${ORACLES[@]}"; do
     existing_addr=$(jq -r ".oracles[\"$oracle_key\"].address // empty" "$DEPLOYMENT_FILE" 2>/dev/null || echo "")
     if [[ -n "$existing_addr" ]] && [[ "$existing_addr" != "null" ]] && [[ "$existing_addr" != "" ]]; then
       # Check if contract exists on chain
-      code=$("$CAST" code "$existing_addr" --rpc-url "$ARBITRUM_RPC_URL" 2>/dev/null | head -1 || echo "0x")
+      code=$("$CAST" code "$existing_addr" --rpc-url "$BASE_RPC_URL" 2>/dev/null | head -1 || echo "0x")
       if [[ "$code" != "0x" ]]; then
         echo "  ⏭️  Already deployed at: $existing_addr"
         continue
@@ -269,7 +238,8 @@ for oracle_info in "${ORACLES[@]}"; do
     # Small delay between deployments (wait for block confirmation)
     sleep 3
     
-    # Note: Verification will be done at the end after all deployments
+    # Verify contract
+    verify_contract "$address" "$contract_path" "$display_name"
   else
     FAILED=$((FAILED + 1))
     echo "  ❌ Failed to deploy $display_name"
@@ -303,132 +273,6 @@ echo "Total: $TOTAL"
 echo "Successful: $SUCCESS"
 echo "Failed: $FAILED"
 echo ""
-
-# Run verification at the end if enabled
-if [[ "$VERIFY" == "true" ]] && [[ -n "$ETHERSCAN_API_KEY" ]] && [[ $SUCCESS -gt 0 ]]; then
-  echo ""
-  echo "=== Starting Verification Process ==="
-  echo "Verifying all deployed contracts (this may take several minutes)..."
-  echo ""
-  
-  # Function to verify a contract (with retries and proper error handling)
-  verify_contract_final() {
-    local address=$1
-    local contract_path=$2
-    local contract_name=$3
-    
-    echo "Verifying $contract_name at $address..."
-    
-    # Check if contract exists on chain
-    local code=$("$CAST" code "$address" --rpc-url "$ARBITRUM_RPC_URL" 2>/dev/null | head -1 || echo "0x")
-    if [[ "$code" == "0x" ]]; then
-      echo "  ❌ No contract code at address"
-      return 1
-    fi
-    
-    # Try to verify with retries
-    local max_retries=3
-    local retry=0
-    local success=false
-    
-    while [[ $retry -lt $max_retries ]]; do
-      local verify_output
-      verify_output=$("$FORGE" verify-contract \
-        "$address" \
-        "$contract_path" \
-        --verifier etherscan \
-        --etherscan-api-key "$ETHERSCAN_API_KEY" \
-        --compiler-version 0.8.30 \
-        --chain arbitrum \
-        --watch 2>&1)
-      
-      if echo "$verify_output" | grep -q "Contract successfully verified"; then
-        echo "  ✅ Verified successfully"
-        success=true
-        break
-      elif echo "$verify_output" | grep -qi "already verified"; then
-        echo "  ✅ Already verified on Arbiscan"
-        success=true
-        break
-      else
-        retry=$((retry + 1))
-        if [[ $retry -lt $max_retries ]]; then
-          echo "  ⏳ Retrying verification ($retry/$max_retries)..."
-          sleep 5
-        else
-          echo "  ❌ Verification failed after $max_retries attempts"
-          echo "  Error: $(echo "$verify_output" | grep -E "(Error|error|Failed|failed)" | head -1 || echo "Unknown error")"
-        fi
-      fi
-    done
-    
-    if [[ "$success" == "true" ]]; then
-      return 0
-    else
-      return 1
-    fi
-  }
-  
-  # Verify all deployed oracles
-  VERIFY_TOTAL=0
-  VERIFY_SUCCESS=0
-  VERIFY_FAILED=0
-  VERIFY_ALREADY=0
-  
-  for oracle_info in "${ORACLES[@]}"; do
-    IFS='|' read -r contract_path oracle_key display_name <<< "$oracle_info"
-    
-    address=$(jq -r ".oracles[\"$oracle_key\"].address // empty" "$DEPLOYMENT_FILE" 2>/dev/null || echo "")
-    if [[ -z "$address" ]] || [[ "$address" == "null" ]] || [[ "$address" == "" ]]; then
-      continue
-    fi
-    
-    VERIFY_TOTAL=$((VERIFY_TOTAL + 1))
-    echo "[$VERIFY_TOTAL/$SUCCESS] $display_name"
-    
-    if verify_contract_final "$address" "$contract_path" "$display_name"; then
-      VERIFY_SUCCESS=$((VERIFY_SUCCESS + 1))
-      # Check if it was already verified
-      verify_check=$("$FORGE" verify-contract \
-        "$address" \
-        "$contract_path" \
-        --verifier etherscan \
-        --etherscan-api-key "$ETHERSCAN_API_KEY" \
-        --compiler-version 0.8.30 \
-        --chain arbitrum 2>&1 | grep -qi "already verified" && echo "yes" || echo "no")
-      if [[ "$verify_check" == "yes" ]]; then
-        VERIFY_ALREADY=$((VERIFY_ALREADY + 1))
-      fi
-    else
-      VERIFY_FAILED=$((VERIFY_FAILED + 1))
-    fi
-    
-    # Small delay between verifications
-    sleep 2
-    echo ""
-  done
-  
-  echo "=== Verification Summary ==="
-  echo "Total: $VERIFY_TOTAL"
-  echo "Successfully verified: $VERIFY_SUCCESS"
-  echo "Already verified: $VERIFY_ALREADY"
-  echo "Failed: $VERIFY_FAILED"
-  echo ""
-  
-  if [[ $VERIFY_FAILED -gt 0 ]]; then
-    echo "⚠️  Some contracts failed verification. You can retry with:"
-    echo "   ./script/verify-arbitrum-v3-oracles.sh"
-    echo ""
-  fi
-elif [[ "$VERIFY" == "true" ]] && [[ -z "$ETHERSCAN_API_KEY" ]]; then
-  echo "💡 ETHERSCAN_API_KEY not set. Skipping verification."
-  echo "   To verify later, run: ./script/verify-arbitrum-v3-oracles.sh"
-  echo ""
-elif [[ "$VERIFY" != "true" ]]; then
-  echo "💡 Verification disabled. To verify contracts, run:"
-  echo "   ./script/verify-arbitrum-v3-oracles.sh"
-  echo ""
-fi
 
 # Test all deployed oracles
 echo "=== Testing Deployed Oracles ==="
