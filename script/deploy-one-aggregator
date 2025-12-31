@@ -9,7 +9,7 @@ set -euo pipefail
 # - This script must be run from the project root (fails otherwise).
 #
 # Network selection:
-# - --network determines the contract name suffix (e.g., mainnet -> Aggregator_*_mainnet.sol)
+# - --network determines the contract name suffix (e.g., mainnet -> src/mainnet/Aggregator_*_mainnet.sol)
 # - --local overrides the RPC to use local anvil while keeping --network for contract naming
 
 usage() {
@@ -36,8 +36,8 @@ Options:
   --etherscan-api-key  Required for --verify / --verify-impl
 
 Contract resolution:
-  Deploys: src/Aggregator_<base>_<quote>_<network>.sol:Aggregator_<base>_<quote>_<network>
-  Salt:    <salt-prefix>::<base>::<quote>
+  Deploys: src/<network>/Aggregator_<base>_<quote>_<network>.sol:Aggregator_<base>_<quote>_<network>
+  Salt:    <salt-prefix>::<base>::<quote>::wrappedAggregator
 
 State file:
   Deployments are recorded in deployment-state-v3-<network>.json
@@ -200,10 +200,8 @@ if [[ -n "$RAW_BASE" ]] && [[ -n "$RAW_QUOTE" ]]; then
   QUOTE="$RAW_QUOTE"
   KEY="${BASE}_${QUOTE}"
 
-  CONTRACT_SUFFIX="$NETWORK"
-
-  CONTRACT_NAME="Aggregator_${BASE}_${QUOTE}_${CONTRACT_SUFFIX}"
-  SRC_FILE="src/${CONTRACT_NAME}.sol"
+  CONTRACT_NAME="Aggregator_${BASE}_${QUOTE}_${NETWORK}"
+  SRC_FILE="src/${NETWORK}/${CONTRACT_NAME}.sol"
   CONTRACT_ID="${SRC_FILE}:${CONTRACT_NAME}"
 
   if [[ ! -f "$SRC_FILE" ]]; then
@@ -703,12 +701,35 @@ tx=$("$CAST" send "$BAO_FACTORY" "deploy(bytes,bytes32)(address)" "$init_code" "
   --rpc-url "$RPC_NETWORK" "${SIGNER_ARGS[@]}" --json)
 
 tx_hash=$(jq -r '.transactionHash // empty' <<<"$tx" 2>/dev/null)
-if [[ -n "$tx_hash" ]]; then
-  echo "  ✓ Tx: $tx_hash"
+if [[ -z "$tx_hash" ]]; then
+  echo "  ❌ Failed to get transaction hash from deployment" >&2
+  exit 1
 fi
+echo "  ✓ Tx: $tx_hash"
 
-echo "  ⏳ Waiting for code..."
-sleep 5
+echo "  ⏳ Waiting for transaction confirmation..."
+max_attempts=60
+attempt=0
+while [[ $attempt -lt $max_attempts ]]; do
+  if receipt=$("$CAST" receipt "$tx_hash" --rpc-url "$RPC_NETWORK" --json 2>/dev/null); then
+    status=$(jq -r '.status // empty' <<<"$receipt" 2>/dev/null)
+    if [[ "$status" == "0x1" ]] || [[ "$status" == "1" ]]; then
+      block=$(jq -r '.blockNumber // empty' <<<"$receipt" 2>/dev/null)
+      echo "  ✓ Confirmed in block $block after ${attempt}s"
+      break
+    elif [[ "$status" == "0x0" ]] || [[ "$status" == "0" ]]; then
+      echo "  ❌ Transaction reverted" >&2
+      exit 1
+    fi
+  fi
+  sleep 1
+  ((attempt++))
+done
+
+if [[ $attempt -ge $max_attempts ]]; then
+  echo "  ❌ Timeout waiting for transaction confirmation" >&2
+  exit 1
+fi
 
 if ! has_code "$predicted"; then
   echo "  ❌ Deployment transaction sent but no code found at predicted address: $predicted" >&2

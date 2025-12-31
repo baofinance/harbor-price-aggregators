@@ -3,43 +3,11 @@ set -euo pipefail
 
 # Harbor Generic Oracle Deployment Script v3 (first batch)
 #
-# Orchestrates a multi-oracle run by calling:
-#   script/harbor-oracle-v3
+# Orchestrates a multi-aggregator run by calling:
+#   script/deploy-one-aggregator
 #
 # IMPORTANT:
 # - This script must be run from the project root (fails otherwise).
-
-usage() {
-  cat <<EOF
-Usage:
-  $0 --network <network> [--local] [--salt <prefix>] [--account <name>] \\
-     <--deploy|--deploy-impl|--check|--verify|--verify-impl>
-
-Notes:
-  - Forwards args to script/harbor-oracle-v3 with --base/--quote for each oracle.
-  - Do not pass --base/--quote yourself.
-  - You MUST specify one of the mode flags (--deploy, --deploy-impl, etc.)
-EOF
-}
-
-require_project_root() {
-  if [[ ! -f "foundry.toml" ]] || [[ ! -d "src" ]] || [[ ! -d "script" ]]; then
-    echo "❌ Must be run from the project root (missing foundry.toml/src/script)" >&2
-    exit 1
-  fi
-}
-
-# Check that user provided an execution mode
-has_mode_flag() {
-  for arg in "$@"; do
-    case "$arg" in
-      --deploy | --deploy-impl | --check | --verify | --verify-impl)
-        return 0
-        ;;
-    esac
-  done
-  return 1
-}
 
 # Oracle set (explicit list)
 # Format: BASE|QUOTE
@@ -55,22 +23,9 @@ ORACLES=(
   "stETH|MCAP"
 )
 
-if [[ "${1:-}" == "-h" ]] || [[ "${1:-}" == "--help" ]]; then
-  usage
-  exit 0
-fi
-
-require_project_root
-
-if ! has_mode_flag "$@"; then
-  echo "❌ Missing mode flag. Specify one of: --deploy, --deploy-impl, --check, --verify, --verify-impl" >&2
-  usage >&2
-  exit 1
-fi
-
-SINGLE_SCRIPT="script/harbor-oracle-v3"
+SINGLE_SCRIPT="script/deploy-one-aggregator"
 if [[ ! -f "$SINGLE_SCRIPT" ]]; then
-  echo "❌ Missing single-oracle script: $SINGLE_SCRIPT" >&2
+  echo "❌ Missing single-aggregator script: $SINGLE_SCRIPT" >&2
   exit 1
 fi
 
@@ -104,8 +59,8 @@ if ! bash "$SINGLE_SCRIPT" "$@" --validate-args 2>&1; then
 fi
 echo ""
 
-# Phase B: Validate each oracle (with --base/--quote)
-echo "── Phase B: Validate all $oracle_count oracles ──────────────"
+# Phase B: Validate each aggregator (with --base/--quote)
+echo "── Phase B: Validate all $oracle_count aggregators ──────────────"
 validation_failed=false
 for entry in "${ORACLES[@]}"; do
   IFS='|' read -r base quote <<<"$entry"
@@ -127,8 +82,8 @@ if [[ "$validation_failed" == "true" ]]; then
 fi
 echo ""
 
-# Phase C: Execute each oracle
-echo "── Phase C: Execute $oracle_count oracles ──────────────────"
+# Phase C: Execute each aggregator
+echo "── Phase C: Execute $oracle_count aggregators ──────────────────"
 fail=false
 oracle_num=0
 
@@ -156,12 +111,12 @@ done
 if [[ "$fail" == "true" ]]; then
   echo ""
   box_line
-  echo "║  ❌ One or more oracle operations failed"
+  echo "║  ❌ One or more aggregator operations failed"
   box_line
   exit 1
 fi
 
 echo ""
 box_line
-echo "║  ✅ All $oracle_count oracles completed successfully"
+echo "║  ✅ All $oracle_count aggregators completed successfully"
 box_line
