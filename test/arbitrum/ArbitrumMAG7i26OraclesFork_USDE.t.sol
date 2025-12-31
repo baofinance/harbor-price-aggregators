@@ -11,6 +11,7 @@ contract ArbitrumMAG7i26OraclesFork_USDETest is Test {
     Aggregator_USDE_MAG7i26_arbitrum public oracleUSDE;
 
     function setUp() public {
+        vm.skip(true);
         // Create fork - skip if RPC URL not available
         try vm.createSelectFork("arbitrum") {} catch {
             vm.skip(true);

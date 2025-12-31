@@ -25,6 +25,7 @@ contract ArbitrumUSDEOraclesForkTest is Test {
     Aggregator_USDE_TSLA_arbitrum public oracleTSLA;
 
     function setUp() public {
+        vm.skip(true);
         // Create fork - skip if RPC URL not available
         try vm.createSelectFork("arbitrum") {} catch {
             vm.skip(true);

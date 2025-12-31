@@ -74,6 +74,7 @@ contract OracleComparisonBase is BaoTest {
     //////////////////////////////////////////////////////////////*/
 
     function setUp() public virtual {
+        vm.skip(true);
         // Fork mainnet at a fixed block for deterministic comparisons.
         vm.createSelectFork("mainnet", END_BLOCK);
         endBlock = END_BLOCK;

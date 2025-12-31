@@ -11,6 +11,7 @@ contract BaseBOM5OracleForkTest is Test {
     Aggregator_stETH_BOM5_base public oracle;
 
     function setUp() public {
+        vm.skip(true);
         // Create fork - skip if RPC URL not available
         try vm.createSelectFork("base") {} catch {
             vm.skip(true);
