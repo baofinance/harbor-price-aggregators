@@ -40,7 +40,9 @@
 | Aggregator_stETH_AMZN_arbitrum    |              4,551 |               20,025 |               5,854 |      968,740 |             96.87 |
 | Aggregator_stETH_BOM5             |              6,807 |               17,769 |               9,274 |    1,454,140 |            145.41 |
 | Aggregator_stETH_BOM5_base        |              6,807 |               17,769 |               9,340 |    1,454,800 |            145.48 |
+| Aggregator_stETH_BTC              |              3,762 |               20,814 |               4,815 |      800,550 |             80.06 |
 | Aggregator_stETH_BTC_mainnet      |              3,762 |               20,814 |               4,690 |      799,300 |             79.93 |
+| Aggregator_stETH_EUR              |              3,762 |               20,814 |               4,815 |      800,550 |             80.06 |
 | Aggregator_stETH_EUR_mainnet      |              3,762 |               20,814 |               4,690 |      799,300 |             79.93 |
 | Aggregator_stETH_GOOGL            |              4,552 |               20,024 |               6,073 |      971,130 |             97.11 |
 | Aggregator_stETH_GOOGL_arbitrum   |              4,552 |               20,024 |               5,855 |      968,950 |             96.90 |
@@ -48,6 +50,7 @@
 | Aggregator_stETH_MAG7_arbitrum    |              6,781 |               17,795 |               9,469 |    1,450,890 |            145.09 |
 | Aggregator_stETH_MAG7i26          |              6,854 |               17,722 |               9,514 |    1,465,940 |            146.59 |
 | Aggregator_stETH_MAG7i26_arbitrum |              6,854 |               17,722 |               9,573 |    1,466,530 |            146.65 |
+| Aggregator_stETH_MCAP             |              3,763 |               20,813 |               4,816 |      800,760 |             80.08 |
 | Aggregator_stETH_MCAP_mainnet     |              3,763 |               20,813 |               4,695 |      799,550 |             79.95 |
 | Aggregator_stETH_META             |              4,551 |               20,025 |               6,072 |      970,920 |             97.09 |
 | Aggregator_stETH_META_arbitrum    |              4,551 |               20,025 |               5,854 |      968,740 |             96.87 |
@@ -61,6 +64,7 @@
 | Aggregator_stETH_TSLA_arbitrum    |              4,551 |               20,025 |               5,854 |      968,740 |             96.87 |
 | Aggregator_stETH_XAG              |              3,762 |               20,814 |               4,815 |      800,550 |             80.06 |
 | Aggregator_stETH_XAG_mainnet      |              3,762 |               20,814 |               4,690 |      799,300 |             79.93 |
+| Aggregator_stETH_XAU              |              3,762 |               20,814 |               4,815 |      800,550 |             80.06 |
 | Aggregator_stETH_XAU_mainnet      |              3,762 |               20,814 |               4,690 |      799,300 |             79.93 |
 | ArbitrumConstants                 |                 57 |               24,519 |                  85 |       12,250 |              1.23 |
 | BTC_USD                           |                 57 |               24,519 |                  85 |       12,250 |              1.23 |
