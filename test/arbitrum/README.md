@@ -23,7 +23,7 @@ Unit tests are fast, deterministic, and don't require an RPC endpoint. They test
 
 Fork tests run against live Arbitrum mainnet and test the actual wiring contracts:
 - **Double-feed oracles**: `ArbitrumOraclesFork.t.sol`, `ArbitrumSUSDEOraclesFork.t.sol`
-- **Multi-feed oracles**: `ArbitrumMAG7OraclesFork.t.sol`, `ArbitrumMAG7i26OraclesFork.t.sol`
+- **Multi-feed oracles**: `ArbitrumMAG7OraclesFork.t.sol`, `ArbitrumMAG7i26OraclesFork_stETH.t.sol`, `ArbitrumMAG7i26OraclesFork_USDE.t.sol`
 - **Utility**: `GetMAG7IndexPrice.t.sol` (calculates MAG7 index price)
 
 Fork tests verify that the deployed contracts work correctly with real Chainlink feeds on Arbitrum.
@@ -80,8 +80,9 @@ forge test --match-path "test/arbitrum/ArbitrumSUSDEOraclesFork.t.sol" --match-t
 # Run MAG7 fork tests
 forge test --match-path "test/arbitrum/ArbitrumMAG7OraclesFork.t.sol" --fork-url $arbitrum -vvv
 
-# Run MAG7i26 fork tests
-forge test --match-path "test/arbitrum/ArbitrumMAG7i26OraclesFork.t.sol" --fork-url $arbitrum -vvv
+# Run MAG7i26 fork tests (split into separate files to reduce rate limiting)
+forge test --match-path "test/arbitrum/ArbitrumMAG7i26OraclesFork_stETH.t.sol" --fork-url $arbitrum -vvv
+forge test --match-path "test/arbitrum/ArbitrumMAG7i26OraclesFork_USDE.t.sol" --fork-url $arbitrum -vvv
 ```
 
 **Note:** Make sure to set `ARBITRUM_RPC_URL` in your `.env` file (see `.env.example` for reference).
