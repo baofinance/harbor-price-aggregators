@@ -1,5 +1,6 @@
 # Dotenv file
 .env
+.env.local
 
 # put your personal stuff in your personal vscode settings file
 .vscode/settings.json

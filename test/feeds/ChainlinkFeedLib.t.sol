@@ -70,6 +70,21 @@ contract ChainlinkFeedLibTest is Test {
 
         // 6 decimals -> 18 decimals
         assertEq(ChainlinkFeedLib.normaliseTo18(100e6, 6), 100e18);
+
+        // 20 decimals -> 18 decimals (scale down - Chainlink never does this, but test coverage)
+        assertEq(ChainlinkFeedLib.normaliseTo18(100e20, 20), 100e18);
+    }
+
+    /// @notice Test latestAnswerNormalized with >18 decimals feed
+    function test_latestAnswerNormalized_above18decimals() public {
+        // Create a 20-decimal feed (hypothetical - Chainlink doesn't use >18)
+        MockAggregatorV3 feed20 = new MockAggregatorV3(20);
+        feed20.setAnswer(2000e20, block.timestamp); // $2000 with 20 decimals
+
+        uint256 price = ChainlinkFeedLib.latestAnswerNormalized(AggregatorV3Interface(address(feed20)), 20, HEARTBEAT);
+
+        // Should normalize to 18 decimals
+        assertEq(price, 2000e18);
     }
 
     /// @notice Helper to make external call for try/catch to work with library

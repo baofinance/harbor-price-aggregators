@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "chainId": 42161,
+  "chainName": "Arbitrum",
+  "deploymentTime": "2025-12-31T09:25:27Z",
+  "oracles": {
+    "USDE_AAPL": {
+      "name": "USDE/AAPL",
+      "address": "0x91F5C981C3676af8eE40003c79E96582Fdb12621",
+      "contractPath": "src/arbitrum/Aggregator_USDE_AAPL_arbitrum.sol:Aggregator_USDE_AAPL_arbitrum"
+    },
+    "USDE_AMZN": {
+      "name": "USDE/AMZN",
+      "address": "0xf5dAfBF1A1abe5eaDC16799e69b7B53C58D193b5",
+      "contractPath": "src/arbitrum/Aggregator_USDE_AMZN_arbitrum.sol:Aggregator_USDE_AMZN_arbitrum"
+    },
+    "USDE_GOOGL": {
+      "name": "USDE/GOOGL",
+      "address": "0xc351A54B3ED4a930d8B30958A112a1e6Dcd3eFc0",
+      "contractPath": "src/arbitrum/Aggregator_USDE_GOOGL_arbitrum.sol:Aggregator_USDE_GOOGL_arbitrum"
+    },
+    "USDE_META": {
+      "name": "USDE/META",
+      "address": "0x9DadfFe3Fd7c14BF1c023fd736510464ea3E8234",
+      "contractPath": "src/arbitrum/Aggregator_USDE_META_arbitrum.sol:Aggregator_USDE_META_arbitrum"
+    },
+    "USDE_MSFT": {
+      "name": "USDE/MSFT",
+      "address": "0x2b63607299E7645D883168906bEfb13cb7F59659",
+      "contractPath": "src/arbitrum/Aggregator_USDE_MSFT_arbitrum.sol:Aggregator_USDE_MSFT_arbitrum"
+    },
+    "USDE_NVDA": {
+      "name": "USDE/NVDA",
+      "address": "0xb772b800982127A3e1489DAacBE214b3C8575dd6",
+      "contractPath": "src/arbitrum/Aggregator_USDE_NVDA_arbitrum.sol:Aggregator_USDE_NVDA_arbitrum"
+    },
+    "USDE_SPY": {
+      "name": "USDE/SPY",
+      "address": "0x657bE7a2b91F95222D163Bee3B5F4C27bed598C5",
+      "contractPath": "src/arbitrum/Aggregator_USDE_SPY_arbitrum.sol:Aggregator_USDE_SPY_arbitrum"
+    },
+    "USDE_TSLA": {
+      "name": "USDE/TSLA",
+      "address": "0x777BD12e1f61B8cac19Cbd30c0233C46B4683C00",
+      "contractPath": "src/arbitrum/Aggregator_USDE_TSLA_arbitrum.sol:Aggregator_USDE_TSLA_arbitrum"
+    },
+    "USDE_MAG7": {
+      "name": "USDE/MAG7",
+      "address": "0xFf37Db6dea33228A5D84546250a5D0D0da942fd7",
+      "contractPath": "src/arbitrum/Aggregator_USDE_MAG7_arbitrum.sol:Aggregator_USDE_MAG7_arbitrum"
+    },
+    "USDE_MAG7i26": {
+      "name": "USDE/MAG7.i26",
+      "address": "0xF36648F44763eFE7c528140a2f804b2124CC3FE1",
+      "contractPath": "src/arbitrum/Aggregator_USDE_MAG7i26_arbitrum.sol:Aggregator_USDE_MAG7i26_arbitrum"
+    },
+    "STETH_AAPL": {
+      "name": "stETH/AAPL",
+      "address": "0xA8643E35Ef119F983B09C322039e8AA49A3e3372",
+      "contractPath": "src/arbitrum/Aggregator_stETH_AAPL_arbitrum.sol:Aggregator_stETH_AAPL_arbitrum"
+    },
+    "STETH_AMZN": {
+      "name": "stETH/AMZN",
+      "address": "0x28bBAaf05dEE8A06d4206089bCd17c1129e6Edca",
+      "contractPath": "src/arbitrum/Aggregator_stETH_AMZN_arbitrum.sol:Aggregator_stETH_AMZN_arbitrum"
+    },
+    "STETH_GOOGL": {
+      "name": "stETH/GOOGL",
+      "address": "0x52B66aD600DC6051cF056951153355d457068bD2",
+      "contractPath": "src/arbitrum/Aggregator_stETH_GOOGL_arbitrum.sol:Aggregator_stETH_GOOGL_arbitrum"
+    },
+    "STETH_META": {
+      "name": "stETH/META",
+      "address": "0x677f597D3013dBF76552Ec6c605eeB551d3bBb72",
+      "contractPath": "src/arbitrum/Aggregator_stETH_META_arbitrum.sol:Aggregator_stETH_META_arbitrum"
+    },
+    "STETH_MSFT": {
+      "name": "stETH/MSFT",
+      "address": "0xf1867657Ef7F65b745E47B7F70D15DE50b66884D",
+      "contractPath": "src/arbitrum/Aggregator_stETH_MSFT_arbitrum.sol:Aggregator_stETH_MSFT_arbitrum"
+    },
+    "STETH_NVDA": {
+      "name": "stETH/NVDA",
+      "address": "0x0D0fDBb10B9EAf18A1034e9942F95af0147CC310",
+      "contractPath": "src/arbitrum/Aggregator_stETH_NVDA_arbitrum.sol:Aggregator_stETH_NVDA_arbitrum"
+    },
+    "STETH_SPY": {
+      "name": "stETH/SPY",
+      "address": "0x969Fb67331d6Fa3E729292FAa5752BBA759f2b7F",
+      "contractPath": "src/arbitrum/Aggregator_stETH_SPY_arbitrum.sol:Aggregator_stETH_SPY_arbitrum"
+    },
+    "STETH_TSLA": {
+      "name": "stETH/TSLA",
+      "address": "0xDA6097f2b8805a01FcBE8BA8Fc2c45FCb7D3e206",
+      "contractPath": "src/arbitrum/Aggregator_stETH_TSLA_arbitrum.sol:Aggregator_stETH_TSLA_arbitrum"
+    },
+    "STETH_MAG7": {
+      "name": "stETH/MAG7",
+      "address": "0xA8A130Bbf041962B60e81009F09c41bd930D1294",
+      "contractPath": "src/arbitrum/Aggregator_stETH_MAG7_arbitrum.sol:Aggregator_stETH_MAG7_arbitrum"
+    },
+    "STETH_MAG7i26": {
+      "name": "stETH/MAG7.i26",
+      "address": "0x436C33222136554192733C6771669c4B51B7fE3D",
+      "contractPath": "src/arbitrum/Aggregator_stETH_MAG7i26_arbitrum.sol:Aggregator_stETH_MAG7i26_arbitrum"
+    }
+  }
+}

@@ -4,7 +4,7 @@ Price oracle aggregators for Harbor Protocol.
 
 ## Overview
 
-The v3 aggregators use an immutable architecture: each oracle is a concrete contract with configuration baked in at construction time. Network-specific "wiring" files (`src/Aggregator_*_mainnet.sol`) extend formula contracts (`src/oracles/Aggregator_*.sol`) and pass chain-specific feed addresses and heartbeats to the constructor.
+The v3 aggregators use an immutable architecture: each aggregator is a concrete contract with configuration baked in at construction time. Network-specific "wiring" files (`src/Aggregator_*_mainnet.sol`) extend formula contracts (`src/aggregators/Aggregator_*.sol`) and pass chain-specific feed addresses and heartbeats to the constructor.
 
 **Architecture highlights:**
 
@@ -12,7 +12,9 @@ The v3 aggregators use an immutable architecture: each oracle is a concrete cont
 - **Heartbeat validation**: `ChainlinkFeedLib` validates feed freshness with a 42-second tolerance to account for block timing variance
 - **UUPS Upgradeable**: Proxy pattern via BaoFactory with fixed owner
 
-## Mainnet v3 Oracles
+To add a new aggregator, see [doc/v3-aggregator-authoring-guide.md](doc/v3-aggregator-authoring-guide.md).
+
+## Mainnet v3 Aggregators
 
 | Oracle | Rate Source | Feeds |
 |--------|-------------|-------|
@@ -25,6 +27,37 @@ The v3 aggregators use an immutable architecture: each oracle is a concrete cont
 | stETH/EUR | wstETH | ETH/USD, EUR/USD (inverted) |
 | stETH/XAU | wstETH | ETH/USD, XAU/USD |
 | stETH/MCAP | wstETH | ETH/USD, MCAP/USD |
+
+## Arbitrum v3 Oracles
+
+| Oracle | Rate Source | Feeds |
+|--------|-------------|-------|
+| USDE/AAPL | sUSDE/USDE (Chainlink) | USDE/USD, AAPL/USD |
+| USDE/AMZN | sUSDE/USDE (Chainlink) | USDE/USD, AMZN/USD |
+| USDE/GOOGL | sUSDE/USDE (Chainlink) | USDE/USD, GOOGL/USD |
+| USDE/META | sUSDE/USDE (Chainlink) | USDE/USD, META/USD |
+| USDE/MSFT | sUSDE/USDE (Chainlink) | USDE/USD, MSFT/USD |
+| USDE/NVDA | sUSDE/USDE (Chainlink) | USDE/USD, NVDA/USD |
+| USDE/SPY | sUSDE/USDE (Chainlink) | USDE/USD, SPY/USD |
+| USDE/TSLA | sUSDE/USDE (Chainlink) | USDE/USD, TSLA/USD |
+| USDE/MAG7 | sUSDE/USDE (Chainlink) | USDE/USD, (AAPL+MSFT+TSLA+GOOGL+META+AMZN+NVDA)/7 |
+| USDE/MAG7.i26 | sUSDE/USDE (Chainlink) | USDE/USD, (AAPL+MSFT+TSLA+GOOGL+META+AMZN+NVDA)/index_price |
+| stETH/AAPL | wstETH/stETH (Chainlink) | stETH/USD, AAPL/USD |
+| stETH/AMZN | wstETH/stETH (Chainlink) | stETH/USD, AMZN/USD |
+| stETH/GOOGL | wstETH/stETH (Chainlink) | stETH/USD, GOOGL/USD |
+| stETH/META | wstETH/stETH (Chainlink) | stETH/USD, META/USD |
+| stETH/MSFT | wstETH/stETH (Chainlink) | stETH/USD, MSFT/USD |
+| stETH/NVDA | wstETH/stETH (Chainlink) | stETH/USD, NVDA/USD |
+| stETH/SPY | wstETH/stETH (Chainlink) | stETH/USD, SPY/USD |
+| stETH/TSLA | wstETH/stETH (Chainlink) | stETH/USD, TSLA/USD |
+| stETH/MAG7 | wstETH/stETH (Chainlink) | stETH/USD, (AAPL+MSFT+TSLA+GOOGL+META+AMZN+NVDA)/7 |
+| stETH/MAG7.i26 | wstETH/stETH (Chainlink) | stETH/USD, (AAPL+MSFT+TSLA+GOOGL+META+AMZN+NVDA)/index_price |
+
+## Base v3 Oracles
+
+| Oracle | Rate Source | Feeds |
+|--------|-------------|-------|
+| stETH/BOM5 | wstETH/stETH (Chainlink) | stETH/USD, normalized average of (DOGE+SHIB+PEPE+TRUMP+WIF)/5 |
 
 ## Installation
 
@@ -39,9 +72,32 @@ forge install
 
 ## Testing
 
+Run all tests:
+
 ```bash
 forge test
 ```
+
+Run tests for specific chains:
+
+```bash
+# Mainnet tests (unit tests only, no fork required)
+forge test --match-path "test/oracles/*.t.sol"
+
+# Arbitrum tests (unit tests, no RPC required)
+forge test --match-path "test/arbitrum/Aggregator_*.t.sol"
+
+# Arbitrum fork tests (requires ARBITRUM_RPC_URL)
+forge test --match-path "test/arbitrum/*Fork.t.sol" --fork-url $arbitrum -vvv
+
+# Base tests (unit tests, no RPC required)
+forge test --match-path "test/base/Aggregator_*.t.sol"
+
+# Base fork tests (requires BASE_RPC_URL)
+forge test --match-path "test/base/*Fork.t.sol" --fork-url $base -vvv
+```
+
+**Note:** Make sure to set `ARBITRUM_RPC_URL`, `BASE_RPC_URL`, and `MAINNET_RPC_URL` in your `.env` file for fork tests. See `test/arbitrum/README.md` and `test/base/README.md` for detailed testing information.
 
 ## Off-chain market data (offchain_feeds)
 
@@ -202,13 +258,23 @@ yarn offchain:stats --market MCAP-USD  --measure close_return --top 20
 
 ### Prerequisites
 
-1. **Configure foundry.toml RPC endpoints**:
+1. **Configure foundry.toml RPC endpoints** (for testing):
    Add your RPC URLs to `foundry.toml` under `[rpc_endpoints]`:
 
    ```toml
    [rpc_endpoints]
-   mainnet = "https://eth-mainnet.g.alchemy.com/v2/YOUR_KEY"
+   mainnet = "${MAINNET_RPC_URL}"
+   arbitrum = "${ARBITRUM_RPC_URL}"
+   base = "${BASE_RPC_URL}"
    local = "http://127.0.0.1:8545"
+   ```
+
+   Or set environment variables in `.env`:
+
+   ```bash
+   MAINNET_RPC_URL="https://eth-mainnet.g.alchemy.com/v2/YOUR_KEY"
+   ARBITRUM_RPC_URL="https://arb-mainnet.g.alchemy.com/v2/YOUR_KEY"
+   BASE_RPC_URL="https://base-mainnet.g.alchemy.com/v2/YOUR_KEY"
    ```
 
 2. **Set up a Foundry keystore account** (for non-local deploys):
@@ -253,48 +319,70 @@ Deployments are recorded in `deployment-state-v3-<network>.json`.
 
 ### Deploy to Arbitrum
 
-Deploy the Arbitrum oracle contracts:
+Deploy all Arbitrum v3 oracle contracts (direct deployments, no proxies):
 
 ```bash
-./script/deploy-arbitrum-oracles
+./script/deploy-arbitrum-v3-oracles.sh
 ```
 
-This will deploy:
+This will deploy 20 v3 oracle contracts (immutable contracts with hardcoded wiring):
 
-- 1 PriceOracle library (pre-deployed, reused)
-- 3 implementation contracts (Single Feed, Double Feed, Custom Feed)
-- 20 proxy contracts:
-  - sUSDE→USD, sUSDE→AAPL, sUSDE→AMZN, sUSDE→GOOGL, sUSDE→META, sUSDE→MSFT, sUSDE→NVDA, sUSDE→SPY, sUSDE→TSLA, sUSDE→MAG7
-  - wstETH→USD, wstETH→AAPL, wstETH→AMZN, wstETH→GOOGL, wstETH→META, wstETH→MSFT, wstETH→NVDA, wstETH→SPY, wstETH→TSLA, wstETH→MAG7
+**USDE oracles (10):**
+- USDE/AAPL, USDE/AMZN, USDE/GOOGL, USDE/META, USDE/MSFT, USDE/NVDA, USDE/SPY, USDE/TSLA, USDE/MAG7, USDE/MAG7.i26
 
-**Deployment Modes:**
+**stETH oracles (10):**
+- stETH/AAPL, stETH/AMZN, stETH/GOOGL, stETH/META, stETH/MSFT, stETH/NVDA, stETH/SPY, stETH/TSLA, stETH/MAG7, stETH/MAG7.i26
 
-- `MODE=deploy` (default): Deploy all contracts
-- `MODE=check`: Check deployment status
-- `MODE=retry`: Retry initialization of failed contracts
-- `MODE=init`: Initialize contracts only
-- `MODE=verify`: Verify all contracts on Arbiscan
+**Requirements:**
 
-**Examples:**
+Set these environment variables (or add them to `.env`):
 
 ```bash
-# Deploy all contracts
-./script/deploy-arbitrum-oracles
-
-# Check deployment status
-MODE=check ./script/deploy-arbitrum-oracles
-
-# Verify all contracts
-MODE=verify ./script/deploy-arbitrum-oracles
-
-# Skip rate source configuration
-SKIP_RATE_CONFIG=true ./script/deploy-arbitrum-oracles
+export ARBITRUM_RPC_URL="https://arb-mainnet.g.alchemy.com/v2/YOUR_KEY"
+export PRIVATE_KEY="your_private_key"
+export ETHERSCAN_API_KEY="your_etherscan_api_key"  # Optional, for verification
 ```
 
-**Note**: For Arbitrum, make sure to set:
+**Verification:**
 
-- `RPC_URL` to an Arbitrum RPC endpoint (e.g., `https://arb-mainnet.g.alchemy.com/v2/YOUR_KEY`)
-- `ETHERSCAN_API_KEY` to your Etherscan API key (same key works for both mainnet and Arbitrum)
+After deployment, verify all contracts on Arbiscan:
+
+```bash
+./script/verify-arbitrum-v3-oracles.sh
+```
+
+Or run verification during deployment (automatic if `ETHERSCAN_API_KEY` is set).
+
+**Deployment State:**
+
+Deployments are recorded in `deployments/arbitrum/v3-oracles.json`. The script will skip contracts that are already deployed unless `FORCE_REDEPLOY=true` is set.
+
+**Note:** These are direct deployments (immutable contracts), not proxy deployments. Each contract is deployed independently with its configuration baked into the bytecode.
+
+### Deploy to Base
+
+Deploy Base v3 oracle contracts (direct deployments, no proxies):
+
+```bash
+# Deployment script to be added
+# ./script/deploy-base-v3-oracles.sh
+```
+
+**Base oracles:**
+
+- stETH/BOM5 (Bag of Memes 5: DOGE, SHIB, PEPE, TRUMP, WIF with supply normalization)
+
+**Requirements:**
+
+Set these environment variables (or add them to `.env`):
+
+```bash
+export BASE_RPC_URL="https://base-mainnet.g.alchemy.com/v2/YOUR_KEY"
+export PRIVATE_KEY="your_private_key"
+export ETHERSCAN_API_KEY="your_etherscan_api_key"  # Optional, for verification
+```
+
+**Note:** Base deployment scripts will follow the same pattern as Arbitrum deployments (direct immutable contracts with hardcoded wiring).
 
 ## License
 

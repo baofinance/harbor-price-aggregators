@@ -3,10 +3,10 @@ pragma solidity 0.8.30;
 
 import "forge-std/Test.sol";
 import {IWrappedPriceOracle} from "@harbor-price/interfaces/IWrappedPriceOracle.sol";
-import {HarborAggregator_v3} from "@harbor-price/HarborAggregator_v3.sol";
+import {HarborAggregator_v3} from "@harbor-price/aggregators/HarborAggregator_v3.sol";
 import {MainnetRateSources} from "@harbor-price/rates/mainnet/MainnetRateSources.sol";
 import {ETH_USD} from "@harbor-price/feeds/chainlink/mainnet/ETH_USD.sol";
-import {Aggregator_fxUSD_ETH} from "@harbor-price/oracles/Aggregator_fxUSD_ETH.sol";
+import {Aggregator_fxUSD_ETH} from "@harbor-price/aggregators/Aggregator_fxUSD_ETH.sol";
 import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import {LatestAnswerErrorClassifier} from "./LatestAnswerErrorClassifier.sol";
 import {UtcTimestampFormatter} from "@harbor-price/format/UtcTimestampFormatter.sol";
@@ -32,6 +32,20 @@ contract FxUsdEthV3Daily3YearDump is Test {
     // Keep this high: intraday sampling is expensive on a fork.
     int256 constant INTRADAY_THRESHOLD_WAD = 5e16; // 5%
     uint256 constant BLOCKS_PER_HOUR = 300;
+
+    /// @dev Sample data struct to reduce stack depth
+    struct SampleData {
+        uint256 sampleBlock;
+        uint256 ts;
+        bool stop;
+        bool hasData;
+        uint256 minPrice;
+        uint256 maxPrice;
+        uint256 minRate;
+        uint256 maxRate;
+        string err;
+        uint256 mid;
+    }
 
     uint256 _prevDaysAgo;
     uint256 _prevMid;
@@ -85,58 +99,27 @@ contract FxUsdEthV3Daily3YearDump is Test {
         }
     }
 
-    function _sample(
-        address oracle,
-        uint256 daysAgo
-    )
-        private
-        returns (
-            uint256 sampleBlock,
-            uint256 ts,
-            bool stop,
-            bool hasData,
-            uint256 minPrice,
-            uint256 maxPrice,
-            uint256 minRate,
-            uint256 maxRate,
-            string memory err,
-            uint256 mid
-        )
-    {
-        sampleBlock = END_BLOCK - (daysAgo * BLOCKS_PER_DAY);
-        vm.rollFork(sampleBlock);
-        ts = block.timestamp;
+    function _sample(address oracle, uint256 daysAgo) private returns (SampleData memory s) {
+        s.sampleBlock = END_BLOCK - (daysAgo * BLOCKS_PER_DAY);
+        vm.rollFork(s.sampleBlock);
+        s.ts = block.timestamp;
 
-        (stop, hasData, minPrice, maxPrice, minRate, maxRate, err) = LatestAnswerErrorClassifier.tryLatestAnswer(
-            oracle
-        );
+        (s.stop, s.hasData, s.minPrice, s.maxPrice, s.minRate, s.maxRate, s.err) = LatestAnswerErrorClassifier
+            .tryLatestAnswer(oracle);
 
-        if (hasData) {
-            mid = (minPrice + maxPrice) / 2;
+        if (s.hasData) {
+            s.mid = (s.minPrice + s.maxPrice) / 2;
         }
     }
 
-    function _writeSample(
-        address oracle,
-        string memory filename,
-        uint256 sampleBlock,
-        uint256 ts,
-        uint256 minPrice,
-        uint256 maxPrice,
-        uint256 minRate,
-        uint256 maxRate,
-        uint256 mid,
-        uint256 daysAgo,
-        bool hasData,
-        string memory err
-    ) private {
-        string memory timeStr = UtcTimestampFormatter.format(ts);
-        string memory prefix = string.concat(vm.toString(sampleBlock), ",", vm.toString(ts), ",", timeStr, ",");
+    function _writeSample(address oracle, string memory filename, SampleData memory s, uint256 daysAgo) private {
+        string memory timeStr = UtcTimestampFormatter.format(s.ts);
+        string memory prefix = string.concat(vm.toString(s.sampleBlock), ",", vm.toString(s.ts), ",", timeStr, ",");
 
         int256 moveWad = 0;
         uint256 move24hAbsWad = 0;
-        if (hasData) {
-            moveWad = _estimateDailyMoveWad(mid, daysAgo);
+        if (s.hasData) {
+            moveWad = _estimateDailyMoveWad(s.mid, daysAgo);
             if (_hasPrev && (daysAgo == _prevDaysAgo + 1) && (_abs(moveWad) > INTRADAY_THRESHOLD_WAD)) {
                 move24hAbsWad = _maxAbsMove24hWad(oracle, _prevDaysAgo, daysAgo, _prevMid);
             }
@@ -144,29 +127,29 @@ contract FxUsdEthV3Daily3YearDump is Test {
                 filename,
                 string.concat(
                     prefix,
-                    vm.toString(minPrice),
+                    vm.toString(s.minPrice),
                     ",",
-                    vm.toString(maxPrice),
+                    vm.toString(s.maxPrice),
                     ",",
-                    vm.toString(minRate),
+                    vm.toString(s.minRate),
                     ",",
-                    vm.toString(maxRate),
+                    vm.toString(s.maxRate),
                     ",",
                     vm.toString(moveWad),
                     ",",
                     vm.toString(move24hAbsWad),
                     ",",
-                    err
+                    s.err
                 )
             );
 
             _prevDaysAgo = daysAgo;
-            _prevMid = mid;
+            _prevMid = s.mid;
             _hasPrev = true;
         } else {
             vm.writeLine(
                 filename,
-                string.concat(prefix, "0,0,0,0,", vm.toString(moveWad), ",", vm.toString(move24hAbsWad), ",", err)
+                string.concat(prefix, "0,0,0,0,", vm.toString(moveWad), ",", vm.toString(move24hAbsWad), ",", s.err)
             );
         }
     }
@@ -175,42 +158,19 @@ contract FxUsdEthV3Daily3YearDump is Test {
         uint256 startDaysAgo = _prevDaysAgo;
         if (!_hasPrev || endDaysAgo <= startDaysAgo) revert("bad interval");
 
-        (
-            uint256 sampleBlock,
-            uint256 ts,
-            bool sampledStop,
-            bool hasData,
-            uint256 minPrice,
-            uint256 maxPrice,
-            uint256 minRate,
-            uint256 maxRate,
-            string memory err,
-            uint256 mid
-        ) = _sample(oracle, endDaysAgo);
+        SampleData memory s = _sample(oracle, endDaysAgo);
 
-        if (sampledStop || !hasData) {
-            _writeSample(oracle, filename, sampleBlock, ts, 0, 0, 0, 0, 0, endDaysAgo, false, err);
+        if (s.stop || !s.hasData) {
+            s.hasData = false;
+            _writeSample(oracle, filename, s, endDaysAgo);
             return true;
         }
 
         uint256 deltaDays = endDaysAgo - startDaysAgo;
-        int256 dailyMoveWad = _estimateDailyMoveWad(mid, endDaysAgo);
+        int256 dailyMoveWad = _estimateDailyMoveWad(s.mid, endDaysAgo);
 
         if (deltaDays == 1 || _abs(dailyMoveWad) <= REFINE_THRESHOLD_WAD) {
-            _writeSample(
-                oracle,
-                filename,
-                sampleBlock,
-                ts,
-                minPrice,
-                maxPrice,
-                minRate,
-                maxRate,
-                mid,
-                endDaysAgo,
-                true,
-                err
-            );
+            _writeSample(oracle, filename, s, endDaysAgo);
             return false;
         }
 
@@ -245,34 +205,9 @@ contract FxUsdEthV3Daily3YearDump is Test {
         _prevMid = 0;
 
         {
-            (
-                uint256 sampleBlock,
-                uint256 ts,
-                bool stop,
-                bool hasData,
-                uint256 minPrice,
-                uint256 maxPrice,
-                uint256 minRate,
-                uint256 maxRate,
-                string memory err,
-                uint256 mid
-            ) = _sample(address(oracle), 0);
-
-            _writeSample(
-                address(oracle),
-                filename,
-                sampleBlock,
-                ts,
-                minPrice,
-                maxPrice,
-                minRate,
-                maxRate,
-                mid,
-                0,
-                hasData,
-                err
-            );
-            if (stop || !hasData) return;
+            SampleData memory s = _sample(address(oracle), 0);
+            _writeSample(address(oracle), filename, s, 0);
+            if (s.stop || !s.hasData) return;
         }
 
         for (uint256 daysAgo = COARSE_STEP_DAYS; daysAgo <= DAYS; daysAgo += COARSE_STEP_DAYS) {
