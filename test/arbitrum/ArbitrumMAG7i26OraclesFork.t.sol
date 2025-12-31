@@ -2,20 +2,25 @@
 pragma solidity 0.8.30;
 
 import {Test, console} from "forge-std/Test.sol";
-import {Oracle_stETH_MAG7i26_arbitrum} from "../../src/arbitrum/Oracle_stETH_MAG7i26_arbitrum.sol";
-import {Oracle_USDE_MAG7i26_arbitrum} from "../../src/arbitrum/Oracle_USDE_MAG7i26_arbitrum.sol";
+import {Aggregator_stETH_MAG7i26_arbitrum} from "../../src/arbitrum/Aggregator_stETH_MAG7i26_arbitrum.sol";
+import {Aggregator_USDE_MAG7i26_arbitrum} from "../../src/arbitrum/Aggregator_USDE_MAG7i26_arbitrum.sol";
 
 /// @notice Fork tests for Arbitrum MAG7.i26 indexed oracles
 /// @dev Run with: forge test --match-path "test/arbitrum/*MAG7i26*.t.sol" --fork-url $arbitrum -vvv
 ///      Ensure ARBITRUM_RPC_URL environment variable is set in foundry.toml
 contract ArbitrumMAG7i26OraclesForkTest is Test {
-    Oracle_stETH_MAG7i26_arbitrum public oracleStETH;
-    Oracle_USDE_MAG7i26_arbitrum public oracleUSDE;
+    Aggregator_stETH_MAG7i26_arbitrum public oracleStETH;
+    Aggregator_USDE_MAG7i26_arbitrum public oracleUSDE;
 
     function setUp() public {
+        // Create fork - skip if RPC URL not available
+        try vm.createSelectFork("arbitrum") {} catch {
+            vm.skip(true);
+        }
+
         // Deploy both MAG7.i26 oracles
-        oracleStETH = new Oracle_stETH_MAG7i26_arbitrum();
-        oracleUSDE = new Oracle_USDE_MAG7i26_arbitrum();
+        oracleStETH = new Aggregator_stETH_MAG7i26_arbitrum();
+        oracleUSDE = new Aggregator_USDE_MAG7i26_arbitrum();
     }
 
     function test_stETH_MAG7i26_RateAndPrice() public view {
@@ -25,7 +30,7 @@ contract ArbitrumMAG7i26OraclesForkTest is Test {
         console.log("Ask Price (18 decimals):", askPrice);
         console.log("Bid Rate (18 decimals):", bidRate);
         console.log("Ask Rate (18 decimals):", askRate);
-        console.log("Index Price:", oracleStETH.INDEX_PRICE());
+        // Note: INDEX_PRICE is now in ArbitrumConstants, not exposed as public
         console.log("");
     }
 
@@ -36,7 +41,7 @@ contract ArbitrumMAG7i26OraclesForkTest is Test {
         console.log("Ask Price (18 decimals):", askPrice);
         console.log("Bid Rate (18 decimals):", bidRate);
         console.log("Ask Rate (18 decimals):", askRate);
-        console.log("Index Price:", oracleUSDE.INDEX_PRICE());
+        // Note: INDEX_PRICE is now in ArbitrumConstants, not exposed as public
         console.log("");
     }
 
@@ -51,14 +56,13 @@ contract ArbitrumMAG7i26OraclesForkTest is Test {
         console.log("stETH/MAG7.i26 rateProvider:", oracleStETH.rateProvider());
         console.log("stETH/MAG7.i26 quoteName:", oracleStETH.quoteName());
         console.log("stETH/MAG7.i26 oracleName:", oracleStETH.oracleName());
-        console.log("stETH/MAG7.i26 indexPrice:", oracleStETH.INDEX_PRICE());
+        // Note: INDEX_PRICE is now in ArbitrumConstants, not exposed as public
         console.log("");
         console.log("USDE/MAG7.i26 base:", oracleUSDE.base());
         console.log("USDE/MAG7.i26 rateProvider:", oracleUSDE.rateProvider());
         console.log("USDE/MAG7.i26 quoteName:", oracleUSDE.quoteName());
         console.log("USDE/MAG7.i26 oracleName:", oracleUSDE.oracleName());
-        console.log("USDE/MAG7.i26 indexPrice:", oracleUSDE.INDEX_PRICE());
+        // Note: INDEX_PRICE is now in ArbitrumConstants, not exposed as public
         console.log("");
     }
 }
-

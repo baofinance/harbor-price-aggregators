@@ -2,38 +2,43 @@
 pragma solidity 0.8.30;
 
 import {Test, console} from "forge-std/Test.sol";
-import {Oracle_stETH_AAPL_arbitrum} from "../../src/arbitrum/Oracle_stETH_AAPL_arbitrum.sol";
-import {Oracle_stETH_AMZN_arbitrum} from "../../src/arbitrum/Oracle_stETH_AMZN_arbitrum.sol";
-import {Oracle_stETH_GOOGL_arbitrum} from "../../src/arbitrum/Oracle_stETH_GOOGL_arbitrum.sol";
-import {Oracle_stETH_META_arbitrum} from "../../src/arbitrum/Oracle_stETH_META_arbitrum.sol";
-import {Oracle_stETH_MSFT_arbitrum} from "../../src/arbitrum/Oracle_stETH_MSFT_arbitrum.sol";
-import {Oracle_stETH_NVDA_arbitrum} from "../../src/arbitrum/Oracle_stETH_NVDA_arbitrum.sol";
-import {Oracle_stETH_SPY_arbitrum} from "../../src/arbitrum/Oracle_stETH_SPY_arbitrum.sol";
-import {Oracle_stETH_TSLA_arbitrum} from "../../src/arbitrum/Oracle_stETH_TSLA_arbitrum.sol";
+import {Aggregator_stETH_AAPL_arbitrum} from "../../src/arbitrum/Aggregator_stETH_AAPL_arbitrum.sol";
+import {Aggregator_stETH_AMZN_arbitrum} from "../../src/arbitrum/Aggregator_stETH_AMZN_arbitrum.sol";
+import {Aggregator_stETH_GOOGL_arbitrum} from "../../src/arbitrum/Aggregator_stETH_GOOGL_arbitrum.sol";
+import {Aggregator_stETH_META_arbitrum} from "../../src/arbitrum/Aggregator_stETH_META_arbitrum.sol";
+import {Aggregator_stETH_MSFT_arbitrum} from "../../src/arbitrum/Aggregator_stETH_MSFT_arbitrum.sol";
+import {Aggregator_stETH_NVDA_arbitrum} from "../../src/arbitrum/Aggregator_stETH_NVDA_arbitrum.sol";
+import {Aggregator_stETH_SPY_arbitrum} from "../../src/arbitrum/Aggregator_stETH_SPY_arbitrum.sol";
+import {Aggregator_stETH_TSLA_arbitrum} from "../../src/arbitrum/Aggregator_stETH_TSLA_arbitrum.sol";
 
-/// @notice Fork tests for Arbitrum oracles
-/// @dev Run with: forge test --match-path "test/arbitrum/*.t.sol" --fork-url $arbitrum -vvv
+/// @notice Fork tests for Arbitrum stETH oracles
+/// @dev Run with: forge test --match-path "test/arbitrum/ArbitrumOraclesFork.t.sol" --fork-url $arbitrum -vvv
 ///      Ensure ARBITRUM_RPC_URL environment variable is set in foundry.toml
 contract ArbitrumOraclesForkTest is Test {
-    Oracle_stETH_AAPL_arbitrum public oracleAAPL;
-    Oracle_stETH_AMZN_arbitrum public oracleAMZN;
-    Oracle_stETH_GOOGL_arbitrum public oracleGOOGL;
-    Oracle_stETH_META_arbitrum public oracleMETA;
-    Oracle_stETH_MSFT_arbitrum public oracleMSFT;
-    Oracle_stETH_NVDA_arbitrum public oracleNVDA;
-    Oracle_stETH_SPY_arbitrum public oracleSPY;
-    Oracle_stETH_TSLA_arbitrum public oracleTSLA;
+    Aggregator_stETH_AAPL_arbitrum public oracleAAPL;
+    Aggregator_stETH_AMZN_arbitrum public oracleAMZN;
+    Aggregator_stETH_GOOGL_arbitrum public oracleGOOGL;
+    Aggregator_stETH_META_arbitrum public oracleMETA;
+    Aggregator_stETH_MSFT_arbitrum public oracleMSFT;
+    Aggregator_stETH_NVDA_arbitrum public oracleNVDA;
+    Aggregator_stETH_SPY_arbitrum public oracleSPY;
+    Aggregator_stETH_TSLA_arbitrum public oracleTSLA;
 
     function setUp() public {
+        // Create fork - skip if RPC URL not available
+        try vm.createSelectFork("arbitrum") {} catch {
+            vm.skip(true);
+        }
+
         // Deploy all oracles
-        oracleAAPL = new Oracle_stETH_AAPL_arbitrum();
-        oracleAMZN = new Oracle_stETH_AMZN_arbitrum();
-        oracleGOOGL = new Oracle_stETH_GOOGL_arbitrum();
-        oracleMETA = new Oracle_stETH_META_arbitrum();
-        oracleMSFT = new Oracle_stETH_MSFT_arbitrum();
-        oracleNVDA = new Oracle_stETH_NVDA_arbitrum();
-        oracleSPY = new Oracle_stETH_SPY_arbitrum();
-        oracleTSLA = new Oracle_stETH_TSLA_arbitrum();
+        oracleAAPL = new Aggregator_stETH_AAPL_arbitrum();
+        oracleAMZN = new Aggregator_stETH_AMZN_arbitrum();
+        oracleGOOGL = new Aggregator_stETH_GOOGL_arbitrum();
+        oracleMETA = new Aggregator_stETH_META_arbitrum();
+        oracleMSFT = new Aggregator_stETH_MSFT_arbitrum();
+        oracleNVDA = new Aggregator_stETH_NVDA_arbitrum();
+        oracleSPY = new Aggregator_stETH_SPY_arbitrum();
+        oracleTSLA = new Aggregator_stETH_TSLA_arbitrum();
     }
 
     function test_AAPL_RateAndPrice() public view {
@@ -136,4 +141,3 @@ contract ArbitrumOraclesForkTest is Test {
         console.log("");
     }
 }
-

@@ -2,7 +2,6 @@
 pragma solidity 0.8.30;
 
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
-import {ChainlinkFeedLib} from "../feeds/ChainlinkFeedLib.sol";
 
 library ChainlinkRateLib {
     error InvalidRate(uint256 rate);
@@ -10,7 +9,7 @@ library ChainlinkRateLib {
 
     uint256 internal constant DEFAULT_MIN_RATE = 1e18;
     uint256 internal constant DEFAULT_MAX_RATE = 2e18;
-    uint64 internal constant DEFAULT_MAX_AGE = 604_800; // 7 days
+    uint64 internal constant DEFAULT_MAX_AGE = 86_400; // 24 hours (matches feed heartbeats)
 
     /// @notice Get the rate from a Chainlink feed with default validation.
     /// @param feed The Chainlink aggregator interface for the rate feed
@@ -65,4 +64,3 @@ library ChainlinkRateLib {
         return rate;
     }
 }
-

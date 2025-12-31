@@ -45,7 +45,7 @@ fi
 # ETHERSCAN_API_KEY is optional (only needed for verification)
 ETHERSCAN_API_KEY=${ETHERSCAN_API_KEY:-}
 
-# Note: All addresses are hardcoded in the contract constructors via MainnetOracleAddresses.sol
+# Note: All addresses are hardcoded in the contract constructors via MainnetRateSources and feed libraries
 # No constructor arguments needed - the mainnet contracts have no-arg constructors
 
 # Check network
@@ -145,79 +145,79 @@ verify_contract() {
 echo "=== Deploying fxUSD Oracles ==="
 echo ""
 
-FXUSD_BTC=$(get_deployment "Oracle_fxUSD_BTC_mainnet")
+FXUSD_BTC=$(get_deployment "Aggregator_fxUSD_BTC_mainnet")
 if [[ -z "$FXUSD_BTC" ]]; then
-  FXUSD_BTC=$(deploy_oracle "Oracle_fxUSD_BTC_mainnet" \
-    "src/Oracle_fxUSD_BTC_mainnet.sol:Oracle_fxUSD_BTC_mainnet")
+  FXUSD_BTC=$(deploy_oracle "Aggregator_fxUSD_BTC_mainnet" \
+    "src/Aggregator_fxUSD_BTC_mainnet.sol:Aggregator_fxUSD_BTC_mainnet")
 fi
 
-FXUSD_EUR=$(get_deployment "Oracle_fxUSD_EUR_mainnet")
+FXUSD_EUR=$(get_deployment "Aggregator_fxUSD_EUR_mainnet")
 if [[ -z "$FXUSD_EUR" ]]; then
-  FXUSD_EUR=$(deploy_oracle "Oracle_fxUSD_EUR_mainnet" \
-    "src/Oracle_fxUSD_EUR_mainnet.sol:Oracle_fxUSD_EUR_mainnet")
+  FXUSD_EUR=$(deploy_oracle "Aggregator_fxUSD_EUR_mainnet" \
+    "src/Aggregator_fxUSD_EUR_mainnet.sol:Aggregator_fxUSD_EUR_mainnet")
 fi
 
-FXUSD_ETH=$(get_deployment "Oracle_fxUSD_ETH_mainnet")
+FXUSD_ETH=$(get_deployment "Aggregator_fxUSD_ETH_mainnet")
 if [[ -z "$FXUSD_ETH" ]]; then
-  FXUSD_ETH=$(deploy_oracle "Oracle_fxUSD_ETH_mainnet" \
-    "src/Oracle_fxUSD_ETH_mainnet.sol:Oracle_fxUSD_ETH_mainnet")
+  FXUSD_ETH=$(deploy_oracle "Aggregator_fxUSD_ETH_mainnet" \
+    "src/Aggregator_fxUSD_ETH_mainnet.sol:Aggregator_fxUSD_ETH_mainnet")
 fi
 
-FXUSD_MCAP=$(get_deployment "Oracle_fxUSD_MCAP_mainnet")
+FXUSD_MCAP=$(get_deployment "Aggregator_fxUSD_MCAP_mainnet")
 if [[ -z "$FXUSD_MCAP" ]]; then
-  FXUSD_MCAP=$(deploy_oracle "Oracle_fxUSD_MCAP_mainnet" \
-    "src/Oracle_fxUSD_MCAP_mainnet.sol:Oracle_fxUSD_MCAP_mainnet")
+  FXUSD_MCAP=$(deploy_oracle "Aggregator_fxUSD_MCAP_mainnet" \
+    "src/Aggregator_fxUSD_MCAP_mainnet.sol:Aggregator_fxUSD_MCAP_mainnet")
 fi
 
-FXUSD_XAU=$(get_deployment "Oracle_fxUSD_XAU_mainnet")
+FXUSD_XAU=$(get_deployment "Aggregator_fxUSD_XAU_mainnet")
 if [[ -z "$FXUSD_XAU" ]]; then
-  FXUSD_XAU=$(deploy_oracle "Oracle_fxUSD_XAU_mainnet" \
-    "src/Oracle_fxUSD_XAU_mainnet.sol:Oracle_fxUSD_XAU_mainnet")
+  FXUSD_XAU=$(deploy_oracle "Aggregator_fxUSD_XAU_mainnet" \
+    "src/Aggregator_fxUSD_XAU_mainnet.sol:Aggregator_fxUSD_XAU_mainnet")
 fi
 
 # Deploy stETH oracles (double feed, using WSTETH rate)
 echo "=== Deploying stETH Oracles ==="
 echo ""
 
-STETH_BTC=$(get_deployment "Oracle_stETH_BTC_mainnet")
+STETH_BTC=$(get_deployment "Aggregator_stETH_BTC_mainnet")
 if [[ -z "$STETH_BTC" ]]; then
-  STETH_BTC=$(deploy_oracle "Oracle_stETH_BTC_mainnet" \
-    "src/Oracle_stETH_BTC_mainnet.sol:Oracle_stETH_BTC_mainnet")
+  STETH_BTC=$(deploy_oracle "Aggregator_stETH_BTC_mainnet" \
+    "src/Aggregator_stETH_BTC_mainnet.sol:Aggregator_stETH_BTC_mainnet")
 fi
 
-STETH_EUR=$(get_deployment "Oracle_stETH_EUR_mainnet")
+STETH_EUR=$(get_deployment "Aggregator_stETH_EUR_mainnet")
 if [[ -z "$STETH_EUR" ]]; then
-  STETH_EUR=$(deploy_oracle "Oracle_stETH_EUR_mainnet" \
-    "src/Oracle_stETH_EUR_mainnet.sol:Oracle_stETH_EUR_mainnet")
+  STETH_EUR=$(deploy_oracle "Aggregator_stETH_EUR_mainnet" \
+    "src/Aggregator_stETH_EUR_mainnet.sol:Aggregator_stETH_EUR_mainnet")
 fi
 
-STETH_MCAP=$(get_deployment "Oracle_stETH_MCAP_mainnet")
+STETH_MCAP=$(get_deployment "Aggregator_stETH_MCAP_mainnet")
 if [[ -z "$STETH_MCAP" ]]; then
-  STETH_MCAP=$(deploy_oracle "Oracle_stETH_MCAP_mainnet" \
-    "src/Oracle_stETH_MCAP_mainnet.sol:Oracle_stETH_MCAP_mainnet")
+  STETH_MCAP=$(deploy_oracle "Aggregator_stETH_MCAP_mainnet" \
+    "src/Aggregator_stETH_MCAP_mainnet.sol:Aggregator_stETH_MCAP_mainnet")
 fi
 
-STETH_XAU=$(get_deployment "Oracle_stETH_XAU_mainnet")
+STETH_XAU=$(get_deployment "Aggregator_stETH_XAU_mainnet")
 if [[ -z "$STETH_XAU" ]]; then
-  STETH_XAU=$(deploy_oracle "Oracle_stETH_XAU_mainnet" \
-    "src/Oracle_stETH_XAU_mainnet.sol:Oracle_stETH_XAU_mainnet")
+  STETH_XAU=$(deploy_oracle "Aggregator_stETH_XAU_mainnet" \
+    "src/Aggregator_stETH_XAU_mainnet.sol:Aggregator_stETH_XAU_mainnet")
 fi
 
 # Summary
 echo "=== Deployment Summary ==="
 echo ""
 echo "fxUSD Oracles:"
-echo "  Oracle_fxUSD_BTC_mainnet:  $FXUSD_BTC"
-echo "  Oracle_fxUSD_EUR_mainnet:  $FXUSD_EUR"
-echo "  Oracle_fxUSD_ETH_mainnet:  $FXUSD_ETH"
-echo "  Oracle_fxUSD_MCAP_mainnet: $FXUSD_MCAP"
-echo "  Oracle_fxUSD_XAU_mainnet:  $FXUSD_XAU"
+echo "  Aggregator_fxUSD_BTC_mainnet:  $FXUSD_BTC"
+echo "  Aggregator_fxUSD_EUR_mainnet:  $FXUSD_EUR"
+echo "  Aggregator_fxUSD_ETH_mainnet:  $FXUSD_ETH"
+echo "  Aggregator_fxUSD_MCAP_mainnet: $FXUSD_MCAP"
+echo "  Aggregator_fxUSD_XAU_mainnet:  $FXUSD_XAU"
 echo ""
 echo "stETH Oracles:"
-echo "  Oracle_stETH_BTC_mainnet:  $STETH_BTC"
-echo "  Oracle_stETH_EUR_mainnet:  $STETH_EUR"
-echo "  Oracle_stETH_MCAP_mainnet: $STETH_MCAP"
-echo "  Oracle_stETH_XAU_mainnet:  $STETH_XAU"
+echo "  Aggregator_stETH_BTC_mainnet:  $STETH_BTC"
+echo "  Aggregator_stETH_EUR_mainnet:  $STETH_EUR"
+echo "  Aggregator_stETH_MCAP_mainnet: $STETH_MCAP"
+echo "  Aggregator_stETH_XAU_mainnet:  $STETH_XAU"
 echo ""
 echo "State saved to: $STATE_FILE"
 echo ""
@@ -227,15 +227,15 @@ if [[ -n "$ETHERSCAN_API_KEY" ]]; then
   echo "=== Verifying Contracts on Etherscan ==="
   echo ""
   
-  verify_contract "Oracle_fxUSD_BTC_mainnet" "src/Oracle_fxUSD_BTC_mainnet.sol:Oracle_fxUSD_BTC_mainnet" "$FXUSD_BTC"
-  verify_contract "Oracle_fxUSD_EUR_mainnet" "src/Oracle_fxUSD_EUR_mainnet.sol:Oracle_fxUSD_EUR_mainnet" "$FXUSD_EUR"
-  verify_contract "Oracle_fxUSD_ETH_mainnet" "src/Oracle_fxUSD_ETH_mainnet.sol:Oracle_fxUSD_ETH_mainnet" "$FXUSD_ETH"
-  verify_contract "Oracle_fxUSD_MCAP_mainnet" "src/Oracle_fxUSD_MCAP_mainnet.sol:Oracle_fxUSD_MCAP_mainnet" "$FXUSD_MCAP"
-  verify_contract "Oracle_fxUSD_XAU_mainnet" "src/Oracle_fxUSD_XAU_mainnet.sol:Oracle_fxUSD_XAU_mainnet" "$FXUSD_XAU"
-  verify_contract "Oracle_stETH_BTC_mainnet" "src/Oracle_stETH_BTC_mainnet.sol:Oracle_stETH_BTC_mainnet" "$STETH_BTC"
-  verify_contract "Oracle_stETH_EUR_mainnet" "src/Oracle_stETH_EUR_mainnet.sol:Oracle_stETH_EUR_mainnet" "$STETH_EUR"
-  verify_contract "Oracle_stETH_MCAP_mainnet" "src/Oracle_stETH_MCAP_mainnet.sol:Oracle_stETH_MCAP_mainnet" "$STETH_MCAP"
-  verify_contract "Oracle_stETH_XAU_mainnet" "src/Oracle_stETH_XAU_mainnet.sol:Oracle_stETH_XAU_mainnet" "$STETH_XAU"
+  verify_contract "Aggregator_fxUSD_BTC_mainnet" "src/Aggregator_fxUSD_BTC_mainnet.sol:Aggregator_fxUSD_BTC_mainnet" "$FXUSD_BTC"
+  verify_contract "Aggregator_fxUSD_EUR_mainnet" "src/Aggregator_fxUSD_EUR_mainnet.sol:Aggregator_fxUSD_EUR_mainnet" "$FXUSD_EUR"
+  verify_contract "Aggregator_fxUSD_ETH_mainnet" "src/Aggregator_fxUSD_ETH_mainnet.sol:Aggregator_fxUSD_ETH_mainnet" "$FXUSD_ETH"
+  verify_contract "Aggregator_fxUSD_MCAP_mainnet" "src/Aggregator_fxUSD_MCAP_mainnet.sol:Aggregator_fxUSD_MCAP_mainnet" "$FXUSD_MCAP"
+  verify_contract "Aggregator_fxUSD_XAU_mainnet" "src/Aggregator_fxUSD_XAU_mainnet.sol:Aggregator_fxUSD_XAU_mainnet" "$FXUSD_XAU"
+  verify_contract "Aggregator_stETH_BTC_mainnet" "src/Aggregator_stETH_BTC_mainnet.sol:Aggregator_stETH_BTC_mainnet" "$STETH_BTC"
+  verify_contract "Aggregator_stETH_EUR_mainnet" "src/Aggregator_stETH_EUR_mainnet.sol:Aggregator_stETH_EUR_mainnet" "$STETH_EUR"
+  verify_contract "Aggregator_stETH_MCAP_mainnet" "src/Aggregator_stETH_MCAP_mainnet.sol:Aggregator_stETH_MCAP_mainnet" "$STETH_MCAP"
+  verify_contract "Aggregator_stETH_XAU_mainnet" "src/Aggregator_stETH_XAU_mainnet.sol:Aggregator_stETH_XAU_mainnet" "$STETH_XAU"
 else
   echo ""
   echo "ℹ️  To verify contracts on Etherscan, set ETHERSCAN_API_KEY environment variable"

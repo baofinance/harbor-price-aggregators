@@ -2,17 +2,22 @@
 pragma solidity 0.8.30;
 
 import {Test, console} from "forge-std/Test.sol";
-import {Oracle_stETH_BOM5_base} from "../../src/base/Oracle_stETH_BOM5_base.sol";
+import {Aggregator_stETH_BOM5_base} from "../../src/base/Aggregator_stETH_BOM5_base.sol";
 
 /// @notice Fork tests for Base BOM5 oracle
 /// @dev Run with: forge test --match-path "test/base/*BOM5*.t.sol" --fork-url $base -vvv
 ///      Ensure BASE_RPC_URL environment variable is set in foundry.toml
 contract BaseBOM5OracleForkTest is Test {
-    Oracle_stETH_BOM5_base public oracle;
+    Aggregator_stETH_BOM5_base public oracle;
 
     function setUp() public {
+        // Create fork - skip if RPC URL not available
+        try vm.createSelectFork("base") {} catch {
+            vm.skip(true);
+        }
+
         // Deploy BOM5 oracle
-        oracle = new Oracle_stETH_BOM5_base();
+        oracle = new Aggregator_stETH_BOM5_base();
     }
 
     function test_BOM5_RateAndPrice() public view {
@@ -42,4 +47,3 @@ contract BaseBOM5OracleForkTest is Test {
         console.log("");
     }
 }
-
