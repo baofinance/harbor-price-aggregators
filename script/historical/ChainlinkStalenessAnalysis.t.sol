@@ -5,7 +5,7 @@ import "forge-std/Test.sol";
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
 import {ETH_USD} from "@harbor-price/feeds/chainlink/mainnet/ETH_USD.sol";
 import {BTC_USD} from "@harbor-price/feeds/chainlink/mainnet/BTC_USD.sol";
-import {DeployedAddresses} from "@harbor-test/DeployedAddresses.sol";
+import {DeployedAddresses} from "@harbor-test/historical/DeployedAddresses.sol";
 
 /// @title Chainlink Staleness Analysis
 /// @notice Historical analysis scripts for investigating Chainlink feed staleness patterns.

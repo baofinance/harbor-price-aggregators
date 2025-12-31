@@ -4,15 +4,15 @@ pragma solidity 0.8.30;
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
 import {IFxSAVE} from "@harbor-price/interfaces/IFxSAVE.sol";
 import {IWrappedPriceOracle} from "@harbor-price/interfaces/IWrappedPriceOracle.sol";
-import {HarborAggregator_v3} from "@harbor-price/HarborAggregator_v3.sol";
+import {HarborAggregator_v3} from "@harbor-price/aggregators/HarborAggregator_v3.sol";
 import {FxSaveRateLib} from "@harbor-price/rates/FxSaveRateLib.sol";
 import {SingleFeedPriceLib} from "@harbor-price/prices/SingleFeedPriceLib.sol";
 
-/// @notice fxUSD/MCAP oracle (rate: fxSAVE, price: inverted MCAP/USD).
+/// @notice fxUSD/BTC oracle (rate: fxSAVE, price: inverted BTC/USD).
 /// @dev This is the formula contract; wiring (feeds/addresses) is provided via constructor.
 /// @custom:oz-upgrades-unsafe-allow state-variable-immutable constructor
 // solhint-disable-next-line contract-name-capwords
-contract Aggregator_fxUSD_MCAP is HarborAggregator_v3 {
+contract Aggregator_fxUSD_BTC is HarborAggregator_v3 {
     using FxSaveRateLib for IFxSAVE;
 
     error InvalidAddress(address value);
@@ -55,7 +55,7 @@ contract Aggregator_fxUSD_MCAP is HarborAggregator_v3 {
     }
 
     function _quoteName() internal pure override returns (string memory) {
-        return "MCAP";
+        return "BTC";
     }
 
     /// @inheritdoc IWrappedPriceOracle

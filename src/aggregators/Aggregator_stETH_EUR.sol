@@ -2,17 +2,17 @@
 pragma solidity 0.8.30;
 
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
-import {HarborAggregator_v3} from "@harbor-price/HarborAggregator_v3.sol";
+import {HarborAggregator_v3} from "@harbor-price/aggregators/HarborAggregator_v3.sol";
 import {IWrappedPriceOracle} from "@harbor-price/interfaces/IWrappedPriceOracle.sol";
 import {IWstETH} from "@bao/interfaces/IWstETH.sol";
 import {WstETHRateLib} from "@harbor-price/rates/WstETHRateLib.sol";
 import {DoubleFeedPriceLib} from "@harbor-price/prices/DoubleFeedPriceLib.sol";
 
-/// @notice stETH/MCAP oracle (rate: wstETH, price: (ETH/USD)/(MCAP/USD)).
+/// @notice stETH/EUR oracle (rate: wstETH, price: (ETH/USD)/(EUR/USD)).
 /// @dev This is the formula contract; wiring (feeds/addresses) is provided via constructor.
 /// @custom:oz-upgrades-unsafe-allow state-variable-immutable constructor
 // solhint-disable-next-line contract-name-capwords
-contract Aggregator_stETH_MCAP is HarborAggregator_v3 {
+contract Aggregator_stETH_EUR is HarborAggregator_v3 {
     using WstETHRateLib for IWstETH;
 
     error InvalidAddress(address value);
@@ -66,7 +66,7 @@ contract Aggregator_stETH_MCAP is HarborAggregator_v3 {
     }
 
     function _quoteName() internal pure override returns (string memory) {
-        return "MCAP";
+        return "EUR";
     }
 
     /// @inheritdoc IWrappedPriceOracle

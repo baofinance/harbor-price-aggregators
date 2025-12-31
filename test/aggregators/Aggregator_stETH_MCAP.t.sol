@@ -3,11 +3,11 @@ pragma solidity 0.8.30;
 
 import {DoubleFeedAggregatorTestBase} from "./DoubleFeedAggregatorTestBase.sol";
 import {IHarborPriceAggregatorV3} from "@harbor-price/interfaces/IHarborPriceAggregatorV3.sol";
-import {Aggregator_stETH_XAU} from "@harbor-price/oracles/Aggregator_stETH_XAU.sol";
+import {Aggregator_stETH_MCAP} from "@harbor-price/aggregators/Aggregator_stETH_MCAP.sol";
 
-contract Aggregator_stETH_XAU_Test is DoubleFeedAggregatorTestBase {
+contract Aggregator_stETH_MCAP_Test is DoubleFeedAggregatorTestBase {
     function _contractName() internal pure override returns (string memory) {
-        return type(Aggregator_stETH_XAU).name;
+        return type(Aggregator_stETH_MCAP).name;
     }
 
     function _createAggregator(
@@ -22,7 +22,7 @@ contract Aggregator_stETH_XAU_Test is DoubleFeedAggregatorTestBase {
         return
             IHarborPriceAggregatorV3(
                 address(
-                    new Aggregator_stETH_XAU(
+                    new Aggregator_stETH_MCAP(
                         wsteth,
                         firstFeed,
                         firstHeartbeat,
@@ -36,7 +36,7 @@ contract Aggregator_stETH_XAU_Test is DoubleFeedAggregatorTestBase {
     }
 
     function _createWithZeroWsteth() internal override {
-        new Aggregator_stETH_XAU(
+        new Aggregator_stETH_MCAP(
             address(0),
             address(mockFirstFeed),
             DEFAULT_HEARTBEAT,
@@ -48,7 +48,7 @@ contract Aggregator_stETH_XAU_Test is DoubleFeedAggregatorTestBase {
     }
 
     function _createWithZeroFirstFeed() internal override {
-        new Aggregator_stETH_XAU(
+        new Aggregator_stETH_MCAP(
             address(mockWstETH),
             address(0),
             DEFAULT_HEARTBEAT,
@@ -60,7 +60,7 @@ contract Aggregator_stETH_XAU_Test is DoubleFeedAggregatorTestBase {
     }
 
     function _createWithZeroSecondFeed() internal override {
-        new Aggregator_stETH_XAU(
+        new Aggregator_stETH_MCAP(
             address(mockWstETH),
             address(mockFirstFeed),
             DEFAULT_HEARTBEAT,
@@ -72,7 +72,7 @@ contract Aggregator_stETH_XAU_Test is DoubleFeedAggregatorTestBase {
     }
 
     function _createWithZeroDivisor() internal override {
-        new Aggregator_stETH_XAU(
+        new Aggregator_stETH_MCAP(
             address(mockWstETH),
             address(mockFirstFeed),
             DEFAULT_HEARTBEAT,

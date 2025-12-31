@@ -4,7 +4,7 @@ pragma solidity 0.8.30;
 import "forge-std/Test.sol";
 
 import {IWrappedPriceOracle} from "@harbor-price/interfaces/IWrappedPriceOracle.sol";
-import {DeployedAddresses} from "../DeployedAddresses.sol";
+import {DeployedAddresses} from "./DeployedAddresses.sol";
 import {OracleComparisonBase} from "./OracleComparisonBase.sol";
 
 import {Aggregator_fxUSD_ETH_mainnet} from "@harbor-price/Aggregator_fxUSD_ETH_mainnet.sol";

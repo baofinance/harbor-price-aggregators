@@ -3,7 +3,7 @@ pragma solidity 0.8.30;
 
 import {MainnetRateSources} from "@harbor-price/rates/mainnet/MainnetRateSources.sol";
 import {ETH_USD} from "@harbor-price/feeds/chainlink/mainnet/ETH_USD.sol";
-import {Aggregator_fxUSD_ETH} from "@harbor-price/oracles/Aggregator_fxUSD_ETH.sol";
+import {Aggregator_fxUSD_ETH} from "@harbor-price/aggregators/Aggregator_fxUSD_ETH.sol";
 
 /// @notice Ethereum mainnet fxUSD/ETH oracle.
 /// @dev Hard-coded wiring for mainnet; deploy scripts select this bytecode by chain.

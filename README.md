@@ -4,7 +4,7 @@ Price oracle aggregators for Harbor Protocol.
 
 ## Overview
 
-The v3 aggregators use an immutable architecture: each oracle is a concrete contract with configuration baked in at construction time. Network-specific "wiring" files (`src/Aggregator_*_mainnet.sol`) extend formula contracts (`src/oracles/Aggregator_*.sol`) and pass chain-specific feed addresses and heartbeats to the constructor.
+The v3 aggregators use an immutable architecture: each aggregator is a concrete contract with configuration baked in at construction time. Network-specific "wiring" files (`src/Aggregator_*_mainnet.sol`) extend formula contracts (`src/aggregators/Aggregator_*.sol`) and pass chain-specific feed addresses and heartbeats to the constructor.
 
 **Architecture highlights:**
 
@@ -12,7 +12,9 @@ The v3 aggregators use an immutable architecture: each oracle is a concrete cont
 - **Heartbeat validation**: `ChainlinkFeedLib` validates feed freshness with a 42-second tolerance to account for block timing variance
 - **UUPS Upgradeable**: Proxy pattern via BaoFactory with fixed owner
 
-## Mainnet v3 Oracles
+To add a new aggregator, see [doc/v3-aggregator-authoring-guide.md](doc/v3-aggregator-authoring-guide.md).
+
+## Mainnet v3 Aggregators
 
 | Oracle | Rate Source | Feeds |
 |--------|-------------|-------|
