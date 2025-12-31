@@ -3,7 +3,7 @@ pragma solidity 0.8.30;
 
 import {DoubleFeedAggregatorTestBase} from "./DoubleFeedAggregatorTestBase.sol";
 import {IHarborPriceAggregatorV3} from "@harbor-price/interfaces/IHarborPriceAggregatorV3.sol";
-import {Aggregator_stETH_XAG} from "@harbor-price/oracles/Aggregator_stETH_XAG.sol";
+import {Aggregator_stETH_XAG} from "@harbor-price/aggregators/Aggregator_stETH_XAG.sol";
 
 contract Aggregator_stETH_XAG_Test is DoubleFeedAggregatorTestBase {
     function _contractName() internal pure override returns (string memory) {

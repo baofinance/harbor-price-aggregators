@@ -10,7 +10,7 @@ import {GOOGL_USD} from "@harbor-price/feeds/chainlink/arbitrum/GOOGL_USD.sol";
 import {META_USD} from "@harbor-price/feeds/chainlink/arbitrum/META_USD.sol";
 import {AMZN_USD} from "@harbor-price/feeds/chainlink/arbitrum/AMZN_USD.sol";
 import {NVDA_USD} from "@harbor-price/feeds/chainlink/arbitrum/NVDA_USD.sol";
-import {Aggregator_USDE_MAG7} from "@harbor-price/oracles/arbitrum/Aggregator_USDE_MAG7.sol";
+import {Aggregator_USDE_MAG7} from "@harbor-price/aggregators/arbitrum/Aggregator_USDE_MAG7.sol";
 
 /// @notice Arbitrum USDE/MAG7 oracle.
 /// @dev Hard-coded wiring for Arbitrum; deploy scripts select this bytecode by chain.

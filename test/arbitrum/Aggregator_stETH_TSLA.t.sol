@@ -3,7 +3,7 @@ pragma solidity 0.8.30;
 
 import {ArbitrumDoubleFeedAggregatorTestBase} from "./ArbitrumDoubleFeedAggregatorTestBase.sol";
 import {IHarborPriceAggregatorV3} from "@harbor-price/interfaces/IHarborPriceAggregatorV3.sol";
-import {Aggregator_stETH_TSLA} from "@harbor-price/oracles/arbitrum/Aggregator_stETH_TSLA.sol";
+import {Aggregator_stETH_TSLA} from "@harbor-price/aggregators/arbitrum/Aggregator_stETH_TSLA.sol";
 
 contract Aggregator_stETH_TSLA_Test is ArbitrumDoubleFeedAggregatorTestBase {
     function _contractName() internal pure override returns (string memory) {

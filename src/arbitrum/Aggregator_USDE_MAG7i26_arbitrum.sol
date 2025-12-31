@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.30;
 
-import {ArbitrumConstants} from "@harbor-price/oracles/arbitrum/constants/ArbitrumConstants.sol";
+import {ArbitrumConstants} from "@harbor-price/aggregators/arbitrum/constants/ArbitrumConstants.sol";
 import {SUSDE_USDE} from "@harbor-price/feeds/chainlink/arbitrum/SUSDE_USDE.sol";
 import {USDE_USD} from "@harbor-price/feeds/chainlink/arbitrum/USDE_USD.sol";
 import {AAPL_USD} from "@harbor-price/feeds/chainlink/arbitrum/AAPL_USD.sol";
@@ -11,7 +11,7 @@ import {GOOGL_USD} from "@harbor-price/feeds/chainlink/arbitrum/GOOGL_USD.sol";
 import {META_USD} from "@harbor-price/feeds/chainlink/arbitrum/META_USD.sol";
 import {AMZN_USD} from "@harbor-price/feeds/chainlink/arbitrum/AMZN_USD.sol";
 import {NVDA_USD} from "@harbor-price/feeds/chainlink/arbitrum/NVDA_USD.sol";
-import {Aggregator_USDE_MAG7i26} from "@harbor-price/oracles/arbitrum/Aggregator_USDE_MAG7i26.sol";
+import {Aggregator_USDE_MAG7i26} from "@harbor-price/aggregators/arbitrum/Aggregator_USDE_MAG7i26.sol";
 
 /// @notice Arbitrum USDE/MAG7.i26 oracle.
 /// @dev Hard-coded wiring for Arbitrum; deploy scripts select this bytecode by chain.

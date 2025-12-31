@@ -7,15 +7,15 @@ import {IWrappedPriceOracle} from "@harbor-price/interfaces/IWrappedPriceOracle.
 import {DeployedAddresses} from "./DeployedAddresses.sol";
 import {OracleComparisonBase} from "./OracleComparisonBase.sol";
 
-import {Aggregator_fxUSD_ETH_mainnet} from "@harbor-price/Aggregator_fxUSD_ETH_mainnet.sol";
-import {Aggregator_fxUSD_BTC_mainnet} from "@harbor-price/Aggregator_fxUSD_BTC_mainnet.sol";
-import {Aggregator_fxUSD_EUR_mainnet} from "@harbor-price/Aggregator_fxUSD_EUR_mainnet.sol";
-import {Aggregator_fxUSD_XAU_mainnet} from "@harbor-price/Aggregator_fxUSD_XAU_mainnet.sol";
-import {Aggregator_fxUSD_MCAP_mainnet} from "@harbor-price/Aggregator_fxUSD_MCAP_mainnet.sol";
-import {Aggregator_stETH_BTC_mainnet} from "@harbor-price/Aggregator_stETH_BTC_mainnet.sol";
-import {Aggregator_stETH_EUR_mainnet} from "@harbor-price/Aggregator_stETH_EUR_mainnet.sol";
-import {Aggregator_stETH_XAU_mainnet} from "@harbor-price/Aggregator_stETH_XAU_mainnet.sol";
-import {Aggregator_stETH_MCAP_mainnet} from "@harbor-price/Aggregator_stETH_MCAP_mainnet.sol";
+import {Aggregator_fxUSD_ETH_mainnet} from "@harbor-price/mainnet/Aggregator_fxUSD_ETH_mainnet.sol";
+import {Aggregator_fxUSD_BTC_mainnet} from "@harbor-price/mainnet/Aggregator_fxUSD_BTC_mainnet.sol";
+import {Aggregator_fxUSD_EUR_mainnet} from "@harbor-price/mainnet/Aggregator_fxUSD_EUR_mainnet.sol";
+import {Aggregator_fxUSD_XAU_mainnet} from "@harbor-price/mainnet/Aggregator_fxUSD_XAU_mainnet.sol";
+import {Aggregator_fxUSD_MCAP_mainnet} from "@harbor-price/mainnet/Aggregator_fxUSD_MCAP_mainnet.sol";
+import {Aggregator_stETH_BTC_mainnet} from "@harbor-price/mainnet/Aggregator_stETH_BTC_mainnet.sol";
+import {Aggregator_stETH_EUR_mainnet} from "@harbor-price/mainnet/Aggregator_stETH_EUR_mainnet.sol";
+import {Aggregator_stETH_XAU_mainnet} from "@harbor-price/mainnet/Aggregator_stETH_XAU_mainnet.sol";
+import {Aggregator_stETH_MCAP_mainnet} from "@harbor-price/mainnet/Aggregator_stETH_MCAP_mainnet.sol";
 
 /// @title All Oracle Comparisons
 /// @notice Compares deployed v3 oracles against locally built v3 oracles

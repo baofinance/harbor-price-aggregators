@@ -3,7 +3,7 @@ pragma solidity 0.8.30;
 
 import {ArbitrumMultiFeedSumAggregatorTestBase} from "./ArbitrumMultiFeedSumAggregatorTestBase.sol";
 import {IHarborPriceAggregatorV3} from "@harbor-price/interfaces/IHarborPriceAggregatorV3.sol";
-import {Aggregator_stETH_MAG7} from "@harbor-price/oracles/arbitrum/Aggregator_stETH_MAG7.sol";
+import {Aggregator_stETH_MAG7} from "@harbor-price/aggregators/arbitrum/Aggregator_stETH_MAG7.sol";
 
 contract Aggregator_stETH_MAG7_Test is ArbitrumMultiFeedSumAggregatorTestBase {
     function _contractName() internal pure override returns (string memory) {

@@ -4,7 +4,7 @@ pragma solidity 0.8.30;
 import {SUSDE_USDE} from "@harbor-price/feeds/chainlink/arbitrum/SUSDE_USDE.sol";
 import {USDE_USD} from "@harbor-price/feeds/chainlink/arbitrum/USDE_USD.sol";
 import {GOOGL_USD} from "@harbor-price/feeds/chainlink/arbitrum/GOOGL_USD.sol";
-import {Aggregator_USDE_GOOGL} from "@harbor-price/oracles/arbitrum/Aggregator_USDE_GOOGL.sol";
+import {Aggregator_USDE_GOOGL} from "@harbor-price/aggregators/arbitrum/Aggregator_USDE_GOOGL.sol";
 
 /// @notice Arbitrum USDE/GOOGL oracle.
 /// @dev Hard-coded wiring for Arbitrum; deploy scripts select this bytecode by chain.

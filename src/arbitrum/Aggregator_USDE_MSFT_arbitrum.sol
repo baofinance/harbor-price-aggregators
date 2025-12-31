@@ -4,7 +4,7 @@ pragma solidity 0.8.30;
 import {SUSDE_USDE} from "@harbor-price/feeds/chainlink/arbitrum/SUSDE_USDE.sol";
 import {USDE_USD} from "@harbor-price/feeds/chainlink/arbitrum/USDE_USD.sol";
 import {MSFT_USD} from "@harbor-price/feeds/chainlink/arbitrum/MSFT_USD.sol";
-import {Aggregator_USDE_MSFT} from "@harbor-price/oracles/arbitrum/Aggregator_USDE_MSFT.sol";
+import {Aggregator_USDE_MSFT} from "@harbor-price/aggregators/arbitrum/Aggregator_USDE_MSFT.sol";
 
 /// @notice Arbitrum USDE/MSFT oracle.
 /// @dev Hard-coded wiring for Arbitrum; deploy scripts select this bytecode by chain.

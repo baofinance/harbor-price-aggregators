@@ -4,7 +4,7 @@ pragma solidity 0.8.30;
 import {WSTETH_STETH} from "@harbor-price/feeds/chainlink/arbitrum/WSTETH_STETH.sol";
 import {STETH_USD} from "@harbor-price/feeds/chainlink/arbitrum/STETH_USD.sol";
 import {AAPL_USD} from "@harbor-price/feeds/chainlink/arbitrum/AAPL_USD.sol";
-import {Aggregator_stETH_AAPL} from "@harbor-price/oracles/arbitrum/Aggregator_stETH_AAPL.sol";
+import {Aggregator_stETH_AAPL} from "@harbor-price/aggregators/arbitrum/Aggregator_stETH_AAPL.sol";
 
 /// @notice Arbitrum stETH/AAPL oracle.
 /// @dev Hard-coded wiring for Arbitrum; deploy scripts select this bytecode by chain.

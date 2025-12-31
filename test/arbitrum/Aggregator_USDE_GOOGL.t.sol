@@ -3,7 +3,7 @@ pragma solidity 0.8.30;
 
 import {ArbitrumDoubleFeedAggregatorTestBase} from "./ArbitrumDoubleFeedAggregatorTestBase.sol";
 import {IHarborPriceAggregatorV3} from "@harbor-price/interfaces/IHarborPriceAggregatorV3.sol";
-import {Aggregator_USDE_GOOGL} from "@harbor-price/oracles/arbitrum/Aggregator_USDE_GOOGL.sol";
+import {Aggregator_USDE_GOOGL} from "@harbor-price/aggregators/arbitrum/Aggregator_USDE_GOOGL.sol";
 
 contract Aggregator_USDE_GOOGL_Test is ArbitrumDoubleFeedAggregatorTestBase {
     function _contractName() internal pure override returns (string memory) {

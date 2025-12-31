@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.30;
 
-import {BaseConstants} from "@harbor-price/oracles/base/constants/BaseConstants.sol";
+import {BaseConstants} from "@harbor-price/aggregators/base/constants/BaseConstants.sol";
 import {WSTETH_STETH} from "@harbor-price/feeds/chainlink/base/WSTETH_STETH.sol";
 import {STETH_USD} from "@harbor-price/feeds/chainlink/base/STETH_USD.sol";
 import {DOGE_USD} from "@harbor-price/feeds/chainlink/base/DOGE_USD.sol";
@@ -9,7 +9,7 @@ import {SHIB_USD} from "@harbor-price/feeds/chainlink/base/SHIB_USD.sol";
 import {PEPE_USD} from "@harbor-price/feeds/chainlink/base/PEPE_USD.sol";
 import {TRUMP_USD} from "@harbor-price/feeds/chainlink/base/TRUMP_USD.sol";
 import {WIF_USD} from "@harbor-price/feeds/chainlink/base/WIF_USD.sol";
-import {Aggregator_stETH_BOM5} from "@harbor-price/oracles/base/Aggregator_stETH_BOM5.sol";
+import {Aggregator_stETH_BOM5} from "@harbor-price/aggregators/base/Aggregator_stETH_BOM5.sol";
 
 /// @notice Base stETH/BOM5 oracle.
 /// @dev Hard-coded wiring for Base; deploy scripts select this bytecode by chain.

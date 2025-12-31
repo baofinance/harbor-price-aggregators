@@ -2,7 +2,7 @@
 pragma solidity 0.8.30;
 
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
-import {HarborAggregator_v3} from "@harbor-price/HarborAggregator_v3.sol";
+import {HarborAggregator_v3} from "@harbor-price/aggregators/HarborAggregator_v3.sol";
 import {IWrappedPriceOracle} from "@harbor-price/interfaces/IWrappedPriceOracle.sol";
 import {ChainlinkRateLib} from "@harbor-price/rates/ChainlinkRateLib.sol";
 import {MultiFeedDivPriceLib} from "@harbor-price/prices/MultiFeedDivPriceLib.sol";
