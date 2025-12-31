@@ -37,7 +37,6 @@ abstract contract ArbitrumDoubleFeedAggregatorTestBase is Test {
 
     /// @notice Deploy the aggregator with standard test parameters
     function _createAggregator(
-        string memory baseName,
         address rateFeed,
         address firstFeed,
         uint256 firstHeartbeat,
@@ -112,7 +111,6 @@ abstract contract ArbitrumDoubleFeedAggregatorTestBase is Test {
         mockSecondFeed.setAnswer(200e8, block.timestamp);
 
         aggregator = _createAggregator(
-            _expectedBaseName(),
             address(mockRateFeed),
             address(mockFirstFeed),
             DEFAULT_HEARTBEAT,
@@ -259,7 +257,6 @@ abstract contract ArbitrumDoubleFeedAggregatorTestBase is Test {
     function test_upgrade() public {
         // Deploy impl1 with divisor=1
         IHarborPriceAggregatorV3 impl1 = _createAggregator(
-            _expectedBaseName(),
             address(mockRateFeed),
             address(mockFirstFeed),
             DEFAULT_HEARTBEAT,
@@ -277,7 +274,6 @@ abstract contract ArbitrumDoubleFeedAggregatorTestBase is Test {
 
         // Deploy impl2 with divisor=2 (halves the price)
         IHarborPriceAggregatorV3 impl2 = _createAggregator(
-            _expectedBaseName(),
             address(mockRateFeed),
             address(mockFirstFeed),
             DEFAULT_HEARTBEAT,

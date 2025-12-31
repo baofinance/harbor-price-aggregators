@@ -44,7 +44,6 @@ abstract contract BaseMultiFeedNormalizedAggregatorTestBase is Test {
 
     /// @notice Deploy the aggregator with standard test parameters
     function _createAggregator(
-        string memory baseName,
         address rateFeed,
         address baseUsdFeed,
         uint256 baseUsdFeedHeartbeat,
@@ -137,7 +136,6 @@ abstract contract BaseMultiFeedNormalizedAggregatorTestBase is Test {
         }
 
         aggregator = _createAggregator(
-            _expectedBaseName(),
             address(mockRateFeed),
             address(mockBaseUsdFeed),
             DEFAULT_HEARTBEAT,
@@ -338,7 +336,6 @@ abstract contract BaseMultiFeedNormalizedAggregatorTestBase is Test {
 
         // Deploy impl1
         IHarborPriceAggregatorV3 impl1 = _createAggregator(
-            _expectedBaseName(),
             address(mockRateFeed),
             address(mockBaseUsdFeed),
             DEFAULT_HEARTBEAT,
@@ -355,7 +352,6 @@ abstract contract BaseMultiFeedNormalizedAggregatorTestBase is Test {
 
         // Deploy impl2 (same constructor, but different instance)
         IHarborPriceAggregatorV3 impl2 = _createAggregator(
-            _expectedBaseName(),
             address(mockRateFeed),
             address(mockBaseUsdFeed),
             DEFAULT_HEARTBEAT,

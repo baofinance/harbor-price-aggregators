@@ -50,13 +50,11 @@ contract ArbitrumMAG7OraclesForkTest is Test {
 
     function test_CheckOracleMetadata() public view {
         console.log("=== Oracle Metadata ===");
-        console.log("stETH/MAG7 base:", oracleStETH.base());
         console.log("stETH/MAG7 rateProvider:", oracleStETH.rateProvider());
         console.log("stETH/MAG7 quoteName:", oracleStETH.quoteName());
         console.log("stETH/MAG7 oracleName:", oracleStETH.oracleName());
         console.log("stETH/MAG7 feedCount:", oracleStETH.FEED_COUNT());
         console.log("");
-        console.log("USDE/MAG7 base:", oracleUSDE.base());
         console.log("USDE/MAG7 rateProvider:", oracleUSDE.rateProvider());
         console.log("USDE/MAG7 quoteName:", oracleUSDE.quoteName());
         console.log("USDE/MAG7 oracleName:", oracleUSDE.oracleName());

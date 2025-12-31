@@ -13,7 +13,6 @@ import {Aggregator_stETH_NVDA} from "@harbor-price/oracles/arbitrum/Aggregator_s
 contract Aggregator_stETH_NVDA_arbitrum is Aggregator_stETH_NVDA {
     constructor()
         Aggregator_stETH_NVDA(
-            "stETH", // Base name (stETH doesn't exist as contract on Arbitrum)
             WSTETH_STETH.FEED, // Rate feed (wstETH/stETH)
             STETH_USD.FEED,
             STETH_USD.HEARTBEAT, // First feed heartbeat (stETH/USD)

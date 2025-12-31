@@ -32,7 +32,7 @@ contract BaseBOM5OracleForkTest is Test {
 
     function test_CheckOracleMetadata() public view {
         console.log("=== Oracle Metadata ===");
-        console.log("BOM5 base:", oracle.base());
+        console.log("BOM5 base:", oracle.baseName());
         console.log("BOM5 rateProvider:", oracle.rateProvider());
         console.log("BOM5 quoteName:", oracle.quoteName());
         console.log("BOM5 oracleName:", oracle.oracleName());

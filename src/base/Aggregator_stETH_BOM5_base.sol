@@ -19,7 +19,6 @@ import {Aggregator_stETH_BOM5} from "@harbor-price/oracles/base/Aggregator_stETH
 contract Aggregator_stETH_BOM5_base is Aggregator_stETH_BOM5 {
     constructor()
         Aggregator_stETH_BOM5(
-            "stETH", // Base name (stETH doesn't exist as contract on Base)
             WSTETH_STETH.FEED, // Rate feed
             STETH_USD.FEED,
             STETH_USD.HEARTBEAT, // Base USD feed heartbeat (stETH/USD)

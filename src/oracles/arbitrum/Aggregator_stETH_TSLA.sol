@@ -15,9 +15,6 @@ contract Aggregator_stETH_TSLA is HarborAggregator_v3 {
     error InvalidAddress(address value);
     error InvalidDivisor(uint256 divisor);
 
-    // solhint-disable-next-line var-name-mixedcase
-    string public BASE_NAME;
-
     AggregatorV3Interface public immutable RATE_FEED;
     AggregatorV3Interface public immutable FIRST_FEED;
     uint8 public immutable FIRST_FEED_DECIMALS;
@@ -30,7 +27,6 @@ contract Aggregator_stETH_TSLA is HarborAggregator_v3 {
     bool public immutable INVERT_PRICE;
 
     constructor(
-        string memory baseName_,
         address rateFeed_,
         address firstFeed_,
         uint256 firstHeartbeat_,
@@ -44,7 +40,6 @@ contract Aggregator_stETH_TSLA is HarborAggregator_v3 {
         if (secondFeed_ == address(0)) revert InvalidAddress(secondFeed_);
         if (priceDivisor_ == 0) revert InvalidDivisor(priceDivisor_);
 
-        BASE_NAME = baseName_;
         RATE_FEED = AggregatorV3Interface(rateFeed_);
 
         FIRST_FEED = AggregatorV3Interface(firstFeed_);
@@ -56,10 +51,6 @@ contract Aggregator_stETH_TSLA is HarborAggregator_v3 {
 
         PRICE_DIVISOR = priceDivisor_;
         INVERT_PRICE = invertPrice_;
-    }
-
-    function base() external view returns (string memory) {
-        return BASE_NAME;
     }
 
     function rateProvider() external view returns (address) {

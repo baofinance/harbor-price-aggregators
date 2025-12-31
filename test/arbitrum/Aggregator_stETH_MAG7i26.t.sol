@@ -11,7 +11,6 @@ contract Aggregator_stETH_MAG7i26_Test is ArbitrumMultiFeedIndexAggregatorTestBa
     }
 
     function _createAggregator(
-        string memory baseName,
         address rateFeed,
         address baseUsdFeed,
         uint256 baseUsdFeedHeartbeat,
@@ -27,14 +26,7 @@ contract Aggregator_stETH_MAG7i26_Test is ArbitrumMultiFeedIndexAggregatorTestBa
         return
             IHarborPriceAggregatorV3(
                 address(
-                    new Aggregator_stETH_MAG7i26(
-                        baseName,
-                        rateFeed,
-                        baseUsdFeed,
-                        baseUsdFeedHeartbeat,
-                        indexPrice,
-                        feedConfigs
-                    )
+                    new Aggregator_stETH_MAG7i26(rateFeed, baseUsdFeed, baseUsdFeedHeartbeat, indexPrice, feedConfigs)
                 )
             );
     }
@@ -52,14 +44,7 @@ contract Aggregator_stETH_MAG7i26_Test is ArbitrumMultiFeedIndexAggregatorTestBa
             feedConfigs[i] = Aggregator_stETH_MAG7i26.FeedConfig({feed: feedAddrs[i], heartbeat: feedHeartbeats_[i]});
         }
 
-        new Aggregator_stETH_MAG7i26(
-            _expectedBaseName(),
-            address(0),
-            address(mockBaseUsdFeed),
-            DEFAULT_HEARTBEAT,
-            INDEX_PRICE,
-            feedConfigs
-        );
+        new Aggregator_stETH_MAG7i26(address(0), address(mockBaseUsdFeed), DEFAULT_HEARTBEAT, INDEX_PRICE, feedConfigs);
     }
 
     function _createWithZeroBaseUsdFeed() internal override {
@@ -75,14 +60,7 @@ contract Aggregator_stETH_MAG7i26_Test is ArbitrumMultiFeedIndexAggregatorTestBa
             feedConfigs[i] = Aggregator_stETH_MAG7i26.FeedConfig({feed: feedAddrs[i], heartbeat: feedHeartbeats_[i]});
         }
 
-        new Aggregator_stETH_MAG7i26(
-            _expectedBaseName(),
-            address(mockRateFeed),
-            address(0),
-            DEFAULT_HEARTBEAT,
-            INDEX_PRICE,
-            feedConfigs
-        );
+        new Aggregator_stETH_MAG7i26(address(mockRateFeed), address(0), DEFAULT_HEARTBEAT, INDEX_PRICE, feedConfigs);
     }
 
     function _createWithZeroIndexPrice() internal override {
@@ -99,7 +77,6 @@ contract Aggregator_stETH_MAG7i26_Test is ArbitrumMultiFeedIndexAggregatorTestBa
         }
 
         new Aggregator_stETH_MAG7i26(
-            _expectedBaseName(),
             address(mockRateFeed),
             address(mockBaseUsdFeed),
             DEFAULT_HEARTBEAT,
@@ -126,7 +103,6 @@ contract Aggregator_stETH_MAG7i26_Test is ArbitrumMultiFeedIndexAggregatorTestBa
         }
 
         new Aggregator_stETH_MAG7i26(
-            _expectedBaseName(),
             address(mockRateFeed),
             address(mockBaseUsdFeed),
             DEFAULT_HEARTBEAT,

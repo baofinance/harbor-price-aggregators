@@ -13,7 +13,6 @@ import {Aggregator_USDE_MSFT} from "@harbor-price/oracles/arbitrum/Aggregator_US
 contract Aggregator_USDE_MSFT_arbitrum is Aggregator_USDE_MSFT {
     constructor()
         Aggregator_USDE_MSFT(
-            "USDE", // Base name (USDE doesn't exist as contract on Arbitrum)
             SUSDE_USDE.FEED, // Rate feed (sUSDE/USDE)
             USDE_USD.FEED,
             USDE_USD.HEARTBEAT, // First feed heartbeat (USDE/USD)

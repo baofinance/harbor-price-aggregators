@@ -52,13 +52,11 @@ contract ArbitrumMAG7i26OraclesForkTest is Test {
 
     function test_CheckOracleMetadata() public view {
         console.log("=== Oracle Metadata ===");
-        console.log("stETH/MAG7.i26 base:", oracleStETH.base());
         console.log("stETH/MAG7.i26 rateProvider:", oracleStETH.rateProvider());
         console.log("stETH/MAG7.i26 quoteName:", oracleStETH.quoteName());
         console.log("stETH/MAG7.i26 oracleName:", oracleStETH.oracleName());
         // Note: INDEX_PRICE is now in ArbitrumConstants, not exposed as public
         console.log("");
-        console.log("USDE/MAG7.i26 base:", oracleUSDE.base());
         console.log("USDE/MAG7.i26 rateProvider:", oracleUSDE.rateProvider());
         console.log("USDE/MAG7.i26 quoteName:", oracleUSDE.quoteName());
         console.log("USDE/MAG7.i26 oracleName:", oracleUSDE.oracleName());

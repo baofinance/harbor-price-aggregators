@@ -22,9 +22,6 @@ contract Aggregator_USDE_MAG7i26 is HarborAggregator_v3 {
         uint256 heartbeat;
     }
 
-    // solhint-disable-next-line var-name-mixedcase
-    string public BASE_NAME;
-
     AggregatorV3Interface public immutable RATE_FEED;
     AggregatorV3Interface public immutable BASE_USD_FEED; // USDE/USD feed
     uint8 public immutable BASE_USD_FEED_DECIMALS;
@@ -55,7 +52,6 @@ contract Aggregator_USDE_MAG7i26 is HarborAggregator_v3 {
     uint256 public immutable FEED_6_HEARTBEAT;
 
     constructor(
-        string memory baseName_,
         address rateFeed_,
         address baseUsdFeed_,
         uint256 baseUsdFeedHeartbeat_,
@@ -70,7 +66,6 @@ contract Aggregator_USDE_MAG7i26 is HarborAggregator_v3 {
             if (feedConfigs_[i].feed == address(0)) revert InvalidAddress(feedConfigs_[i].feed);
         }
 
-        BASE_NAME = baseName_;
         RATE_FEED = AggregatorV3Interface(rateFeed_);
         BASE_USD_FEED = AggregatorV3Interface(baseUsdFeed_);
         BASE_USD_FEED_DECIMALS = BASE_USD_FEED.decimals();
@@ -98,10 +93,6 @@ contract Aggregator_USDE_MAG7i26 is HarborAggregator_v3 {
         FEED_6 = AggregatorV3Interface(feedConfigs_[6].feed);
         FEED_6_DECIMALS = FEED_6.decimals();
         FEED_6_HEARTBEAT = feedConfigs_[6].heartbeat;
-    }
-
-    function base() external view returns (string memory) {
-        return BASE_NAME;
     }
 
     function rateProvider() external view returns (address) {

@@ -11,7 +11,6 @@ contract Aggregator_stETH_MAG7_Test is ArbitrumMultiFeedSumAggregatorTestBase {
     }
 
     function _createAggregator(
-        string memory baseName,
         address rateFeed,
         address baseUsdFeed,
         uint256 baseUsdFeedHeartbeat,
@@ -25,7 +24,7 @@ contract Aggregator_stETH_MAG7_Test is ArbitrumMultiFeedSumAggregatorTestBase {
 
         return
             IHarborPriceAggregatorV3(
-                address(new Aggregator_stETH_MAG7(baseName, rateFeed, baseUsdFeed, baseUsdFeedHeartbeat, feedConfigs))
+                address(new Aggregator_stETH_MAG7(rateFeed, baseUsdFeed, baseUsdFeedHeartbeat, feedConfigs))
             );
     }
 
@@ -42,13 +41,7 @@ contract Aggregator_stETH_MAG7_Test is ArbitrumMultiFeedSumAggregatorTestBase {
             feedConfigs[i] = Aggregator_stETH_MAG7.FeedConfig({feed: feedAddrs[i], heartbeat: feedHeartbeats_[i]});
         }
 
-        new Aggregator_stETH_MAG7(
-            _expectedBaseName(),
-            address(0),
-            address(mockBaseUsdFeed),
-            DEFAULT_HEARTBEAT,
-            feedConfigs
-        );
+        new Aggregator_stETH_MAG7(address(0), address(mockBaseUsdFeed), DEFAULT_HEARTBEAT, feedConfigs);
     }
 
     function _createWithZeroBaseUsdFeed() internal override {
@@ -64,13 +57,7 @@ contract Aggregator_stETH_MAG7_Test is ArbitrumMultiFeedSumAggregatorTestBase {
             feedConfigs[i] = Aggregator_stETH_MAG7.FeedConfig({feed: feedAddrs[i], heartbeat: feedHeartbeats_[i]});
         }
 
-        new Aggregator_stETH_MAG7(
-            _expectedBaseName(),
-            address(mockRateFeed),
-            address(0),
-            DEFAULT_HEARTBEAT,
-            feedConfigs
-        );
+        new Aggregator_stETH_MAG7(address(mockRateFeed), address(0), DEFAULT_HEARTBEAT, feedConfigs);
     }
 
     function _createWithZeroFeed(uint256 feedIndex) internal override {
@@ -90,12 +77,6 @@ contract Aggregator_stETH_MAG7_Test is ArbitrumMultiFeedSumAggregatorTestBase {
             feedConfigs[i] = Aggregator_stETH_MAG7.FeedConfig({feed: feedAddrs[i], heartbeat: feedHeartbeats_[i]});
         }
 
-        new Aggregator_stETH_MAG7(
-            _expectedBaseName(),
-            address(mockRateFeed),
-            address(mockBaseUsdFeed),
-            DEFAULT_HEARTBEAT,
-            feedConfigs
-        );
+        new Aggregator_stETH_MAG7(address(mockRateFeed), address(mockBaseUsdFeed), DEFAULT_HEARTBEAT, feedConfigs);
     }
 }

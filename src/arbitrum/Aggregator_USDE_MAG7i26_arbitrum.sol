@@ -20,7 +20,6 @@ import {Aggregator_USDE_MAG7i26} from "@harbor-price/oracles/arbitrum/Aggregator
 contract Aggregator_USDE_MAG7i26_arbitrum is Aggregator_USDE_MAG7i26 {
     constructor()
         Aggregator_USDE_MAG7i26(
-            "USDE", // Base name
             SUSDE_USDE.FEED, // Rate feed (sUSDE/USDE)
             USDE_USD.FEED, // Base USD feed
             USDE_USD.HEARTBEAT, // Base USD feed heartbeat

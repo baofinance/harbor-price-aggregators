@@ -24,9 +24,6 @@ contract Aggregator_stETH_BOM5 is HarborAggregator_v3 {
         uint256 normFactor;
     }
 
-    // solhint-disable-next-line var-name-mixedcase
-    string public BASE_NAME;
-
     AggregatorV3Interface public immutable RATE_FEED;
     AggregatorV3Interface public immutable BASE_USD_FEED; // stETH/USD feed
     uint8 public immutable BASE_USD_FEED_DECIMALS;
@@ -59,7 +56,6 @@ contract Aggregator_stETH_BOM5 is HarborAggregator_v3 {
     uint256 public constant FEED_COUNT = 5;
 
     constructor(
-        string memory baseName_,
         address rateFeed_,
         address baseUsdFeed_,
         uint256 baseUsdFeedHeartbeat_,
@@ -73,7 +69,6 @@ contract Aggregator_stETH_BOM5 is HarborAggregator_v3 {
             if (feedConfigs_[i].normFactor == 0) revert InvalidFeedCount(0);
         }
 
-        BASE_NAME = baseName_;
         RATE_FEED = AggregatorV3Interface(rateFeed_);
         BASE_USD_FEED = AggregatorV3Interface(baseUsdFeed_);
         BASE_USD_FEED_DECIMALS = BASE_USD_FEED.decimals();
@@ -99,10 +94,6 @@ contract Aggregator_stETH_BOM5 is HarborAggregator_v3 {
         FEED_4_DECIMALS = FEED_4.decimals();
         FEED_4_HEARTBEAT = feedConfigs_[4].heartbeat;
         NORM_FACTOR_4 = feedConfigs_[4].normFactor;
-    }
-
-    function base() external view returns (string memory) {
-        return BASE_NAME;
     }
 
     function rateProvider() external view returns (address) {

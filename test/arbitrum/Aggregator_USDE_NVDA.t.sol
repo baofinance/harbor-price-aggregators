@@ -11,7 +11,6 @@ contract Aggregator_USDE_NVDA_Test is ArbitrumDoubleFeedAggregatorTestBase {
     }
 
     function _createAggregator(
-        string memory baseName,
         address rateFeed,
         address firstFeed,
         uint256 firstHeartbeat,
@@ -24,7 +23,6 @@ contract Aggregator_USDE_NVDA_Test is ArbitrumDoubleFeedAggregatorTestBase {
             IHarborPriceAggregatorV3(
                 address(
                     new Aggregator_USDE_NVDA(
-                        baseName,
                         rateFeed,
                         firstFeed,
                         firstHeartbeat,
@@ -39,7 +37,6 @@ contract Aggregator_USDE_NVDA_Test is ArbitrumDoubleFeedAggregatorTestBase {
 
     function _createWithZeroRateFeed() internal override {
         new Aggregator_USDE_NVDA(
-            _expectedBaseName(),
             address(0),
             address(mockFirstFeed),
             DEFAULT_HEARTBEAT,
@@ -52,7 +49,6 @@ contract Aggregator_USDE_NVDA_Test is ArbitrumDoubleFeedAggregatorTestBase {
 
     function _createWithZeroFirstFeed() internal override {
         new Aggregator_USDE_NVDA(
-            _expectedBaseName(),
             address(mockRateFeed),
             address(0),
             DEFAULT_HEARTBEAT,
@@ -65,7 +61,6 @@ contract Aggregator_USDE_NVDA_Test is ArbitrumDoubleFeedAggregatorTestBase {
 
     function _createWithZeroSecondFeed() internal override {
         new Aggregator_USDE_NVDA(
-            _expectedBaseName(),
             address(mockRateFeed),
             address(mockFirstFeed),
             DEFAULT_HEARTBEAT,
@@ -78,7 +73,6 @@ contract Aggregator_USDE_NVDA_Test is ArbitrumDoubleFeedAggregatorTestBase {
 
     function _createWithZeroDivisor() internal override {
         new Aggregator_USDE_NVDA(
-            _expectedBaseName(),
             address(mockRateFeed),
             address(mockFirstFeed),
             DEFAULT_HEARTBEAT,

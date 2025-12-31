@@ -134,7 +134,6 @@ contract ArbitrumUSDEOraclesForkTest is Test {
 
     function test_CheckOracleMetadata() public view {
         console.log("=== Oracle Metadata ===");
-        console.log("AAPL base:", oracleAAPL.base());
         console.log("AAPL rateProvider:", oracleAAPL.rateProvider());
         console.log("AAPL quoteName:", oracleAAPL.quoteName());
         console.log("AAPL oracleName:", oracleAAPL.oracleName());

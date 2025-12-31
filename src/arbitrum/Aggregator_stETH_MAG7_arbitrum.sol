@@ -19,7 +19,6 @@ import {Aggregator_stETH_MAG7} from "@harbor-price/oracles/arbitrum/Aggregator_s
 contract Aggregator_stETH_MAG7_arbitrum is Aggregator_stETH_MAG7 {
     constructor()
         Aggregator_stETH_MAG7(
-            "stETH", // Base name (stETH doesn't exist as contract on Arbitrum)
             WSTETH_STETH.FEED, // Rate feed
             STETH_USD.FEED, // Base USD feed (stETH/USD)
             STETH_USD.HEARTBEAT, // Base USD feed heartbeat

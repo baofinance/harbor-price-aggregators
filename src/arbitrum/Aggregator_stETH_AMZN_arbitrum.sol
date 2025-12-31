@@ -13,7 +13,6 @@ import {Aggregator_stETH_AMZN} from "@harbor-price/oracles/arbitrum/Aggregator_s
 contract Aggregator_stETH_AMZN_arbitrum is Aggregator_stETH_AMZN {
     constructor()
         Aggregator_stETH_AMZN(
-            "stETH", // Base name (stETH doesn't exist as contract on Arbitrum)
             WSTETH_STETH.FEED, // Rate feed (wstETH/stETH)
             STETH_USD.FEED,
             STETH_USD.HEARTBEAT, // First feed heartbeat (stETH/USD)

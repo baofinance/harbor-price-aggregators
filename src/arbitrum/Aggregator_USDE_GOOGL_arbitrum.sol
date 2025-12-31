@@ -13,7 +13,6 @@ import {Aggregator_USDE_GOOGL} from "@harbor-price/oracles/arbitrum/Aggregator_U
 contract Aggregator_USDE_GOOGL_arbitrum is Aggregator_USDE_GOOGL {
     constructor()
         Aggregator_USDE_GOOGL(
-            "USDE", // Base name (USDE doesn't exist as contract on Arbitrum)
             SUSDE_USDE.FEED, // Rate feed (sUSDE/USDE)
             USDE_USD.FEED,
             USDE_USD.HEARTBEAT, // First feed heartbeat (USDE/USD)

@@ -13,7 +13,6 @@ import {Aggregator_USDE_META} from "@harbor-price/oracles/arbitrum/Aggregator_US
 contract Aggregator_USDE_META_arbitrum is Aggregator_USDE_META {
     constructor()
         Aggregator_USDE_META(
-            "USDE", // Base name (USDE doesn't exist as contract on Arbitrum)
             SUSDE_USDE.FEED, // Rate feed (sUSDE/USDE)
             USDE_USD.FEED,
             USDE_USD.HEARTBEAT, // First feed heartbeat (USDE/USD)
