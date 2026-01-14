@@ -70,6 +70,30 @@
       "contractSource": "src/mainnet/Aggregator_stETH_XAU_mainnet.sol",
       "contractType": "Aggregator_stETH_XAU_mainnet",
       "deploymentTime": "2025-12-31T09:42:41Z"
+    },
+    "0x102daaC2055BcD48026bC180ccC13e779E1a8516": {
+      "pair": "fxUSD/GOLD",
+      "contractSource": "src/mainnet/Aggregator_fxUSD_GOLD_mainnet.sol",
+      "contractType": "Aggregator_fxUSD_GOLD_mainnet",
+      "deploymentTime": "2026-01-14T13:21:14Z"
+    },
+    "0xDb1D0f6ABb300136399b684213B1078556C47698": {
+      "pair": "fxUSD/SILVER",
+      "contractSource": "src/mainnet/Aggregator_fxUSD_SILVER_mainnet.sol",
+      "contractType": "Aggregator_fxUSD_SILVER_mainnet",
+      "deploymentTime": "2026-01-14T13:21:38Z"
+    },
+    "0x80e63F7b320CB820659CEa1cBdc7C1b35fe1a72C": {
+      "pair": "stETH/GOLD",
+      "contractSource": "src/mainnet/Aggregator_stETH_GOLD_mainnet.sol",
+      "contractType": "Aggregator_stETH_GOLD_mainnet",
+      "deploymentTime": "2026-01-14T13:21:50Z"
+    },
+    "0x99fC4A92FaA72DEb2C3329E4ddDc4C783A9ef6F5": {
+      "pair": "stETH/SILVER",
+      "contractSource": "src/mainnet/Aggregator_stETH_SILVER_mainnet.sol",
+      "contractType": "Aggregator_stETH_SILVER_mainnet",
+      "deploymentTime": "2026-01-14T13:22:02Z"
     }
   },
   "proxies": {
@@ -138,6 +162,30 @@
       "implementation": "0x863C1185470b3D2d3E9D5FbB82e7837de081F46c",
       "salt": "harbor_v1::stETH::XAU::wrappedPriceAggregator",
       "deploymentTime": "2026-01-03T13:05:38Z"
+    },
+    "fxUSD/GOLD": {
+      "address": "0x1f7F62889E599E51b9e21B27d589Fa521516D147",
+      "implementation": "0x102daaC2055BcD48026bC180ccC13e779E1a8516",
+      "salt": "harbor_v1::fxUSD::GOLD::wrappedPriceAggregator",
+      "deploymentTime": "2026-01-14T13:25:28Z"
+    },
+    "fxUSD/SILVER": {
+      "address": "0x14816ff286f2eA46AB48c3275401Fd4b1ef817B5",
+      "implementation": "0xDb1D0f6ABb300136399b684213B1078556C47698",
+      "salt": "harbor_v1::fxUSD::SILVER::wrappedPriceAggregator",
+      "deploymentTime": "2026-01-14T13:25:40Z"
+    },
+    "stETH/GOLD": {
+      "address": "0x4ebde6143C5E366264ba7416FdEa18BC27C04A31",
+      "implementation": "0x80e63F7b320CB820659CEa1cBdc7C1b35fe1a72C",
+      "salt": "harbor_v1::stETH::GOLD::wrappedPriceAggregator",
+      "deploymentTime": "2026-01-14T13:25:52Z"
+    },
+    "stETH/SILVER": {
+      "address": "0x7223E17bD4527AcbE44644300eA0F09A4AeBC995",
+      "implementation": "0x99fC4A92FaA72DEb2C3329E4ddDc4C783A9ef6F5",
+      "salt": "harbor_v1::stETH::SILVER::wrappedPriceAggregator",
+      "deploymentTime": "2026-01-14T13:26:05Z"
     }
   }
 }

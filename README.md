@@ -16,47 +16,49 @@ To add a new aggregator, see [doc/v3-aggregator-authoring-guide.md](doc/v3-aggre
 
 ## Mainnet v3 Aggregators
 
-| Oracle | Rate Source | Feeds |
-|--------|-------------|-------|
-| fxUSD/ETH | fxSAVE | ETH/USD (inverted) |
-| fxUSD/BTC | fxSAVE | BTC/USD |
-| fxUSD/EUR | fxSAVE | EUR/USD (inverted) |
-| fxUSD/XAU | fxSAVE | XAU/USD |
-| fxUSD/MCAP | fxSAVE | MCAP/USD |
-| stETH/BTC | wstETH | ETH/USD, BTC/USD |
-| stETH/EUR | wstETH | ETH/USD, EUR/USD (inverted) |
-| stETH/XAU | wstETH | ETH/USD, XAU/USD |
-| stETH/MCAP | wstETH | ETH/USD, MCAP/USD |
+| Pair         | Oracle | Rate Source                 | Feeds |
+| ------------ | ------ | --------------------------- | ----- |
+| fxUSD/ETH    | fxSAVE | ETH/USD (inverted)          |
+| fxUSD/BTC    | fxSAVE | BTC/USD                     |
+| fxUSD/EUR    | fxSAVE | EUR/USD (inverted)          |
+| fxUSD/GOLD   | fxSAVE | XAU/USD                     |
+| fxUSD/MCAP   | fxSAVE | MCAP/USD                    |
+| fxUSD/SILVER | fxSAVE | XAG/USD                     |
+| stETH/BTC    | wstETH | ETH/USD, BTC/USD            |
+| stETH/EUR    | wstETH | ETH/USD, EUR/USD (inverted) |
+| stETH/GOLD   | wstETH | ETH/USD, XAU/USD            |
+| stETH/MCAP   | wstETH | ETH/USD, MCAP/USD           |
+| stETH/SILVER | wstETH | ETH/USD, XAG/USD            |
 
 ## Arbitrum v3 Oracles
 
-| Oracle | Rate Source | Feeds |
-|--------|-------------|-------|
-| USDE/AAPL | sUSDE/USDE (Chainlink) | USDE/USD, AAPL/USD |
-| USDE/AMZN | sUSDE/USDE (Chainlink) | USDE/USD, AMZN/USD |
-| USDE/GOOGL | sUSDE/USDE (Chainlink) | USDE/USD, GOOGL/USD |
-| USDE/META | sUSDE/USDE (Chainlink) | USDE/USD, META/USD |
-| USDE/MSFT | sUSDE/USDE (Chainlink) | USDE/USD, MSFT/USD |
-| USDE/NVDA | sUSDE/USDE (Chainlink) | USDE/USD, NVDA/USD |
-| USDE/SPY | sUSDE/USDE (Chainlink) | USDE/USD, SPY/USD |
-| USDE/TSLA | sUSDE/USDE (Chainlink) | USDE/USD, TSLA/USD |
-| USDE/MAG7 | sUSDE/USDE (Chainlink) | USDE/USD, (AAPL+MSFT+TSLA+GOOGL+META+AMZN+NVDA)/7 |
-| USDE/MAG7.i26 | sUSDE/USDE (Chainlink) | USDE/USD, (AAPL+MSFT+TSLA+GOOGL+META+AMZN+NVDA)/index_price |
-| stETH/AAPL | wstETH/stETH (Chainlink) | stETH/USD, AAPL/USD |
-| stETH/AMZN | wstETH/stETH (Chainlink) | stETH/USD, AMZN/USD |
-| stETH/GOOGL | wstETH/stETH (Chainlink) | stETH/USD, GOOGL/USD |
-| stETH/META | wstETH/stETH (Chainlink) | stETH/USD, META/USD |
-| stETH/MSFT | wstETH/stETH (Chainlink) | stETH/USD, MSFT/USD |
-| stETH/NVDA | wstETH/stETH (Chainlink) | stETH/USD, NVDA/USD |
-| stETH/SPY | wstETH/stETH (Chainlink) | stETH/USD, SPY/USD |
-| stETH/TSLA | wstETH/stETH (Chainlink) | stETH/USD, TSLA/USD |
-| stETH/MAG7 | wstETH/stETH (Chainlink) | stETH/USD, (AAPL+MSFT+TSLA+GOOGL+META+AMZN+NVDA)/7 |
+| Oracle         | Rate Source              | Feeds                                                        |
+| -------------- | ------------------------ | ------------------------------------------------------------ |
+| USDE/AAPL      | sUSDE/USDE (Chainlink)   | USDE/USD, AAPL/USD                                           |
+| USDE/AMZN      | sUSDE/USDE (Chainlink)   | USDE/USD, AMZN/USD                                           |
+| USDE/GOOGL     | sUSDE/USDE (Chainlink)   | USDE/USD, GOOGL/USD                                          |
+| USDE/META      | sUSDE/USDE (Chainlink)   | USDE/USD, META/USD                                           |
+| USDE/MSFT      | sUSDE/USDE (Chainlink)   | USDE/USD, MSFT/USD                                           |
+| USDE/NVDA      | sUSDE/USDE (Chainlink)   | USDE/USD, NVDA/USD                                           |
+| USDE/SPY       | sUSDE/USDE (Chainlink)   | USDE/USD, SPY/USD                                            |
+| USDE/TSLA      | sUSDE/USDE (Chainlink)   | USDE/USD, TSLA/USD                                           |
+| USDE/MAG7      | sUSDE/USDE (Chainlink)   | USDE/USD, (AAPL+MSFT+TSLA+GOOGL+META+AMZN+NVDA)/7            |
+| USDE/MAG7.i26  | sUSDE/USDE (Chainlink)   | USDE/USD, (AAPL+MSFT+TSLA+GOOGL+META+AMZN+NVDA)/index_price  |
+| stETH/AAPL     | wstETH/stETH (Chainlink) | stETH/USD, AAPL/USD                                          |
+| stETH/AMZN     | wstETH/stETH (Chainlink) | stETH/USD, AMZN/USD                                          |
+| stETH/GOOGL    | wstETH/stETH (Chainlink) | stETH/USD, GOOGL/USD                                         |
+| stETH/META     | wstETH/stETH (Chainlink) | stETH/USD, META/USD                                          |
+| stETH/MSFT     | wstETH/stETH (Chainlink) | stETH/USD, MSFT/USD                                          |
+| stETH/NVDA     | wstETH/stETH (Chainlink) | stETH/USD, NVDA/USD                                          |
+| stETH/SPY      | wstETH/stETH (Chainlink) | stETH/USD, SPY/USD                                           |
+| stETH/TSLA     | wstETH/stETH (Chainlink) | stETH/USD, TSLA/USD                                          |
+| stETH/MAG7     | wstETH/stETH (Chainlink) | stETH/USD, (AAPL+MSFT+TSLA+GOOGL+META+AMZN+NVDA)/7           |
 | stETH/MAG7.i26 | wstETH/stETH (Chainlink) | stETH/USD, (AAPL+MSFT+TSLA+GOOGL+META+AMZN+NVDA)/index_price |
 
 ## Base v3 Oracles
 
-| Oracle | Rate Source | Feeds |
-|--------|-------------|-------|
+| Oracle     | Rate Source              | Feeds                                                         |
+| ---------- | ------------------------ | ------------------------------------------------------------- |
 | stETH/BOM5 | wstETH/stETH (Chainlink) | stETH/USD, normalized average of (DOGE+SHIB+PEPE+TRUMP+WIF)/5 |
 
 ## Installation
@@ -68,6 +70,11 @@ foundryup
 
 # Install dependencies
 forge install
+
+yarn
+
+uv sync
+
 ```
 
 ## Testing
@@ -75,7 +82,8 @@ forge install
 Run all tests:
 
 ```bash
-forge test
+yarn test
+
 ```
 
 Run tests for specific chains:
@@ -98,6 +106,10 @@ forge test --match-path "test/base/*Fork.t.sol" --fork-url $base -vvv
 ```
 
 **Note:** Make sure to set `ARBITRUM_RPC_URL`, `BASE_RPC_URL`, and `MAINNET_RPC_URL` in your `.env` file for fork tests. See `test/arbitrum/README.md` and `test/base/README.md` for detailed testing information.
+
+## Deployment
+
+For deploying and verifying aggregator implementations and proxies, see [script/README.md](script/README.md).
 
 ## Off-chain market data (offchain_feeds)
 
@@ -328,9 +340,11 @@ Deploy all Arbitrum v3 oracle contracts (direct deployments, no proxies):
 This will deploy 20 v3 oracle contracts (immutable contracts with hardcoded wiring):
 
 **USDE oracles (10):**
+
 - USDE/AAPL, USDE/AMZN, USDE/GOOGL, USDE/META, USDE/MSFT, USDE/NVDA, USDE/SPY, USDE/TSLA, USDE/MAG7, USDE/MAG7.i26
 
 **stETH oracles (10):**
+
 - stETH/AAPL, stETH/AMZN, stETH/GOOGL, stETH/META, stETH/MSFT, stETH/NVDA, stETH/SPY, stETH/TSLA, stETH/MAG7, stETH/MAG7.i26
 
 **Requirements:**

@@ -14,13 +14,13 @@ set -euo pipefail
 ORACLES=(
   "fxUSD|ETH"
   "fxUSD|BTC"
-  "fxUSD|EUR"
-  "fxUSD|XAU"
-  "fxUSD|MCAP"
-  "stETH|BTC"
-  "stETH|EUR"
-  "stETH|XAU"
-  "stETH|MCAP"
+  # "fxUSD|EUR"
+  # "fxUSD|XAU"
+  # "fxUSD|MCAP"
+  # "stETH|BTC"
+  # "stETH|EUR"
+  # "stETH|XAU"
+  # "stETH|MCAP"
 )
 
 SINGLE_SCRIPT="script/deploy-one-aggregator"
@@ -47,6 +47,48 @@ echo "║  Single: $SINGLE_SCRIPT"
 echo "║  Args:   $*"
 box_line
 echo ""
+
+# Extract mode and other values from args
+MODE=""
+NETWORK=""
+ACCOUNT_NAME=""
+ETHERSCAN_API_KEY=""
+SALT_PREFIX="harbor_v1"
+USE_LOCAL=false
+args=("$@")
+for ((i = 0; i < ${#args[@]}; i++)); do
+  case "${args[i]}" in
+    --deploy) MODE="deploy" ;;
+    --deploy-impl) MODE="deploy-impl" ;;
+    --check) MODE="check" ;;
+    --verify) MODE="verify" ;;
+    --verify-impl) MODE="verify-impl" ;;
+    --account) ACCOUNT_NAME="${args[i + 1]:-}" ;;
+    --network) NETWORK="${args[i + 1]:-}" ;;
+    --salt) SALT_PREFIX="${args[i + 1]:-}" ;;
+    --etherscan-api-key) ETHERSCAN_API_KEY="${args[i + 1]:-}" ;;
+    --local) USE_LOCAL=true ;;
+  esac
+done
+
+# Validate mode-specific requirements
+if [[ "$MODE" == "check" ]]; then
+  if [[ -z "$ETHERSCAN_API_KEY" ]] && [[ "$USE_LOCAL" == false ]]; then
+    echo "❌ --etherscan-api-key is required for --check mode (unless --local)" >&2
+    exit 1
+  fi
+  if [[ -n "$ACCOUNT_NAME" ]]; then
+    echo "❌ --account should not be specified for --check mode" >&2
+    exit 1
+  fi
+fi
+
+# Only prompt for password on modes that need signing
+if [[ -n "$ACCOUNT_NAME" ]] && [[ "$MODE" == "deploy" || "$MODE" == "deploy-impl" ]]; then
+  read -s -p "Enter password for account '$ACCOUNT_NAME': " PASSWORD
+  echo ""
+  set -- "$@" --password "$PASSWORD"
+fi
 
 oracle_count=${#ORACLES[@]}
 
@@ -120,3 +162,104 @@ echo ""
 box_line
 echo "║  ✅ All $oracle_count aggregators completed successfully"
 box_line
+
+# Generate markdown documentation after --check
+if [[ "$MODE" == "check" ]]; then
+  # Determine state file path in deployments/{network}/ with salt suffix
+  if [[ "$USE_LOCAL" == true ]]; then
+    STATE_DIR="deployments/local"
+  else
+    STATE_DIR="deployments/${NETWORK}"
+  fi
+  if [[ "$SALT_PREFIX" == "harbor_v1" ]]; then
+    STATE_FILE="${STATE_DIR}/v3-oracles.json"
+  else
+    STATE_FILE="${STATE_DIR}/v3-oracles-${SALT_PREFIX}.json"
+  fi
+
+  if [[ -f "$STATE_FILE" ]]; then
+    # Generate markdown documentation
+    md_file="${STATE_FILE%.json}.md"
+    network_name=$(jq -r '.network' "$STATE_FILE")
+    chain_id=$(jq -r '.chainId' "$STATE_FILE")
+
+    case "$network_name" in
+      mainnet) explorer_url="https://etherscan.io" ;;
+      arbitrum) explorer_url="https://arbiscan.io" ;;
+      base) explorer_url="https://basescan.org" ;;
+      *) explorer_url="https://etherscan.io" ;;
+    esac
+
+    # Check proxy verification status
+    check_proxy_status() {
+      local address="$1"
+      local api_key="$2"
+      local cid="$3"
+      if [[ -z "$api_key" ]]; then
+        echo ""
+        return
+      fi
+      local abi_response abi_status source_tick
+      abi_response=$(curl -s "https://api.etherscan.io/v2/api?chainid=${cid}&module=contract&action=getabi&address=${address}&apikey=${api_key}")
+      abi_status=$(echo "$abi_response" | jq -r '.status')
+      if [[ "$abi_status" == "1" ]]; then source_tick='<span title="Source verified">✓</span>'; else source_tick='<span title="Source not verified">✗</span>'; fi
+      local src_response result_count
+      src_response=$(curl -s "https://api.etherscan.io/v2/api?chainid=${cid}&module=contract&action=getsourcecode&address=${address}&apikey=${api_key}")
+      result_count=$(echo "$src_response" | jq '.result | length')
+      if [[ "$result_count" != "1" ]]; then
+        echo " ${source_tick}<span title=\"API error\">⚠⚠</span>"
+        return
+      fi
+      local implementation impl_tick
+      implementation=$(echo "$src_response" | jq -r '.result[0].Implementation')
+      if [[ -n "$implementation" && "$implementation" != "null" && "$implementation" != "" ]]; then impl_tick='<span title="Implementation linked">✓</span>'; else impl_tick='<span title="Implementation not linked">✗</span>'; fi
+      local proxy_flag proxy_tick
+      proxy_flag=$(echo "$src_response" | jq -r '.result[0].Proxy')
+      if [[ "$proxy_flag" == "1" ]]; then proxy_tick='<span title="Proxy flag set">✓</span>'; else proxy_tick='<span title="Proxy flag not set">✗</span>'; fi
+      echo " ${source_tick}${impl_tick}${proxy_tick}"
+    }
+
+    check_impl_status() {
+      local address="$1"
+      local api_key="$2"
+      local cid="$3"
+      if [[ -z "$api_key" ]]; then
+        echo ""
+        return
+      fi
+      local response status
+      response=$(curl -s "https://api.etherscan.io/v2/api?chainid=${cid}&module=contract&action=getabi&address=${address}&apikey=${api_key}")
+      status=$(echo "$response" | jq -r '.status')
+      if [[ "$status" == "1" ]]; then echo ' <span title="Source verified">✓</span>'; else echo ' <span title="Source not verified">✗</span>'; fi
+    }
+
+    {
+      echo "# Harbor v3 Oracle Deployment Addresses"
+      echo ""
+      echo "Network: ${network_name} (chainId: ${chain_id})"
+      echo ""
+      echo "Generated: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+      echo ""
+      echo "## Proxies"
+      echo ""
+      jq -r '.proxies | to_entries | sort_by(.key) | .[] | "\(.key)\t\(.value.address)\t\(.value.implementation)"' "$STATE_FILE" |
+        while IFS=$'\t' read -r key proxy_addr impl_addr; do
+          proxy_status=$(check_proxy_status "$proxy_addr" "$ETHERSCAN_API_KEY" "$chain_id")
+          impl_status=$(check_impl_status "$impl_addr" "$ETHERSCAN_API_KEY" "$chain_id")
+          echo "- [${key}](${explorer_url}/address/${proxy_addr}#code)"
+          echo "  - [[verify proxy](${explorer_url}/proxyContractChecker?a=${proxy_addr})]${proxy_status} [[implementation](${explorer_url}/address/${impl_addr}#code)]${impl_status}"
+        done
+      echo ""
+      echo "## Implementations"
+      echo ""
+      jq -r '.implementations | to_entries | sort_by(.value.contractName) | .[] | "\(.value.contractName)\t\(.key)"' "$STATE_FILE" |
+        while IFS=$'\t' read -r contract_name impl_addr; do
+          impl_status=$(check_impl_status "$impl_addr" "$ETHERSCAN_API_KEY" "$chain_id")
+          echo "- [${contract_name}](${explorer_url}/address/${impl_addr}#code)${impl_status}"
+        done
+    } >"$md_file"
+
+    echo ""
+    echo "  Markdown: $md_file"
+  fi
+fi

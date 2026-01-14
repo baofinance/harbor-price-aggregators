@@ -44,13 +44,6 @@ State file:
 EOF
 }
 
-require_project_root() {
-  if [[ ! -f "foundry.toml" ]] || [[ ! -d "src" ]] || [[ ! -d "script" ]]; then
-    echo "❌ Must be run from the project root (missing foundry.toml/src/script)" >&2
-    exit 1
-  fi
-}
-
 FORGE=forge
 CAST=cast
 
@@ -67,6 +60,7 @@ NETWORK=""
 USE_LOCAL=false
 SALT_PREFIX="harbor_v1"
 ACCOUNT_NAME=""
+PASSWORD=""
 MODE=""
 ETHERSCAN_API_KEY=""
 
@@ -93,6 +87,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --account)
       ACCOUNT_NAME=${2:-}
+      shift 2
+      ;;
+    --password)
+      PASSWORD=${2:-}
       shift 2
       ;;
     --etherscan-api-key)
@@ -144,7 +142,10 @@ while [[ $# -gt 0 ]]; do
 
 done
 
-require_project_root
+if [[ ! -f "foundry.toml" ]] || [[ ! -d "src" ]] || [[ ! -d "script" ]]; then
+  echo "❌ Must be run from the project root (missing foundry.toml/src/script)" >&2
+  exit 1
+fi
 
 if [[ -z "$NETWORK" ]]; then
   echo "❌ Missing --network" >&2
@@ -225,6 +226,9 @@ fi
 SIGNER_ARGS=()
 if [[ -n "$ACCOUNT_NAME" ]]; then
   SIGNER_ARGS=(--account "$ACCOUNT_NAME")
+  if [[ -n "$PASSWORD" ]]; then
+    SIGNER_ARGS+=(--password "$PASSWORD")
+  fi
 elif [[ "$USE_LOCAL" == true ]]; then
   SIGNER_ARGS=(--private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80)
 fi
@@ -255,26 +259,24 @@ if [[ "$CHAIN_ID" != "$EXPECTED_CHAIN_ID" ]]; then
   exit 1
 fi
 
-# Set state file path (suffix with -local when using local anvil)
+# Set state file path in deployments/{network}/ with salt suffix when not default
 if [[ "$USE_LOCAL" == true ]]; then
-  STATE_FILE="deployment-state-v3-local.json"
+  STATE_DIR="deployments/local"
 else
-  STATE_FILE="deployment-state-v3-${NETWORK}.json"
+  STATE_DIR="deployments/${NETWORK}"
+fi
+mkdir -p "$STATE_DIR"
+if [[ "$SALT_PREFIX" == "harbor_v1" ]]; then
+  STATE_FILE="${STATE_DIR}/v3-oracles.json"
+else
+  STATE_FILE="${STATE_DIR}/v3-oracles-${SALT_PREFIX}.json"
 fi
 
+# Only resolve DEPLOYER for modes that need it (deploy, deploy-impl)
 DEPLOYER=""
-if [[ -n "$ACCOUNT_NAME" ]]; then
-  DEPLOYER=$("$CAST" wallet address --account "$ACCOUNT_NAME")
-elif [[ "$USE_LOCAL" == true ]]; then
-  DEPLOYER=$("$CAST" wallet address --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80)
-else
-  DEPLOYER=""
+if [[ "$MODE" == "deploy" || "$MODE" == "deploy-impl" ]] && [[ ${#SIGNER_ARGS[@]} -gt 0 ]]; then
+  DEPLOYER=$("$CAST" wallet address "${SIGNER_ARGS[@]}")
 fi
-
-predict_address() {
-  local salt_b32=$1
-  "$CAST" call "$BAO_FACTORY" "predictAddress(bytes32)(address)" "$salt_b32" --rpc-url "$RPC_NETWORK"
-}
 
 has_code() {
   local addr=$1
@@ -309,7 +311,8 @@ init_state_file() {
     return
   fi
   if [[ ! -f "$STATE_FILE" ]]; then
-    jq -n \
+    local base_obj
+    base_obj=$(jq -n \
       --arg version "$STATE_VERSION" \
       --arg network "$NETWORK" \
       --arg chainId "$CHAIN_ID" \
@@ -321,7 +324,14 @@ init_state_file() {
         baoFactory: $baoFactory,
         implementations: {},
         proxies: {}
-      }' >"$STATE_FILE"
+      }')
+    
+    # Add saltPrefix only if not the default
+    if [[ "$SALT_PREFIX" != "harbor_v1" ]]; then
+      base_obj=$(echo "$base_obj" | jq --arg salt "$SALT_PREFIX" '. + {saltPrefix: $salt}')
+    fi
+    
+    echo "$base_obj" >"$STATE_FILE"
   fi
 }
 
@@ -454,7 +464,7 @@ echo ""
 salt_str="${SALT_PREFIX}::${BASE}::${QUOTE}::wrappedPriceAggregator"
 salt_b32=$("$CAST" keccak "$("$CAST" from-utf8 "$salt_str")")
 
-predicted=$(predict_address "$salt_b32")
+predicted=$("$CAST" call "$BAO_FACTORY" "predictAddress(bytes32)(address)" "$salt_b32" --rpc-url "$RPC_NETWORK")
 
 if [[ "$MODE" == "check" ]]; then
   echo "── Check ────────────────────────────────────────"
@@ -565,13 +575,7 @@ if [[ "$MODE" == "verify" ]]; then
     exit 1
   fi
 
-  echo "── Verify All ───────────────────────────────────"
-
-  verify_impl_args=("$0" --rpc-url "$RPC_NETWORK" --salt "$SALT_PREFIX" --base "$BASE" --quote "$QUOTE" --etherscan-api-key "$ETHERSCAN_API_KEY" --verify-impl)
-
-  if [[ -n "$ACCOUNT_NAME" ]]; then
-    verify_impl_args+=(--account "$ACCOUNT_NAME")
-  fi
+  verify_impl_args=("$0" --network "$NETWORK" --salt "$SALT_PREFIX" --base "$BASE" --quote "$QUOTE" --etherscan-api-key "$ETHERSCAN_API_KEY" "${SIGNER_ARGS[@]}" --verify-impl)
   "${verify_impl_args[@]}"
 
   echo ""
@@ -723,7 +727,7 @@ while [[ $attempt -lt $max_attempts ]]; do
     fi
   fi
   sleep 1
-  ((attempt++))
+  ((++attempt))
 done
 
 if [[ $attempt -ge $max_attempts ]]; then
