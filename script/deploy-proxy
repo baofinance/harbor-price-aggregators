@@ -1,0 +1,312 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Deploy proxy contract(s) for Harbor v3 aggregators via BaoFactory CREATE3
+#
+# This script:
+#   1. Reads implementation address from state file
+#   2. Deploys ERC1967 proxy via BaoFactory.deploy()
+#   3. Records proxy in state file
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/lib/common.sh"
+
+usage() {
+  cat <<EOF
+Usage:
+  $0 --network <network> --account <account> [--local] [--copy-network] [--salt <prefix>] <pair> [<pair>...]
+  $0 --network <network> --account <account> [--local] [--copy-network] [--salt <prefix>] --use-state-file
+
+Arguments:
+  <pair>           One or more pairs in BASE/QUOTE format (e.g., fxUSD/ETH stETH/BTC)
+
+Options:
+  --network        Required. Network name (mainnet, arbitrum, base)
+  --account        Required for non-local. Foundry keystore account name
+  --local          Use local anvil RPC (test key, no password prompt)
+  --copy-network   With --local: copy network state to local before deploying
+  --salt           Salt prefix for CREATE3 (default: harbor_v1)
+  --use-state-file Deploy proxies for all implementations without proxies in state file
+
+Examples:
+  $0 --network mainnet --account deployer fxUSD/ETH
+  $0 --network mainnet --account deployer --use-state-file
+  $0 --network mainnet --local --use-state-file
+  $0 --network mainnet --local --copy-network --use-state-file
+
+State file:
+  Production: deployments/<network>/v3-aggregators.json
+  Local:      deployments/local/<network>/v3-aggregators.json
+EOF
+}
+
+# ── Argument parsing ───────────────────────────────────────────────────────
+
+NETWORK=""
+ACCOUNT_NAME=""
+USE_LOCAL=false
+COPY_NETWORK=false
+SALT_PREFIX="harbor_v1"
+USE_STATE_FILE=false
+PAIRS=()
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --network) NETWORK=${2:-}; shift 2 ;;
+    --account) ACCOUNT_NAME=${2:-}; shift 2 ;;
+    --local) USE_LOCAL=true; shift ;;
+    --copy-network) COPY_NETWORK=true; shift ;;
+    --salt) SALT_PREFIX=${2:-}; shift 2 ;;
+    --use-state-file) USE_STATE_FILE=true; shift ;;
+    -h | --help) usage; exit 0 ;;
+    -*) echo "❌ Unknown option: $1" >&2; usage >&2; exit 1 ;;
+    *) PAIRS+=("$1"); shift ;;
+  esac
+done
+
+# ── Validation ─────────────────────────────────────────────────────────────
+
+check_project_root
+
+if [[ -z "$NETWORK" ]]; then
+  echo "❌ Missing --network" >&2
+  usage >&2
+  exit 1
+fi
+
+if [[ "$USE_LOCAL" != true ]] && [[ -z "$ACCOUNT_NAME" ]]; then
+  echo "❌ --account is required for non-local deployments" >&2
+  exit 1
+fi
+
+if [[ "$COPY_NETWORK" == true ]] && [[ "$USE_LOCAL" != true ]]; then
+  echo "❌ --copy-network requires --local" >&2
+  exit 1
+fi
+
+if [[ ${#PAIRS[@]} -eq 0 ]] && [[ "$USE_STATE_FILE" != true ]]; then
+  echo "❌ No pairs specified. Use --use-state-file to deploy all pending proxies." >&2
+  usage >&2
+  exit 1
+fi
+
+if [[ ${#PAIRS[@]} -gt 0 ]] && [[ "$USE_STATE_FILE" == true ]]; then
+  echo "❌ Cannot specify both pairs and --use-state-file" >&2
+  exit 1
+fi
+
+# ── Initialize ─────────────────────────────────────────────────────────────
+
+init_rpc "$NETWORK" "$USE_LOCAL"
+
+# Copy network state to local if --copy-network specified
+if [[ "$COPY_NETWORK" == true ]]; then
+  copy_network_state "$NETWORK" "$SALT_PREFIX"
+fi
+
+init_state_file "$NETWORK" "$SALT_PREFIX" "$USE_LOCAL"
+init_signer "$USE_LOCAL" "$ACCOUNT_NAME"
+
+DEPLOYER=$("$CAST" wallet address "${SIGNER_ARGS[@]}")
+
+# ── Load pairs from state file if requested ────────────────────────────────
+
+if [[ "$USE_STATE_FILE" == true ]]; then
+  # Get all unique pairs that have implementations
+  impl_pairs=$(get_implementation_pairs "$STATE_FILE")
+  proxy_keys=$(get_proxy_pairs "$STATE_FILE")
+
+  for pair in $impl_pairs; do
+    if ! echo "$proxy_keys" | grep -qx "$pair"; then
+      PAIRS+=("$pair")
+    fi
+  done
+
+  if [[ ${#PAIRS[@]} -eq 0 ]]; then
+    echo "✅ All implementations already have proxies deployed."
+    exit 0
+  fi
+
+  echo "Found ${#PAIRS[@]} implementation(s) without proxies:"
+  for pair in "${PAIRS[@]}"; do
+    echo "  - $pair"
+  done
+  echo ""
+fi
+
+# Validate pairs have implementations in state
+for pair in "${PAIRS[@]}"; do
+  impl_addr=$(find_implementation_for_pair "$STATE_FILE" "$pair")
+  if [[ -z "$impl_addr" ]]; then
+    echo "❌ No implementation found in state for: $pair" >&2
+    echo "   Run deploy-impl first." >&2
+    exit 1
+  fi
+done
+
+# ── Check for already deployed proxies ─────────────────────────────────────
+
+pairs_to_deploy=()
+pairs_already_deployed=()
+
+for pair in "${PAIRS[@]}"; do
+  IFS='/' read -r base quote <<<"$pair"
+  proxy=$(predict_proxy_address "$base" "$quote" "$SALT_PREFIX")
+  if has_code "$proxy"; then
+    pairs_already_deployed+=("$pair|$proxy")
+  else
+    pairs_to_deploy+=("$pair")
+  fi
+done
+
+echo ""
+echo "═══════════════════════════════════════════════════════════"
+echo "  DEPLOY PROXY"
+echo "  Network:  $NETWORK (chainId: $CHAIN_ID)"
+echo "  Salt:     $SALT_PREFIX"
+echo "  Deployer: $DEPLOYER"
+echo "  State:    $STATE_FILE"
+echo "═══════════════════════════════════════════════════════════"
+echo ""
+
+if [[ ${#pairs_already_deployed[@]} -gt 0 ]]; then
+  echo "⚠ The following pairs already have proxies deployed:"
+  for entry in "${pairs_already_deployed[@]}"; do
+    IFS='|' read -r pair proxy <<<"$entry"
+    echo "  - $pair → $proxy"
+  done
+  echo ""
+fi
+
+if [[ ${#pairs_to_deploy[@]} -eq 0 ]]; then
+  echo "✅ All requested proxies are already deployed."
+  exit 0
+fi
+
+echo "Will deploy proxies for:"
+for pair in "${pairs_to_deploy[@]}"; do
+  echo "  - $pair"
+done
+echo ""
+
+read -p "Continue? [y/N] " -n 1 -r
+echo ""
+if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+  echo "Aborted."
+  exit 0
+fi
+echo ""
+
+# ── Check operator status ──────────────────────────────────────────────────
+
+ensure_bao_operator "$DEPLOYER" "$USE_LOCAL"
+echo ""
+
+# ── Main ───────────────────────────────────────────────────────────────────
+
+deployed_count=0
+failed_count=0
+
+for pair in "${pairs_to_deploy[@]}"; do
+  IFS='/' read -r base quote <<<"$pair"
+
+  echo "── $pair ────────────────────────────────────────"
+
+  # Get implementation from state (find by pair, returns address)
+  impl_addr=$(find_implementation_for_pair "$STATE_FILE" "$pair")
+  echo "  Implementation: $impl_addr"
+
+  # Calculate salt and predicted address
+  salt_str="${SALT_PREFIX}::${base}::${quote}::wrappedPriceAggregator"
+  salt_b32=$("$CAST" keccak "$("$CAST" from-utf8 "$salt_str")")
+  predicted=$(predict_proxy_address "$base" "$quote" "$SALT_PREFIX")
+
+  echo "  Salt:      $salt_str"
+  echo "  Predicted: $predicted"
+
+  # Build proxy bytecode
+  init_data="0x"
+  proxy_bytecode=$("$FORGE" inspect ERC1967Proxy bytecode)
+  proxy_args=$("$CAST" abi-encode "constructor(address,bytes)" "$impl_addr" "$init_data")
+  init_code="${proxy_bytecode}${proxy_args:2}"
+
+  echo "  Deploying proxy..."
+
+  if ! tx=$("$CAST" send "$BAO_FACTORY" "deploy(bytes,bytes32)(address)" "$init_code" "$salt_b32" \
+    --rpc-url "$RPC_NETWORK" "${SIGNER_ARGS[@]}" --json 2>&1); then
+    echo "  ❌ Deployment failed:" >&2
+    echo "$tx" | sed 's/^/     /' >&2
+    ((++failed_count))
+    echo ""
+    continue
+  fi
+
+  tx_hash=$(jq -r '.transactionHash // empty' <<<"$tx" 2>/dev/null)
+  if [[ -z "$tx_hash" ]]; then
+    echo "  ❌ Failed to get transaction hash" >&2
+    ((++failed_count))
+    echo ""
+    continue
+  fi
+  echo "  ✓ Tx: $tx_hash"
+
+  # Wait for confirmation
+  echo "  ⏳ Waiting for confirmation..."
+  max_attempts=60
+  attempt=0
+  while [[ $attempt -lt $max_attempts ]]; do
+    if receipt=$("$CAST" receipt "$tx_hash" --rpc-url "$RPC_NETWORK" --json 2>/dev/null); then
+      status=$(jq -r '.status // empty' <<<"$receipt" 2>/dev/null)
+      if [[ "$status" == "0x1" ]] || [[ "$status" == "1" ]]; then
+        block=$(jq -r '.blockNumber // empty' <<<"$receipt" 2>/dev/null)
+        echo "  ✓ Confirmed in block $block"
+        break
+      elif [[ "$status" == "0x0" ]] || [[ "$status" == "0" ]]; then
+        echo "  ❌ Transaction reverted" >&2
+        ((++failed_count))
+        echo ""
+        continue 2
+      fi
+    fi
+    sleep 1
+    ((++attempt))
+  done
+
+  if [[ $attempt -ge $max_attempts ]]; then
+    echo "  ❌ Timeout waiting for confirmation" >&2
+    ((++failed_count))
+    echo ""
+    continue
+  fi
+
+  # Verify deployment
+  if ! has_code "$predicted"; then
+    echo "  ❌ No code at predicted address after deployment" >&2
+    ((++failed_count))
+    echo ""
+    continue
+  fi
+
+  echo "  ✓ Deployed: $predicted"
+  ((++deployed_count))
+
+  # Record in state
+  record_proxy "$STATE_FILE" "$pair" "$predicted" "$impl_addr" "$salt_str"
+  echo "  ✓ Recorded in state"
+
+  echo ""
+done
+
+# ── Summary ────────────────────────────────────────────────────────────────
+
+echo "═══════════════════════════════════════════════════════════"
+echo "  SUMMARY"
+echo "═══════════════════════════════════════════════════════════"
+echo "  Deployed: $deployed_count"
+echo "  Skipped:  ${#pairs_already_deployed[@]} (already deployed)"
+echo "  Failed:   $failed_count"
+echo ""
+
+if [[ "$failed_count" -gt 0 ]]; then
+  exit 1
+fi

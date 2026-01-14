@@ -1,0 +1,215 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Migrate v3-oracles.json (old format) to v3-aggregators.json (new format)
+#
+# Old format:
+#   {
+#     "schemaVersion": 1,
+#     "chainId": 1,
+#     "chainName": "Mainnet",
+#     "oracles": { "FXUSD_ETH": { "name": "fxUSD/ETH", "address": "0x...", "contractPath": "..." } }
+#   }
+#
+# New format:
+#   {
+#     "schemaVersion": 1,
+#     "version": "v3",
+#     "network": "mainnet",
+#     "chainId": 1,
+#     "baoFactory": "0x...",
+#     "implementations": {
+#       "fxUSD/ETH": {
+#         "address": "0x...",
+#         "contractSource": "src/mainnet/Aggregator_fxUSD_ETH_mainnet.sol",
+#         "contractType": "Aggregator_fxUSD_ETH_mainnet",
+#         "deploymentTime": "2025-12-31T09:42:41Z"
+#       }
+#     },
+#     "proxies": {}
+#   }
+#
+# Note: Keys use BASE/QUOTE format (e.g., "fxUSD/ETH", "USDE/MAG7.i26")
+# Note: proxies section starts empty. Entries are added by deploy-proxy when proxies are deployed.
+
+usage() {
+  cat <<EOF
+Usage:
+  $0 --network <network> [--salt <prefix>] [--update] [--dry-run]
+
+Options:
+  --network    Required. Network name (mainnet, arbitrum, base)
+  --salt       Salt prefix for CREATE3 addresses (default: harbor_v1)
+  --update     Overwrite existing v3-aggregators.json if it exists
+  --dry-run    Print the new state file without writing
+
+Reads:  deployments/<network>/v3-oracles.json
+Writes: deployments/<network>/v3-aggregators.json
+Backup: deployments/<network>/v3-oracles.json.bak
+EOF
+}
+
+BAO_FACTORY=0xD696E56b3A054734d4C6DCBD32E11a278b0EC458
+
+NETWORK=""
+SALT_PREFIX="harbor_v1"
+DRY_RUN=false
+UPDATE=false
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --network)
+      NETWORK=${2:-}
+      shift 2
+      ;;
+    --salt)
+      SALT_PREFIX=${2:-}
+      shift 2
+      ;;
+    --update)
+      UPDATE=true
+      shift
+      ;;
+    --dry-run)
+      DRY_RUN=true
+      shift
+      ;;
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    *)
+      echo "❌ Unknown option: $1" >&2
+      usage >&2
+      exit 1
+      ;;
+  esac
+done
+
+if [[ -z "$NETWORK" ]]; then
+  echo "❌ Missing --network" >&2
+  usage >&2
+  exit 1
+fi
+
+OLD_FILE="deployments/${NETWORK}/v3-oracles.json"
+NEW_FILE="deployments/${NETWORK}/v3-aggregators.json"
+
+if [[ ! -f "$OLD_FILE" ]]; then
+  echo "❌ Old state file not found: $OLD_FILE" >&2
+  exit 1
+fi
+
+if [[ -f "$NEW_FILE" && "$UPDATE" != true ]]; then
+  echo "❌ New state file already exists: $NEW_FILE" >&2
+  echo "   Use --update to overwrite, or remove it first." >&2
+  exit 1
+fi
+
+echo "Migrating: $OLD_FILE → $NEW_FILE"
+echo ""
+
+# Read old file
+old_chain_id=$(jq -r '.chainId' "$OLD_FILE")
+old_deployment_time=$(jq -r '.deploymentTime // ""' "$OLD_FILE")
+
+# Normalize network name (Mainnet → mainnet, Arbitrum → arbitrum, Base → base)
+case "$NETWORK" in
+  mainnet | Mainnet) network_name="mainnet" ;;
+  arbitrum | Arbitrum) network_name="arbitrum" ;;
+  base | Base) network_name="base" ;;
+  *) network_name=$(echo "$NETWORK" | tr '[:upper:]' '[:lower:]') ;;
+esac
+
+echo "Network: $network_name (chainId: $old_chain_id)"
+echo "Salt prefix: $SALT_PREFIX"
+echo ""
+
+# Build new state file
+new_state=$(jq -n \
+  --argjson schemaVersion 1 \
+  --arg version "v3" \
+  --arg network "$network_name" \
+  --argjson chainId "$old_chain_id" \
+  --arg baoFactory "$BAO_FACTORY" \
+  '{
+    schemaVersion: $schemaVersion,
+    version: $version,
+    network: $network,
+    chainId: $chainId,
+    baoFactory: $baoFactory,
+    implementations: {},
+    proxies: {}
+  }')
+
+# Add salt prefix if not default
+if [[ "$SALT_PREFIX" != "harbor_v1" ]]; then
+  new_state=$(echo "$new_state" | jq --arg salt "$SALT_PREFIX" '. + {saltPrefix: $salt}')
+fi
+
+# Process each oracle from old file
+oracle_keys=$(jq -r '.oracles | keys[]' "$OLD_FILE")
+
+for old_key in $oracle_keys; do
+  echo "Processing: $old_key"
+
+  # Read old oracle data
+  old_name=$(jq -r ".oracles[\"$old_key\"].name" "$OLD_FILE")
+  old_address=$(jq -r ".oracles[\"$old_key\"].address" "$OLD_FILE")
+  old_contract_path=$(jq -r ".oracles[\"$old_key\"].contractPath" "$OLD_FILE")
+
+  # Parse BASE/QUOTE from name (e.g., "fxUSD/ETH" → fxUSD, ETH)
+  IFS='/' read -r base quote <<<"$old_name"
+
+  # Key is the human-readable pair (e.g., "fxUSD/ETH", "USDE/MAG7.i26")
+  new_key="$old_name"
+
+  # For file names, convert to underscore format and strip dots
+  # (dots aren't valid in Solidity identifiers)
+  base_file="${base//./}"
+  quote_file="${quote//./}"
+  contract_type="Aggregator_${base_file}_${quote_file}_${network_name}"
+  contract_source_file="src/${network_name}/${contract_type}.sol"
+
+  echo "  Key: $old_key → $new_key"
+  echo "  Address: $old_address"
+  echo "  Source: $contract_source_file"
+  echo "  Type: $contract_type"
+
+  # Verify source file exists
+  if [[ ! -f "$contract_source_file" ]]; then
+    echo "  ⚠ WARNING: Source file not found: $contract_source_file"
+  fi
+
+  # Add to implementations (keyed by address, proxies added by deploy-proxy when deployed)
+  new_state=$(echo "$new_state" | jq \
+    --arg addr "$old_address" \
+    --arg pair "$new_key" \
+    --arg src "$contract_source_file" \
+    --arg ctype "$contract_type" \
+    --arg deployTime "$old_deployment_time" \
+    '.implementations[$addr] = {pair: $pair, contractSource: $src, contractType: $ctype, deploymentTime: $deployTime}')
+
+  echo ""
+done
+
+# Pretty print
+new_state=$(echo "$new_state" | jq '.')
+
+if [[ "$DRY_RUN" == true ]]; then
+  echo "═══════════════════════════════════════════════════════════"
+  echo "DRY RUN - New state file would be:"
+  echo "═══════════════════════════════════════════════════════════"
+  echo "$new_state"
+else
+  # Write new file
+  echo "$new_state" >"$NEW_FILE"
+  echo "Created: $NEW_FILE"
+
+  echo ""
+  echo "✅ Migration complete"
+  echo ""
+  echo "Next steps:"
+  echo "  1. Review the new state file"
+  echo "  2. Deploy proxies: ./script/deploy-proxy --network $network_name --account <account> <pairs...>"
+fi

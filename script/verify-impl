@@ -1,0 +1,182 @@
+ #!/usr/bin/env bash
+set -euo pipefail
+
+# Verify implementation contract(s) on Etherscan
+#
+# This script:
+#   1. Reads implementation(s) from state file
+#   2. Verifies each on Etherscan via forge verify-contract
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/lib/common.sh"
+
+usage() {
+  cat <<EOF
+Usage:
+  $0 --network <network> [options] [<pair>...]
+
+Arguments:
+  <pair>           One or more pairs in BASE/QUOTE format (e.g., fxUSD/ETH)
+
+Options:
+  --network        Required. Network name (mainnet, arbitrum, base)
+  --use-state-file Verify all implementations in state file
+  --salt           Salt prefix (default: harbor_v1). Affects state file lookup.
+  --local          Dry run: use local state file, print commands without executing
+
+Examples:
+  $0 --network mainnet --use-state-file           # Verify all
+  $0 --network mainnet --use-state-file --local   # Print commands only (uses local state)
+  $0 --network mainnet fxUSD/ETH                  # Verify specific pair
+  $0 --network arbitrum USDE/ETH USDE/BTC         # Verify multiple pairs
+
+State file:
+  Production: deployments/<network>/v3-aggregators.json
+  Local:      deployments/local/<network>/v3-aggregators.json
+EOF
+}
+
+# ── Argument parsing ───────────────────────────────────────────────────────
+
+NETWORK=""
+SALT_PREFIX="harbor_v1"
+USE_STATE_FILE=false
+DRY_RUN=false
+PAIRS=()
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --network) NETWORK=${2:-}; shift 2 ;;
+    --salt) SALT_PREFIX=${2:-}; shift 2 ;;
+    --use-state-file) USE_STATE_FILE=true; shift ;;
+    --local) DRY_RUN=true; shift ;;
+    -h | --help) usage; exit 0 ;;
+    -*) echo "❌ Unknown option: $1" >&2; usage >&2; exit 1 ;;
+    *) PAIRS+=("$1"); shift ;;
+  esac
+done
+
+# ── Validation ─────────────────────────────────────────────────────────────
+
+check_project_root
+
+if [[ -z "$NETWORK" ]]; then
+  echo "❌ Missing --network" >&2
+  usage >&2
+  exit 1
+fi
+
+if [[ "$USE_STATE_FILE" == false && ${#PAIRS[@]} -eq 0 ]]; then
+  echo "❌ Specify pairs or use --use-state-file" >&2
+  usage >&2
+  exit 1
+fi
+
+if [[ "$USE_STATE_FILE" == true && ${#PAIRS[@]} -gt 0 ]]; then
+  echo "❌ Cannot combine --use-state-file with explicit pairs" >&2
+  exit 1
+fi
+
+# ── Initialize ─────────────────────────────────────────────────────────────
+
+init_rpc "$NETWORK" "$DRY_RUN"
+init_state_file "$NETWORK" "$SALT_PREFIX" "$DRY_RUN"
+
+# ── Build list of (address, pair) to verify ────────────────────────────────
+
+declare -A IMPL_MAP  # address -> pair
+
+if [[ "$USE_STATE_FILE" == true ]]; then
+  while IFS= read -r addr; do
+    [[ -z "$addr" ]] && continue
+    pair=$(get_implementation_info "$STATE_FILE" "$addr" pair)
+    IMPL_MAP["$addr"]="$pair"
+  done < <(get_implementation_addresses "$STATE_FILE")
+else
+  for pair in "${PAIRS[@]}"; do
+    validate_pair_format "$pair" || exit 1
+    addr=$(find_implementation_for_pair "$STATE_FILE" "$pair")
+    if [[ -z "$addr" ]]; then
+      echo "❌ No implementation found for pair: $pair" >&2
+      exit 1
+    fi
+    IMPL_MAP["$addr"]="$pair"
+  done
+fi
+
+if [[ ${#IMPL_MAP[@]} -eq 0 ]]; then
+  echo "ℹ No implementations to verify."
+  exit 0
+fi
+
+# ── Banner ─────────────────────────────────────────────────────────────────
+
+echo ""
+echo "═══════════════════════════════════════════════════════════"
+echo "  VERIFY IMPLEMENTATIONS"
+echo "  Network: $NETWORK (chainId: $CHAIN_ID)"
+echo "  State:   $STATE_FILE"
+echo "  Count:   ${#IMPL_MAP[@]}"
+if [[ "$DRY_RUN" == true ]]; then
+  echo "  Mode:    DRY RUN (commands only)"
+fi
+echo "═══════════════════════════════════════════════════════════"
+echo ""
+
+# ── Verify each implementation ─────────────────────────────────────────────
+
+total=0
+success=0
+failed=0
+
+for addr in "${!IMPL_MAP[@]}"; do
+  pair="${IMPL_MAP[$addr]}"
+  total=$((total + 1))
+
+  read -r _ _ contract_id < <(get_contract_details "$pair" "$NETWORK")
+
+  echo "── $pair ────────────────────────────────────────"
+  echo "  Address:  $addr"
+  echo "  Contract: $contract_id"
+
+  if [[ "$DRY_RUN" == true ]]; then
+    echo ""
+    echo "  forge verify-contract \\"
+    echo "    $addr \\"
+    echo "    $contract_id \\"
+    echo "    --chain $NETWORK \\"
+    echo "    --watch"
+    echo ""
+    success=$((success + 1))
+    continue
+  fi
+
+  # Check code exists
+  if ! has_code "$addr"; then
+    echo "  ❌ No code at address"
+    failed=$((failed + 1))
+    continue
+  fi
+
+  if verify_contract "$addr" "$contract_id" "$NETWORK"; then
+    success=$((success + 1))
+  else
+    failed=$((failed + 1))
+  fi
+
+  sleep 1
+  echo ""
+done
+
+# ── Summary ────────────────────────────────────────────────────────────────
+
+echo "═══════════════════════════════════════════════════════════"
+echo "  SUMMARY"
+echo "  Total:   $total"
+echo "  Success: $success"
+echo "  Failed:  $failed"
+echo "═══════════════════════════════════════════════════════════"
+
+if [[ $failed -gt 0 ]]; then
+  exit 1
+fi

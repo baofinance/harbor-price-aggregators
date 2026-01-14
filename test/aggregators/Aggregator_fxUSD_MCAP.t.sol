@@ -3,7 +3,7 @@ pragma solidity 0.8.30;
 
 import {SingleFeedAggregatorTestBase} from "./SingleFeedAggregatorTestBase.sol";
 import {IHarborPriceAggregatorV3} from "@harbor-price/interfaces/IHarborPriceAggregatorV3.sol";
-import {Aggregator_fxUSD_MCAP} from "@harbor-price/aggregators/Aggregator_fxUSD_MCAP.sol";
+import {Aggregator_fxUSD_MCAP} from "@harbor-price/aggregators/mainnet/Aggregator_fxUSD_MCAP.sol";
 
 contract Aggregator_fxUSD_MCAP_Test is SingleFeedAggregatorTestBase {
     function _contractName() internal pure override returns (string memory) {

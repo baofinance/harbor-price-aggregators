@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "version": "v3",
+  "network": "base",
+  "chainId": 8453,
+  "baoFactory": "0xD696E56b3A054734d4C6DCBD32E11a278b0EC458",
+  "implementations": {
+    "0x2877330d6fbA9BC0299588BcBaf16bA42d12b05a": {
+      "pair": "stETH/BOM5",
+      "contractSource": "src/base/Aggregator_stETH_BOM5_base.sol",
+      "contractType": "Aggregator_stETH_BOM5_base",
+      "deploymentTime": "2025-12-31T09:34:55Z"
+    }
+  },
+  "proxies": {}
+}

@@ -1,0 +1,143 @@
+{
+  "schemaVersion": 1,
+  "version": "v3",
+  "network": "mainnet",
+  "chainId": 1,
+  "baoFactory": "0xD696E56b3A054734d4C6DCBD32E11a278b0EC458",
+  "implementations": {
+    "0x9f62503D61cdA530216ad46c1d239258bd201034": {
+      "pair": "fxUSD/BTC",
+      "contractSource": "src/mainnet/Aggregator_fxUSD_BTC_mainnet.sol",
+      "contractType": "Aggregator_fxUSD_BTC_mainnet",
+      "deploymentTime": "2025-12-31T09:42:41Z"
+    },
+    "0x78D74eA76Fbfd476A06c1678dC89c025595c8536": {
+      "pair": "fxUSD/ETH",
+      "contractSource": "src/mainnet/Aggregator_fxUSD_ETH_mainnet.sol",
+      "contractType": "Aggregator_fxUSD_ETH_mainnet",
+      "deploymentTime": "2025-12-31T09:42:41Z"
+    },
+    "0x8f6F9C8af44f5f15a18d0fa93B5814a623Fa6353": {
+      "pair": "fxUSD/EUR",
+      "contractSource": "src/mainnet/Aggregator_fxUSD_EUR_mainnet.sol",
+      "contractType": "Aggregator_fxUSD_EUR_mainnet",
+      "deploymentTime": "2025-12-31T09:42:41Z"
+    },
+    "0x63d961913cd855f5f8C8cA7cDC22771abA3326FE": {
+      "pair": "fxUSD/MCAP",
+      "contractSource": "src/mainnet/Aggregator_fxUSD_MCAP_mainnet.sol",
+      "contractType": "Aggregator_fxUSD_MCAP_mainnet",
+      "deploymentTime": "2025-12-31T09:42:41Z"
+    },
+    "0xD59a1c8D1fa8f3FAE1E1f835E243A7BFb6173f91": {
+      "pair": "fxUSD/XAG",
+      "contractSource": "src/mainnet/Aggregator_fxUSD_XAG_mainnet.sol",
+      "contractType": "Aggregator_fxUSD_XAG_mainnet",
+      "deploymentTime": "2025-12-31T09:42:41Z"
+    },
+    "0x4be4501336130E61e5872cB953e886a3a84D34Cc": {
+      "pair": "fxUSD/XAU",
+      "contractSource": "src/mainnet/Aggregator_fxUSD_XAU_mainnet.sol",
+      "contractType": "Aggregator_fxUSD_XAU_mainnet",
+      "deploymentTime": "2025-12-31T09:42:41Z"
+    },
+    "0xC52B9C4eB5139E817e625290874c1CeBD44b2f6A": {
+      "pair": "stETH/BTC",
+      "contractSource": "src/mainnet/Aggregator_stETH_BTC_mainnet.sol",
+      "contractType": "Aggregator_stETH_BTC_mainnet",
+      "deploymentTime": "2025-12-31T09:42:41Z"
+    },
+    "0x6Daab5e7999D634ae849c30658B17D0e94f0f965": {
+      "pair": "stETH/EUR",
+      "contractSource": "src/mainnet/Aggregator_stETH_EUR_mainnet.sol",
+      "contractType": "Aggregator_stETH_EUR_mainnet",
+      "deploymentTime": "2025-12-31T09:42:41Z"
+    },
+    "0x6B5A6950f7f2b380c33aF81dbbD7DA31caaFEA63": {
+      "pair": "stETH/MCAP",
+      "contractSource": "src/mainnet/Aggregator_stETH_MCAP_mainnet.sol",
+      "contractType": "Aggregator_stETH_MCAP_mainnet",
+      "deploymentTime": "2025-12-31T09:42:41Z"
+    },
+    "0xE0Ba50991B891df0f0F92d06127B43314a5e427d": {
+      "pair": "stETH/XAG",
+      "contractSource": "src/mainnet/Aggregator_stETH_XAG_mainnet.sol",
+      "contractType": "Aggregator_stETH_XAG_mainnet",
+      "deploymentTime": "2025-12-31T09:42:41Z"
+    },
+    "0x863C1185470b3D2d3E9D5FbB82e7837de081F46c": {
+      "pair": "stETH/XAU",
+      "contractSource": "src/mainnet/Aggregator_stETH_XAU_mainnet.sol",
+      "contractType": "Aggregator_stETH_XAU_mainnet",
+      "deploymentTime": "2025-12-31T09:42:41Z"
+    }
+  },
+  "proxies": {
+    "fxUSD/BTC": {
+      "address": "0xF7657CD7890904d108384E289997c993e2e2bBc0",
+      "implementation": "0x9f62503D61cdA530216ad46c1d239258bd201034",
+      "salt": "harbor_v1::fxUSD::BTC::wrappedPriceAggregator",
+      "deploymentTime": "2026-01-03T13:03:27Z"
+    },
+    "fxUSD/ETH": {
+      "address": "0xea5292c58288DcE24C52C1dB13ca048275665EbC",
+      "implementation": "0x78D74eA76Fbfd476A06c1678dC89c025595c8536",
+      "salt": "harbor_v1::fxUSD::ETH::wrappedPriceAggregator",
+      "deploymentTime": "2026-01-03T13:03:38Z"
+    },
+    "fxUSD/EUR": {
+      "address": "0x305454F8B46Aa3485D8B350D8E832459974F5e9F",
+      "implementation": "0x8f6F9C8af44f5f15a18d0fa93B5814a623Fa6353",
+      "salt": "harbor_v1::fxUSD::EUR::wrappedPriceAggregator",
+      "deploymentTime": "2026-01-03T13:03:50Z"
+    },
+    "fxUSD/MCAP": {
+      "address": "0x88430c0F09A6D603c43E2816F2EA9Ab45dB7e1a8",
+      "implementation": "0x63d961913cd855f5f8C8cA7cDC22771abA3326FE",
+      "salt": "harbor_v1::fxUSD::MCAP::wrappedPriceAggregator",
+      "deploymentTime": "2026-01-03T13:04:03Z"
+    },
+    "fxUSD/XAG": {
+      "address": "0xB4E46a2E299F28FFa86BaeE19201B1BB9cd4c153",
+      "implementation": "0xD59a1c8D1fa8f3FAE1E1f835E243A7BFb6173f91",
+      "salt": "harbor_v1::fxUSD::XAG::wrappedPriceAggregator",
+      "deploymentTime": "2026-01-03T13:04:29Z"
+    },
+    "fxUSD/XAU": {
+      "address": "0xd71538769Af1c8f4D663BD0a5eA667D67E1623e2",
+      "implementation": "0x4be4501336130E61e5872cB953e886a3a84D34Cc",
+      "salt": "harbor_v1::fxUSD::XAU::wrappedPriceAggregator",
+      "deploymentTime": "2026-01-03T13:04:37Z"
+    },
+    "stETH/BTC": {
+      "address": "0x42018953e5174dC07058BeEE0618aa569fbFBE90",
+      "implementation": "0xC52B9C4eB5139E817e625290874c1CeBD44b2f6A",
+      "salt": "harbor_v1::stETH::BTC::wrappedPriceAggregator",
+      "deploymentTime": "2026-01-03T13:04:50Z"
+    },
+    "stETH/EUR": {
+      "address": "0x5e27965689B4B8B425d98fbc676fE22d74caf7C7",
+      "implementation": "0x6Daab5e7999D634ae849c30658B17D0e94f0f965",
+      "salt": "harbor_v1::stETH::EUR::wrappedPriceAggregator",
+      "deploymentTime": "2026-01-03T13:05:01Z"
+    },
+    "stETH/MCAP": {
+      "address": "0x4fe6fa14db0D3C8a4709A4F3e37C1c862381859F",
+      "implementation": "0x6B5A6950f7f2b380c33aF81dbbD7DA31caaFEA63",
+      "salt": "harbor_v1::stETH::MCAP::wrappedPriceAggregator",
+      "deploymentTime": "2026-01-03T13:05:14Z"
+    },
+    "stETH/XAG": {
+      "address": "0x7FE8D4590A5aa0C8bdcA581BBc30d68aB59Dad78",
+      "implementation": "0xE0Ba50991B891df0f0F92d06127B43314a5e427d",
+      "salt": "harbor_v1::stETH::XAG::wrappedPriceAggregator",
+      "deploymentTime": "2026-01-03T13:05:28Z"
+    },
+    "stETH/XAU": {
+      "address": "0x2962ECcF1B9cc46FE1aFf7bfc0f7179Fc87939ee",
+      "implementation": "0x863C1185470b3D2d3E9D5FbB82e7837de081F46c",
+      "salt": "harbor_v1::stETH::XAU::wrappedPriceAggregator",
+      "deploymentTime": "2026-01-03T13:05:38Z"
+    }
+  }
+}

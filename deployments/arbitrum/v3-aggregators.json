@@ -1,0 +1,130 @@
+{
+  "schemaVersion": 1,
+  "version": "v3",
+  "network": "arbitrum",
+  "chainId": 42161,
+  "baoFactory": "0xD696E56b3A054734d4C6DCBD32E11a278b0EC458",
+  "implementations": {
+    "0xA8643E35Ef119F983B09C322039e8AA49A3e3372": {
+      "pair": "stETH/AAPL",
+      "contractSource": "src/arbitrum/Aggregator_stETH_AAPL_arbitrum.sol",
+      "contractType": "Aggregator_stETH_AAPL_arbitrum",
+      "deploymentTime": "2025-12-31T09:25:27Z"
+    },
+    "0x28bBAaf05dEE8A06d4206089bCd17c1129e6Edca": {
+      "pair": "stETH/AMZN",
+      "contractSource": "src/arbitrum/Aggregator_stETH_AMZN_arbitrum.sol",
+      "contractType": "Aggregator_stETH_AMZN_arbitrum",
+      "deploymentTime": "2025-12-31T09:25:27Z"
+    },
+    "0x52B66aD600DC6051cF056951153355d457068bD2": {
+      "pair": "stETH/GOOGL",
+      "contractSource": "src/arbitrum/Aggregator_stETH_GOOGL_arbitrum.sol",
+      "contractType": "Aggregator_stETH_GOOGL_arbitrum",
+      "deploymentTime": "2025-12-31T09:25:27Z"
+    },
+    "0xA8A130Bbf041962B60e81009F09c41bd930D1294": {
+      "pair": "stETH/MAG7",
+      "contractSource": "src/arbitrum/Aggregator_stETH_MAG7_arbitrum.sol",
+      "contractType": "Aggregator_stETH_MAG7_arbitrum",
+      "deploymentTime": "2025-12-31T09:25:27Z"
+    },
+    "0x436C33222136554192733C6771669c4B51B7fE3D": {
+      "pair": "stETH/MAG7.i26",
+      "contractSource": "src/arbitrum/Aggregator_stETH_MAG7i26_arbitrum.sol",
+      "contractType": "Aggregator_stETH_MAG7i26_arbitrum",
+      "deploymentTime": "2025-12-31T09:25:27Z"
+    },
+    "0x677f597D3013dBF76552Ec6c605eeB551d3bBb72": {
+      "pair": "stETH/META",
+      "contractSource": "src/arbitrum/Aggregator_stETH_META_arbitrum.sol",
+      "contractType": "Aggregator_stETH_META_arbitrum",
+      "deploymentTime": "2025-12-31T09:25:27Z"
+    },
+    "0xf1867657Ef7F65b745E47B7F70D15DE50b66884D": {
+      "pair": "stETH/MSFT",
+      "contractSource": "src/arbitrum/Aggregator_stETH_MSFT_arbitrum.sol",
+      "contractType": "Aggregator_stETH_MSFT_arbitrum",
+      "deploymentTime": "2025-12-31T09:25:27Z"
+    },
+    "0x0D0fDBb10B9EAf18A1034e9942F95af0147CC310": {
+      "pair": "stETH/NVDA",
+      "contractSource": "src/arbitrum/Aggregator_stETH_NVDA_arbitrum.sol",
+      "contractType": "Aggregator_stETH_NVDA_arbitrum",
+      "deploymentTime": "2025-12-31T09:25:27Z"
+    },
+    "0x969Fb67331d6Fa3E729292FAa5752BBA759f2b7F": {
+      "pair": "stETH/SPY",
+      "contractSource": "src/arbitrum/Aggregator_stETH_SPY_arbitrum.sol",
+      "contractType": "Aggregator_stETH_SPY_arbitrum",
+      "deploymentTime": "2025-12-31T09:25:27Z"
+    },
+    "0xDA6097f2b8805a01FcBE8BA8Fc2c45FCb7D3e206": {
+      "pair": "stETH/TSLA",
+      "contractSource": "src/arbitrum/Aggregator_stETH_TSLA_arbitrum.sol",
+      "contractType": "Aggregator_stETH_TSLA_arbitrum",
+      "deploymentTime": "2025-12-31T09:25:27Z"
+    },
+    "0x91F5C981C3676af8eE40003c79E96582Fdb12621": {
+      "pair": "USDE/AAPL",
+      "contractSource": "src/arbitrum/Aggregator_USDE_AAPL_arbitrum.sol",
+      "contractType": "Aggregator_USDE_AAPL_arbitrum",
+      "deploymentTime": "2025-12-31T09:25:27Z"
+    },
+    "0xf5dAfBF1A1abe5eaDC16799e69b7B53C58D193b5": {
+      "pair": "USDE/AMZN",
+      "contractSource": "src/arbitrum/Aggregator_USDE_AMZN_arbitrum.sol",
+      "contractType": "Aggregator_USDE_AMZN_arbitrum",
+      "deploymentTime": "2025-12-31T09:25:27Z"
+    },
+    "0xc351A54B3ED4a930d8B30958A112a1e6Dcd3eFc0": {
+      "pair": "USDE/GOOGL",
+      "contractSource": "src/arbitrum/Aggregator_USDE_GOOGL_arbitrum.sol",
+      "contractType": "Aggregator_USDE_GOOGL_arbitrum",
+      "deploymentTime": "2025-12-31T09:25:27Z"
+    },
+    "0xFf37Db6dea33228A5D84546250a5D0D0da942fd7": {
+      "pair": "USDE/MAG7",
+      "contractSource": "src/arbitrum/Aggregator_USDE_MAG7_arbitrum.sol",
+      "contractType": "Aggregator_USDE_MAG7_arbitrum",
+      "deploymentTime": "2025-12-31T09:25:27Z"
+    },
+    "0xF36648F44763eFE7c528140a2f804b2124CC3FE1": {
+      "pair": "USDE/MAG7.i26",
+      "contractSource": "src/arbitrum/Aggregator_USDE_MAG7i26_arbitrum.sol",
+      "contractType": "Aggregator_USDE_MAG7i26_arbitrum",
+      "deploymentTime": "2025-12-31T09:25:27Z"
+    },
+    "0x9DadfFe3Fd7c14BF1c023fd736510464ea3E8234": {
+      "pair": "USDE/META",
+      "contractSource": "src/arbitrum/Aggregator_USDE_META_arbitrum.sol",
+      "contractType": "Aggregator_USDE_META_arbitrum",
+      "deploymentTime": "2025-12-31T09:25:27Z"
+    },
+    "0x2b63607299E7645D883168906bEfb13cb7F59659": {
+      "pair": "USDE/MSFT",
+      "contractSource": "src/arbitrum/Aggregator_USDE_MSFT_arbitrum.sol",
+      "contractType": "Aggregator_USDE_MSFT_arbitrum",
+      "deploymentTime": "2025-12-31T09:25:27Z"
+    },
+    "0xb772b800982127A3e1489DAacBE214b3C8575dd6": {
+      "pair": "USDE/NVDA",
+      "contractSource": "src/arbitrum/Aggregator_USDE_NVDA_arbitrum.sol",
+      "contractType": "Aggregator_USDE_NVDA_arbitrum",
+      "deploymentTime": "2025-12-31T09:25:27Z"
+    },
+    "0x657bE7a2b91F95222D163Bee3B5F4C27bed598C5": {
+      "pair": "USDE/SPY",
+      "contractSource": "src/arbitrum/Aggregator_USDE_SPY_arbitrum.sol",
+      "contractType": "Aggregator_USDE_SPY_arbitrum",
+      "deploymentTime": "2025-12-31T09:25:27Z"
+    },
+    "0x777BD12e1f61B8cac19Cbd30c0233C46B4683C00": {
+      "pair": "USDE/TSLA",
+      "contractSource": "src/arbitrum/Aggregator_USDE_TSLA_arbitrum.sol",
+      "contractType": "Aggregator_USDE_TSLA_arbitrum",
+      "deploymentTime": "2025-12-31T09:25:27Z"
+    }
+  },
+  "proxies": {}
+}

@@ -1,0 +1,191 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Verify proxy contract(s) on Etherscan
+#
+# This script:
+#   1. Reads proxy(s) from state file
+#   2. Verifies proxy contract on Etherscan
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/lib/common.sh"
+
+# ERC1967 Proxy contract path (OpenZeppelin)
+PROXY_CONTRACT="lib/openzeppelin-contracts-upgradeable/lib/openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Proxy.sol:ERC1967Proxy"
+
+usage() {
+  cat <<EOF
+Usage:
+  $0 --network <network> [options] [<pair>...]
+
+Arguments:
+  <pair>           One or more pairs in BASE/QUOTE format (e.g., fxUSD/ETH)
+
+Options:
+  --network        Required. Network name (mainnet, arbitrum, base)
+  --use-state-file Verify all proxies in state file
+  --salt           Salt prefix (default: harbor_v1). Affects state file lookup.
+  --local          Dry run: use local state file, print commands without executing
+
+Examples:
+  $0 --network mainnet --use-state-file           # Verify all
+  $0 --network mainnet --use-state-file --local   # Print commands only (uses local state)
+  $0 --network mainnet fxUSD/ETH                  # Verify specific pair
+  $0 --network arbitrum USDE/ETH USDE/BTC         # Verify multiple pairs
+
+State file:
+  Production: deployments/<network>/v3-aggregators.json
+  Local:      deployments/local/<network>/v3-aggregators.json
+EOF
+}
+
+# ── Argument parsing ───────────────────────────────────────────────────────
+
+NETWORK=""
+SALT_PREFIX="harbor_v1"
+USE_STATE_FILE=false
+DRY_RUN=false
+PAIRS=()
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --network) NETWORK=${2:-}; shift 2 ;;
+    --salt) SALT_PREFIX=${2:-}; shift 2 ;;
+    --use-state-file) USE_STATE_FILE=true; shift ;;
+    --local) DRY_RUN=true; shift ;;
+    -h | --help) usage; exit 0 ;;
+    -*) echo "❌ Unknown option: $1" >&2; usage >&2; exit 1 ;;
+    *) PAIRS+=("$1"); shift ;;
+  esac
+done
+
+# ── Validation ─────────────────────────────────────────────────────────────
+
+check_project_root
+
+if [[ -z "$NETWORK" ]]; then
+  echo "❌ Missing --network" >&2
+  usage >&2
+  exit 1
+fi
+
+if [[ "$USE_STATE_FILE" == false && ${#PAIRS[@]} -eq 0 ]]; then
+  echo "❌ Specify pairs or use --use-state-file" >&2
+  usage >&2
+  exit 1
+fi
+
+if [[ "$USE_STATE_FILE" == true && ${#PAIRS[@]} -gt 0 ]]; then
+  echo "❌ Cannot combine --use-state-file with explicit pairs" >&2
+  exit 1
+fi
+
+# ── Initialize ─────────────────────────────────────────────────────────────
+
+init_rpc "$NETWORK" "$DRY_RUN"
+init_state_file "$NETWORK" "$SALT_PREFIX" "$DRY_RUN"
+
+# ── Build list of pairs to verify ──────────────────────────────────────────
+
+PROXY_PAIRS=()
+
+if [[ "$USE_STATE_FILE" == true ]]; then
+  while IFS= read -r pair; do
+    [[ -z "$pair" ]] && continue
+    PROXY_PAIRS+=("$pair")
+  done < <(get_proxy_pairs "$STATE_FILE")
+else
+  for pair in "${PAIRS[@]}"; do
+    validate_pair_format "$pair" || exit 1
+    addr=$(get_proxy_info "$STATE_FILE" "$pair" address)
+    if [[ -z "$addr" || "$addr" == "-" ]]; then
+      echo "❌ No proxy found for pair: $pair" >&2
+      exit 1
+    fi
+    PROXY_PAIRS+=("$pair")
+  done
+fi
+
+if [[ ${#PROXY_PAIRS[@]} -eq 0 ]]; then
+  echo "ℹ No proxies to verify."
+  exit 0
+fi
+
+# ── Banner ─────────────────────────────────────────────────────────────────
+
+echo ""
+echo "═══════════════════════════════════════════════════════════"
+echo "  VERIFY PROXIES"
+echo "  Network: $NETWORK (chainId: $CHAIN_ID)"
+echo "  State:   $STATE_FILE"
+echo "  Count:   ${#PROXY_PAIRS[@]}"
+if [[ "$DRY_RUN" == true ]]; then
+  echo "  Mode:    DRY RUN (commands only)"
+fi
+echo "═══════════════════════════════════════════════════════════"
+echo ""
+
+# ── Verify each proxy ──────────────────────────────────────────────────────
+
+total=0
+success=0
+failed=0
+
+for pair in "${PROXY_PAIRS[@]}"; do
+  total=$((total + 1))
+
+  proxy_addr=$(get_proxy_info "$STATE_FILE" "$pair" address)
+  impl_addr=$(get_proxy_info "$STATE_FILE" "$pair" implementation)
+
+  # Constructor args: (address implementation, bytes memory data)
+  # No initialize() call - data is empty
+  constructor_args=$("$CAST" abi-encode "constructor(address,bytes)" "$impl_addr" "0x")
+
+  echo "── $pair ────────────────────────────────────────"
+  echo "  Proxy:          $proxy_addr"
+  echo "  Implementation: $impl_addr"
+
+  if [[ "$DRY_RUN" == true ]]; then
+    echo ""
+    echo "  forge verify-contract \\"
+    echo "    $proxy_addr \\"
+    echo "    $PROXY_CONTRACT \\"
+    echo "    --chain $NETWORK \\"
+    echo "    --constructor-args $constructor_args \\"
+    echo "    --watch"
+    echo ""
+    success=$((success + 1))
+    continue
+  fi
+
+  # Check code exists
+  if ! has_code "$proxy_addr"; then
+    echo "  ❌ No code at proxy address"
+    failed=$((failed + 1))
+    continue
+  fi
+
+  echo "  Verifying..."
+
+  if verify_contract "$proxy_addr" "$PROXY_CONTRACT" "$NETWORK" "$constructor_args"; then
+    success=$((success + 1))
+  else
+    failed=$((failed + 1))
+  fi
+
+  sleep 1
+  echo ""
+done
+
+# ── Summary ────────────────────────────────────────────────────────────────
+
+echo "═══════════════════════════════════════════════════════════"
+echo "  SUMMARY"
+echo "  Total:   $total"
+echo "  Success: $success"
+echo "  Failed:  $failed"
+echo "═══════════════════════════════════════════════════════════"
+
+if [[ $failed -gt 0 ]]; then
+  exit 1
+fi

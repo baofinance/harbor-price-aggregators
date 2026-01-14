@@ -6,7 +6,7 @@ import {IWrappedPriceOracle} from "@harbor-price/interfaces/IWrappedPriceOracle.
 import {HarborAggregator_v3} from "@harbor-price/aggregators/HarborAggregator_v3.sol";
 import {MainnetRateSources} from "@harbor-price/rates/mainnet/MainnetRateSources.sol";
 import {ETH_USD} from "@harbor-price/feeds/chainlink/mainnet/ETH_USD.sol";
-import {Aggregator_fxUSD_ETH} from "@harbor-price/aggregators/Aggregator_fxUSD_ETH.sol";
+import {Aggregator_fxUSD_ETH} from "@harbor-price/aggregators/mainnet/Aggregator_fxUSD_ETH.sol";
 import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import {LatestAnswerErrorClassifier} from "./LatestAnswerErrorClassifier.sol";
 import {UtcTimestampFormatter} from "@harbor-price/format/UtcTimestampFormatter.sol";
