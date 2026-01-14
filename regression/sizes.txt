@@ -28,8 +28,10 @@
 | Aggregator_fxUSD_ETH_mainnet      |              3,332 |               21,244 |               4,058 |      706,980 |             70.70 |
 | Aggregator_fxUSD_EUR              |              3,332 |               21,244 |               4,185 |      708,250 |             70.83 |
 | Aggregator_fxUSD_EUR_mainnet      |              3,332 |               21,244 |               4,059 |      706,990 |             70.70 |
+| Aggregator_fxUSD_GOLD_mainnet     |              3,333 |               21,243 |               4,060 |      707,200 |             70.72 |
 | Aggregator_fxUSD_MCAP             |              3,333 |               21,243 |               4,186 |      708,460 |             70.85 |
 | Aggregator_fxUSD_MCAP_mainnet     |              3,333 |               21,243 |               4,064 |      707,240 |             70.72 |
+| Aggregator_fxUSD_SILVER_mainnet   |              3,335 |               21,241 |               4,062 |      707,620 |             70.76 |
 | Aggregator_fxUSD_XAG              |              3,332 |               21,244 |               4,185 |      708,250 |             70.83 |
 | Aggregator_fxUSD_XAG_mainnet      |              3,332 |               21,244 |               4,059 |      706,990 |             70.70 |
 | Aggregator_fxUSD_XAU              |              3,332 |               21,244 |               4,185 |      708,250 |             70.83 |
@@ -44,6 +46,7 @@
 | Aggregator_stETH_BTC_mainnet      |              3,762 |               20,814 |               4,690 |      799,300 |             79.93 |
 | Aggregator_stETH_EUR              |              3,762 |               20,814 |               4,815 |      800,550 |             80.06 |
 | Aggregator_stETH_EUR_mainnet      |              3,762 |               20,814 |               4,690 |      799,300 |             79.93 |
+| Aggregator_stETH_GOLD_mainnet     |              3,763 |               20,813 |               4,691 |      799,510 |             79.95 |
 | Aggregator_stETH_GOOGL            |              4,105 |               20,471 |               5,158 |      872,580 |             87.26 |
 | Aggregator_stETH_GOOGL_arbitrum   |              4,105 |               20,471 |               5,034 |      871,340 |             87.13 |
 | Aggregator_stETH_MAG7             |              6,481 |               18,095 |               8,626 |    1,382,460 |            138.25 |
@@ -58,6 +61,7 @@
 | Aggregator_stETH_MSFT_arbitrum    |              4,104 |               20,472 |               5,033 |      871,130 |             87.11 |
 | Aggregator_stETH_NVDA             |              4,104 |               20,472 |               5,157 |      872,370 |             87.24 |
 | Aggregator_stETH_NVDA_arbitrum    |              4,104 |               20,472 |               5,033 |      871,130 |             87.11 |
+| Aggregator_stETH_SILVER_mainnet   |              3,765 |               20,811 |               4,693 |      799,930 |             79.99 |
 | Aggregator_stETH_SPY              |              4,103 |               20,473 |               5,156 |      872,160 |             87.22 |
 | Aggregator_stETH_SPY_arbitrum     |              4,103 |               20,473 |               5,032 |      870,920 |             87.09 |
 | Aggregator_stETH_TSLA             |              4,104 |               20,472 |               5,157 |      872,370 |             87.24 |

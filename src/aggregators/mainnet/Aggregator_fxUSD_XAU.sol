@@ -54,7 +54,7 @@ contract Aggregator_fxUSD_XAU is HarborAggregator_v3 {
         return "fxUSD";
     }
 
-    function _quoteName() internal pure override returns (string memory) {
+    function _quoteName() internal pure virtual override returns (string memory) {
         return "XAU";
     }
 

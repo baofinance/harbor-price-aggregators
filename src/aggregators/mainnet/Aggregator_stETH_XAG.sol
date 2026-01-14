@@ -65,7 +65,7 @@ contract Aggregator_stETH_XAG is HarborAggregator_v3 {
         return "stETH";
     }
 
-    function _quoteName() internal pure override returns (string memory) {
+    function _quoteName() internal pure virtual override returns (string memory) {
         return "XAG";
     }
 
