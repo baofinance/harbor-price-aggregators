@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "version": "v3",
+  "network": "mainnet",
+  "chainId": 1,
+  "baoFactory": "0xD696E56b3A054734d4C6DCBD32E11a278b0EC458",
+  "implementations": {
+    "0xbceceC6458fDd5a11c18beDB8b9ebcF16C81B757": {
+      "pair": "fxUSD/EUR",
+      "contractSource": "src/mainnet/Aggregator_fxUSD_EUR_mainnet.sol",
+      "contractType": "Aggregator_fxUSD_EUR_mainnet",
+      "deploymentTime": "2026-01-19T16:37:02Z"
+    },
+    "0xeeeE1DA506747A436Ae604425C180193efeCacA7": {
+      "pair": "stETH/EUR",
+      "contractSource": "src/mainnet/Aggregator_stETH_EUR_mainnet.sol",
+      "contractType": "Aggregator_stETH_EUR_mainnet",
+      "deploymentTime": "2026-01-19T16:37:13Z"
+    }
+  },
+  "proxies": {
+    "fxUSD/EUR": {
+      "address": "0x26c03eE2Bbe1eb29322E7e1049444424EeB2D1ed",
+      "implementation": "0xbceceC6458fDd5a11c18beDB8b9ebcF16C81B757",
+      "salt": "testEUR::fxUSD::EUR::wrappedPriceAggregator",
+      "deploymentTime": "2026-01-19T16:38:03Z"
+    },
+    "stETH/EUR": {
+      "address": "0x8Ad84A275C61e341f3E574dA5044f2E427D72Ab5",
+      "implementation": "0xeeeE1DA506747A436Ae604425C180193efeCacA7",
+      "salt": "testEUR::stETH::EUR::wrappedPriceAggregator",
+      "deploymentTime": "2026-01-19T16:38:16Z"
+    }
+  }
+}

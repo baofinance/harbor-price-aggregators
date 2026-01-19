@@ -531,3 +531,13 @@ Common causes:
 
 - [v3 Aggregator Authoring Guide](../doc/v3-aggregator-authoring-guide.md) - How to create new aggregator contracts
 - [Main README](../README.md) - Project overview and testing
+
+## Legacy Scripts
+
+The following network-specific scripts are retained for arbitrum and base deployments, as the unified scripts above have only been tested on mainnet:
+
+- `deploy-arbitrum-v3-oracles.sh`, `deploy-base-v3-oracles.sh`, `deploy-mainnet-v3-oracles.sh`
+- `verify-arbitrum-v3-oracles.sh`, `verify-base-v3-oracles.sh`, `verify-mainnet-v3-oracles.sh`
+- `check-aggregators`, `deploy-aggregators`, `deploy-many-aggregators`, `deploy-one-aggregator`
+
+Once the unified scripts (`deploy-impl`, `deploy-proxy`, etc.) have been validated on arbitrum and base, these legacy scripts can be removed.

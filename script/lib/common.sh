@@ -188,8 +188,8 @@ init_state_file() {
     STATE_FILE="${state_dir}/v3-aggregators-${salt_prefix}.json"
   fi
 
-  # For local mode, create empty state if doesn't exist
-  if [[ "$use_local" == "true" && ! -f "$STATE_FILE" ]]; then
+  # Create empty state if doesn't exist
+  if [[ ! -f "$STATE_FILE" ]]; then
     mkdir -p "$state_dir"
     local chain_id
     chain_id=$("$CAST" chain-id --rpc-url "$RPC_NETWORK" 2>/dev/null || echo "1")
@@ -204,13 +204,7 @@ init_state_file() {
   "proxies": {}
 }
 EOF
-    echo "ℹ Created empty local state: $STATE_FILE"
-  fi
-
-  if [[ ! -f "$STATE_FILE" ]]; then
-    echo "❌ State file not found: $STATE_FILE" >&2
-    echo "   Run migrate-state first." >&2
-    exit 1
+    echo "ℹ Created empty state: $STATE_FILE"
   fi
 
   # Validate schema
