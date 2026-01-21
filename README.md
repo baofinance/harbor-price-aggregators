@@ -1,3 +1,19 @@
+<p align="center">
+  <a href="https://github.com/baofinance/harbor-app">
+    <img src="https://github.com/baofinance/harbor-app/raw/main/public/logo.svg" 
+         alt="Harbor App Logo" 
+         width="480" 
+         style="max-width:100%; height:auto;">
+  </a>
+</p>
+
+<p align="center">
+  <br>
+  <i>A Safer Harbor For Leverage, Uncharted Waters For Yield.</i><br>
+</p>
+
+<br>
+
 # Harbor Price Aggregators
 
 Price oracle aggregators for Harbor Protocol.
