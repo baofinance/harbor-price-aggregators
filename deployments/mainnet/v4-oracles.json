@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "chainId": 1,
+  "chainName": "Mainnet",
+  "deploymentTime": "2026-02-07T01:09:52Z",
+  "oracles": {
+    "WSTETH_USD": {
+      "name": "wstETH/USD",
+      "address": "0x28bBAaf05dEE8A06d4206089bCd17c1129e6Edca",
+      "contractPath": "src/mainnet/Aggregator_wstETH_USD_mainnet.sol:Aggregator_wstETH_USD_mainnet"
+    },
+    "WBTC_USD": {
+      "name": "wBTC/USD",
+      "address": "0x52B66aD600DC6051cF056951153355d457068bD2",
+      "contractPath": "src/mainnet/Aggregator_wBTC_USD_mainnet.sol:Aggregator_wBTC_USD_mainnet"
+    },
+    "TBTC_USD": {
+      "name": "tBTC/USD",
+      "address": "0x677f597D3013dBF76552Ec6c605eeB551d3bBb72",
+      "contractPath": "src/mainnet/Aggregator_tBTC_USD_mainnet.sol:Aggregator_tBTC_USD_mainnet"
+    },
+    "PAXG_USD": {
+      "name": "PAXG/USD",
+      "address": "0xf1867657Ef7F65b745E47B7F70D15DE50b66884D",
+      "contractPath": "src/mainnet/Aggregator_PAXG_USD_mainnet.sol:Aggregator_PAXG_USD_mainnet"
+    },
+    "SUSDE_BTC": {
+      "name": "sUSDe/BTC",
+      "address": "0x0D0fDBb10B9EAf18A1034e9942F95af0147CC310",
+      "contractPath": "src/mainnet/Aggregator_sUSDe_BTC_mainnet.sol:Aggregator_sUSDe_BTC_mainnet"
+    },
+    "SUSDE_ETH": {
+      "name": "sUSDe/ETH",
+      "address": "0x969Fb67331d6Fa3E729292FAa5752BBA759f2b7F",
+      "contractPath": "src/mainnet/Aggregator_sUSDe_ETH_mainnet.sol:Aggregator_sUSDe_ETH_mainnet"
+    },
+    "SUSDE_EUR": {
+      "name": "sUSDe/EUR",
+      "address": "0xDA6097f2b8805a01FcBE8BA8Fc2c45FCb7D3e206",
+      "contractPath": "src/mainnet/Aggregator_sUSDe_EUR_mainnet.sol:Aggregator_sUSDe_EUR_mainnet"
+    },
+    "SUSDE_XAU": {
+      "name": "sUSDe/XAU",
+      "address": "0xA8A130Bbf041962B60e81009F09c41bd930D1294",
+      "contractPath": "src/mainnet/Aggregator_sUSDe_XAU_mainnet.sol:Aggregator_sUSDe_XAU_mainnet",
+      "deprecated": true
+    },
+    "SUSDE_XAG": {
+      "name": "sUSDe/XAG",
+      "address": "0x436C33222136554192733C6771669c4B51B7fE3D",
+      "contractPath": "src/mainnet/Aggregator_sUSDe_XAG_mainnet.sol:Aggregator_sUSDe_XAG_mainnet",
+      "deprecated": true
+    },
+    "SUSDE_MCAP": {
+      "name": "sUSDe/MCAP",
+      "address": "0xf2ac2880E1569D2CaB50be41F6bfA92e5e6e03C9",
+      "contractPath": "src/mainnet/Aggregator_sUSDe_MCAP_mainnet.sol:Aggregator_sUSDe_MCAP_mainnet"
+    },
+    "SUSDE_GOLD": {
+      "name": "sUSDe/GOLD",
+      "address": "0x5C38C744CfF6ec051d955566384BF921CFAaAc26",
+      "contractPath": "src/mainnet/Aggregator_sUSDe_GOLD_mainnet.sol:Aggregator_sUSDe_GOLD_mainnet"
+    },
+    "SUSDE_SILVER": {
+      "name": "sUSDe/SILVER",
+      "address": "0x7A4AC7b91bCbd069Fa0B45bdb5e393915A663cfD",
+      "contractPath": "src/mainnet/Aggregator_sUSDe_SILVER_mainnet.sol:Aggregator_sUSDe_SILVER_mainnet"
+    }
+  }
+}

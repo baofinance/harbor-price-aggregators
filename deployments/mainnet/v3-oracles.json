@@ -27,12 +27,14 @@
     "FXUSD_XAG": {
       "name": "fxUSD/XAG",
       "address": "0xD59a1c8D1fa8f3FAE1E1f835E243A7BFb6173f91",
-      "contractPath": "src/Aggregator_fxUSD_XAG_mainnet.sol:Aggregator_fxUSD_XAG_mainnet"
+      "contractPath": "src/Aggregator_fxUSD_XAG_mainnet.sol:Aggregator_fxUSD_XAG_mainnet",
+      "deprecated": true
     },
     "FXUSD_XAU": {
       "name": "fxUSD/XAU",
       "address": "0x4be4501336130E61e5872cB953e886a3a84D34Cc",
-      "contractPath": "src/Aggregator_fxUSD_XAU_mainnet.sol:Aggregator_fxUSD_XAU_mainnet"
+      "contractPath": "src/Aggregator_fxUSD_XAU_mainnet.sol:Aggregator_fxUSD_XAU_mainnet",
+      "deprecated": true
     },
     "STETH_BTC": {
       "name": "stETH/BTC",
@@ -52,12 +54,14 @@
     "STETH_XAG": {
       "name": "stETH/XAG",
       "address": "0xE0Ba50991B891df0f0F92d06127B43314a5e427d",
-      "contractPath": "src/Aggregator_stETH_XAG_mainnet.sol:Aggregator_stETH_XAG_mainnet"
+      "contractPath": "src/Aggregator_stETH_XAG_mainnet.sol:Aggregator_stETH_XAG_mainnet",
+      "deprecated": true
     },
     "STETH_XAU": {
       "name": "stETH/XAU",
       "address": "0x863C1185470b3D2d3E9D5FbB82e7837de081F46c",
-      "contractPath": "src/Aggregator_stETH_XAU_mainnet.sol:Aggregator_stETH_XAU_mainnet"
+      "contractPath": "src/Aggregator_stETH_XAU_mainnet.sol:Aggregator_stETH_XAU_mainnet",
+      "deprecated": true
     }
   }
 }

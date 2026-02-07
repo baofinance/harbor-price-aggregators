@@ -46,6 +46,8 @@ To add a new aggregator, see [doc/v3-aggregator-authoring-guide.md](doc/v3-aggre
 | stETH/MCAP   | wstETH | ETH/USD, MCAP/USD           |
 | stETH/SILVER | wstETH | ETH/USD, XAG/USD            |
 
+**GOLD / SILVER vs XAU / XAG:** We use **GOLD** and **SILVER** for external naming (oracle names, mainnet wiring in `src/mainnet`, deploy scripts). The formula contracts in `src/aggregators/mainnet` and Chainlink feeds stay as **XAU** (gold) and **XAG** (silver); mainnet contracts extend those and expose the quote as GOLD or SILVER. No duplicate XAU/XAG mainnet wiring—only GOLD and SILVER are deployed.
+
 ### Leveraged token oracles: output in USD vs BTC
 
 Single-feed leveraged token oracles (e.g. **hsfxUSD-BTC/USD**) use the same formula contract for both USD- and BTC-denominated output. Only the constructor’s last argument (**invert**) changes:
@@ -296,6 +298,29 @@ yarn offchain:stats --market MCAP-USD  --measure close_return --top 20
 ```
 
 ## Deployment
+
+### Deploy mainnet v4 oracles (sUSDe, wstETH, wBTC, tBTC, PAXG)
+
+To deploy **sUSDe** and other v4 oracles (wstETH/USD, wBTC/USD, tBTC/USD, PAXG/USD, and sUSDe: BTC, ETH, EUR, MCAP, GOLD, SILVER):
+
+```bash
+# Requires: MAINNET_RPC_URL, PRIVATE_KEY (and ETHERSCAN_API_KEY for verify)
+./script/deploy-mainnet-v4-oracles.sh
+```
+
+State: `deployments/mainnet/v4-oracles.json`. Verify: `./script/verify-mainnet-v4-oracles.sh`
+
+### Deploy mainnet leveraged token (haUSD) oracles
+
+To deploy **leveraged token USD** oracles (hsfxUSD-*, hsstETH-*):
+
+```bash
+./script/deploy-mainnet-leverage-v4-oracles.sh
+```
+
+State: `deployments/mainnet/leverage-v4-oracles.json`. Verify: `./script/verify-mainnet-leverage-v4-oracles.sh`
+
+Deploy and verify v4 and leverage separately; they are independent.
 
 ### Prerequisites
 

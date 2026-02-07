@@ -324,6 +324,7 @@ echo ""
 
 if [[ $FAILED -eq 0 ]] && [[ $TEST_FAILED -eq 0 ]]; then
   echo "✅ All leveraged token oracles deployed and tested successfully!"
+  echo "   Verify on Etherscan: ./script/verify-mainnet-leverage-v4-oracles.sh"
 else
   echo "⚠️  Some oracles failed. Check the output above for details."
   exit 1

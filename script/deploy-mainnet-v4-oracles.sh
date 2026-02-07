@@ -3,7 +3,7 @@ set -euo pipefail
 
 # Deploy all Mainnet v4 oracles
 # These are direct deployments (no proxies) with hardcoded wiring
-# Includes: wstETH/USD, wBTC/USD, tBTC/BTC, PAXG/USD, and all sUSDe aggregators
+# Includes: wstETH/USD, wBTC/USD, tBTC/USD, PAXG/USD, and all sUSDe aggregators
 
 # Use full path to forge/cast
 FORGE=${FORGE:-$HOME/.foundry/bin/forge}
@@ -31,12 +31,8 @@ if [[ -z "${PRIVATE_KEY:-}" ]]; then
   exit 1
 fi
 
-VERIFY=${VERIFY:-true}
-if [[ -z "${ETHERSCAN_API_KEY:-}" ]]; then
-  echo "⚠️  WARNING: ETHERSCAN_API_KEY is not set"
-  echo "   Verification will be skipped"
-  VERIFY=false
-fi
+# Verification is done separately via verify-mainnet-v4-oracles.sh (run after deploy)
+VERIFY=false
 
 # Check network
 CHAIN_ID=$("$CAST" chain-id --rpc-url "$MAINNET_RPC_URL" 2>/dev/null || echo "unknown")
@@ -76,34 +72,37 @@ else
 fi
 echo ""
 
-# Function to deploy a contract
+# Function to deploy a contract. Only the deployed address is printed to stdout (for capture).
+# All other messages go to stderr so success/failure is determined correctly.
 deploy_contract() {
   local contract_path=$1
   local contract_name=$2
   local oracle_key=$3
   
-  echo "Deploying $contract_name..."
+  echo "Deploying $contract_name..." >&2
   
   DEPLOY_OUT=$("$FORGE" create "$contract_path" \
     --rpc-url "$MAINNET_RPC_URL" \
     --private-key "$PRIVATE_KEY" \
     --broadcast 2>&1)
   
-  if [[ $? -ne 0 ]] || ! echo "$DEPLOY_OUT" | grep -q "Deployed to:"; then
-    echo "❌ Deployment failed for $contract_name"
-    echo "Error output:"
-    echo "$DEPLOY_OUT" | grep -E "(Error|error|revert|Revert)" | head -5
+  local forge_exit_code=$?
+  
+  if [[ $forge_exit_code -ne 0 ]] || ! echo "$DEPLOY_OUT" | grep -q "Deployed to:"; then
+    echo "❌ Deployment failed for $contract_name" >&2
+    echo "Error output:" >&2
+    echo "$DEPLOY_OUT" | tail -30 >&2
     return 1
   fi
   
   local address=$(echo "$DEPLOY_OUT" | grep -Eo "Deployed to: 0x[0-9a-fA-F]{40}" | awk '{print $3}')
   
   if [[ -z "$address" ]]; then
-    echo "❌ Could not extract address for $contract_name"
+    echo "❌ Could not extract address for $contract_name" >&2
     return 1
   fi
   
-  echo "✅ Deployed to: $address"
+  echo "✅ Deployed to: $address" >&2
   
   # Update deployment JSON
   local tmp_file=$(mktemp)
@@ -116,21 +115,22 @@ deploy_contract() {
        "address": $addr,
        "contractPath": $path
      }' "$DEPLOYMENT_FILE" > "$tmp_file" 2>/dev/null; then
-    echo "  ⚠️  Warning: Failed to update JSON file, but deployment succeeded"
+    echo "  ⚠️  Warning: Failed to update JSON file, but deployment succeeded" >&2
     rm -f "$tmp_file"
   else
     mv "$tmp_file" "$DEPLOYMENT_FILE"
-    echo "  💾 Address saved to deployment file"
+    echo "  💾 Address saved to deployment file" >&2
     
     # Verify it was saved
     saved_addr=$(jq -r ".oracles[\"$oracle_key\"].address // empty" "$DEPLOYMENT_FILE" 2>/dev/null || echo "")
     if [[ "$saved_addr" == "$address" ]]; then
-      echo "  ✅ Address confirmed in deployment file"
+      echo "  ✅ Address confirmed in deployment file" >&2
     else
-      echo "  ⚠️  Warning: Address may not have been saved correctly"
+      echo "  ⚠️  Warning: Address may not have been saved correctly" >&2
     fi
   fi
   
+  # Only stdout: the address (so capture gets a single line and success check works)
   echo "$address"
 }
 
@@ -199,15 +199,13 @@ declare -a ORACLES=(
   # New v4 Oracles
   "src/mainnet/Aggregator_wstETH_USD_mainnet.sol:Aggregator_wstETH_USD_mainnet|WSTETH_USD|wstETH/USD"
   "src/mainnet/Aggregator_wBTC_USD_mainnet.sol:Aggregator_wBTC_USD_mainnet|WBTC_USD|wBTC/USD"
-  "src/mainnet/Aggregator_tBTC_BTC_mainnet.sol:Aggregator_tBTC_BTC_mainnet|TBTC_BTC|tBTC/BTC"
+  "src/mainnet/Aggregator_tBTC_USD_mainnet.sol:Aggregator_tBTC_USD_mainnet|TBTC_USD|tBTC/USD"
   "src/mainnet/Aggregator_PAXG_USD_mainnet.sol:Aggregator_PAXG_USD_mainnet|PAXG_USD|PAXG/USD"
   
   # sUSDe Oracles
   "src/mainnet/Aggregator_sUSDe_BTC_mainnet.sol:Aggregator_sUSDe_BTC_mainnet|SUSDE_BTC|sUSDe/BTC"
   "src/mainnet/Aggregator_sUSDe_ETH_mainnet.sol:Aggregator_sUSDe_ETH_mainnet|SUSDE_ETH|sUSDe/ETH"
   "src/mainnet/Aggregator_sUSDe_EUR_mainnet.sol:Aggregator_sUSDe_EUR_mainnet|SUSDE_EUR|sUSDe/EUR"
-  "src/mainnet/Aggregator_sUSDe_XAU_mainnet.sol:Aggregator_sUSDe_XAU_mainnet|SUSDE_XAU|sUSDe/XAU"
-  "src/mainnet/Aggregator_sUSDe_XAG_mainnet.sol:Aggregator_sUSDe_XAG_mainnet|SUSDE_XAG|sUSDe/XAG"
   "src/mainnet/Aggregator_sUSDe_MCAP_mainnet.sol:Aggregator_sUSDe_MCAP_mainnet|SUSDE_MCAP|sUSDe/MCAP"
   "src/mainnet/Aggregator_sUSDe_GOLD_mainnet.sol:Aggregator_sUSDe_GOLD_mainnet|SUSDE_GOLD|sUSDe/GOLD"
   "src/mainnet/Aggregator_sUSDe_SILVER_mainnet.sol:Aggregator_sUSDe_SILVER_mainnet|SUSDE_SILVER|sUSDe/SILVER"
@@ -229,32 +227,40 @@ for oracle_info in "${ORACLES[@]}"; do
   echo "[$CURRENT/$TOTAL] $display_name"
   
   # Check if already deployed (unless FORCE_REDEPLOY is set)
-  if [[ "${FORCE_REDEPLOY:-}" != "true" ]]; then
-    existing_addr=$(jq -r ".oracles[\"$oracle_key\"].address // empty" "$DEPLOYMENT_FILE" 2>/dev/null || echo "")
-    if [[ -n "$existing_addr" ]] && [[ "$existing_addr" != "null" ]] && [[ "$existing_addr" != "" ]]; then
-      # Check if contract exists on chain
-      code=$("$CAST" code "$existing_addr" --rpc-url "$MAINNET_RPC_URL" 2>/dev/null | head -1 || echo "0x")
-      if [[ "$code" != "0x" ]]; then
-        echo "  ⏭️  Already deployed at: $existing_addr"
-        continue
-      else
-        echo "  ⚠️  Address in file but no contract on-chain, redeploying..."
-      fi
+  # Use set +e so a crashing cast (e.g. proxy bug) doesn't kill the script
+  existing_addr=""
+  if [[ "${FORCE_REDEPLOY:-}" != "true" ]] && [[ -f "$DEPLOYMENT_FILE" ]]; then
+    existing_addr=$(jq -r ".oracles[\"$oracle_key\"].address // empty" "$DEPLOYMENT_FILE" 2>/dev/null) || existing_addr=""
+  fi
+  if [[ -n "$existing_addr" ]] && [[ "$existing_addr" != "null" ]]; then
+    set +e
+    code=$("$CAST" code "$existing_addr" --rpc-url "$MAINNET_RPC_URL" 2>/dev/null | head -1 || echo "0x")
+    set -e
+    if [[ -n "$code" ]] && [[ "$code" != "0x" ]]; then
+      echo "  ⏭️  Already deployed at: $existing_addr"
+      continue
+    else
+      echo "  ⚠️  Address in file but no contract on-chain, redeploying..."
     fi
-  else
+  fi
+  if [[ "${FORCE_REDEPLOY:-}" == "true" ]]; then
     echo "  🔄 Force redeploy mode - deploying new contract..."
   fi
   
   # Deploy
+  set +e
   address=$(deploy_contract "$contract_path" "$display_name" "$oracle_key")
-  if [[ $? -eq 0 ]] && [[ -n "$address" ]]; then
+  deploy_exit_code=$?
+  set -e
+  
+  # Trim whitespace/newlines so we only have the address
+  address=$(echo "$address" | tr -d '\n\r' | grep -Eo '0x[0-9a-fA-F]{40}' | head -1)
+  
+  if [[ $deploy_exit_code -eq 0 ]] && [[ -n "$address" ]] && [[ "$address" =~ ^0x[0-9a-fA-F]{40}$ ]]; then
     SUCCESS=$((SUCCESS + 1))
     
     # Small delay between deployments (wait for block confirmation)
     sleep 3
-    
-    # Verify contract
-    verify_contract "$address" "$contract_path" "$display_name"
   else
     FAILED=$((FAILED + 1))
     echo "  ❌ Failed to deploy $display_name"
@@ -325,7 +331,8 @@ jq -r '.oracles | to_entries[] | "\(.key): \(.value.address)"' "$DEPLOYMENT_FILE
 echo ""
 
 if [[ $FAILED -eq 0 ]] && [[ $TEST_FAILED -eq 0 ]]; then
-  echo "✅ All oracles deployed and tested successfully!"
+  echo "✅ All v4 oracles deployed and tested successfully!"
+  echo "   Verify on Etherscan: ./script/verify-mainnet-v4-oracles.sh"
 else
   echo "⚠️  Some oracles failed. Check the output above for details."
   exit 1

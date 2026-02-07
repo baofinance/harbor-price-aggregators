@@ -8,11 +8,11 @@ import {LatestAnswerErrorClassifier} from "./LatestAnswerErrorClassifier.sol";
 import {Aggregator_fxUSD_ETH_mainnet} from "../../src/mainnet/Aggregator_fxUSD_ETH_mainnet.sol";
 import {Aggregator_fxUSD_BTC_mainnet} from "../../src/mainnet/Aggregator_fxUSD_BTC_mainnet.sol";
 import {Aggregator_fxUSD_EUR_mainnet} from "../../src/mainnet/Aggregator_fxUSD_EUR_mainnet.sol";
-import {Aggregator_fxUSD_XAU_mainnet} from "../../src/mainnet/Aggregator_fxUSD_XAU_mainnet.sol";
+import {Aggregator_fxUSD_GOLD_mainnet} from "../../src/mainnet/Aggregator_fxUSD_GOLD_mainnet.sol";
 import {Aggregator_fxUSD_MCAP_mainnet} from "../../src/mainnet/Aggregator_fxUSD_MCAP_mainnet.sol";
 import {Aggregator_stETH_BTC_mainnet} from "../../src/mainnet/Aggregator_stETH_BTC_mainnet.sol";
 import {Aggregator_stETH_EUR_mainnet} from "../../src/mainnet/Aggregator_stETH_EUR_mainnet.sol";
-import {Aggregator_stETH_XAU_mainnet} from "../../src/mainnet/Aggregator_stETH_XAU_mainnet.sol";
+import {Aggregator_stETH_GOLD_mainnet} from "../../src/mainnet/Aggregator_stETH_GOLD_mainnet.sol";
 import {Aggregator_stETH_MCAP_mainnet} from "../../src/mainnet/Aggregator_stETH_MCAP_mainnet.sol";
 
 /// @title Oracle Deploy Dump V3
@@ -34,11 +34,11 @@ contract OracleDeployDumpV3 is Test {
         FXUSD_ETH,
         FXUSD_BTC,
         FXUSD_EUR,
-        FXUSD_XAU,
+        FXUSD_GOLD,
         FXUSD_MCAP,
         STETH_BTC,
         STETH_EUR,
-        STETH_XAU,
+        STETH_GOLD,
         STETH_MCAP
     }
 
@@ -51,11 +51,11 @@ contract OracleDeployDumpV3 is Test {
         if (oracleType == OracleType.FXUSD_ETH) return address(new Aggregator_fxUSD_ETH_mainnet());
         if (oracleType == OracleType.FXUSD_BTC) return address(new Aggregator_fxUSD_BTC_mainnet());
         if (oracleType == OracleType.FXUSD_EUR) return address(new Aggregator_fxUSD_EUR_mainnet());
-        if (oracleType == OracleType.FXUSD_XAU) return address(new Aggregator_fxUSD_XAU_mainnet());
+        if (oracleType == OracleType.FXUSD_GOLD) return address(new Aggregator_fxUSD_GOLD_mainnet());
         if (oracleType == OracleType.FXUSD_MCAP) return address(new Aggregator_fxUSD_MCAP_mainnet());
         if (oracleType == OracleType.STETH_BTC) return address(new Aggregator_stETH_BTC_mainnet());
         if (oracleType == OracleType.STETH_EUR) return address(new Aggregator_stETH_EUR_mainnet());
-        if (oracleType == OracleType.STETH_XAU) return address(new Aggregator_stETH_XAU_mainnet());
+        if (oracleType == OracleType.STETH_GOLD) return address(new Aggregator_stETH_GOLD_mainnet());
         if (oracleType == OracleType.STETH_MCAP) return address(new Aggregator_stETH_MCAP_mainnet());
         revert("Unknown oracle type");
     }
@@ -139,8 +139,8 @@ contract OracleDeployDumpV3 is Test {
         _dumpOracle(OracleType.FXUSD_EUR, "FXUSD_EUR", START_BLOCK, END_BLOCK);
     }
 
-    function test_dump_fxUSD_XAU() public {
-        _dumpOracle(OracleType.FXUSD_XAU, "FXUSD_XAU", START_BLOCK, END_BLOCK);
+    function test_dump_fxUSD_GOLD() public {
+        _dumpOracle(OracleType.FXUSD_GOLD, "FXUSD_GOLD", START_BLOCK, END_BLOCK);
     }
 
     function test_dump_fxUSD_MCAP() public {
@@ -155,8 +155,8 @@ contract OracleDeployDumpV3 is Test {
         _dumpOracle(OracleType.STETH_EUR, "STETH_EUR", START_BLOCK, END_BLOCK);
     }
 
-    function test_dump_stETH_XAU() public {
-        _dumpOracle(OracleType.STETH_XAU, "STETH_XAU", START_BLOCK, END_BLOCK);
+    function test_dump_stETH_GOLD() public {
+        _dumpOracle(OracleType.STETH_GOLD, "STETH_GOLD", START_BLOCK, END_BLOCK);
     }
 
     function test_dump_stETH_MCAP() public {
@@ -167,11 +167,11 @@ contract OracleDeployDumpV3 is Test {
         _dumpOracle(OracleType.FXUSD_ETH, "FXUSD_ETH", START_BLOCK, END_BLOCK);
         _dumpOracle(OracleType.FXUSD_BTC, "FXUSD_BTC", START_BLOCK, END_BLOCK);
         _dumpOracle(OracleType.FXUSD_EUR, "FXUSD_EUR", START_BLOCK, END_BLOCK);
-        _dumpOracle(OracleType.FXUSD_XAU, "FXUSD_XAU", START_BLOCK, END_BLOCK);
+        _dumpOracle(OracleType.FXUSD_GOLD, "FXUSD_GOLD", START_BLOCK, END_BLOCK);
         _dumpOracle(OracleType.FXUSD_MCAP, "FXUSD_MCAP", START_BLOCK, END_BLOCK);
         _dumpOracle(OracleType.STETH_BTC, "STETH_BTC", START_BLOCK, END_BLOCK);
         _dumpOracle(OracleType.STETH_EUR, "STETH_EUR", START_BLOCK, END_BLOCK);
-        _dumpOracle(OracleType.STETH_XAU, "STETH_XAU", START_BLOCK, END_BLOCK);
+        _dumpOracle(OracleType.STETH_GOLD, "STETH_GOLD", START_BLOCK, END_BLOCK);
         _dumpOracle(OracleType.STETH_MCAP, "STETH_MCAP", START_BLOCK, END_BLOCK);
     }
 }

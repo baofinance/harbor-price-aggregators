@@ -63,13 +63,13 @@ abstract contract DoubleFeedSUSDEAggregatorTestBase is Test {
     // String parsing helpers
     // =========================================================================
 
-    /// @notice Parse "Aggregator_BASE_QUOTE" to extract BASE
-    function _expectedBaseName() internal pure returns (string memory) {
+    /// @notice Parse "Aggregator_BASE_QUOTE" to extract BASE (override if aggregator uses different label)
+    function _expectedBaseName() internal pure virtual returns (string memory) {
         return _parseContractName(1);
     }
 
-    /// @notice Parse "Aggregator_BASE_QUOTE" to extract QUOTE
-    function _expectedQuoteName() internal pure returns (string memory) {
+    /// @notice Parse "Aggregator_BASE_QUOTE" to extract QUOTE (override if aggregator uses different label)
+    function _expectedQuoteName() internal pure virtual returns (string memory) {
         return _parseContractName(2);
     }
 

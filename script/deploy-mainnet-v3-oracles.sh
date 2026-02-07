@@ -200,15 +200,15 @@ declare -a ORACLES=(
   "src/Aggregator_fxUSD_ETH_mainnet.sol:Aggregator_fxUSD_ETH_mainnet|FXUSD_ETH|fxUSD/ETH"
   "src/Aggregator_fxUSD_EUR_mainnet.sol:Aggregator_fxUSD_EUR_mainnet|FXUSD_EUR|fxUSD/EUR"
   "src/Aggregator_fxUSD_MCAP_mainnet.sol:Aggregator_fxUSD_MCAP_mainnet|FXUSD_MCAP|fxUSD/MCAP"
-  "src/Aggregator_fxUSD_XAG_mainnet.sol:Aggregator_fxUSD_XAG_mainnet|FXUSD_XAG|fxUSD/XAG"
-  "src/Aggregator_fxUSD_XAU_mainnet.sol:Aggregator_fxUSD_XAU_mainnet|FXUSD_XAU|fxUSD/XAU"
+  "src/mainnet/Aggregator_fxUSD_GOLD_mainnet.sol:Aggregator_fxUSD_GOLD_mainnet|FXUSD_GOLD|fxUSD/GOLD"
+  "src/mainnet/Aggregator_fxUSD_SILVER_mainnet.sol:Aggregator_fxUSD_SILVER_mainnet|FXUSD_SILVER|fxUSD/SILVER"
   
   # stETH Oracles
-  "src/Aggregator_stETH_BTC_mainnet.sol:Aggregator_stETH_BTC_mainnet|STETH_BTC|stETH/BTC"
-  "src/Aggregator_stETH_EUR_mainnet.sol:Aggregator_stETH_EUR_mainnet|STETH_EUR|stETH/EUR"
-  "src/Aggregator_stETH_MCAP_mainnet.sol:Aggregator_stETH_MCAP_mainnet|STETH_MCAP|stETH/MCAP"
-  "src/Aggregator_stETH_XAG_mainnet.sol:Aggregator_stETH_XAG_mainnet|STETH_XAG|stETH/XAG"
-  "src/Aggregator_stETH_XAU_mainnet.sol:Aggregator_stETH_XAU_mainnet|STETH_XAU|stETH/XAU"
+  "src/mainnet/Aggregator_stETH_BTC_mainnet.sol:Aggregator_stETH_BTC_mainnet|STETH_BTC|stETH/BTC"
+  "src/mainnet/Aggregator_stETH_EUR_mainnet.sol:Aggregator_stETH_EUR_mainnet|STETH_EUR|stETH/EUR"
+  "src/mainnet/Aggregator_stETH_MCAP_mainnet.sol:Aggregator_stETH_MCAP_mainnet|STETH_MCAP|stETH/MCAP"
+  "src/mainnet/Aggregator_stETH_GOLD_mainnet.sol:Aggregator_stETH_GOLD_mainnet|STETH_GOLD|stETH/GOLD"
+  "src/mainnet/Aggregator_stETH_SILVER_mainnet.sol:Aggregator_stETH_SILVER_mainnet|STETH_SILVER|stETH/SILVER"
 )
 
 TOTAL=${#ORACLES[@]}

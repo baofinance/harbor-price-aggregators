@@ -10,11 +10,11 @@ import {OracleComparisonBase} from "./OracleComparisonBase.sol";
 import {Aggregator_fxUSD_ETH_mainnet} from "@harbor-price/mainnet/Aggregator_fxUSD_ETH_mainnet.sol";
 import {Aggregator_fxUSD_BTC_mainnet} from "@harbor-price/mainnet/Aggregator_fxUSD_BTC_mainnet.sol";
 import {Aggregator_fxUSD_EUR_mainnet} from "@harbor-price/mainnet/Aggregator_fxUSD_EUR_mainnet.sol";
-import {Aggregator_fxUSD_XAU_mainnet} from "@harbor-price/mainnet/Aggregator_fxUSD_XAU_mainnet.sol";
+import {Aggregator_fxUSD_GOLD_mainnet} from "@harbor-price/mainnet/Aggregator_fxUSD_GOLD_mainnet.sol";
 import {Aggregator_fxUSD_MCAP_mainnet} from "@harbor-price/mainnet/Aggregator_fxUSD_MCAP_mainnet.sol";
 import {Aggregator_stETH_BTC_mainnet} from "@harbor-price/mainnet/Aggregator_stETH_BTC_mainnet.sol";
 import {Aggregator_stETH_EUR_mainnet} from "@harbor-price/mainnet/Aggregator_stETH_EUR_mainnet.sol";
-import {Aggregator_stETH_XAU_mainnet} from "@harbor-price/mainnet/Aggregator_stETH_XAU_mainnet.sol";
+import {Aggregator_stETH_GOLD_mainnet} from "@harbor-price/mainnet/Aggregator_stETH_GOLD_mainnet.sol";
 import {Aggregator_stETH_MCAP_mainnet} from "@harbor-price/mainnet/Aggregator_stETH_MCAP_mainnet.sol";
 
 /// @title All Oracle Comparisons
@@ -53,8 +53,8 @@ contract AllOracleComparisons is OracleComparisonBase {
 
         _compareOracle(
             IWrappedPriceOracle(DeployedAddresses.FXUSD_XAU),
-            _deployV3(address(new Aggregator_fxUSD_XAU_mainnet())),
-            "FXUSD_XAU_v3"
+            _deployV3(address(new Aggregator_fxUSD_GOLD_mainnet())),
+            "FXUSD_GOLD_v3"
         );
 
         _compareOracle(
@@ -78,8 +78,8 @@ contract AllOracleComparisons is OracleComparisonBase {
 
         _compareOracle(
             IWrappedPriceOracle(DeployedAddresses.STETH_XAU),
-            _deployV3(address(new Aggregator_stETH_XAU_mainnet())),
-            "STETH_XAU_v3"
+            _deployV3(address(new Aggregator_stETH_GOLD_mainnet())),
+            "STETH_GOLD_v3"
         );
 
         _compareOracle(
