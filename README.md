@@ -46,6 +46,19 @@ To add a new aggregator, see [doc/v3-aggregator-authoring-guide.md](doc/v3-aggre
 | stETH/MCAP   | wstETH | ETH/USD, MCAP/USD           |
 | stETH/SILVER | wstETH | ETH/USD, XAG/USD            |
 
+### Leveraged token oracles: output in USD vs BTC
+
+Single-feed leveraged token oracles (e.g. **hsfxUSD-BTC/USD**) use the same formula contract for both USD- and BTC-denominated output. Only the constructor’s last argument (**invert**) changes:
+
+| `invert` | Output |
+| -------- | ------ |
+| `false` | **Price in USD** — `output = rate × BTC/USD` |
+| `true`  | **Price in BTC** (leverage terms) — `output = rate × (1e18 / BTC/USD)` |
+
+No other code changes are required: same formula contract, same mainnet contract type; wire a separate mainnet deployment with `invert = true` if you want a feed in BTC instead of USD.
+
+**Current mainnet deployments** expose the **USD price** (`invert = false`). Integrators should use these feeds when consuming the leveraged token oracles (hsfxUSD-*, hsstETH-*).
+
 ## Arbitrum v3 Oracles
 
 | Oracle         | Rate Source              | Feeds                                                        |

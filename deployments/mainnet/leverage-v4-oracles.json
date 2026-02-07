@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "chainId": 1,
+  "chainName": "Mainnet",
+  "deploymentTime": "2026-02-07T00:54:05Z",
+  "oracles": {
+    "HSFXUSD_EUR_USD": {
+      "name": "hsfxUSD-EUR/USD",
+      "address": "0x657bE7a2b91F95222D163Bee3B5F4C27bed598C5",
+      "contractPath": "src/mainnet/Aggregator_hsfxUSD_EUR_USD_mainnet.sol:Aggregator_hsfxUSD_EUR_USD_mainnet"
+    },
+    "HSSTETH_EUR_USD": {
+      "name": "hsstETH-EUR/USD",
+      "address": "0x777BD12e1f61B8cac19Cbd30c0233C46B4683C00",
+      "contractPath": "src/mainnet/Aggregator_hsstETH_EUR_USD_mainnet.sol:Aggregator_hsstETH_EUR_USD_mainnet"
+    },
+    "HSSTETH_BTC_USD": {
+      "name": "hsstETH-BTC/USD",
+      "address": "0xFf37Db6dea33228A5D84546250a5D0D0da942fd7",
+      "contractPath": "src/mainnet/Aggregator_hsstETH_BTC_USD_mainnet.sol:Aggregator_hsstETH_BTC_USD_mainnet"
+    },
+    "HSFXUSD_BTC_USD": {
+      "name": "hsfxUSD-BTC/USD",
+      "address": "0xF36648F44763eFE7c528140a2f804b2124CC3FE1",
+      "contractPath": "src/mainnet/Aggregator_hsfxUSD_BTC_USD_mainnet.sol:Aggregator_hsfxUSD_BTC_USD_mainnet"
+    },
+    "HSFXUSD_ETH_USD": {
+      "name": "hsfxUSD-ETH/USD",
+      "address": "0xA8643E35Ef119F983B09C322039e8AA49A3e3372",
+      "contractPath": "src/mainnet/Aggregator_hsfxUSD_ETH_USD_mainnet.sol:Aggregator_hsfxUSD_ETH_USD_mainnet"
+    }
+  }
+}
