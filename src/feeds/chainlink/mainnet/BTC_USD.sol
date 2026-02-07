@@ -9,7 +9,7 @@ library BTC_USD {
     /// @notice Chainlink BTC/USD aggregator address on Ethereum mainnet
     address internal constant FEED = 0xF4030086522a5bEEa4988F8cA5B36dbC97BeE88c;
 
-    /// @notice Heartbeat: 1 hour (3600 seconds)
-    /// @dev Feed updates at least once per heartbeat or on 0.5% deviation
-    uint256 internal constant HEARTBEAT = 3600;
+    /// @notice Heartbeat: 1 day (86400 seconds)
+    /// @dev Permissive to avoid StaleFeedData when feed updates are less frequent
+    uint256 internal constant HEARTBEAT = 86400;
 }

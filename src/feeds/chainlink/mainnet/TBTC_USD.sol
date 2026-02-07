@@ -9,7 +9,7 @@ library TBTC_USD {
     /// @notice Chainlink TBTC/USD aggregator address on Ethereum mainnet
     address internal constant FEED = 0x8350b7De6a6a2C1368E7D4Bd968190e13E354297;
 
-    /// @notice Heartbeat: 1 hour (3600 seconds)
-    /// @dev Feed updates at least once per heartbeat or on 2% deviation
-    uint256 internal constant HEARTBEAT = 3600;
+    /// @notice Heartbeat: 1 day (86400 seconds)
+    /// @dev Permissive to avoid StaleFeedData when feed updates are less frequent
+    uint256 internal constant HEARTBEAT = 86400;
 }

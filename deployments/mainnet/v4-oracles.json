@@ -11,12 +11,12 @@
     },
     "WBTC_USD": {
       "name": "wBTC/USD",
-      "address": "0x52B66aD600DC6051cF056951153355d457068bD2",
+      "address": "0x87292E650040B2D284983c0E0814344506948080",
       "contractPath": "src/mainnet/Aggregator_wBTC_USD_mainnet.sol:Aggregator_wBTC_USD_mainnet"
     },
     "TBTC_USD": {
       "name": "tBTC/USD",
-      "address": "0x677f597D3013dBF76552Ec6c605eeB551d3bBb72",
+      "address": "0xd8DF89f1C15a26F8A6C119161812F199cdFe23Ee",
       "contractPath": "src/mainnet/Aggregator_tBTC_USD_mainnet.sol:Aggregator_tBTC_USD_mainnet"
     },
     "PAXG_USD": {
