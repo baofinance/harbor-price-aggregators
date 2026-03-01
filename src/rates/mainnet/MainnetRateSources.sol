@@ -14,4 +14,9 @@ library MainnetRateSources {
     address internal constant MINTER_HSSTETH_BTC = 0xF42516EB885E737780EB864dd07cEc8628000919;
     address internal constant MINTER_HSFXUSD_BTC = 0x33e32ff4d0677862fa31582CC654a25b9b1e4888;
     address internal constant MINTER_HSFXUSD_ETH = 0xd6E2F8e57b4aFB51C6fA4cbC012e1cE6aEad989F;
+    // Leveraged Token Minters - GOLD and SILVER
+    address internal constant MINTER_HSFXUSD_GOLD = 0x880600E0c803d836E305B7c242FC095Eed234A8f;
+    address internal constant MINTER_HSFXUSD_SILVER = 0xDBF9F31795DAEa636e3e1305f897BFa8D2aA017d;
+    address internal constant MINTER_HSSTETH_GOLD = 0xB315DC4698DF45A477d8bb4B0Bc694C4D1Be91b5;
+    address internal constant MINTER_HSSTETH_SILVER = 0x1c0067BEe039A293804b8BE951B368D2Ec65b3e9;
 }

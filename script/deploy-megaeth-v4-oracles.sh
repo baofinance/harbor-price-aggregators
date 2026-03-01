@@ -258,6 +258,9 @@ declare -a ORACLES=(
   "src/megaeth/Aggregator_USDMY_HYPE_megaeth.sol:Aggregator_USDMY_HYPE_megaeth|USDMY_HYPE|USDMY/HYPE"
   "src/megaeth/Aggregator_USDMY_SOL_megaeth.sol:Aggregator_USDMY_SOL_megaeth|USDMY_SOL|USDMY/SOL"
   "src/megaeth/Aggregator_USDMY_BTC_megaeth.sol:Aggregator_USDMY_BTC_megaeth|USDMY_BTC|USDMY/BTC"
+  # BTC and wstETH Oracles
+  "src/megaeth/Aggregator_BTC_USD_megaeth.sol:Aggregator_BTC_USD_megaeth|BTC_USD|BTC/USD"
+  "src/megaeth/Aggregator_wstETH_USD_megaeth.sol:Aggregator_wstETH_USD_megaeth|WSTETH_USD|wstETH/USD"
 )
 
 TOTAL=${#ORACLES[@]}

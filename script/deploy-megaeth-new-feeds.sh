@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Deploy Mainnet Leveraged Token v4 oracles (GOLD and SILVER only)
-# These are direct deployments (no proxies) with hardcoded wiring
-# Includes: hsfxUSD-GOLD/USD, hsfxUSD-SILVER/USD, hsstETH-GOLD/USD, hsstETH-SILVER/USD
+# Deploy only the new MegaETH feeds: BTC/USD and wstETH/USD
+# This script adds to the existing deployment JSON without overwriting
 
 # Use full path to forge/cast
 FORGE=${FORGE:-$HOME/.foundry/bin/forge}
@@ -17,9 +16,9 @@ if [[ -f .env ]]; then
 fi
 
 # Required environment variables
-if [[ -z "${MAINNET_RPC_URL:-}" ]]; then
-  echo "❌ ERROR: MAINNET_RPC_URL is not set"
-  echo "   Set it via: export MAINNET_RPC_URL='your_rpc_url'"
+if [[ -z "${MEGAETH_RPC_URL:-}" ]]; then
+  echo "❌ ERROR: MEGAETH_RPC_URL is not set"
+  echo "   Set it via: export MEGAETH_RPC_URL='your_rpc_url'"
   echo "   Or add it to a .env file in the project root"
   exit 1
 fi
@@ -31,34 +30,26 @@ if [[ -z "${PRIVATE_KEY:-}" ]]; then
   exit 1
 fi
 
-# Verification is done separately via verify-mainnet-leverage-v4-oracles.sh (run after deploy)
-VERIFY=false
-
 # Check network
-CHAIN_ID=$("$CAST" chain-id --rpc-url "$MAINNET_RPC_URL" 2>/dev/null || echo "unknown")
+CHAIN_ID=$("$CAST" chain-id --rpc-url "$MEGAETH_RPC_URL" 2>/dev/null || echo "unknown")
 echo "=== Network Check ==="
-echo "RPC URL: $MAINNET_RPC_URL"
+echo "RPC URL: $MEGAETH_RPC_URL"
 echo "Chain ID: $CHAIN_ID"
-if [[ "$CHAIN_ID" != "0x1" ]] && [[ "$CHAIN_ID" != "1" ]]; then
-  echo "⚠️  WARNING: Expected Mainnet chain ID (1), got: $CHAIN_ID"
-  echo "   Press Ctrl+C to cancel, or wait 5 seconds to continue..."
-  sleep 5
-fi
 echo ""
 
 # Create deployments directory if it doesn't exist
-mkdir -p deployments/mainnet
+mkdir -p deployments/megaeth
 
-# Deployment state file
-DEPLOYMENT_FILE="deployments/mainnet/leverage-v4-oracles.json"
+# Deployment state file (same as main script - will add to existing)
+DEPLOYMENT_FILE="deployments/megaeth/v4-oracles.json"
 
 # Initialize deployment JSON if it doesn't exist
 if [[ ! -f "$DEPLOYMENT_FILE" ]]; then
   cat > "$DEPLOYMENT_FILE" <<EOF
 {
   "schemaVersion": 1,
-  "chainId": 1,
-  "chainName": "Mainnet",
+  "chainId": 0,
+  "chainName": "MegaETH",
   "deploymentTime": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
   "oracles": {}
 }
@@ -82,7 +73,7 @@ deploy_contract() {
   echo "Deploying $contract_name..." >&2
   
   DEPLOY_OUT=$("$FORGE" create "$contract_path" \
-    --rpc-url "$MAINNET_RPC_URL" \
+    --rpc-url "$MEGAETH_RPC_URL" \
     --private-key "$PRIVATE_KEY" \
     --broadcast 2>&1)
   
@@ -134,56 +125,17 @@ deploy_contract() {
   echo "$address"
 }
 
-# Function to verify a contract (non-blocking, continues on failure)
-verify_contract() {
-  local address=$1
-  local contract_path=$2
-  local contract_name=$3
-  
-  if [[ "$VERIFY" != "true" ]]; then
-    return 0
-  fi
-  
-  echo "  Verifying $contract_name..."
-  
-  # Submit verification request (non-blocking)
-  local verify_output
-  verify_output=$("$FORGE" verify-contract \
-    "$address" \
-    "$contract_path" \
-    --verifier etherscan \
-    --etherscan-api-key "$ETHERSCAN_API_KEY" \
-    --compiler-version 0.8.30 \
-    --chain mainnet 2>&1 || echo "VERIFY_ERROR")
-  
-  if echo "$verify_output" | grep -q "Contract successfully verified"; then
-    echo "  ✅ Verified successfully"
-    return 0
-  elif echo "$verify_output" | grep -qi "already verified"; then
-    echo "  ✅ Already verified on Etherscan"
-    return 0
-  elif echo "$verify_output" | grep -qi "submitted\|pending\|waiting"; then
-    echo "  ⏳ Verification submitted (check Etherscan in a few minutes)"
-    return 0
-  elif echo "$verify_output" | grep -qi "VERIFY_ERROR\|Error\|error"; then
-    echo "  ⚠️  Verification submission failed (will retry later)"
-    return 0  # Don't fail deployment
-  else
-    echo "  ⏳ Verification request submitted"
-    return 0
-  fi
-}
-
 # Function to test an oracle
 test_oracle() {
   local address=$1
   local name=$2
   
-  local oracle_name=$("$CAST" call "$address" "oracleName()(string)" --rpc-url "$MAINNET_RPC_URL" 2>/dev/null || echo "")
-  local base_name=$("$CAST" call "$address" "baseName()(string)" --rpc-url "$MAINNET_RPC_URL" 2>/dev/null || echo "")
+  local oracle_name=$("$CAST" call "$address" "oracleName()(string)" --rpc-url "$MEGAETH_RPC_URL" 2>/dev/null || echo "")
+  local base_name=$("$CAST" call "$address" "baseName()(string)" --rpc-url "$MEGAETH_RPC_URL" 2>/dev/null || echo "")
+  local quote_name=$("$CAST" call "$address" "quoteName()(string)" --rpc-url "$MEGAETH_RPC_URL" 2>/dev/null || echo "")
   
   if [[ -n "$oracle_name" ]] && [[ "$oracle_name" != "" ]]; then
-    echo "  ✅ $name: $oracle_name (base: $base_name)"
+    echo "  ✅ $name: $oracle_name (base: $base_name, quote: $quote_name)"
     return 0
   else
     echo "  ⚠️  $name: Could not fetch oracle name"
@@ -191,15 +143,13 @@ test_oracle() {
   fi
 }
 
-echo "=== Deploying Mainnet Leveraged Token v4 Oracles ==="
+echo "=== Deploying New MegaETH Feeds (BTC/USD and wstETH/USD) ==="
 echo ""
 
-# Define leveraged token oracles to deploy (GOLD and SILVER only)
+# Define only the 2 new oracles to deploy
 declare -a ORACLES=(
-  "src/mainnet/Aggregator_hsfxUSD_GOLD_USD_mainnet.sol:Aggregator_hsfxUSD_GOLD_USD_mainnet|HSFXUSD_GOLD_USD|hsfxUSD-GOLD/USD"
-  "src/mainnet/Aggregator_hsfxUSD_SILVER_USD_mainnet.sol:Aggregator_hsfxUSD_SILVER_USD_mainnet|HSFXUSD_SILVER_USD|hsfxUSD-SILVER/USD"
-  "src/mainnet/Aggregator_hsstETH_GOLD_USD_mainnet.sol:Aggregator_hsstETH_GOLD_USD_mainnet|HSSTETH_GOLD_USD|hsstETH-GOLD/USD"
-  "src/mainnet/Aggregator_hsstETH_SILVER_USD_mainnet.sol:Aggregator_hsstETH_SILVER_USD_mainnet|HSSTETH_SILVER_USD|hsstETH-SILVER/USD"
+  "src/megaeth/Aggregator_BTC_USD_megaeth.sol:Aggregator_BTC_USD_megaeth|BTC_USD|BTC/USD"
+  "src/megaeth/Aggregator_wstETH_USD_megaeth.sol:Aggregator_wstETH_USD_megaeth|WSTETH_USD|wstETH/USD"
 )
 
 TOTAL=${#ORACLES[@]}
@@ -208,7 +158,7 @@ SUCCESS=0
 FAILED=0
 
 # Deploy all oracles
-echo "Deploying $TOTAL leveraged token GOLD/SILVER oracles..."
+echo "Deploying $TOTAL new MegaETH oracles..."
 echo ""
 
 for oracle_info in "${ORACLES[@]}"; do
@@ -218,14 +168,13 @@ for oracle_info in "${ORACLES[@]}"; do
   echo "[$CURRENT/$TOTAL] $display_name"
   
   # Check if already deployed (unless FORCE_REDEPLOY is set)
-  # Use set +e so a crashing cast (e.g. proxy bug) doesn't kill the script
   existing_addr=""
   if [[ "${FORCE_REDEPLOY:-}" != "true" ]] && [[ -f "$DEPLOYMENT_FILE" ]]; then
     existing_addr=$(jq -r ".oracles[\"$oracle_key\"].address // empty" "$DEPLOYMENT_FILE" 2>/dev/null) || existing_addr=""
   fi
   if [[ -n "$existing_addr" ]] && [[ "$existing_addr" != "null" ]]; then
     set +e
-    code=$("$CAST" code "$existing_addr" --rpc-url "$MAINNET_RPC_URL" 2>/dev/null | head -1 || echo "0x")
+    code=$("$CAST" code "$existing_addr" --rpc-url "$MEGAETH_RPC_URL" 2>/dev/null | head -1 || echo "0x")
     set -e
     if [[ -n "$code" ]] && [[ "$code" != "0x" ]]; then
       echo "  ⏭️  Already deployed at: $existing_addr"
@@ -238,7 +187,7 @@ for oracle_info in "${ORACLES[@]}"; do
     echo "  🔄 Force redeploy mode - deploying new contract..."
   fi
   
-  # Deploy (with --verify to verify on Etherscan after deploy)
+  # Deploy
   set +e
   address=$(deploy_contract "$contract_path" "$display_name" "$oracle_key")
   deploy_exit_code=$?
@@ -316,14 +265,19 @@ echo "=== Deployment File ==="
 echo "Deployment addresses saved to: $DEPLOYMENT_FILE"
 echo ""
 
-# Display all addresses
-echo "=== All Deployed Addresses ==="
-jq -r '.oracles | to_entries[] | "\(.key): \(.value.address)"' "$DEPLOYMENT_FILE" | sort
+# Display new addresses
+echo "=== Newly Deployed Addresses ==="
+for oracle_info in "${ORACLES[@]}"; do
+  IFS='|' read -r contract_path oracle_key display_name <<< "$oracle_info"
+  address=$(jq -r ".oracles[\"$oracle_key\"].address // empty" "$DEPLOYMENT_FILE" 2>/dev/null || echo "")
+  if [[ -n "$address" ]] && [[ "$address" != "null" ]] && [[ "$address" != "" ]]; then
+    echo "$oracle_key: $address"
+  fi
+done
 echo ""
 
 if [[ $FAILED -eq 0 ]] && [[ $TEST_FAILED -eq 0 ]]; then
-  echo "✅ All leveraged token oracles deployed and tested successfully!"
-  echo "   Verify on Etherscan: ./script/verify-mainnet-leverage-v4-oracles.sh"
+  echo "✅ All new MegaETH feeds deployed and tested successfully!"
 else
   echo "⚠️  Some oracles failed. Check the output above for details."
   exit 1
