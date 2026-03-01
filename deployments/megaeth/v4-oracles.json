@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "chainId": 0,
   "chainName": "MegaETH",
-  "deploymentTime": "2026-02-23T23:15:17Z",
+  "deploymentTime": "2026-03-01T22:04:59Z",
   "oracles": {
     "USDMY_ETH": {
       "name": "USDMY/ETH",
@@ -23,6 +23,16 @@
       "name": "USDMY/BTC",
       "address": "0xf9cB23E2E882C67A899C448CBe2542df9eebC615",
       "contractPath": "src/megaeth/Aggregator_USDMY_BTC_megaeth.sol:Aggregator_USDMY_BTC_megaeth"
+    },
+    "BTC_USD": {
+      "name": "BTC/USD",
+      "address": "0xD3902Ac4c84FE62f831f38385e67E3d1BA27c75F",
+      "contractPath": "src/megaeth/Aggregator_BTC_USD_megaeth.sol:Aggregator_BTC_USD_megaeth"
+    },
+    "WSTETH_USD": {
+      "name": "wstETH/USD",
+      "address": "0xF183D68f7D4e47f0546bF67f56677d35CE87617D",
+      "contractPath": "src/megaeth/Aggregator_wstETH_USD_megaeth.sol:Aggregator_wstETH_USD_megaeth"
     }
   }
 }

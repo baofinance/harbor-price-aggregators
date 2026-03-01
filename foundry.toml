@@ -73,6 +73,10 @@ skip = ["**/*.vy"]
 
 [etherscan]
 mainnet = { key = "${ETHERSCAN_KEY}" }
+# MegaETH uses Etherscan API V2 with chain ID 4326
+# The url parameter tells forge to use this API endpoint for verification
+# Chain ID 4326 is passed as a query parameter in the API request
+megaeth = { key = "${ETHERSCAN_API_KEY:-${ETHERSCAN_KEY}}", url = "https://api.etherscan.io/v2/api" }
 
 [rpc_endpoints]
 sepolia = "${SEPOLIA_RPC_URL}"

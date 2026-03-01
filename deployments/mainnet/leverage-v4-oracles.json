@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "chainId": 1,
   "chainName": "Mainnet",
-  "deploymentTime": "2026-02-07T00:54:05Z",
+  "deploymentTime": "2026-02-28T00:13:40Z",
   "oracles": {
     "HSFXUSD_EUR_USD": {
       "name": "hsfxUSD-EUR/USD",
@@ -28,6 +28,26 @@
       "name": "hsfxUSD-ETH/USD",
       "address": "0xA8643E35Ef119F983B09C322039e8AA49A3e3372",
       "contractPath": "src/mainnet/Aggregator_hsfxUSD_ETH_USD_mainnet.sol:Aggregator_hsfxUSD_ETH_USD_mainnet"
+    },
+    "HSFXUSD_GOLD_USD": {
+      "name": "hsfxUSD-GOLD/USD",
+      "address": "0x652E9B0ad84fD2A0c3806129bDbDEF4585bb29e8",
+      "contractPath": "src/mainnet/Aggregator_hsfxUSD_GOLD_USD_mainnet.sol:Aggregator_hsfxUSD_GOLD_USD_mainnet"
+    },
+    "HSFXUSD_SILVER_USD": {
+      "name": "hsfxUSD-SILVER/USD",
+      "address": "0x70387587a0d3A01a2C75904Dd8CA355a921cd1F3",
+      "contractPath": "src/mainnet/Aggregator_hsfxUSD_SILVER_USD_mainnet.sol:Aggregator_hsfxUSD_SILVER_USD_mainnet"
+    },
+    "HSSTETH_GOLD_USD": {
+      "name": "hsstETH-GOLD/USD",
+      "address": "0x34dfDF00262E1A3b61c7a0616F0645A928Dd8187",
+      "contractPath": "src/mainnet/Aggregator_hsstETH_GOLD_USD_mainnet.sol:Aggregator_hsstETH_GOLD_USD_mainnet"
+    },
+    "HSSTETH_SILVER_USD": {
+      "name": "hsstETH-SILVER/USD",
+      "address": "0x50E198a8Fa7e4c95B355E34cba026133F68D1637",
+      "contractPath": "src/mainnet/Aggregator_hsstETH_SILVER_USD_mainnet.sol:Aggregator_hsstETH_SILVER_USD_mainnet"
     }
   }
 }
