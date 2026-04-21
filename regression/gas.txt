@@ -250,6 +250,18 @@ src/aggregators/base/Aggregator_stETH_BOM5.sol:Aggregator_stETH_BOM5
 | upgradeToAndCall | 8.865e+03 |
 | version          | 5.130e+02 |
 
+src/aggregators/mainnet/Aggregator_PAXG_USD.sol:Aggregator_PAXG_USD
+| function name    |       max |
+|------------------|-----------|
+| baseName         | 4.900e+02 |
+| latestAnswer     | 1.064e+04 |
+| oracleName       | 1.099e+03 |
+| proxiableUUID    | 3.460e+02 |
+| quoteName        | 5.120e+02 |
+| rateProvider     | 4.160e+02 |
+| upgradeToAndCall | 8.500e+03 |
+| version          | 3.290e+02 |
+
 src/aggregators/mainnet/Aggregator_fxUSD_BTC.sol:Aggregator_fxUSD_BTC
 | function name        |       max |
 |----------------------|-----------|
@@ -328,6 +340,138 @@ src/aggregators/mainnet/Aggregator_fxUSD_XAU.sol:Aggregator_fxUSD_XAU
 | upgradeToAndCall | 8.500e+03 |
 | version          | 3.290e+02 |
 
+src/aggregators/mainnet/Aggregator_hsfxUSD_BTC_USD.sol:Aggregator_hsfxUSD_BTC_USD
+| function name    |       max |
+|------------------|-----------|
+| baseName         | 4.840e+02 |
+| latestAnswer     | 1.594e+04 |
+| oracleName       | 1.093e+03 |
+| proxiableUUID    | 3.460e+02 |
+| quoteName        | 5.120e+02 |
+| rateProvider     | 4.350e+02 |
+| upgradeToAndCall | 8.500e+03 |
+| version          | 3.290e+02 |
+
+src/aggregators/mainnet/Aggregator_hsfxUSD_ETH_USD.sol:Aggregator_hsfxUSD_ETH_USD
+| function name    |       max |
+|------------------|-----------|
+| baseName         | 4.840e+02 |
+| latestAnswer     | 1.594e+04 |
+| oracleName       | 1.093e+03 |
+| proxiableUUID    | 3.460e+02 |
+| quoteName        | 5.120e+02 |
+| rateProvider     | 4.350e+02 |
+| upgradeToAndCall | 8.500e+03 |
+| version          | 3.290e+02 |
+
+src/aggregators/mainnet/Aggregator_hsfxUSD_EUR_USD.sol:Aggregator_hsfxUSD_EUR_USD
+| function name    |       max |
+|------------------|-----------|
+| baseName         | 4.840e+02 |
+| latestAnswer     | 1.594e+04 |
+| oracleName       | 1.093e+03 |
+| proxiableUUID    | 3.460e+02 |
+| quoteName        | 5.120e+02 |
+| rateProvider     | 4.350e+02 |
+| upgradeToAndCall | 8.500e+03 |
+| version          | 3.290e+02 |
+
+src/aggregators/mainnet/Aggregator_hsstETH_BTC_USD.sol:Aggregator_hsstETH_BTC_USD
+| function name    |       max |
+|------------------|-----------|
+| baseName         | 4.840e+02 |
+| latestAnswer     | 1.594e+04 |
+| oracleName       | 1.093e+03 |
+| proxiableUUID    | 3.460e+02 |
+| quoteName        | 5.120e+02 |
+| rateProvider     | 4.350e+02 |
+| upgradeToAndCall | 8.500e+03 |
+| version          | 3.290e+02 |
+
+src/aggregators/mainnet/Aggregator_hsstETH_EUR_USD.sol:Aggregator_hsstETH_EUR_USD
+| function name    |       max |
+|------------------|-----------|
+| baseName         | 4.840e+02 |
+| latestAnswer     | 1.594e+04 |
+| oracleName       | 1.093e+03 |
+| proxiableUUID    | 3.460e+02 |
+| quoteName        | 5.120e+02 |
+| rateProvider     | 4.350e+02 |
+| upgradeToAndCall | 8.500e+03 |
+| version          | 3.290e+02 |
+
+src/aggregators/mainnet/Aggregator_sUSDe_BTC.sol:Aggregator_sUSDe_BTC
+| function name    |       max |
+|------------------|-----------|
+| baseName         | 5.340e+02 |
+| latestAnswer     | 2.649e+04 |
+| oracleName       | 1.165e+03 |
+| proxiableUUID    | 3.900e+02 |
+| quoteName        | 5.560e+02 |
+| rateProvider     | 5.230e+02 |
+| upgradeToAndCall | 8.588e+03 |
+| version          | 3.730e+02 |
+
+src/aggregators/mainnet/Aggregator_sUSDe_ETH.sol:Aggregator_sUSDe_ETH
+| function name    |       max |
+|------------------|-----------|
+| baseName         | 5.340e+02 |
+| latestAnswer     | 2.649e+04 |
+| oracleName       | 1.165e+03 |
+| proxiableUUID    | 3.900e+02 |
+| quoteName        | 5.560e+02 |
+| rateProvider     | 5.230e+02 |
+| upgradeToAndCall | 8.588e+03 |
+| version          | 3.730e+02 |
+
+src/aggregators/mainnet/Aggregator_sUSDe_EUR.sol:Aggregator_sUSDe_EUR
+| function name    |       max |
+|------------------|-----------|
+| baseName         | 5.340e+02 |
+| latestAnswer     | 2.649e+04 |
+| oracleName       | 1.165e+03 |
+| proxiableUUID    | 3.900e+02 |
+| quoteName        | 5.560e+02 |
+| rateProvider     | 5.230e+02 |
+| upgradeToAndCall | 8.588e+03 |
+| version          | 3.730e+02 |
+
+src/aggregators/mainnet/Aggregator_sUSDe_MCAP.sol:Aggregator_sUSDe_MCAP
+| function name    |       max |
+|------------------|-----------|
+| baseName         | 5.340e+02 |
+| latestAnswer     | 2.649e+04 |
+| oracleName       | 1.165e+03 |
+| proxiableUUID    | 3.900e+02 |
+| quoteName        | 5.560e+02 |
+| rateProvider     | 5.230e+02 |
+| upgradeToAndCall | 8.588e+03 |
+| version          | 3.730e+02 |
+
+src/aggregators/mainnet/Aggregator_sUSDe_XAG.sol:Aggregator_sUSDe_XAG
+| function name    |       max |
+|------------------|-----------|
+| baseName         | 5.340e+02 |
+| latestAnswer     | 2.649e+04 |
+| oracleName       | 1.165e+03 |
+| proxiableUUID    | 3.900e+02 |
+| quoteName        | 5.560e+02 |
+| rateProvider     | 5.230e+02 |
+| upgradeToAndCall | 8.588e+03 |
+| version          | 3.730e+02 |
+
+src/aggregators/mainnet/Aggregator_sUSDe_XAU.sol:Aggregator_sUSDe_XAU
+| function name    |       max |
+|------------------|-----------|
+| baseName         | 5.340e+02 |
+| latestAnswer     | 2.649e+04 |
+| oracleName       | 1.165e+03 |
+| proxiableUUID    | 3.900e+02 |
+| quoteName        | 5.560e+02 |
+| rateProvider     | 5.230e+02 |
+| upgradeToAndCall | 8.588e+03 |
+| version          | 3.730e+02 |
+
 src/aggregators/mainnet/Aggregator_stETH_BTC.sol:Aggregator_stETH_BTC
 | function name         |       max |
 |-----------------------|-----------|
@@ -390,6 +534,90 @@ src/aggregators/mainnet/Aggregator_stETH_XAU.sol:Aggregator_stETH_XAU
 |------------------|-----------|
 | baseName         | 5.340e+02 |
 | latestAnswer     | 2.666e+04 |
+| oracleName       | 1.143e+03 |
+| proxiableUUID    | 3.680e+02 |
+| quoteName        | 5.560e+02 |
+| rateProvider     | 5.010e+02 |
+| upgradeToAndCall | 8.544e+03 |
+| version          | 3.510e+02 |
+
+src/aggregators/mainnet/Aggregator_tBTC_USD.sol:Aggregator_tBTC_USD
+| function name    |       max |
+|------------------|-----------|
+| baseName         | 4.900e+02 |
+| latestAnswer     | 1.064e+04 |
+| oracleName       | 1.099e+03 |
+| proxiableUUID    | 3.460e+02 |
+| quoteName        | 5.120e+02 |
+| rateProvider     | 4.160e+02 |
+| upgradeToAndCall | 8.500e+03 |
+| version          | 3.290e+02 |
+
+src/aggregators/mainnet/Aggregator_wBTC_USD.sol:Aggregator_wBTC_USD
+| function name    |       max |
+|------------------|-----------|
+| baseName         | 5.340e+02 |
+| latestAnswer     | 2.098e+04 |
+| oracleName       | 1.143e+03 |
+| proxiableUUID    | 3.680e+02 |
+| quoteName        | 5.560e+02 |
+| rateProvider     | 4.820e+02 |
+| upgradeToAndCall | 8.544e+03 |
+| version          | 3.510e+02 |
+
+src/aggregators/mainnet/Aggregator_wstETH_USD.sol:Aggregator_wstETH_USD
+| function name    |       max |
+|------------------|-----------|
+| baseName         | 4.900e+02 |
+| latestAnswer     | 1.612e+04 |
+| oracleName       | 1.099e+03 |
+| proxiableUUID    | 3.460e+02 |
+| quoteName        | 5.120e+02 |
+| rateProvider     | 4.350e+02 |
+| upgradeToAndCall | 8.500e+03 |
+| version          | 3.290e+02 |
+
+src/aggregators/megaeth/Aggregator_USDMY_BTC.sol:Aggregator_USDMY_BTC
+| function name    |       max |
+|------------------|-----------|
+| baseName         | 5.340e+02 |
+| latestAnswer     | 2.647e+04 |
+| oracleName       | 1.143e+03 |
+| proxiableUUID    | 3.680e+02 |
+| quoteName        | 5.560e+02 |
+| rateProvider     | 5.010e+02 |
+| upgradeToAndCall | 8.544e+03 |
+| version          | 3.510e+02 |
+
+src/aggregators/megaeth/Aggregator_USDMY_ETH.sol:Aggregator_USDMY_ETH
+| function name    |       max |
+|------------------|-----------|
+| baseName         | 5.340e+02 |
+| latestAnswer     | 2.647e+04 |
+| oracleName       | 1.143e+03 |
+| proxiableUUID    | 3.680e+02 |
+| quoteName        | 5.560e+02 |
+| rateProvider     | 5.010e+02 |
+| upgradeToAndCall | 8.544e+03 |
+| version          | 3.510e+02 |
+
+src/aggregators/megaeth/Aggregator_USDMY_HYPE.sol:Aggregator_USDMY_HYPE
+| function name    |       max |
+|------------------|-----------|
+| baseName         | 5.340e+02 |
+| latestAnswer     | 2.647e+04 |
+| oracleName       | 1.143e+03 |
+| proxiableUUID    | 3.680e+02 |
+| quoteName        | 5.560e+02 |
+| rateProvider     | 5.010e+02 |
+| upgradeToAndCall | 8.544e+03 |
+| version          | 3.510e+02 |
+
+src/aggregators/megaeth/Aggregator_USDMY_SOL.sol:Aggregator_USDMY_SOL
+| function name    |       max |
+|------------------|-----------|
+| baseName         | 5.340e+02 |
+| latestAnswer     | 2.647e+04 |
 | oracleName       | 1.143e+03 |
 | proxiableUUID    | 3.680e+02 |
 | quoteName        | 5.560e+02 |
