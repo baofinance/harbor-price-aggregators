@@ -80,14 +80,7 @@ abstract contract LeveragedTokenUSDAggregatorTestBase is Test {
         mockUnderlyingUsdFeed.setAnswer(3000e8, block.timestamp); // stETH/USD = 3000
 
         // Default setup for fxSAVE underlying (type 0)
-        aggregator = _createAggregator(
-            address(mockMinter),
-            0,
-            address(mockFxSAVE),
-            address(0),
-            0,
-            _expectedBaseName()
-        );
+        aggregator = _createAggregator(address(mockMinter), 0, address(mockFxSAVE), address(0), 0, _expectedBaseName());
     }
 
     // =========================================================================

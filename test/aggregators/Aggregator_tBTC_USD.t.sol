@@ -16,8 +16,7 @@ contract Aggregator_tBTC_USD_Test is SingleFeedNoRateAggregatorTestBase {
         uint256 divisor,
         bool invert
     ) internal override returns (IHarborPriceAggregatorV3) {
-        return
-            IHarborPriceAggregatorV3(address(new Aggregator_tBTC_USD(priceFeed, heartbeat, divisor, invert)));
+        return IHarborPriceAggregatorV3(address(new Aggregator_tBTC_USD(priceFeed, heartbeat, divisor, invert)));
     }
 
     function _createWithZeroPriceFeed() internal override {

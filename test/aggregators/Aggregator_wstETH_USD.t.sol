@@ -18,9 +18,7 @@ contract Aggregator_wstETH_USD_Test is SingleFeedWstETHAggregatorTestBase {
         bool invert
     ) internal override returns (IHarborPriceAggregatorV3) {
         return
-            IHarborPriceAggregatorV3(
-                address(new Aggregator_wstETH_USD(wsteth, priceFeed, heartbeat, divisor, invert))
-            );
+            IHarborPriceAggregatorV3(address(new Aggregator_wstETH_USD(wsteth, priceFeed, heartbeat, divisor, invert)));
     }
 
     function _createWithZeroWsteth() internal override {
