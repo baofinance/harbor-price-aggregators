@@ -8,11 +8,11 @@ import {HarborAggregator_v3} from "@harbor-price/aggregators/HarborAggregator_v3
 import {WstETHRateLib} from "@harbor-price/rates/WstETHRateLib.sol";
 import {SingleFeedPriceLib} from "@harbor-price/prices/SingleFeedPriceLib.sol";
 
-/// @notice wstETH/USD oracle (rate: wstETH->stETH, price: stETH/USD).
+/// @notice stETH/USD oracle (rate: wstETH->stETH, price: stETH/USD).
 /// @dev This is the formula contract; wiring (feeds/addresses) is provided via constructor.
 /// @custom:oz-upgrades-unsafe-allow state-variable-immutable constructor
 // solhint-disable-next-line contract-name-capwords
-contract Aggregator_wstETH_USD is HarborAggregator_v3 {
+contract Aggregator_stETH_USD is HarborAggregator_v3 {
     using WstETHRateLib for IWstETH;
 
     error InvalidAddress(address value);
@@ -51,7 +51,7 @@ contract Aggregator_wstETH_USD is HarborAggregator_v3 {
     }
 
     function _baseName() internal pure override returns (string memory) {
-        return "wstETH";
+        return "stETH";
     }
 
     function _quoteName() internal pure override returns (string memory) {
