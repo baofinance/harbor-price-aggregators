@@ -2,37 +2,62 @@
   "schemaVersion": 1,
   "chainId": 0,
   "chainName": "MegaETH",
-  "deploymentTime": "2026-03-01T22:04:59Z",
+  "deploymentTime": "2026-03-10T22:51:29Z",
   "oracles": {
-    "USDMY_ETH": {
-      "name": "USDMY/ETH",
+    "USDM_ETH": {
+      "name": "USDM/ETH",
+      "address": "",
+      "contractPath": "src/megaeth/Aggregator_USDM_ETH_megaeth.sol:Aggregator_USDM_ETH_megaeth"
+    },
+    "USDM_BTC": {
+      "name": "USDM/BTC",
+      "address": "",
+      "contractPath": "src/megaeth/Aggregator_USDM_BTC_megaeth.sol:Aggregator_USDM_BTC_megaeth"
+    },
+    "USDM_ETH_V3": {
+      "name": "USDM/ETH",
       "address": "0x756B95D0bB61c195d1196EB2143D8D88570036AC",
-      "contractPath": "src/megaeth/Aggregator_USDMY_ETH_megaeth.sol:Aggregator_USDMY_ETH_megaeth"
+      "contractPath": "src/megaeth/Aggregator_USDM_ETH_megaeth.sol:Aggregator_USDM_ETH_megaeth"
     },
-    "USDMY_HYPE": {
-      "name": "USDMY/HYPE",
+    "USDM_HYPE": {
+      "name": "USDM/HYPE",
       "address": "0x830AB2B3A936F727ee2FF67E9C073380B6f166D8",
-      "contractPath": "src/megaeth/Aggregator_USDMY_HYPE_megaeth.sol:Aggregator_USDMY_HYPE_megaeth"
+      "contractPath": "src/megaeth/Aggregator_USDM_HYPE_megaeth.sol:Aggregator_USDM_HYPE_megaeth"
     },
-    "USDMY_SOL": {
-      "name": "USDMY/SOL",
+    "USDM_SOL": {
+      "name": "USDM/SOL",
       "address": "0xE2962ab29C723415F023451E9F166122d8b4a980",
-      "contractPath": "src/megaeth/Aggregator_USDMY_SOL_megaeth.sol:Aggregator_USDMY_SOL_megaeth"
+      "contractPath": "src/megaeth/Aggregator_USDM_SOL_megaeth.sol:Aggregator_USDM_SOL_megaeth"
     },
-    "USDMY_BTC": {
-      "name": "USDMY/BTC",
+    "USDM_BTC_V3": {
+      "name": "USDM/BTC",
       "address": "0xf9cB23E2E882C67A899C448CBe2542df9eebC615",
-      "contractPath": "src/megaeth/Aggregator_USDMY_BTC_megaeth.sol:Aggregator_USDMY_BTC_megaeth"
+      "contractPath": "src/megaeth/Aggregator_USDM_BTC_megaeth.sol:Aggregator_USDM_BTC_megaeth"
+    },
+    "USDE_ETH": {
+      "name": "USDE/ETH",
+      "address": "",
+      "contractPath": "src/megaeth/Aggregator_USDE_ETH_megaeth.sol:Aggregator_USDE_ETH_megaeth"
+    },
+    "USDE_BTC": {
+      "name": "USDE/BTC",
+      "address": "",
+      "contractPath": "src/megaeth/Aggregator_USDE_BTC_megaeth.sol:Aggregator_USDE_BTC_megaeth"
     },
     "BTC_USD": {
       "name": "BTC/USD",
       "address": "0xD3902Ac4c84FE62f831f38385e67E3d1BA27c75F",
       "contractPath": "src/megaeth/Aggregator_BTC_USD_megaeth.sol:Aggregator_BTC_USD_megaeth"
     },
-    "WSTETH_USD": {
-      "name": "wstETH/USD",
-      "address": "0xF183D68f7D4e47f0546bF67f56677d35CE87617D",
-      "contractPath": "src/megaeth/Aggregator_wstETH_USD_megaeth.sol:Aggregator_wstETH_USD_megaeth"
+    "STETH_USD": {
+      "name": "stETH/USD",
+      "address": "",
+      "contractPath": "src/megaeth/Aggregator_stETH_USD_megaeth.sol:Aggregator_stETH_USD_megaeth"
+    },
+    "BTCb_USD": {
+      "name": "BTC.b/USD",
+      "address": "0x46396230c61776A384c1c00c04A9784c4a2F5d8F",
+      "contractPath": "src/megaeth/Aggregator_BTCb_USD_megaeth.sol:Aggregator_BTCb_USD_megaeth"
     }
   }
 }

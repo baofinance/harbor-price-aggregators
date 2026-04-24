@@ -1,4 +1,4 @@
-# Shared library for Harbor v3 deployment scripts
+# Shared library for Harbor deployment scripts
 #
 # Source this file from deploy-impl, deploy-proxy, etc.
 # Usage: source "$(dirname "$0")/lib/common.sh"
@@ -34,11 +34,35 @@ has_code() {
   [[ "$code" != "0x" ]]
 }
 
+# Wait for bytecode to be visible at address.
+# Args: address [attempts] [sleep_seconds]
+# Environment overrides:
+#   DEPLOY_CODE_WAIT_ATTEMPTS (default 20)
+#   DEPLOY_CODE_WAIT_SECONDS  (default 1)
+wait_for_code() {
+  local addr=$1
+  local attempts=${2:-${DEPLOY_CODE_WAIT_ATTEMPTS:-20}}
+  local sleep_seconds=${3:-${DEPLOY_CODE_WAIT_SECONDS:-1}}
+  local i=0
+
+  while [[ $i -lt $attempts ]]; do
+    if has_code "$addr"; then
+      return 0
+    fi
+    sleep "$sleep_seconds"
+    ((i++))
+  done
+
+  return 1
+}
+
+# Optional 4th arg: salt suffix (default wrappedPriceAggregator). Used for MegaETH priceoracle etc.
 predict_proxy_address() {
   local base=$1
   local quote=$2
   local salt_prefix=$3
-  local salt_str="${salt_prefix}::${base}::${quote}::wrappedPriceAggregator"
+  local suffix=${4:-wrappedPriceAggregator}
+  local salt_str="${salt_prefix}::${base}::${quote}::${suffix}"
   local salt_b32
   salt_b32=$("$CAST" keccak "$("$CAST" from-utf8 "$salt_str")")
   "$CAST" call "$BAO_FACTORY" "predictAddress(bytes32)(address)" "$salt_b32" --rpc-url "$RPC_NETWORK"
@@ -141,6 +165,26 @@ get_proxy_info() {
 
 # ── Initialization functions ───────────────────────────────────────────────
 
+# Resolve state file basename by network.
+# MegaETH uses v4 naming; other networks remain on v3 naming.
+state_basename_for_network() {
+  local network=$1
+  local salt_prefix=$2
+  local base
+
+  if [[ "$network" == "megaeth" ]]; then
+    base="v4-aggregators"
+  else
+    base="v3-aggregators"
+  fi
+
+  if [[ "$salt_prefix" == "harbor_v1" ]]; then
+    echo "${base}.json"
+  else
+    echo "${base}-${salt_prefix}.json"
+  fi
+}
+
 # Check we're in project root
 check_project_root() {
   if [[ ! -f "foundry.toml" ]] || [[ ! -d "src" ]]; then
@@ -174,6 +218,10 @@ init_state_file() {
   local network=$1
   local salt_prefix=$2
   local use_local=${3:-false}
+  local state_version_tag="v3"
+  if [[ "$network" == "megaeth" ]]; then
+    state_version_tag="v4"
+  fi
 
   local state_dir
   if [[ "$use_local" == "true" ]]; then
@@ -182,10 +230,23 @@ init_state_file() {
     state_dir="deployments/${network}"
   fi
 
-  if [[ "$salt_prefix" == "harbor_v1" ]]; then
-    STATE_FILE="${state_dir}/v3-aggregators.json"
-  else
-    STATE_FILE="${state_dir}/v3-aggregators-${salt_prefix}.json"
+  local state_basename
+  state_basename=$(state_basename_for_network "$network" "$salt_prefix")
+  STATE_FILE="${state_dir}/${state_basename}"
+
+  # MegaETH migration path:
+  # If new v4 state file doesn't exist yet but legacy v3 file does, copy it once.
+  if [[ "$network" == "megaeth" ]] && [[ ! -f "$STATE_FILE" ]]; then
+    local legacy_file
+    if [[ "$salt_prefix" == "harbor_v1" ]]; then
+      legacy_file="${state_dir}/v3-aggregators.json"
+    else
+      legacy_file="${state_dir}/v3-aggregators-${salt_prefix}.json"
+    fi
+    if [[ -f "$legacy_file" ]]; then
+      cp "$legacy_file" "$STATE_FILE"
+      echo "ℹ Migrated legacy MegaETH state: $legacy_file -> $STATE_FILE"
+    fi
   fi
 
   # Create empty state if doesn't exist
@@ -196,7 +257,7 @@ init_state_file() {
     cat >"$STATE_FILE" <<EOF
 {
   "schemaVersion": 1,
-  "version": "v3",
+  "version": "$state_version_tag",
   "network": "$network",
   "chainId": $chain_id,
   "baoFactory": "$BAO_FACTORY",
@@ -215,6 +276,18 @@ EOF
     exit 1
   fi
 
+  # Keep state metadata aligned with network/version conventions.
+  if [[ "$network" == "megaeth" ]]; then
+    local current_version
+    current_version=$(jq -r '.version // ""' "$STATE_FILE")
+    if [[ "$current_version" != "v4" ]]; then
+      local tmp
+      tmp=$(mktemp)
+      jq '.version = "v4"' "$STATE_FILE" >"$tmp" && mv "$tmp" "$STATE_FILE"
+      echo "ℹ Normalized MegaETH state version to v4 in $STATE_FILE"
+    fi
+  fi
+
   local state_network
   state_network=$(jq -r '.network' "$STATE_FILE")
   if [[ "$state_network" != "$network" ]]; then
@@ -230,10 +303,19 @@ copy_network_state() {
   local salt_prefix=$2
 
   local local_dir="deployments/local/${network}"
-  local prod_file="deployments/${network}/v3-aggregators.json"
-  if [[ "$salt_prefix" != "harbor_v1" ]]; then
-    prod_file="deployments/${network}/v3-aggregators-${salt_prefix}.json"
+  local state_basename
+  state_basename=$(state_basename_for_network "$network" "$salt_prefix")
+  local prod_file="deployments/${network}/${state_basename}"
+
+  # MegaETH fallback: allow copying legacy v3 file if v4 file doesn't exist yet.
+  if [[ "$network" == "megaeth" ]] && [[ ! -f "$prod_file" ]]; then
+    if [[ "$salt_prefix" == "harbor_v1" ]]; then
+      prod_file="deployments/${network}/v3-aggregators.json"
+    else
+      prod_file="deployments/${network}/v3-aggregators-${salt_prefix}.json"
+    fi
   fi
+
   if [[ ! -f "$prod_file" ]]; then
     echo "❌ Network state not found: $prod_file" >&2
     exit 1

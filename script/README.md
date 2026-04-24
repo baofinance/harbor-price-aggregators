@@ -60,6 +60,19 @@ deployments/local/<network>/v3-aggregators.json
 - `salt`: CREATE3 salt used for deterministic proxy address generation
 - All timestamps are ISO 8601 UTC format
 
+## Script layout
+
+Chain-specific deploy and verify scripts live under **script/\<chain\>/deploy/** and **script/\<chain\>/verify/**:
+
+| Chain    | Deploy | Verify |
+|----------|--------|--------|
+| **megaeth**  | `script/megaeth/deploy/`  | `script/megaeth/verify/`  |
+| **mainnet**  | `script/mainnet/deploy/`  | `script/mainnet/verify/`  |
+| **arbitrum** | `script/arbitrum/deploy/` | `script/arbitrum/verify/` |
+| **base**     | `script/base/deploy/`     | `script/base/verify/`     |
+
+Shared tools (`deploy-impl`, `deploy-proxy`, `verify-impl`, `verify-proxy`, `lib/common.sh`) remain in **script/**.
+
 ## Scripts
 
 ### deploy-impl
