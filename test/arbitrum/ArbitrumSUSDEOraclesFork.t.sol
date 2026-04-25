@@ -2,14 +2,14 @@
 pragma solidity 0.8.30;
 
 import {Test, console} from "forge-std/Test.sol";
-import {Aggregator_USDE_AAPL_arbitrum} from "../../src/arbitrum/Aggregator_USDE_AAPL_arbitrum.sol";
-import {Aggregator_USDE_AMZN_arbitrum} from "../../src/arbitrum/Aggregator_USDE_AMZN_arbitrum.sol";
-import {Aggregator_USDE_GOOGL_arbitrum} from "../../src/arbitrum/Aggregator_USDE_GOOGL_arbitrum.sol";
-import {Aggregator_USDE_META_arbitrum} from "../../src/arbitrum/Aggregator_USDE_META_arbitrum.sol";
-import {Aggregator_USDE_MSFT_arbitrum} from "../../src/arbitrum/Aggregator_USDE_MSFT_arbitrum.sol";
-import {Aggregator_USDE_NVDA_arbitrum} from "../../src/arbitrum/Aggregator_USDE_NVDA_arbitrum.sol";
-import {Aggregator_USDE_SPY_arbitrum} from "../../src/arbitrum/Aggregator_USDE_SPY_arbitrum.sol";
-import {Aggregator_USDE_TSLA_arbitrum} from "../../src/arbitrum/Aggregator_USDE_TSLA_arbitrum.sol";
+import {Aggregator_USDE_AAPL_arbitrum} from "@harbor-price/arbitrum/Aggregator_USDE_AAPL_arbitrum.sol";
+import {Aggregator_USDE_AMZN_arbitrum} from "@harbor-price/arbitrum/Aggregator_USDE_AMZN_arbitrum.sol";
+import {Aggregator_USDE_GOOGL_arbitrum} from "@harbor-price/arbitrum/Aggregator_USDE_GOOGL_arbitrum.sol";
+import {Aggregator_USDE_META_arbitrum} from "@harbor-price/arbitrum/Aggregator_USDE_META_arbitrum.sol";
+import {Aggregator_USDE_MSFT_arbitrum} from "@harbor-price/arbitrum/Aggregator_USDE_MSFT_arbitrum.sol";
+import {Aggregator_USDE_NVDA_arbitrum} from "@harbor-price/arbitrum/Aggregator_USDE_NVDA_arbitrum.sol";
+import {Aggregator_USDE_SPY_arbitrum} from "@harbor-price/arbitrum/Aggregator_USDE_SPY_arbitrum.sol";
+import {Aggregator_USDE_TSLA_arbitrum} from "@harbor-price/arbitrum/Aggregator_USDE_TSLA_arbitrum.sol";
 
 /// @notice Fork tests for Arbitrum USDE oracles
 /// @dev Run with: forge test --match-path "test/arbitrum/*USDE*.t.sol" --fork-url $arbitrum -vvv

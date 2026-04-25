@@ -2,7 +2,7 @@
 pragma solidity 0.8.30;
 
 import {Test, console} from "forge-std/Test.sol";
-import {Aggregator_stETH_BOM5_base} from "../../src/base/Aggregator_stETH_BOM5_base.sol";
+import {Aggregator_stETH_BOM5_base} from "@harbor-price/base/Aggregator_stETH_BOM5_base.sol";
 
 /// @notice Fork tests for Base BOM5 oracle
 /// @dev Run with: forge test --match-path "test/base/*BOM5*.t.sol" --fork-url $base -vvv

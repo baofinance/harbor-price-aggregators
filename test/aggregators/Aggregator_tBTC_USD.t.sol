@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.30;
 
-import {SingleFeedNoRateAggregatorTestBase} from "./SingleFeedNoRateAggregatorTestBase.sol";
+import {SingleFeedNoRateAggregatorTestBase} from "@harbor-test/aggregators/SingleFeedNoRateAggregatorTestBase.sol";
 import {IHarborPriceAggregatorV3} from "@harbor-price/interfaces/IHarborPriceAggregatorV3.sol";
 import {Aggregator_tBTC_USD} from "@harbor-price/aggregators/mainnet/Aggregator_tBTC_USD.sol";
 

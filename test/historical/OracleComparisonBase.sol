@@ -5,7 +5,7 @@ import {BaoTest} from "@bao-test/BaoTest.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 import "forge-std/console.sol";
 import {IWrappedPriceOracle} from "@harbor-price/interfaces/IWrappedPriceOracle.sol";
-import {DeployedAddresses} from "./DeployedAddresses.sol";
+import {DeployedAddresses} from "@harbor-test/historical/DeployedAddresses.sol";
 import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import {UtcTimestampFormatter} from "@harbor-price/format/UtcTimestampFormatter.sol";
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";

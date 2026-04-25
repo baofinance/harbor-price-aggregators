@@ -34,3 +34,10 @@ deploy/v3-oracles-mainnet src/feeds/chainlink/mainnet/BTC_USD.sol src/feeds/chai
 # E. MainnetRateSources.sol — GOLD/SILVER minter addresses added in f26fa71
 # after this tag; additive only, no bytecode effect on deployed consumers.
 deploy/v4-oracles-mainnet src/rates/mainnet/MainnetRateSources.sol
+
+# F. Aggregator_stETH_USD — these files did not exist at the time these deploy
+# tags were cut; they were added after the deploys they reference.
+deploy/v3-oracles-mainnet src/aggregators/mainnet/Aggregator_stETH_USD.sol src/mainnet/Aggregator_stETH_USD_mainnet.sol
+deploy/v4-oracles-mainnet src/aggregators/mainnet/Aggregator_stETH_USD.sol src/mainnet/Aggregator_stETH_USD_mainnet.sol
+deploy/v4-oracles-mainnet-leverage src/aggregators/mainnet/Aggregator_stETH_USD.sol src/mainnet/Aggregator_stETH_USD_mainnet.sol
+deploy/v4-oracles-megaeth src/aggregators/mainnet/Aggregator_stETH_USD.sol src/mainnet/Aggregator_stETH_USD_mainnet.sol
