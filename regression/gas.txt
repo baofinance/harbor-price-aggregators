@@ -493,6 +493,18 @@ src/aggregators/mainnet/Aggregator_stETH_BTC.sol:Aggregator_stETH_BTC
 | upgradeToAndCall      | 8.544e+03 |
 | version               | 3.510e+02 |
 
+src/aggregators/mainnet/Aggregator_stETH_ETH.sol:Aggregator_stETH_ETH
+| function name    |       max |
+|------------------|-----------|
+| baseName         | 4.900e+02 |
+| latestAnswer     | 1.612e+04 |
+| oracleName       | 1.099e+03 |
+| proxiableUUID    | 3.460e+02 |
+| quoteName        | 5.120e+02 |
+| rateProvider     | 4.350e+02 |
+| upgradeToAndCall | 8.500e+03 |
+| version          | 3.290e+02 |
+
 src/aggregators/mainnet/Aggregator_stETH_EUR.sol:Aggregator_stETH_EUR
 | function name    |       max |
 |------------------|-----------|
@@ -516,6 +528,18 @@ src/aggregators/mainnet/Aggregator_stETH_MCAP.sol:Aggregator_stETH_MCAP
 | rateProvider     | 5.010e+02 |
 | upgradeToAndCall | 8.544e+03 |
 | version          | 3.510e+02 |
+
+src/aggregators/mainnet/Aggregator_stETH_USD.sol:Aggregator_stETH_USD
+| function name    |       max |
+|------------------|-----------|
+| baseName         | 4.900e+02 |
+| latestAnswer     | 1.612e+04 |
+| oracleName       | 1.099e+03 |
+| proxiableUUID    | 3.460e+02 |
+| quoteName        | 5.120e+02 |
+| rateProvider     | 4.350e+02 |
+| upgradeToAndCall | 8.500e+03 |
+| version          | 3.290e+02 |
 
 src/aggregators/mainnet/Aggregator_stETH_XAG.sol:Aggregator_stETH_XAG
 | function name    |       max |
@@ -564,18 +588,6 @@ src/aggregators/mainnet/Aggregator_wBTC_USD.sol:Aggregator_wBTC_USD
 | rateProvider     | 4.820e+02 |
 | upgradeToAndCall | 8.544e+03 |
 | version          | 3.510e+02 |
-
-src/aggregators/mainnet/Aggregator_wstETH_USD.sol:Aggregator_wstETH_USD
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 4.900e+02 |
-| latestAnswer     | 1.612e+04 |
-| oracleName       | 1.099e+03 |
-| proxiableUUID    | 3.460e+02 |
-| quoteName        | 5.120e+02 |
-| rateProvider     | 4.350e+02 |
-| upgradeToAndCall | 8.500e+03 |
-| version          | 3.290e+02 |
 
 src/aggregators/megaeth/Aggregator_USDMY_BTC.sol:Aggregator_USDMY_BTC
 | function name    |       max |

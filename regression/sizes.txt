@@ -85,6 +85,8 @@
 | Aggregator_stETH_BOM5_base            |              6,507 |               18,069 |               8,650 |    1,387,900 |            138.79 |
 | Aggregator_stETH_BTC                  |              3,762 |               20,814 |               4,815 |      800,550 |             80.06 |
 | Aggregator_stETH_BTC_mainnet          |              3,762 |               20,814 |               4,691 |      799,310 |             79.93 |
+| Aggregator_stETH_ETH                  |              3,356 |               21,220 |               4,209 |      713,290 |             71.33 |
+| Aggregator_stETH_ETH_mainnet          |              3,356 |               21,220 |               4,082 |      712,020 |             71.20 |
 | Aggregator_stETH_EUR                  |              3,762 |               20,814 |               4,815 |      800,550 |             80.06 |
 | Aggregator_stETH_EUR_mainnet          |              3,762 |               20,814 |               4,690 |      799,300 |             79.93 |
 | Aggregator_stETH_GOLD_mainnet         |              3,763 |               20,813 |               4,691 |      799,510 |             79.95 |
@@ -107,13 +109,15 @@
 | Aggregator_stETH_SPY_arbitrum         |              4,103 |               20,473 |               5,032 |      870,920 |             87.09 |
 | Aggregator_stETH_TSLA                 |              4,104 |               20,472 |               5,157 |      872,370 |             87.24 |
 | Aggregator_stETH_TSLA_arbitrum        |              4,104 |               20,472 |               5,033 |      871,130 |             87.11 |
+| Aggregator_stETH_USD                  |              3,356 |               21,220 |               4,209 |      713,290 |             71.33 |
+| Aggregator_stETH_USD_mainnet          |              3,356 |               21,220 |               4,082 |      712,020 |             71.20 |
 | Aggregator_stETH_XAG                  |              3,762 |               20,814 |               4,815 |      800,550 |             80.06 |
 | Aggregator_stETH_XAU                  |              3,762 |               20,814 |               4,815 |      800,550 |             80.06 |
 | Aggregator_tBTC_USD                   |              3,103 |               21,473 |               3,885 |      659,450 |             65.95 |
 | Aggregator_tBTC_USD_mainnet           |              3,103 |               21,473 |               3,787 |      658,470 |             65.85 |
 | Aggregator_wBTC_USD                   |              3,328 |               21,248 |               4,305 |      708,650 |             70.87 |
 | Aggregator_wBTC_USD_mainnet           |              3,328 |               21,248 |               4,208 |      707,680 |             70.77 |
-| Aggregator_wstETH_USD_mainnet         |              3,357 |               21,219 |               4,083 |      712,230 |             71.22 |
+| Aggregator_wstETH_USD                 |              3,898 |               20,678 |               4,758 |      827,180 |             82.72 |
 | Aggregator_wstETH_USD_megaeth         |              3,898 |               20,678 |               4,631 |      825,910 |             82.59 |
 | ArbitrumConstants                     |                 57 |               24,519 |                  85 |       12,250 |              1.23 |
 | BaseConstants                         |                 57 |               24,519 |                  85 |       12,250 |              1.23 |
