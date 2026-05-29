@@ -17,6 +17,7 @@ abstract contract SingleFeedNoRateAggregatorTestBase is Test {
     IHarborPriceAggregatorV3 aggregator;
 
     uint256 constant DEFAULT_HEARTBEAT = 3600;
+    uint256 constant FIXED_RATE = 1e18;
 
     /// @dev The fixed owner address from HarborAggregator_v3
     address constant OWNER = 0x9bABfC1A1952a6ed2caC1922BFfE80c0506364a2;
@@ -142,7 +143,7 @@ abstract contract SingleFeedNoRateAggregatorTestBase is Test {
 
         assertGt(p1, 0, "price1 > 0");
         assertEq(p1, p2, "price1 == price2");
-        assertEq(r1, 0, "rate1 should be 0");
+        assertEq(r1, FIXED_RATE, "rate1 should be fixed 1e18");
         assertEq(r1, r2, "rate1 == rate2");
     }
 

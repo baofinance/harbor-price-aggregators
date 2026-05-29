@@ -150,7 +150,11 @@ for pair in "${PROXY_PAIRS[@]}"; do
     echo "  forge verify-contract \\"
     echo "    $proxy_addr \\"
     echo "    $PROXY_CONTRACT \\"
-    echo "    --chain $NETWORK \\"
+    if [[ "$NETWORK" == "megaeth" ]]; then
+      echo "    --chain 4326 \\"
+    else
+      echo "    --chain $NETWORK \\"
+    fi
     echo "    --constructor-args $constructor_args \\"
     echo "    --watch"
     echo ""

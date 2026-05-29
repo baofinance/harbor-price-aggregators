@@ -429,7 +429,16 @@ verify_contract() {
   local max_retries=3
   local retry=0
 
-  local forge_args=("$address" "$contract_id" --chain "$network" --watch)
+  local chain_arg
+  if [[ "$network" == "megaeth" ]]; then
+    # forge verify-contract may not recognize custom network aliases,
+    # but numeric chain IDs are accepted.
+    chain_arg="4326"
+  else
+    chain_arg="$network"
+  fi
+
+  local forge_args=("$address" "$contract_id" --chain "$chain_arg" --watch)
   if [[ -n "$constructor_args" ]]; then
     forge_args+=(--constructor-args "$constructor_args")
   fi

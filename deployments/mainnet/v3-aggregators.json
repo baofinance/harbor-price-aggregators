@@ -94,6 +94,54 @@
       "contractSource": "src/mainnet/Aggregator_stETH_SILVER_mainnet.sol",
       "contractType": "Aggregator_stETH_SILVER_mainnet",
       "deploymentTime": "2026-01-14T13:22:02Z"
+    },
+    "0x3Be5C5A88a9Aac9bf8fA13c74Cab9c7695c416A9": {
+      "pair": "wBTC/USD",
+      "contractSource": "src/mainnet/Aggregator_wBTC_USD_mainnet.sol",
+      "contractType": "Aggregator_wBTC_USD_mainnet",
+      "deploymentTime": "2026-05-17T21:58:13Z"
+    },
+    "0x520A61890FEBC1EcC5056cDD3CAa7CFc3C92E8A9": {
+      "pair": "tBTC/USD",
+      "contractSource": "src/mainnet/Aggregator_tBTC_USD_mainnet.sol",
+      "contractType": "Aggregator_tBTC_USD_mainnet",
+      "deploymentTime": "2026-05-17T21:58:26Z"
+    },
+    "0xBbA1a473bdFa0fa661C0Df666050a7aad3C58bFB": {
+      "pair": "PAXG/USD",
+      "contractSource": "src/mainnet/Aggregator_PAXG_USD_mainnet.sol",
+      "contractType": "Aggregator_PAXG_USD_mainnet",
+      "deploymentTime": "2026-05-17T21:58:37Z"
+    },
+    "0x003056C3a3262b37C59143149D062Ad3a6a45BF7": {
+      "pair": "stETH/USD",
+      "contractSource": "src/mainnet/Aggregator_stETH_USD_mainnet.sol",
+      "contractType": "Aggregator_stETH_USD_mainnet",
+      "deploymentTime": "2026-05-17T21:58:51Z"
+    },
+    "0xB54cdaF42af247025F0Ee8689f19aAF903843771": {
+      "pair": "wBTC/USD",
+      "contractSource": "src/mainnet/Aggregator_wBTC_USD_mainnet.sol",
+      "contractType": "Aggregator_wBTC_USD_mainnet",
+      "deploymentTime": "2026-05-17T22:13:38Z"
+    },
+    "0x0D2056c4C556686337e98783e0Ad10a36B784A3a": {
+      "pair": "tBTC/USD",
+      "contractSource": "src/mainnet/Aggregator_tBTC_USD_mainnet.sol",
+      "contractType": "Aggregator_tBTC_USD_mainnet",
+      "deploymentTime": "2026-05-17T22:14:13Z"
+    },
+    "0xfefC59EE1A3Ff3E0c9b3600b77f9b2aB2AfeeD6A": {
+      "pair": "PAXG/USD",
+      "contractSource": "src/mainnet/Aggregator_PAXG_USD_mainnet.sol",
+      "contractType": "Aggregator_PAXG_USD_mainnet",
+      "deploymentTime": "2026-05-17T22:14:26Z"
+    },
+    "0xEac675b5E2304b6B62540880319C5679b3d69437": {
+      "pair": "wBTC/USD",
+      "contractSource": "src/mainnet/Aggregator_wBTC_USD_mainnet.sol",
+      "contractType": "Aggregator_wBTC_USD_mainnet",
+      "deploymentTime": "2026-05-17T22:38:02Z"
     }
   },
   "proxies": {
@@ -186,6 +234,30 @@
       "implementation": "0x99fC4A92FaA72DEb2C3329E4ddDc4C783A9ef6F5",
       "salt": "harbor_v1::stETH::SILVER::wrappedPriceAggregator",
       "deploymentTime": "2026-01-14T13:26:05Z"
+    },
+    "wBTC/USD": {
+      "address": "0x189d6CA0271F06c222873b4C09A26C83AdCCF73d",
+      "implementation": "0x3Be5C5A88a9Aac9bf8fA13c74Cab9c7695c416A9",
+      "salt": "harbor_v1::wBTC::USD::wrappedPriceAggregator",
+      "deploymentTime": "2026-05-17T22:01:03Z"
+    },
+    "tBTC/USD": {
+      "address": "0x4D72FfE2499C4e66b2c6C11D7AfeA04001dB440C",
+      "implementation": "0x520A61890FEBC1EcC5056cDD3CAa7CFc3C92E8A9",
+      "salt": "harbor_v1::tBTC::USD::wrappedPriceAggregator",
+      "deploymentTime": "2026-05-17T22:01:27Z"
+    },
+    "PAXG/USD": {
+      "address": "0x647633122f9d9ba87210210d5A3ded365911BF9b",
+      "implementation": "0xBbA1a473bdFa0fa661C0Df666050a7aad3C58bFB",
+      "salt": "harbor_v1::PAXG::USD::wrappedPriceAggregator",
+      "deploymentTime": "2026-05-17T22:02:05Z"
+    },
+    "stETH/USD": {
+      "address": "0xcE8633B7198d02860873689Bb2566BD2efD11F52",
+      "implementation": "0x003056C3a3262b37C59143149D062Ad3a6a45BF7",
+      "salt": "harbor_v1::stETH::USD::wrappedPriceAggregator",
+      "deploymentTime": "2026-05-17T22:02:27Z"
     }
   }
 }

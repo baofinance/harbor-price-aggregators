@@ -58,4 +58,17 @@ contract Aggregator_wBTC_USD_Test is DoubleFeedNoRateAggregatorTestBase {
             false
         );
     }
+
+    function test_latestAnswer_scalesTo1e18() public view {
+        (uint256 p1, uint256 p2, uint256 r1, uint256 r2) = aggregator.latestAnswer();
+
+        // Defaults from base setup:
+        // - first feed (wBTC/BTC) = 1.0
+        // - second feed (BTC/USD) = 50,000
+        // Expected wBTC/USD = 50,000 with 1e18 precision.
+        assertEq(p1, 50_000e18);
+        assertEq(p2, 50_000e18);
+        assertEq(r1, 1e18);
+        assertEq(r2, 1e18);
+    }
 }

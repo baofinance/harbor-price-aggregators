@@ -302,6 +302,50 @@ Summary: 15/15 proxies passed ✓
 - Confirm proxy→implementation linkage matches state file
 - Troubleshoot oracle failures (shows which call failed)
 
+### read-latest-answer
+
+Reads `latestAnswer()` from deployed proxy addresses in a chosen deployment JSON file.
+
+**Basic usage:**
+
+```bash
+script/read-latest-answer --network mainnet --version v3
+```
+
+**Read MegaETH v4 oracles file:**
+
+```bash
+script/read-latest-answer --network megaeth --version v4 --kind oracles
+```
+
+**Future versions (example v5):**
+
+```bash
+script/read-latest-answer --network mainnet --version v5
+```
+
+**Options:**
+
+- `--network <name>`: Required. Network folder (`megaeth`, `mainnet`, `base`, `arbitrum`)
+- `--version <tag>`: Required unless `--state-file` is provided (`v3`, `v4`, `v5`, ...)
+- `--kind <type>`: `aggregators` or `oracles` (default: `aggregators`)
+- `--state-file <path>`: Explicit JSON file path override
+- `--pair <BASE/QUOTE>`: Optional pair filter (repeatable)
+- `--local`: Use `local` RPC endpoint alias
+
+**Default state file pattern:**
+
+```bash
+deployments/<network>/<version>-<kind>.json
+```
+
+**What it does:**
+
+1. Loads proxy addresses from the selected deployment file
+2. Calls `latestAnswer()(uint256,uint256,uint256,uint256)` on each proxy
+3. Prints raw values and 1e18-formatted values
+4. Returns non-zero exit code if any call fails
+
 ### check-verify
 
 Generates Etherscan verification report for all aggregators.
