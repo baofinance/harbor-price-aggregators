@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.30;
 
-import {SingleFeedWstETHAggregatorTestBase} from "@harbor-test/aggregators/SingleFeedWstETHAggregatorTestBase.sol";
+import {SingleFeedWstETHAggregatorTestBase} from "@harbor-test/aggregators/SingleFeedStETHAggregatorTestBase.sol";
 import {IHarborPriceAggregatorV3} from "@harbor-price/interfaces/IHarborPriceAggregatorV3.sol";
 import {Aggregator_stETH_USD} from "@harbor-price/aggregators/mainnet/Aggregator_stETH_USD.sol";
 
-contract Aggregator_stETH_USD_Test is SingleFeedWstETHAggregatorTestBase {
+contract Aggregator_stETH_USD_Test is SingleFeedStETHAggregatorTestBase {
     function _contractName() internal pure override returns (string memory) {
         return type(Aggregator_stETH_USD).name;
     }

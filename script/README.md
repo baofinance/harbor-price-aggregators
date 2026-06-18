@@ -60,6 +60,19 @@ deployments/local/<network>/v3-aggregators.json
 - `salt`: CREATE3 salt used for deterministic proxy address generation
 - All timestamps are ISO 8601 UTC format
 
+## Script layout
+
+Chain-specific deploy and verify scripts live under **script/\<chain\>/deploy/** and **script/\<chain\>/verify/**:
+
+| Chain    | Deploy | Verify |
+|----------|--------|--------|
+| **megaeth**  | `script/megaeth/deploy/`  | `script/megaeth/verify/`  |
+| **mainnet**  | `script/mainnet/deploy/`  | `script/mainnet/verify/`  |
+| **arbitrum** | `script/arbitrum/deploy/` | `script/arbitrum/verify/` |
+| **base**     | `script/base/deploy/`     | `script/base/verify/`     |
+
+Shared tools (`deploy-impl`, `deploy-proxy`, `verify-impl`, `verify-proxy`, `lib/common.sh`) remain in **script/**.
+
 ## Scripts
 
 ### deploy-impl
@@ -288,6 +301,50 @@ Summary: 15/15 proxies passed ✓
 - Smoke test that oracles are functional
 - Confirm proxy→implementation linkage matches state file
 - Troubleshoot oracle failures (shows which call failed)
+
+### read-latest-answer
+
+Reads `latestAnswer()` from deployed proxy addresses in a chosen deployment JSON file.
+
+**Basic usage:**
+
+```bash
+script/read-latest-answer --network mainnet --version v3
+```
+
+**Read MegaETH v4 oracles file:**
+
+```bash
+script/read-latest-answer --network megaeth --version v4 --kind oracles
+```
+
+**Future versions (example v5):**
+
+```bash
+script/read-latest-answer --network mainnet --version v5
+```
+
+**Options:**
+
+- `--network <name>`: Required. Network folder (`megaeth`, `mainnet`, `base`, `arbitrum`)
+- `--version <tag>`: Required unless `--state-file` is provided (`v3`, `v4`, `v5`, ...)
+- `--kind <type>`: `aggregators` or `oracles` (default: `aggregators`)
+- `--state-file <path>`: Explicit JSON file path override
+- `--pair <BASE/QUOTE>`: Optional pair filter (repeatable)
+- `--local`: Use `local` RPC endpoint alias
+
+**Default state file pattern:**
+
+```bash
+deployments/<network>/<version>-<kind>.json
+```
+
+**What it does:**
+
+1. Loads proxy addresses from the selected deployment file
+2. Calls `latestAnswer()(uint256,uint256,uint256,uint256)` on each proxy
+3. Prints raw values and 1e18-formatted values
+4. Returns non-zero exit code if any call fails
 
 ### check-verify
 

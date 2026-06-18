@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Deploy implementation contract(s) for Harbor v3 aggregators
+# Deploy implementation contract(s) for Harbor aggregators
 #
 # This script:
-#   1. Deploys implementation contract(s) via forge create
+#   1. Deploys implementation contract(s) via forge create (default) or BaoFactory CREATE3
 #   2. Records deployment in state file
 #   3. If proxy exists, outputs Safe tx for upgradeToAndCall
 
@@ -14,20 +14,24 @@ source "$SCRIPT_DIR/lib/common.sh"
 usage() {
   cat <<EOF
 Usage:
-  $0 --network <network> --account <account> [--local] [--copy-network] [--salt <prefix>] <pair> [<pair>...]
+  $0 --network <network> --account <account> [--local] [--copy-network] [--salt <prefix>] [--impl-create3] [--impl-salt-suffix <suffix>] [--proxy-salt-suffix <suffix>] <pair> [<pair>...]
 
 Arguments:
   <pair>         One or more pairs in BASE/QUOTE format (e.g., fxUSD/ETH stETH/BTC)
 
 Options:
-  --network        Required. Network name (mainnet, arbitrum, base)
+  --network        Required. Network name (mainnet, arbitrum, base, megaeth)
   --account        Required for non-local. Foundry keystore account name
   --local          Use local anvil RPC (test key, no password prompt)
   --copy-network   With --local: copy network state to local before deploying
   --salt           Salt prefix (default: harbor_v1). Affects state file and proxy lookup.
+  --impl-create3   Deploy implementations via BaoFactory CREATE3 (deterministic address)
+  --impl-salt-suffix   Impl salt suffix (default: implementation)
+  --proxy-salt-suffix  Proxy salt suffix for lookup/upgrade hints (default: wrappedPriceAggregator)
 
 Examples:
   $0 --network mainnet --account deployer fxUSD/ETH
+  $0 --network megaeth --account deployer --impl-create3 --impl-salt-suffix implementation USDM/ETH
   $0 --network arbitrum --account deployer USDE/ETH USDE/BTC
   $0 --network mainnet --local fxUSD/ETH fxUSD/BTC
   $0 --network mainnet --local --copy-network fxUSD/ETH
@@ -45,6 +49,9 @@ ACCOUNT_NAME=""
 USE_LOCAL=false
 COPY_NETWORK=false
 SALT_PREFIX="harbor_v1"
+IMPL_CREATE3=false
+IMPL_SALT_SUFFIX="implementation"
+PROXY_SALT_SUFFIX="wrappedPriceAggregator"
 PAIRS=()
 
 while [[ $# -gt 0 ]]; do
@@ -67,6 +74,18 @@ while [[ $# -gt 0 ]]; do
       ;;
     --salt)
       SALT_PREFIX=${2:-}
+      shift 2
+      ;;
+    --impl-create3)
+      IMPL_CREATE3=true
+      shift
+      ;;
+    --impl-salt-suffix)
+      IMPL_SALT_SUFFIX=${2:-}
+      shift 2
+      ;;
+    --proxy-salt-suffix)
+      PROXY_SALT_SUFFIX=${2:-}
       shift 2
       ;;
     -h | --help)
@@ -140,7 +159,7 @@ pairs_without_proxy=()
 
 for pair in "${PAIRS[@]}"; do
   IFS='/' read -r base quote <<<"$pair"
-  proxy=$(predict_proxy_address "$base" "$quote" "$SALT_PREFIX")
+  proxy=$(predict_proxy_address "$base" "$quote" "$SALT_PREFIX" "$PROXY_SALT_SUFFIX")
   if has_code "$proxy"; then
     pairs_with_proxy+=("$pair")
   else
@@ -153,6 +172,12 @@ echo "════════════════════════�
 echo "  DEPLOY IMPLEMENTATION"
 echo "  Network: $NETWORK (chainId: $CHAIN_ID)"
 echo "  Pairs:   ${PAIRS[*]}"
+if [[ "$IMPL_CREATE3" == true ]]; then
+  echo "  Impl deployment: CREATE3 via BaoFactory (${IMPL_SALT_SUFFIX})"
+else
+  echo "  Impl deployment: forge create"
+fi
+echo "  Proxy lookup suffix: $PROXY_SALT_SUFFIX"
 echo "  State:   $STATE_FILE"
 echo "═══════════════════════════════════════════════════════════"
 echo ""
@@ -161,7 +186,7 @@ if [[ ${#pairs_with_proxy[@]} -gt 0 ]]; then
   echo "⚠ The following pairs have proxies already deployed:"
   for pair in "${pairs_with_proxy[@]}"; do
     IFS='/' read -r base quote <<<"$pair"
-    proxy=$(predict_proxy_address "$base" "$quote" "$SALT_PREFIX")
+    proxy=$(predict_proxy_address "$base" "$quote" "$SALT_PREFIX" "$PROXY_SALT_SUFFIX")
     echo "  - $pair → $proxy"
   done
   echo ""
@@ -182,6 +207,13 @@ safe_txs=()
 deployed_count=0
 failed_count=0
 
+if [[ "$IMPL_CREATE3" == true ]]; then
+  DEPLOYER=$("$CAST" wallet address "${SIGNER_ARGS[@]}")
+  echo "Ensuring BaoFactory operator for deployer: $DEPLOYER"
+  ensure_bao_operator "$DEPLOYER" "$USE_LOCAL"
+  echo ""
+fi
+
 for pair in "${PAIRS[@]}"; do
   read -r contract_source contract_type contract_id <<<"$(get_contract_details "$pair" "$NETWORK")"
 
@@ -190,21 +222,86 @@ for pair in "${PAIRS[@]}"; do
 
   # Deploy implementation
   echo "  Deploying..."
-  if ! out=$("$FORGE" create "$contract_id" --rpc-url "$RPC_NETWORK" "${SIGNER_ARGS[@]}" --broadcast 2>&1); then
-    echo "  ❌ Deployment failed:" >&2
-    echo "$out" | sed 's/^/     /' >&2
-    ((++failed_count))
-    echo ""
-    continue
-  fi
+  if [[ "$IMPL_CREATE3" == true ]]; then
+    IFS='/' read -r base quote <<<"$pair"
+    impl=$(predict_proxy_address "$base" "$quote" "$SALT_PREFIX" "$IMPL_SALT_SUFFIX")
+    impl_salt="${SALT_PREFIX}::${base}::${quote}::${IMPL_SALT_SUFFIX}"
+    impl_salt_b32=$("$CAST" keccak "$("$CAST" from-utf8 "$impl_salt")")
+    echo "  Impl salt:      $impl_salt"
+    echo "  Impl predicted: $impl"
 
-  impl=$(grep -Eo "Deployed to: 0x[0-9a-fA-F]{40}" <<<"$out" | awk '{print $3}')
-  if [[ -z "$impl" ]]; then
-    echo "  ❌ Failed to parse implementation address" >&2
-    echo "$out" | sed 's/^/     /' >&2
-    ((++failed_count))
-    echo ""
-    continue
+    if has_code "$impl"; then
+      echo "  ℹ Implementation already deployed at predicted address"
+    else
+      impl_bytecode=$("$FORGE" inspect "$contract_id" bytecode 2>/dev/null || true)
+      if [[ -z "$impl_bytecode" ]] || [[ "$impl_bytecode" == "0x" ]]; then
+        echo "  ❌ Failed to fetch implementation bytecode" >&2
+        ((++failed_count))
+        echo ""
+        continue
+      fi
+
+      if ! tx=$("$CAST" send "$BAO_FACTORY" "deploy(bytes,bytes32)(address)" "$impl_bytecode" "$impl_salt_b32" \
+        --rpc-url "$RPC_NETWORK" "${SIGNER_ARGS[@]}" --json 2>&1); then
+        echo "  ❌ CREATE3 deployment failed:" >&2
+        echo "$tx" | sed 's/^/     /' >&2
+        ((++failed_count))
+        echo ""
+        continue
+      fi
+
+      tx_hash=$(jq -r '.transactionHash // empty' <<<"$tx" 2>/dev/null || true)
+      if [[ -z "$tx_hash" ]]; then
+        echo "  ❌ Failed to parse deployment tx hash" >&2
+        ((++failed_count))
+        echo ""
+        continue
+      fi
+      echo "  ✓ Tx: $tx_hash"
+
+      max_attempts=60
+      attempt=0
+      while [[ $attempt -lt $max_attempts ]]; do
+        if receipt=$("$CAST" receipt "$tx_hash" --rpc-url "$RPC_NETWORK" --json 2>/dev/null); then
+          status=$(jq -r '.status // empty' <<<"$receipt" 2>/dev/null)
+          if [[ "$status" == "0x1" ]] || [[ "$status" == "1" ]]; then
+            break
+          elif [[ "$status" == "0x0" ]] || [[ "$status" == "0" ]]; then
+            echo "  ❌ CREATE3 deployment reverted" >&2
+            ((++failed_count))
+            echo ""
+            continue 2
+          fi
+        fi
+        sleep 1
+        ((++attempt))
+      done
+
+      echo "  ⏳ Waiting for implementation bytecode at predicted address..."
+      if ! wait_for_code "$impl"; then
+        echo "  ❌ No code at predicted implementation address after deployment retries" >&2
+        ((++failed_count))
+        echo ""
+        continue
+      fi
+    fi
+  else
+    if ! out=$("$FORGE" create "$contract_id" --rpc-url "$RPC_NETWORK" "${SIGNER_ARGS[@]}" --broadcast 2>&1); then
+      echo "  ❌ Deployment failed:" >&2
+      echo "$out" | sed 's/^/     /' >&2
+      ((++failed_count))
+      echo ""
+      continue
+    fi
+
+    impl=$(grep -Eo "Deployed to: 0x[0-9a-fA-F]{40}" <<<"$out" | awk '{print $3}')
+    if [[ -z "$impl" ]]; then
+      echo "  ❌ Failed to parse implementation address" >&2
+      echo "$out" | sed 's/^/     /' >&2
+      ((++failed_count))
+      echo ""
+      continue
+    fi
   fi
 
   echo "  ✓ Deployed: $impl"
@@ -216,7 +313,7 @@ for pair in "${PAIRS[@]}"; do
 
   # Check if proxy exists
   IFS='/' read -r base quote <<<"$pair"
-  proxy=$(predict_proxy_address "$base" "$quote" "$SALT_PREFIX")
+  proxy=$(predict_proxy_address "$base" "$quote" "$SALT_PREFIX" "$PROXY_SALT_SUFFIX")
   if has_code "$proxy"; then
     echo "  ℹ Proxy exists: $proxy"
 

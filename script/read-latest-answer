@@ -1,0 +1,283 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/lib/common.sh"
+
+usage() {
+  cat <<EOF
+Usage:
+  $0 --network <megaeth|mainnet|base|arbitrum> --version <v3|v4|v5...> [options]
+
+Reads latestAnswer() from deployed proxy addresses in a deployment state file.
+
+Options:
+  --network       Required. Network folder inside deployments/ (e.g. mainnet)
+  --version       Required. File prefix version (e.g. v3, v4, v5)
+  --kind          State file suffix: aggregators or oracles (default: aggregators)
+  --state-file    Explicit JSON state file path or prefix (overrides --version/--kind)
+  --pair          Optional pair filter (repeatable), e.g. --pair fxUSD/ETH
+  --local         Use local RPC endpoint alias (local) instead of network alias
+  -h, --help      Show this help
+
+Default state file pattern:
+  deployments/<network>/<version>-<kind>.json
+
+Examples:
+  $0 --network mainnet --version v3
+  $0 --network megaeth --version v4 --kind oracles
+  $0 --network base --version v3 --pair fxUSD/ETH --pair fxUSD/BTC
+  $0 --network arbitrum --version v3 --state-file deployments/arbitrum/v3-oracles.json
+  $0 --network megaeth --state-file deployments/megaeth/v4-aggregators
+EOF
+}
+
+NETWORK=""
+VERSION=""
+KIND="aggregators"
+STATE_FILE_OVERRIDE=""
+LOCAL=false
+PAIRS=()
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --network)
+      NETWORK=${2:-}
+      shift 2
+      ;;
+    --version)
+      VERSION=${2:-}
+      shift 2
+      ;;
+    --kind)
+      KIND=${2:-}
+      shift 2
+      ;;
+    --state-file)
+      STATE_FILE_OVERRIDE=${2:-}
+      shift 2
+      ;;
+    --pair)
+      PAIRS+=("${2:-}")
+      shift 2
+      ;;
+    --local)
+      LOCAL=true
+      shift
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    *)
+      echo "❌ Unknown option: $1" >&2
+      usage >&2
+      exit 1
+      ;;
+  esac
+done
+
+check_project_root
+
+resolve_state_file_from_prefix() {
+  local prefix=$1
+  local candidates=()
+
+  shopt -s nullglob
+  candidates=("${prefix}"*.json)
+  shopt -u nullglob
+
+  if [[ ${#candidates[@]} -eq 1 ]]; then
+    echo "${candidates[0]}"
+    return 0
+  fi
+
+  if [[ ${#candidates[@]} -gt 1 ]]; then
+    echo "❌ Multiple state files match prefix: $prefix" >&2
+    local file
+    for file in "${candidates[@]}"; do
+      echo "   - $file" >&2
+    done
+    echo "   Please pass an exact --state-file path." >&2
+    exit 1
+  fi
+
+  return 1
+}
+
+if [[ -z "$NETWORK" ]]; then
+  echo "❌ Missing --network" >&2
+  usage >&2
+  exit 1
+fi
+
+if [[ -z "$VERSION" && -z "$STATE_FILE_OVERRIDE" ]]; then
+  echo "❌ Missing --version (or use --state-file)" >&2
+  usage >&2
+  exit 1
+fi
+
+if [[ "$KIND" != "aggregators" && "$KIND" != "oracles" ]]; then
+  echo "❌ --kind must be 'aggregators' or 'oracles'" >&2
+  exit 1
+fi
+
+if [[ "$LOCAL" == true ]]; then
+  RPC_NETWORK="local"
+else
+  RPC_NETWORK="$NETWORK"
+fi
+
+if ! CHAIN_ID=$("$CAST" chain-id --rpc-url "$RPC_NETWORK" 2>&1); then
+  echo "❌ Failed to fetch chainId from RPC '$RPC_NETWORK'" >&2
+  echo "   $CHAIN_ID" >&2
+  exit 1
+fi
+
+if [[ -n "$STATE_FILE_OVERRIDE" ]]; then
+  if [[ -f "$STATE_FILE_OVERRIDE" ]]; then
+    STATE_FILE="$STATE_FILE_OVERRIDE"
+  elif resolved=$(resolve_state_file_from_prefix "$STATE_FILE_OVERRIDE"); then
+    STATE_FILE="$resolved"
+  else
+    echo "❌ State file not found (or prefix has no matches): $STATE_FILE_OVERRIDE" >&2
+    exit 1
+  fi
+else
+  STATE_FILE="deployments/${NETWORK}/${VERSION}-${KIND}.json"
+  if [[ ! -f "$STATE_FILE" ]]; then
+    salted_prefix="deployments/${NETWORK}/${VERSION}-${KIND}-"
+    if resolved=$(resolve_state_file_from_prefix "$salted_prefix"); then
+      STATE_FILE="$resolved"
+    fi
+  fi
+fi
+
+if [[ ! -f "$STATE_FILE" ]]; then
+  echo "❌ State file not found: $STATE_FILE" >&2
+  exit 1
+fi
+
+SOURCE_MODE=""
+if jq -e '.proxies and (.proxies | type == "object")' "$STATE_FILE" >/dev/null 2>&1; then
+  SOURCE_MODE="proxies"
+elif jq -e '.oracles and (.oracles | type == "object")' "$STATE_FILE" >/dev/null 2>&1; then
+  SOURCE_MODE="oracles"
+else
+  echo "❌ Invalid state file format (missing .proxies or .oracles): $STATE_FILE" >&2
+  exit 1
+fi
+
+format_e18() {
+  awk -v val="$1" 'BEGIN { printf "%\047.8f", val / 1e18 }'
+}
+
+is_pair_selected() {
+  local pair=$1
+  if [[ ${#PAIRS[@]} -eq 0 ]]; then
+    return 0
+  fi
+
+  local selected
+  for selected in "${PAIRS[@]}"; do
+    if [[ "$selected" == "$pair" ]]; then
+      return 0
+    fi
+  done
+  return 1
+}
+
+if [[ "$SOURCE_MODE" == "proxies" ]]; then
+  proxy_pairs=$(jq -r '.proxies | keys[]' "$STATE_FILE")
+else
+  proxy_pairs=$(jq -r '.oracles | to_entries[] | (.value.name // .key)' "$STATE_FILE")
+fi
+
+echo ""
+echo "═══════════════════════════════════════════════════════════"
+echo "  READ latestAnswer"
+echo "  Network: $NETWORK (chainId: $CHAIN_ID, rpc: $RPC_NETWORK)"
+echo "  State:   $STATE_FILE"
+echo "  Source:  .$SOURCE_MODE"
+echo "═══════════════════════════════════════════════════════════"
+echo ""
+
+if [[ -z "$proxy_pairs" ]]; then
+  echo "ℹ No proxies in state file."
+  exit 0
+fi
+
+success_count=0
+failure_count=0
+skipped_count=0
+
+for pair in $proxy_pairs; do
+  if ! is_pair_selected "$pair"; then
+    ((++skipped_count))
+    continue
+  fi
+
+  if [[ "$SOURCE_MODE" == "proxies" ]]; then
+    address=$(jq -r --arg pair "$pair" '.proxies[$pair].address // ""' "$STATE_FILE")
+  else
+    address=$(jq -r --arg pair "$pair" '
+      .oracles
+      | to_entries
+      | map(select((.value.name // .key) == $pair))
+      | map(.value.address // "")
+      | map(select(length > 0))
+      | first // ""
+    ' "$STATE_FILE")
+  fi
+  if [[ -z "$address" ]]; then
+    echo "ℹ $pair: no deployed address in state file (skipping)"
+    ((++skipped_count))
+    continue
+  fi
+
+  echo "── $pair ────────────────────────────────────────"
+  echo "  proxy: $address"
+
+  if ! latest_answer=$("$CAST" call "$address" "latestAnswer()(uint256,uint256,uint256,uint256)" --rpc-url "$RPC_NETWORK" 2>&1); then
+    echo "  ❌ latestAnswer() call failed"
+    echo "     $latest_answer"
+    ((++failure_count))
+    echo ""
+    continue
+  fi
+
+  min_price_raw=$(echo "$latest_answer" | sed -n '1p' | awk '{print $1}')
+  max_price_raw=$(echo "$latest_answer" | sed -n '2p' | awk '{print $1}')
+  min_rate_raw=$(echo "$latest_answer" | sed -n '3p' | awk '{print $1}')
+  max_rate_raw=$(echo "$latest_answer" | sed -n '4p' | awk '{print $1}')
+
+  min_price_fmt=$(format_e18 "$min_price_raw")
+  max_price_fmt=$(format_e18 "$max_price_raw")
+  min_rate_fmt=$(format_e18 "$min_rate_raw")
+  max_rate_fmt=$(format_e18 "$max_rate_raw")
+
+  echo "  latestAnswer:"
+  echo "    minUnderlyingPriceRaw: $min_price_raw"
+  echo "    maxUnderlyingPriceRaw: $max_price_raw"
+  echo "    minRateRaw:            $min_rate_raw"
+  echo "    maxRateRaw:            $max_rate_raw"
+  echo "    minUnderlyingPrice:    $min_price_fmt"
+  echo "    maxUnderlyingPrice:    $max_price_fmt"
+  echo "    minRate:               $min_rate_fmt"
+  echo "    maxRate:               $max_rate_fmt"
+  echo ""
+
+  ((++success_count))
+done
+
+echo "═══════════════════════════════════════════════════════════"
+echo "  SUMMARY"
+echo "═══════════════════════════════════════════════════════════"
+echo "  Success: $success_count"
+echo "  Failed:  $failure_count"
+echo "  Skipped: $skipped_count"
+echo ""
+
+if [[ "$failure_count" -gt 0 ]]; then
+  exit 1
+fi

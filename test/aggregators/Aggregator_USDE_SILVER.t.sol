@@ -1,0 +1,91 @@
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.30;
+
+import {DoubleFeedSUSDEAggregatorTestBase} from "@harbor-test/aggregators/DoubleFeedSUSDEAggregatorTestBase.sol";
+import {IHarborPriceAggregatorV3} from "@harbor-price/interfaces/IHarborPriceAggregatorV3.sol";
+import {Aggregator_USDE_XAG} from "@harbor-price/aggregators/mainnet/Aggregator_USDE_XAG.sol";
+
+/// @notice Tests for USDE/SILVER (uses Aggregator_USDE_XAG formula, quote label SILVER in mainnet).
+contract Aggregator_USDE_SILVER_Test is DoubleFeedUSDEAggregatorTestBase {
+    function _contractName() internal pure override returns (string memory) {
+        return "Aggregator_USDE_SILVER";
+    }
+
+    /// @dev Formula contract returns quoteName "XAG"; override so assertion passes.
+    function _expectedQuoteName() internal pure override returns (string memory) {
+        return "XAG";
+    }
+
+    function _createAggregator(
+        address susde,
+        address firstFeed,
+        uint256 firstHeartbeat,
+        address secondFeed,
+        uint256 secondHeartbeat,
+        uint256 divisor,
+        bool invert
+    ) internal override returns (IHarborPriceAggregatorV3) {
+        return
+            IHarborPriceAggregatorV3(
+                address(
+                    new Aggregator_USDE_XAG(
+                        susde,
+                        firstFeed,
+                        firstHeartbeat,
+                        secondFeed,
+                        secondHeartbeat,
+                        divisor,
+                        invert
+                    )
+                )
+            );
+    }
+
+    function _createWithZeroSusde() internal override {
+        new Aggregator_USDE_XAG(
+            address(0),
+            address(mockFirstFeed),
+            DEFAULT_HEARTBEAT,
+            address(mockSecondFeed),
+            DEFAULT_HEARTBEAT,
+            1,
+            false
+        );
+    }
+
+    function _createWithZeroFirstFeed() internal override {
+        new Aggregator_USDE_XAG(
+            address(mockSUSDe),
+            address(0),
+            DEFAULT_HEARTBEAT,
+            address(mockSecondFeed),
+            DEFAULT_HEARTBEAT,
+            1,
+            false
+        );
+    }
+
+    function _createWithZeroSecondFeed() internal override {
+        new Aggregator_USDE_XAG(
+            address(mockSUSDe),
+            address(mockFirstFeed),
+            DEFAULT_HEARTBEAT,
+            address(0),
+            DEFAULT_HEARTBEAT,
+            1,
+            false
+        );
+    }
+
+    function _createWithZeroDivisor() internal override {
+        new Aggregator_USDE_XAG(
+            address(mockSUSDe),
+            address(mockFirstFeed),
+            DEFAULT_HEARTBEAT,
+            address(mockSecondFeed),
+            DEFAULT_HEARTBEAT,
+            0,
+            false
+        );
+    }
+}

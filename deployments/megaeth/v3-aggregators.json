@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "version": "v3",
+  "network": "megaeth",
+  "chainId": 4326,
+  "baoFactory": "0xD696E56b3A054734d4C6DCBD32E11a278b0EC458",
+  "implementations": {
+    "0x756B95D0bB61c195d1196EB2143D8D88570036AC": {
+      "pair": "USDM/ETH",
+      "contractSource": "src/megaeth/Aggregator_USDM_ETH_megaeth.sol",
+      "contractType": "Aggregator_USDM_ETH_megaeth",
+      "deploymentTime": "2026-03-10T22:51:29Z"
+    },
+    "0x830AB2B3A936F727ee2FF67E9C073380B6f166D8": {
+      "pair": "USDMY/HYPE",
+      "contractSource": "src/megaeth/Aggregator_USDM_HYPE_megaeth.sol",
+      "contractType": "Aggregator_USDM_HYPE_megaeth",
+      "deploymentTime": "2026-03-10T22:51:29Z"
+    },
+    "0xE2962ab29C723415F023451E9F166122d8b4a980": {
+      "pair": "USDMY/SOL",
+      "contractSource": "src/megaeth/Aggregator_USDM_SOL_megaeth.sol",
+      "contractType": "Aggregator_USDM_SOL_megaeth",
+      "deploymentTime": "2026-03-10T22:51:29Z"
+    },
+    "0xf9cB23E2E882C67A899C448CBe2542df9eebC615": {
+      "pair": "USDM/BTC",
+      "contractSource": "src/megaeth/Aggregator_USDM_BTC_megaeth.sol",
+      "contractType": "Aggregator_USDM_BTC_megaeth",
+      "deploymentTime": "2026-03-10T22:51:29Z"
+    },
+    "0xD3902Ac4c84FE62f831f38385e67E3d1BA27c75F": {
+      "pair": "BTC/USD",
+      "contractSource": "src/megaeth/Aggregator_BTC_USD_megaeth.sol",
+      "contractType": "Aggregator_BTC_USD_megaeth",
+      "deploymentTime": "2026-03-10T22:51:29Z"
+    },
+    "0xF183D68f7D4e47f0546bF67f56677d35CE87617D": {
+      "pair": "stETH/USD",
+      "contractSource": "src/megaeth/Aggregator_stETH_USD_megaeth.sol",
+      "contractType": "Aggregator_stETH_USD_megaeth",
+      "deploymentTime": "2026-03-10T22:51:29Z"
+    },
+    "0x46396230c61776A384c1c00c04A9784c4a2F5d8F": {
+      "pair": "BTC.b/USD",
+      "contractSource": "src/megaeth/Aggregator_BTCb_USD_megaeth.sol",
+      "contractType": "Aggregator_BTCb_USD_megaeth",
+      "deploymentTime": "2026-03-10T22:51:29Z"
+    }
+  },
+  "proxies": {
+    "BTC.b/USD": {
+      "address": "0x13b0e1E788FB57E0624E08fC5B6788AAB53125BB",
+      "implementation": "0x46396230c61776A384c1c00c04A9784c4a2F5d8F",
+      "salt": "harbor_v1::BTC.b::USD::priceoracle",
+      "deploymentTime": "2026-03-10T23:29:19Z"
+    },
+    "BTC/USD": {
+      "address": "0xB2b9E8eeC94F9Db61C5d6C0022B52838ae58a00d",
+      "implementation": "0xD3902Ac4c84FE62f831f38385e67E3d1BA27c75F",
+      "salt": "harbor_v1::BTC::USD::priceoracle",
+      "deploymentTime": "2026-03-10T23:29:23Z"
+    },
+    "USDMY/BTC": {
+      "address": "0xD150d2523120559C4a26C288B749D224427A5D28",
+      "implementation": "0xf9cB23E2E882C67A899C448CBe2542df9eebC615",
+      "salt": "harbor_v1::USDMY::BTC::priceoracle",
+      "deploymentTime": "2026-03-10T23:29:28Z"
+    },
+    "USDMY/ETH": {
+      "address": "0x45e4a5E934Cc199E1643A1dC05f5b25352e73a8B",
+      "implementation": "0x756B95D0bB61c195d1196EB2143D8D88570036AC",
+      "salt": "harbor_v1::USDMY::ETH::priceoracle",
+      "deploymentTime": "2026-03-10T23:29:32Z"
+    },
+    "USDMY/HYPE": {
+      "address": "0xE09D652d77656B502712a72326bCcAad3d81abe4",
+      "implementation": "0x830AB2B3A936F727ee2FF67E9C073380B6f166D8",
+      "salt": "harbor_v1::USDMY::HYPE::priceoracle",
+      "deploymentTime": "2026-03-10T23:29:36Z"
+    },
+    "USDMY/SOL": {
+      "address": "0x971E2D5b915Bca46f49fa4ccB1E7FE39d6782687",
+      "implementation": "0xE2962ab29C723415F023451E9F166122d8b4a980",
+      "salt": "harbor_v1::USDMY::SOL::priceoracle",
+      "deploymentTime": "2026-03-10T23:29:40Z"
+    },
+    "stETH/USD": {
+      "address": "0x8EDE2Ba210e96f23294063938Bc080aFC8F0BAf1",
+      "implementation": "0xF183D68f7D4e47f0546bF67f56677d35CE87617D",
+      "salt": "harbor_v1::wstETH::USD::priceoracle",
+      "deploymentTime": "2026-03-10T23:29:45Z"
+    }
+  }
+}

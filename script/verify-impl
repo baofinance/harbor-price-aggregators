@@ -84,13 +84,15 @@ init_state_file "$NETWORK" "$SALT_PREFIX" "$DRY_RUN"
 
 # ── Build list of (address, pair) to verify ────────────────────────────────
 
-declare -A IMPL_MAP  # address -> pair
+IMPL_ADDRS=()
+IMPL_PAIRS=()
 
 if [[ "$USE_STATE_FILE" == true ]]; then
   while IFS= read -r addr; do
     [[ -z "$addr" ]] && continue
     pair=$(get_implementation_info "$STATE_FILE" "$addr" pair)
-    IMPL_MAP["$addr"]="$pair"
+    IMPL_ADDRS+=("$addr")
+    IMPL_PAIRS+=("$pair")
   done < <(get_implementation_addresses "$STATE_FILE")
 else
   for pair in "${PAIRS[@]}"; do
@@ -100,11 +102,12 @@ else
       echo "❌ No implementation found for pair: $pair" >&2
       exit 1
     fi
-    IMPL_MAP["$addr"]="$pair"
+    IMPL_ADDRS+=("$addr")
+    IMPL_PAIRS+=("$pair")
   done
 fi
 
-if [[ ${#IMPL_MAP[@]} -eq 0 ]]; then
+if [[ ${#IMPL_ADDRS[@]} -eq 0 ]]; then
   echo "ℹ No implementations to verify."
   exit 0
 fi
@@ -116,7 +119,7 @@ echo "════════════════════════�
 echo "  VERIFY IMPLEMENTATIONS"
 echo "  Network: $NETWORK (chainId: $CHAIN_ID)"
 echo "  State:   $STATE_FILE"
-echo "  Count:   ${#IMPL_MAP[@]}"
+echo "  Count:   ${#IMPL_ADDRS[@]}"
 if [[ "$DRY_RUN" == true ]]; then
   echo "  Mode:    DRY RUN (commands only)"
 fi
@@ -129,8 +132,9 @@ total=0
 success=0
 failed=0
 
-for addr in "${!IMPL_MAP[@]}"; do
-  pair="${IMPL_MAP[$addr]}"
+for i in "${!IMPL_ADDRS[@]}"; do
+  addr="${IMPL_ADDRS[$i]}"
+  pair="${IMPL_PAIRS[$i]}"
   total=$((total + 1))
 
   read -r _ _ contract_id < <(get_contract_details "$pair" "$NETWORK")
@@ -144,7 +148,11 @@ for addr in "${!IMPL_MAP[@]}"; do
     echo "  forge verify-contract \\"
     echo "    $addr \\"
     echo "    $contract_id \\"
-    echo "    --chain $NETWORK \\"
+    if [[ "$NETWORK" == "megaeth" ]]; then
+      echo "    --chain 4326 \\"
+    else
+      echo "    --chain $NETWORK \\"
+    fi
     echo "    --watch"
     echo ""
     success=$((success + 1))

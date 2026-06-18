@@ -24,12 +24,12 @@ deploy/v3-oracles-base src/aggregators/mainnet/Aggregator_fxUSD_XAG.sol src/aggr
 # GOLD/SILVER are new deployments, not renames of XAU/XAG.
 # E. MainnetRateSources.sol — only new constants added post-deploy; no existing
 # constant changed so deployed consumer bytecodes are unaffected.
-deploy/v3-aggregators-mainnet src/feeds/chainlink/mainnet/BTC_USD.sol src/mainnet/Aggregator_fxUSD_XAG_mainnet.sol src/mainnet/Aggregator_fxUSD_XAU_mainnet.sol src/mainnet/Aggregator_hsfxUSD_ETH_USD_mainnet.sol src/mainnet/Aggregator_hsfxUSD_GOLD_USD_mainnet.sol src/rates/mainnet/MainnetRateSources.sol
-deploy/v3-aggregators-mainnet-testEUR src/feeds/chainlink/mainnet/BTC_USD.sol src/mainnet/Aggregator_fxUSD_XAG_mainnet.sol src/mainnet/Aggregator_fxUSD_XAU_mainnet.sol src/mainnet/Aggregator_hsfxUSD_ETH_USD_mainnet.sol src/mainnet/Aggregator_hsfxUSD_GOLD_USD_mainnet.sol src/rates/mainnet/MainnetRateSources.sol
+deploy/v3-aggregators-mainnet src/feeds/chainlink/mainnet/BTC_USD.sol src/mainnet/Aggregator_fxUSD_XAG_mainnet.sol src/mainnet/Aggregator_fxUSD_XAU_mainnet.sol src/mainnet/Aggregator_hsfxUSD_ETH_USD_mainnet.sol src/rates/mainnet/MainnetRateSources.sol
+deploy/v3-aggregators-mainnet-testEUR src/feeds/chainlink/mainnet/BTC_USD.sol src/mainnet/Aggregator_fxUSD_XAG_mainnet.sol src/mainnet/Aggregator_fxUSD_XAU_mainnet.sol src/mainnet/Aggregator_hsfxUSD_ETH_USD_mainnet.sol src/rates/mainnet/MainnetRateSources.sol
 
 # B (cont). BTC/TBTC/WBTC heartbeats all changed 3600->86400 in a3b9a95.
 # E. MainnetRateSources.sol additive only.
-deploy/v3-oracles-mainnet src/feeds/chainlink/mainnet/BTC_USD.sol src/feeds/chainlink/mainnet/TBTC_USD.sol src/feeds/chainlink/mainnet/WBTC_BTC.sol src/rates/mainnet/MainnetRateSources.sol
+deploy/v3-oracles-mainnet src/feeds/chainlink/mainnet/BTC_USD.sol src/feeds/chainlink/mainnet/TBTC_USD.sol src/feeds/chainlink/mainnet/WBTC_BTC.sol src/aggregators/mainnet/Aggregator_PAXG_USD.sol src/aggregators/mainnet/Aggregator_sUSDe_XAG.sol src/aggregators/mainnet/Aggregator_wBTC_USD.sol src/rates/mainnet/MainnetRateSources.sol
 
 # E. MainnetRateSources.sol — GOLD/SILVER minter addresses added in f26fa71
 # after this tag; additive only, no bytecode effect on deployed consumers.
@@ -37,7 +37,7 @@ deploy/v4-oracles-mainnet src/rates/mainnet/MainnetRateSources.sol
 
 # F. Aggregator_stETH_USD — these files did not exist at the time these deploy
 # tags were cut; they were added after the deploys they reference.
-deploy/v3-oracles-mainnet src/aggregators/mainnet/Aggregator_stETH_USD.sol src/mainnet/Aggregator_stETH_USD_mainnet.sol
-deploy/v4-oracles-mainnet src/aggregators/mainnet/Aggregator_stETH_USD.sol src/mainnet/Aggregator_stETH_USD_mainnet.sol
-deploy/v4-oracles-mainnet-leverage src/aggregators/mainnet/Aggregator_stETH_USD.sol src/mainnet/Aggregator_stETH_USD_mainnet.sol
-deploy/v4-oracles-megaeth src/aggregators/mainnet/Aggregator_stETH_USD.sol src/mainnet/Aggregator_stETH_USD_mainnet.sol
+deploy/v3-oracles-mainnet src/aggregators/mainnet/Aggregator_stETH_USD.sol src/mainnet/Aggregator_stETH_USD_mainnet.sol src/aggregators/mainnet/Aggregator_sUSDe_XAU.sol src/aggregators/mainnet/Aggregator_tBTC_USD.sol
+deploy/v4-oracles-mainnet src/aggregators/mainnet/Aggregator_stETH_USD.sol src/mainnet/Aggregator_stETH_USD_mainnet.sol src/aggregators/mainnet/Aggregator_PAXG_USD.sol src/aggregators/mainnet/Aggregator_sUSDe_XAG.sol src/aggregators/mainnet/Aggregator_sUSDe_XAU.sol src/aggregators/mainnet/Aggregator_wBTC_USD.sol src/aggregators/mainnet/Aggregator_tBTC_USD.sol
+deploy/v4-oracles-mainnet-leverage src/aggregators/mainnet/Aggregator_stETH_USD.sol src/mainnet/Aggregator_stETH_USD_mainnet.sol src/aggregators/mainnet/Aggregator_PAXG_USD.sol src/aggregators/mainnet/Aggregator_sUSDe_XAG.sol  src/aggregators/mainnet/Aggregator_sUSDe_XAU.sol src/aggregators/mainnet/Aggregator_tBTC_USD.sol src/aggregators/mainnet/Aggregator_wBTC_USD.sol src/aggregators/megaeth/Aggregator_BTC_USD.sol
+deploy/v4-oracles-megaeth src/aggregators/mainnet/Aggregator_stETH_USD.sol src/mainnet/Aggregator_stETH_USD_mainnet.sol src/aggregators/megaeth/Aggregator_BTC_USD.sol src/aggregators/mainnet/Aggregator_PAXG_USD.sol src/aggregators/mainnet/Aggregator_sUSDe_XAG.sol src/aggregators/mainnet/Aggregator_sUSDe_XAU.sol src/aggregators/mainnet/Aggregator_tBTC_USD.sol src/aggregators/mainnet/Aggregator_wBTC_USD.sol

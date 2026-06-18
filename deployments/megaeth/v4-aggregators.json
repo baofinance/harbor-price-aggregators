@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "version": "v4",
+  "network": "megaeth",
+  "chainId": 4326,
+  "baoFactory": "0xD696E56b3A054734d4C6DCBD32E11a278b0EC458",
+  "implementations": {
+    "0xD011778057AA740BB3703Ad4d78b3c79a1aED1cb": {
+      "pair": "USDM/ETH",
+      "contractSource": "src/megaeth/Aggregator_USDM_ETH_megaeth.sol",
+      "contractType": "Aggregator_USDM_ETH_megaeth",
+      "deploymentTime": "2026-04-27T21:47:21Z"
+    },
+    "0x3d881b3C7B690f05E672cD0F8fCbC0aE3A7292CF": {
+      "pair": "USDM/BTC",
+      "contractSource": "src/megaeth/Aggregator_USDM_BTC_megaeth.sol",
+      "contractType": "Aggregator_USDM_BTC_megaeth",
+      "deploymentTime": "2026-04-27T21:47:26Z"
+    },
+    "0x4cd395CB5edF33b44E73257ee614413f95d1a6cD": {
+      "pair": "USDE/ETH",
+      "contractSource": "src/megaeth/Aggregator_USDE_ETH_megaeth.sol",
+      "contractType": "Aggregator_USDE_ETH_megaeth",
+      "deploymentTime": "2026-04-27T21:47:30Z"
+    },
+    "0xe606AE6d6394a977a8B0926557BF9D291051f989": {
+      "pair": "USDE/BTC",
+      "contractSource": "src/megaeth/Aggregator_USDE_BTC_megaeth.sol",
+      "contractType": "Aggregator_USDE_BTC_megaeth",
+      "deploymentTime": "2026-04-27T21:47:35Z"
+    },
+    "0xDe10BEd5236B786cAA18Ca39FFa5de1b904a8a94": {
+      "pair": "stETH/USD",
+      "contractSource": "src/megaeth/Aggregator_stETH_USD_megaeth.sol",
+      "contractType": "Aggregator_stETH_USD_megaeth",
+      "deploymentTime": "2026-04-27T21:47:39Z"
+    }
+  },
+  "proxies": {
+    "USDM/ETH": {
+      "address": "0x62b6Fe18484bAE75865AaF24D3E4840AF3A0e65D",
+      "implementation": "0xD011778057AA740BB3703Ad4d78b3c79a1aED1cb",
+      "salt": "harbor_megaeth_v1::USDM::ETH::wrappedPriceAggregator",
+      "deploymentTime": "2026-04-27T21:50:06Z"
+    },
+    "USDM/BTC": {
+      "address": "0x61a087e8277cA472dA74eEb145749896E36f6E40",
+      "implementation": "0x3d881b3C7B690f05E672cD0F8fCbC0aE3A7292CF",
+      "salt": "harbor_megaeth_v1::USDM::BTC::wrappedPriceAggregator",
+      "deploymentTime": "2026-04-27T21:50:11Z"
+    },
+    "USDE/ETH": {
+      "address": "0x918B54bc90BeeC0bd6C2681af8435a5d57B59812",
+      "implementation": "0x4cd395CB5edF33b44E73257ee614413f95d1a6cD",
+      "salt": "harbor_megaeth_v1::USDE::ETH::wrappedPriceAggregator",
+      "deploymentTime": "2026-04-27T21:50:15Z"
+    },
+    "USDE/BTC": {
+      "address": "0xCD19299BD54bB683a40F1D4cF6715209274dA953",
+      "implementation": "0xe606AE6d6394a977a8B0926557BF9D291051f989",
+      "salt": "harbor_megaeth_v1::USDE::BTC::wrappedPriceAggregator",
+      "deploymentTime": "2026-04-27T21:50:19Z"
+    },
+    "stETH/USD": {
+      "address": "0xEDd3dC3E699360846c87CB69052EcbC900201854",
+      "implementation": "0xDe10BEd5236B786cAA18Ca39FFa5de1b904a8a94",
+      "salt": "harbor_megaeth_v1::stETH::USD::wrappedPriceAggregator",
+      "deploymentTime": "2026-04-27T21:50:24Z"
+    }
+  }
+}
