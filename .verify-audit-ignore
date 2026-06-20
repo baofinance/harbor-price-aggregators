@@ -1,43 +1,43 @@
-# Syntax: tag [file1 file2 ...]
-#   tag alone        — ignore the whole tag
-#   tag file1 file2  — ignore specific files within the tag only;
-#                      other drifting files in that tag still fail
+# Each deploy tag is scoped to exactly the contracts its deployment manifest
+# recorded — {path.json:field} reads that field's contract paths at the tag — so
+# only the deployed contracts are checked. Bytecode-neutral drift (renames,
+# NatSpec, added `virtual`, additive constants, import moves) auto-clears via the
+# bytecode-equivalence check, so it needs no entry. Anything still listed below is
+# a genuine, reviewed bytecode change in a deployed contract that is accepted.
+#
+# Syntax:
+#   tag {path.json:field}   scope to the manifest's deployed contracts
+#   tag {dir ...}           scope to directories (default is all of src/)
+#   tag ... file ...        accept drift in a specific in-scope contract
+# (v3-aggregators manifests use field "contractSource"; oracle manifests use
+# "contractPath".)
 
-# A. _quoteName() virtual — commit 9218c09 added `virtual` to _quoteName() in
-# these four base aggregator contracts after the e97564c tag was cut. These are
-# base contracts (not deployed directly); the deployed mainnet/arbitrum/base
-# concrete contracts inherit them. Adding `virtual` may change bytecode of
-# consumers, but the XAU/XAG markets were deprecated at v4 anyway.
-# Applies to all four tags at e97564c.
-deploy/v3-aggregators-arbitrum src/aggregators/mainnet/Aggregator_fxUSD_XAG.sol src/aggregators/mainnet/Aggregator_fxUSD_XAU.sol src/aggregators/mainnet/Aggregator_stETH_XAG.sol src/aggregators/mainnet/Aggregator_stETH_XAU.sol src/feeds/chainlink/mainnet/BTC_USD.sol src/mainnet/Aggregator_fxUSD_GOLD_mainnet.sol src/mainnet/Aggregator_fxUSD_SILVER_mainnet.sol src/mainnet/Aggregator_stETH_GOLD_mainnet.sol src/mainnet/Aggregator_stETH_SILVER_mainnet.sol src/rates/mainnet/MainnetRateSources.sol
-deploy/v3-aggregators-base src/aggregators/mainnet/Aggregator_fxUSD_XAG.sol src/aggregators/mainnet/Aggregator_fxUSD_XAU.sol src/aggregators/mainnet/Aggregator_stETH_XAG.sol src/aggregators/mainnet/Aggregator_stETH_XAU.sol src/feeds/chainlink/mainnet/BTC_USD.sol src/mainnet/Aggregator_fxUSD_GOLD_mainnet.sol src/mainnet/Aggregator_fxUSD_SILVER_mainnet.sol src/mainnet/Aggregator_stETH_GOLD_mainnet.sol src/mainnet/Aggregator_stETH_SILVER_mainnet.sol src/rates/mainnet/MainnetRateSources.sol
-deploy/v3-oracles-arbitrum src/aggregators/mainnet/Aggregator_fxUSD_XAG.sol src/aggregators/mainnet/Aggregator_fxUSD_XAU.sol src/aggregators/mainnet/Aggregator_stETH_XAG.sol src/aggregators/mainnet/Aggregator_stETH_XAU.sol src/feeds/chainlink/mainnet/BTC_USD.sol src/mainnet/Aggregator_fxUSD_GOLD_mainnet.sol src/mainnet/Aggregator_fxUSD_SILVER_mainnet.sol src/mainnet/Aggregator_stETH_GOLD_mainnet.sol src/mainnet/Aggregator_stETH_SILVER_mainnet.sol src/rates/mainnet/MainnetRateSources.sol
-deploy/v3-oracles-base src/aggregators/mainnet/Aggregator_fxUSD_XAG.sol src/aggregators/mainnet/Aggregator_fxUSD_XAU.sol src/aggregators/mainnet/Aggregator_stETH_XAG.sol src/aggregators/mainnet/Aggregator_stETH_XAU.sol src/feeds/chainlink/mainnet/BTC_USD.sol src/mainnet/Aggregator_fxUSD_GOLD_mainnet.sol src/mainnet/Aggregator_fxUSD_SILVER_mainnet.sol src/mainnet/Aggregator_stETH_GOLD_mainnet.sol src/mainnet/Aggregator_stETH_SILVER_mainnet.sol src/rates/mainnet/MainnetRateSources.sol
+deploy/v3-aggregators-arbitrum        {deployments/arbitrum/v3-aggregators.json:contractSource}
+deploy/v3-aggregators-base            {deployments/base/v3-aggregators.json:contractSource}
+deploy/v3-aggregators-mainnet-testEUR {deployments/mainnet/v3-aggregators-testEUR.json:contractSource}
+deploy/v3-oracles-arbitrum            {deployments/arbitrum/v3-oracles.json:contractPath}
+deploy/v3-oracles-base                {deployments/base/v3-oracles.json:contractPath}
+deploy/v3-oracles-mainnet             {deployments/mainnet/v3-oracles.json:contractPath}
+deploy/v4-oracles-mainnet-leverage    {deployments/mainnet/leverage-v4-oracles.json:contractPath}
 
-# B. BTC heartbeat — commit a3b9a95 changed HEARTBEAT 3600->86400 in BTC_USD.sol
-# after v3-aggregators-mainnet/testEUR were tagged. Inlined constant; bytecodes
-# of consumers changed post-deploy.
-# C. XAU/XAG mainnet deleted — commit ee23a48 deleted these files when XAU/XAG
-# markets were deprecated. The contracts remain deployed on-chain.
-# D. GOLD/SILVER — git false-rename detection pairs the deleted XAU/XAG files
-# (similar boilerplate, 79-83%) with the newly added GOLD/SILVER contracts.
-# GOLD/SILVER are new deployments, not renames of XAU/XAG.
-# E. MainnetRateSources.sol — only new constants added post-deploy; no existing
-# constant changed so deployed consumer bytecodes are unaffected.
-deploy/v3-aggregators-mainnet src/feeds/chainlink/mainnet/BTC_USD.sol src/mainnet/Aggregator_fxUSD_XAG_mainnet.sol src/mainnet/Aggregator_fxUSD_XAU_mainnet.sol src/mainnet/Aggregator_hsfxUSD_ETH_USD_mainnet.sol src/rates/mainnet/MainnetRateSources.sol
-deploy/v3-aggregators-mainnet-testEUR src/feeds/chainlink/mainnet/BTC_USD.sol src/mainnet/Aggregator_fxUSD_XAG_mainnet.sol src/mainnet/Aggregator_fxUSD_XAU_mainnet.sol src/mainnet/Aggregator_hsfxUSD_ETH_USD_mainnet.sol src/rates/mainnet/MainnetRateSources.sol
+# Accepted drift on deploy/v3-aggregators-mainnet:
+#   USDE_ETH_mainnet  — sUSDe->USDE rename; the inherited _quoteName() string
+#     changed ("sUSDe"->"USDE"), an intended renaming of the oracle, no other
+#     change to the deployed contract.
+#   fxUSD_XAG/XAU_mainnet — XAU/XAG markets deprecated at v4; the source was
+#     deleted, but the contracts remain deployed on-chain.
+#   hsfxUSD_ETH_USD_mainnet — a contract added after this tag that git's rename
+#     detection mis-paired with a deleted deployed contract; it is a new
+#     deployment, not a change to the deployed one.
+deploy/v3-aggregators-mainnet         {deployments/mainnet/v3-aggregators.json:contractSource} src/mainnet/Aggregator_USDE_ETH_mainnet.sol src/mainnet/Aggregator_fxUSD_XAG_mainnet.sol src/mainnet/Aggregator_fxUSD_XAU_mainnet.sol src/mainnet/Aggregator_hsfxUSD_ETH_USD_mainnet.sol
 
-# B (cont). BTC/TBTC/WBTC heartbeats all changed 3600->86400 in a3b9a95.
-# E. MainnetRateSources.sol additive only.
-deploy/v3-oracles-mainnet src/feeds/chainlink/mainnet/BTC_USD.sol src/feeds/chainlink/mainnet/TBTC_USD.sol src/feeds/chainlink/mainnet/WBTC_BTC.sol src/aggregators/mainnet/Aggregator_PAXG_USD.sol src/aggregators/mainnet/Aggregator_sUSDe_XAG.sol src/aggregators/mainnet/Aggregator_wBTC_USD.sol src/rates/mainnet/MainnetRateSources.sol
+# Accepted drift on deploy/v4-oracles-mainnet:
+#   USDE_* — sUSDe->USDE rename; inherited _quoteName() string change only.
+#   stETH_USD_mainnet — new contract mis-paired by rename detection with a
+#     deleted deployed contract; a new deployment, not a change to the old one.
+deploy/v4-oracles-mainnet             {deployments/mainnet/v4-oracles.json:contractPath} src/mainnet/Aggregator_USDE_BTC_mainnet.sol src/mainnet/Aggregator_USDE_ETH_mainnet.sol src/mainnet/Aggregator_USDE_EUR_mainnet.sol src/mainnet/Aggregator_USDE_GOLD_mainnet.sol src/mainnet/Aggregator_USDE_MCAP_mainnet.sol src/mainnet/Aggregator_USDE_SILVER_mainnet.sol src/mainnet/Aggregator_stETH_USD_mainnet.sol
 
-# E. MainnetRateSources.sol — GOLD/SILVER minter addresses added in f26fa71
-# after this tag; additive only, no bytecode effect on deployed consumers.
-deploy/v4-oracles-mainnet src/rates/mainnet/MainnetRateSources.sol
-
-# F. Aggregator_stETH_USD — these files did not exist at the time these deploy
-# tags were cut; they were added after the deploys they reference.
-deploy/v3-oracles-mainnet src/aggregators/mainnet/Aggregator_stETH_USD.sol src/mainnet/Aggregator_stETH_USD_mainnet.sol src/aggregators/mainnet/Aggregator_sUSDe_XAU.sol src/aggregators/mainnet/Aggregator_tBTC_USD.sol
-deploy/v4-oracles-mainnet src/aggregators/mainnet/Aggregator_stETH_USD.sol src/mainnet/Aggregator_stETH_USD_mainnet.sol src/aggregators/mainnet/Aggregator_PAXG_USD.sol src/aggregators/mainnet/Aggregator_sUSDe_XAG.sol src/aggregators/mainnet/Aggregator_sUSDe_XAU.sol src/aggregators/mainnet/Aggregator_wBTC_USD.sol src/aggregators/mainnet/Aggregator_tBTC_USD.sol
-deploy/v4-oracles-mainnet-leverage src/aggregators/mainnet/Aggregator_stETH_USD.sol src/mainnet/Aggregator_stETH_USD_mainnet.sol src/aggregators/mainnet/Aggregator_PAXG_USD.sol src/aggregators/mainnet/Aggregator_sUSDe_XAG.sol  src/aggregators/mainnet/Aggregator_sUSDe_XAU.sol src/aggregators/mainnet/Aggregator_tBTC_USD.sol src/aggregators/mainnet/Aggregator_wBTC_USD.sol src/aggregators/megaeth/Aggregator_BTC_USD.sol
-deploy/v4-oracles-megaeth src/aggregators/mainnet/Aggregator_stETH_USD.sol src/mainnet/Aggregator_stETH_USD_mainnet.sol src/aggregators/megaeth/Aggregator_BTC_USD.sol src/aggregators/mainnet/Aggregator_PAXG_USD.sol src/aggregators/mainnet/Aggregator_sUSDe_XAG.sol src/aggregators/mainnet/Aggregator_sUSDe_XAU.sol src/aggregators/mainnet/Aggregator_tBTC_USD.sol src/aggregators/mainnet/Aggregator_wBTC_USD.sol
+# Accepted drift on deploy/v4-oracles-megaeth:
+#   USDM_* — USDMY->USDM rename; inherited _quoteName() string change only.
+#   stETH_USD_megaeth — new contract mis-paired by rename detection.
+deploy/v4-oracles-megaeth             {deployments/megaeth/v4-oracles.json:contractPath} src/megaeth/Aggregator_USDM_BTC_megaeth.sol src/megaeth/Aggregator_USDM_ETH_megaeth.sol src/megaeth/Aggregator_USDM_HYPE_megaeth.sol src/megaeth/Aggregator_USDM_SOL_megaeth.sol src/megaeth/Aggregator_stETH_USD_megaeth.sol

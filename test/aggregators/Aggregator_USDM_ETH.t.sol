@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.30;
 
-import {DoubleFeedUSDMYAggregatorTestBase} from "@harbor-test/aggregators/DoubleFeedUSDMAggregatorTestBase.sol";
+import {DoubleFeedUSDMAggregatorTestBase} from "@harbor-price-test/aggregators/DoubleFeedUSDMAggregatorTestBase.sol";
 import {IHarborPriceAggregatorV3} from "@harbor-price/interfaces/IHarborPriceAggregatorV3.sol";
 import {Aggregator_USDM_ETH} from "@harbor-price/aggregators/megaeth/Aggregator_USDM_ETH.sol";
 

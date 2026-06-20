@@ -2,7 +2,7 @@
 pragma solidity 0.8.30;
 
 import "forge-std/Test.sol";
-import {LatestAnswerErrorClassifier} from "@harbor-script/historical/LatestAnswerErrorClassifier.sol";
+import {LatestAnswerErrorClassifier} from "@harbor-price-script/historical/LatestAnswerErrorClassifier.sol";
 
 // v3 mainnet wrappers (parameterless constructors)
 import {Aggregator_fxUSD_ETH_mainnet} from "@harbor-price/mainnet/Aggregator_fxUSD_ETH_mainnet.sol";

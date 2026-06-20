@@ -2,9 +2,9 @@
 pragma solidity 0.8.30;
 
 import {Test} from "forge-std/Test.sol";
-import {MockAggregatorV3} from "@harbor-test/mock/MockAggregatorV3.sol";
-import {MockFxSAVE} from "@harbor-test/mock/MockFxSAVE.sol";
-import {MockWstETH} from "@harbor-test/mock/MockWstETH.sol";
+import {MockAggregatorV3} from "@harbor-price-test/mock/MockAggregatorV3.sol";
+import {MockFxSAVE} from "@harbor-price-test/mock/MockFxSAVE.sol";
+import {MockWstETH} from "@harbor-price-test/mock/MockWstETH.sol";
 import {Aggregator_fxUSD_BTC} from "@harbor-price/aggregators/mainnet/Aggregator_fxUSD_BTC.sol";
 import {Aggregator_stETH_BTC} from "@harbor-price/aggregators/mainnet/Aggregator_stETH_BTC.sol";
 import {FxSaveRateLib} from "@harbor-price/rates/FxSaveRateLib.sol";

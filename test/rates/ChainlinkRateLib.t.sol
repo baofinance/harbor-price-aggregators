@@ -4,7 +4,7 @@ pragma solidity 0.8.30;
 import {Test} from "forge-std/Test.sol";
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
 import {ChainlinkRateLib} from "@harbor-price/rates/ChainlinkRateLib.sol";
-import {MockAggregatorV3} from "@harbor-test/mock/MockAggregatorV3.sol";
+import {MockAggregatorV3} from "@harbor-price-test/mock/MockAggregatorV3.sol";
 
 /// @title ChainlinkRateLib Unit Tests
 /// @notice Tests for ChainlinkRateLib rate retrieval and validation

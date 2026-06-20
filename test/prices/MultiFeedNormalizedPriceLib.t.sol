@@ -4,7 +4,7 @@ pragma solidity 0.8.30;
 import {Test} from "forge-std/Test.sol";
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
 import {MultiFeedNormalizedPriceLib} from "@harbor-price/prices/MultiFeedNormalizedPriceLib.sol";
-import {MockAggregatorV3} from "@harbor-test/mock/MockAggregatorV3.sol";
+import {MockAggregatorV3} from "@harbor-price-test/mock/MockAggregatorV3.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 
 /// @title MultiFeedNormalizedPriceLib Unit Tests

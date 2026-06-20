@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.30;
 
-import {LeveragedTokenUSDAggregatorTestBase} from "@harbor-test/aggregators/LeveragedTokenUSDAggregatorTestBase.sol";
+import {LeveragedTokenUSDAggregatorTestBase} from "@harbor-price-test/aggregators/LeveragedTokenUSDAggregatorTestBase.sol";
 import {IHarborPriceAggregatorV3} from "@harbor-price/interfaces/IHarborPriceAggregatorV3.sol";
 import {Aggregator_hsfxUSD_ETH_USD} from "@harbor-price/aggregators/mainnet/Aggregator_hsfxUSD_ETH_USD.sol";
 

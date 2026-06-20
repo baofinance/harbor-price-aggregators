@@ -4,7 +4,7 @@ pragma solidity 0.8.30;
 import {Test} from "forge-std/Test.sol";
 import {IWstETH} from "@bao/interfaces/IWstETH.sol";
 import {WstETHRateLib} from "@harbor-price/rates/WstETHRateLib.sol";
-import {MockWstETH} from "@harbor-test/mock/MockWstETH.sol";
+import {MockWstETH} from "@harbor-price-test/mock/MockWstETH.sol";
 
 /// @title WstETHRateLib Unit Tests
 /// @notice Tests for WstETHRateLib rate retrieval and validation

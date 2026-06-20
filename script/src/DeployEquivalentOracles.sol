@@ -2,7 +2,7 @@
 pragma solidity >=0.8.28 <0.9.0;
 
 import {console2 as console} from "forge-std/console2.sol";
-import {HarborPriceAggregatorDeployer} from "@harbor-script/src/HarborPriceAggregatorDeployer.sol";
+import {HarborPriceAggregatorDeployer} from "@harbor-price-script/src/HarborPriceAggregatorDeployer.sol";
 import {DeploymentState} from "@bao-script/deployment/DeploymentState.sol";
 import {DeploymentTypes} from "@bao-script/deployment/DeploymentTypes.sol";
 

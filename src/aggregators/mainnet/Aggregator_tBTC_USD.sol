@@ -13,7 +13,7 @@ import {SingleFeedPriceLib} from "@harbor-price/prices/SingleFeedPriceLib.sol";
 contract Aggregator_tBTC_USD is HarborAggregator_v3 {
     error InvalidAddress(address value);
     error InvalidDivisor(uint256 divisor);
-    uint256 internal constant FIXED_RATE = 1e18;
+    uint256 internal constant _FIXED_RATE = 1e18;
 
     AggregatorV3Interface public immutable PRICE_FEED;
     uint8 public immutable PRICE_FEED_DECIMALS;
@@ -59,6 +59,6 @@ contract Aggregator_tBTC_USD is HarborAggregator_v3 {
             INVERT_PRICE
         );
 
-        return (price, price, FIXED_RATE, FIXED_RATE);
+        return (price, price, _FIXED_RATE, _FIXED_RATE);
     }
 }

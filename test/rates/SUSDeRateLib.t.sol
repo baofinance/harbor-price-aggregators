@@ -4,7 +4,7 @@ pragma solidity 0.8.30;
 import {Test} from "forge-std/Test.sol";
 import {ISUSDe} from "@harbor-price/interfaces/ISUSDe.sol";
 import {SUSDeRateLib} from "@harbor-price/rates/SUSDeRateLib.sol";
-import {MockSUSDe} from "@harbor-test/mock/MockSUSDe.sol";
+import {MockSUSDe} from "@harbor-price-test/mock/MockSUSDe.sol";
 
 /// @title SUSDeRateLib Unit Tests
 /// @notice Tests for SUSDeRateLib rate retrieval and validation

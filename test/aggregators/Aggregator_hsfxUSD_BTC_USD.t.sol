@@ -2,7 +2,7 @@
 pragma solidity 0.8.30;
 
 import "forge-std/console.sol";
-import {LeveragedTokenUSDAggregatorTestBase} from "@harbor-test/aggregators/LeveragedTokenUSDAggregatorTestBase.sol";
+import {LeveragedTokenUSDAggregatorTestBase} from "@harbor-price-test/aggregators/LeveragedTokenUSDAggregatorTestBase.sol";
 import {IHarborPriceAggregatorV3} from "@harbor-price/interfaces/IHarborPriceAggregatorV3.sol";
 import {Aggregator_hsfxUSD_BTC_USD} from "@harbor-price/aggregators/mainnet/Aggregator_hsfxUSD_BTC_USD.sol";
 
