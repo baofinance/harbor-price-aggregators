@@ -7,6 +7,7 @@ import {USDE_USD} from "@harbor-price/feeds/chainlink/monad/USDE_USD.sol";
 import {BTC_USD} from "@harbor-price/feeds/chainlink/monad/BTC_USD.sol";
 
 /// @notice Monad sUSDe/BTC oracle (rate: SUSDE_USD/USDE_USD, price: USDE_USD/BTC_USD). CL only.
+/// @custom:oz-upgrades-unsafe-allow constructor
 // solhint-disable-next-line contract-name-capwords
 contract Aggregator_sUSDe_BTC_monad is Aggregator_DoubleFeed_TwoFeedRate {
     constructor()

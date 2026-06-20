@@ -7,6 +7,7 @@ import {MON_USD} from "@harbor-price/feeds/chainlink/monad/MON_USD.sol";
 import {BTC_USD} from "@harbor-price/feeds/chainlink/monad/BTC_USD.sol";
 
 /// @notice Monad shMON/BTC oracle (rate: SHMON_MON, price = rate * MON_USD/BTC_USD). CL only.
+/// @custom:oz-upgrades-unsafe-allow constructor
 // solhint-disable-next-line contract-name-capwords
 contract Aggregator_shMON_BTC_monad is Aggregator_SingleRate_DoublePrice {
     constructor()
