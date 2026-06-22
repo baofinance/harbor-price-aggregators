@@ -8,8 +8,9 @@ import {DeploymentTypes} from "@bao-script/deployment/DeploymentTypes.sol";
 import {IHarborPriceAggregatorV3} from "@harbor-price/interfaces/IHarborPriceAggregatorV3.sol";
 
 /// @notice Generic ETH price oracle deployment via BaoFactory CREATE3.
-/// @dev Salt: {saltPrefix}::{peg}::ethPriceAggregator — must match what AutoCompounder_v1 predicts.
-///      The peg name is read from the implementation's baseName() — no separate config needed.
+/// @dev Salt key from the shared `_aggregatorKey` generator — the same `{base}::{quote}::wrappedPriceAggregator`
+///      scheme every aggregator uses, so the deployed and consumer-predicted keys can't drift. The base/quote
+///      are read from the implementation itself — no separate config needed.
 abstract contract DeployEthPriceOracles is HarborPriceAggregatorDeployer {
     /// @notice Deploy a peg/ETH price oracle proxy and record it in deployment state.
     /// @param saltPrefix_ The salt prefix (e.g. "harbor_v1") — must match the minter deploy salt.
@@ -30,8 +31,8 @@ abstract contract DeployEthPriceOracles is HarborPriceAggregatorDeployer {
             });
         state.baoFactory = baoFactory();
 
-        string memory peg = IHarborPriceAggregatorV3(impl).baseName();
-        string memory oracleKey = _key(peg, "ethPriceAggregator");
+        string memory base = IHarborPriceAggregatorV3(impl).baseName();
+        string memory oracleKey = _aggregatorKey(impl);
 
         console.log("--- Deploying %s ---", _saltString(oracleKey));
         console.log("      Impl: %s", impl);
@@ -39,8 +40,8 @@ abstract contract DeployEthPriceOracles is HarborPriceAggregatorDeployer {
         _recordImplementation(
             state,
             oracleKey,
-            string.concat("@harbor-price/mainnet/EthPriceAggregator_", peg, "_mainnet.sol"),
-            string.concat("EthPriceAggregator_", peg, "_mainnet"),
+            string.concat("@harbor-price/mainnet/EthPriceAggregator_", base, "_mainnet.sol"),
+            string.concat("EthPriceAggregator_", base, "_mainnet"),
             impl
         );
         _deployProxyAndRecord(state, oracleKey, impl, "");

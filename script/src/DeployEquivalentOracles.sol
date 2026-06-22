@@ -9,19 +9,18 @@ import {DeploymentTypes} from "@bao-script/deployment/DeploymentTypes.sol";
 /// @notice Deployment of equivalent-vault valuation oracles via BaoFactory CREATE3.
 /// @dev These oracles price a HarborYield equivalent vault's underlying (e.g. wstETH) against the peg.
 ///      They are deployed in the same salt-prefixed campaign as the rest of the protocol, so HarborYield
-///      references them by predicted address (`_predictAddress(key)`). The `key` MUST match the key the
-///      HarborYield config uses (e.g. "stETH::ETH::wrappedPriceAggregator").
+///      references them by predicted address (`_predictAddress(key)`). The salt key is derived from the
+///      implementation's own base/quote via the shared `_aggregatorKey` generator, the same
+///      `{base}::{quote}::wrappedPriceAggregator` scheme the HarborYield config predicts against.
 abstract contract DeployEquivalentOracles is HarborPriceAggregatorDeployer {
     /// @notice Deploy a valuation-oracle proxy at a deterministic CREATE3 address and record it.
     /// @param saltPrefix_ The salt prefix (must match the protocol deploy salt).
-    /// @param key The CREATE3 salt key (e.g. "stETH::ETH::wrappedPriceAggregator") — must match the HarborYield config.
     /// @param impl The oracle implementation (e.g. address(new Aggregator_stETH_ETH_mainnet())).
     /// @param sourcePath Source file path for state recording.
     /// @param contractName Contract name for state recording.
     /// @param network Network name for state recording (e.g. "mainnet").
     function deployEquivalentOracle(
         string memory saltPrefix_,
-        string memory key,
         address impl,
         string memory sourcePath,
         string memory contractName,
@@ -40,6 +39,8 @@ abstract contract DeployEquivalentOracles is HarborPriceAggregatorDeployer {
                 baoFactory: address(0)
             });
         state.baoFactory = baoFactory();
+
+        string memory key = _aggregatorKey(impl);
 
         console.log("--- Deploying %s ---", _saltString(key));
         console.log("      Impl: %s", impl);

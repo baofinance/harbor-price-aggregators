@@ -1,9 +1,9 @@
 | File                                                        | % Lines            | % Statements       | % Branches       | % Funcs          |
 |-------------------------------------------------------------|--------------------|--------------------|------------------|------------------|
 | script/historical/LatestAnswerErrorClassifier.sol           | X   0% (0/28)      | X   0% (0/34)      | X   0% (0/10)    | X   0% (0/4)     |
-| script/src/DeployEquivalentOracles.sol                      | X   0% (0/10)      | X   0% (0/10)      | ✓ 100% (0/0)     | X   0% (0/1)     |
+| script/src/DeployEquivalentOracles.sol                      | X   0% (0/11)      | X   0% (0/12)      | ✓ 100% (0/0)     | X   0% (0/1)     |
 | script/src/DeployEthPriceOracles.sol                        | X   0% (0/12)      | X   0% (0/14)      | ✓ 100% (0/0)     | X   0% (0/1)     |
-| script/src/HarborPriceAggregatorDeployer.sol                | X   0% (0/8)       | X   0% (0/5)       | ✓ 100% (0/0)     | X   0% (0/3)     |
+| script/src/HarborPriceAggregatorDeployer.sol                | X   0% (0/11)      | X   0% (0/7)       | ✓ 100% (0/0)     | X   0% (0/4)     |
 | src/aggregators/HarborAggregator_v3.sol                     | ✓ 100% (11/11)     | ✓ 100% (8/8)       | ✓ 100% (0/0)     | ✓ 100% (6/6)     |
 | src/aggregators/arbitrum/Aggregator_USDE_AAPL.sol           | ✓ 100% (24/24)     | ✓ 100% (25/25)     | ✓ 100% (4/4)     | ✓ 100% (5/5)     |
 | src/aggregators/arbitrum/Aggregator_USDE_AMZN.sol           | ✓ 100% (24/24)     | ✓ 100% (25/25)     | ✓ 100% (4/4)     | ✓ 100% (5/5)     |
@@ -109,4 +109,4 @@
 | src/rates/TwoFeedRatioRateLib.sol                           | X   0% (0/13)      | X   0% (0/20)      | X   0% (0/3)     | X   0% (0/2)     |
 | src/rates/USDMYRateLib.sol                                  | ✓ 100% (8/8)       | ✓ 100% (9/9)       | ✓ 100% (1/1)     | ✓ 100% (3/3)     |
 | src/rates/WstETHRateLib.sol                                 | ✓ 100% (8/8)       | ✓ 100% (11/11)     | ✓ 100% (1/1)     | ✓ 100% (3/3)     |
-| Total                                                       | X  76% (2322/3070) | X  77% (2260/2949) | X  77% (261/337) | X  72% (566/787) |
+| Total                                                       | X  76% (2322/3074) | X  77% (2260/2953) | X  77% (261/337) | X  72% (566/788) |
