@@ -65,6 +65,7 @@ contract Aggregator_stETH_XAU is HarborAggregator_v3 {
         return "stETH";
     }
 
+    // slither-disable-next-line dead-code // false positive: this base is itself deployable, so quoteName()->_quoteName() is reachable; slither only models leaf-contract deployment
     function _quoteName() internal pure virtual override returns (string memory) {
         return "XAU";
     }
