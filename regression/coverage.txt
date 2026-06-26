@@ -1,9 +1,6 @@
 | File                                                        | % Lines            | % Statements       | % Branches       | % Funcs          |
 |-------------------------------------------------------------|--------------------|--------------------|------------------|------------------|
 | script/historical/LatestAnswerErrorClassifier.sol           | X   0% (0/28)      | X   0% (0/34)      | X   0% (0/10)    | X   0% (0/4)     |
-| script/src/DeployEquivalentOracles.sol                      | X   0% (0/11)      | X   0% (0/12)      | ✓ 100% (0/0)     | X   0% (0/1)     |
-| script/src/DeployEthPriceOracles.sol                        | X   0% (0/12)      | X   0% (0/14)      | ✓ 100% (0/0)     | X   0% (0/1)     |
-| script/src/HarborPriceAggregatorDeployer.sol                | X   0% (0/11)      | X   0% (0/7)       | ✓ 100% (0/0)     | X   0% (0/4)     |
 | src/aggregators/HarborAggregator_v3.sol                     | ✓ 100% (11/11)     | ✓ 100% (8/8)       | ✓ 100% (0/0)     | ✓ 100% (6/6)     |
 | src/aggregators/arbitrum/Aggregator_USDE_AAPL.sol           | ✓ 100% (24/24)     | ✓ 100% (25/25)     | ✓ 100% (4/4)     | ✓ 100% (5/5)     |
 | src/aggregators/arbitrum/Aggregator_USDE_AMZN.sol           | ✓ 100% (24/24)     | ✓ 100% (25/25)     | ✓ 100% (4/4)     | ✓ 100% (5/5)     |
@@ -87,17 +84,17 @@
 | src/aggregators/monad/Aggregator_wstETH_XAU_monad.sol       | X   0% (0/4)       | X   0% (0/2)       | ✓ 100% (0/0)     | X   0% (0/2)     |
 | src/feeds/chainlink/ChainlinkFeedLib.sol                    | ✓ 100% (14/14)     | ✓ 100% (16/16)     | ✓ 100% (5/5)     | ✓ 100% (2/2)     |
 | src/format/UtcTimestampFormatter.sol                        | X   0% (0/40)      | X   0% (0/59)      | X   0% (0/1)     | X   0% (0/1)     |
+| src/mainnet/Aggregator_BTC_ETH_mainnet.sol                  | X   0% (0/2)       | X   0% (0/1)       | ✓ 100% (0/0)     | X   0% (0/1)     |
+| src/mainnet/Aggregator_EUR_ETH_mainnet.sol                  | X   0% (0/2)       | X   0% (0/1)       | ✓ 100% (0/0)     | X   0% (0/1)     |
+| src/mainnet/Aggregator_GOLD_ETH_mainnet.sol                 | X   0% (0/2)       | X   0% (0/1)       | ✓ 100% (0/0)     | X   0% (0/1)     |
+| src/mainnet/Aggregator_MCAP_ETH_mainnet.sol                 | X   0% (0/2)       | X   0% (0/1)       | ✓ 100% (0/0)     | X   0% (0/1)     |
+| src/mainnet/Aggregator_SILVER_ETH_mainnet.sol               | X   0% (0/2)       | X   0% (0/1)       | ✓ 100% (0/0)     | X   0% (0/1)     |
 | src/mainnet/Aggregator_USDE_GOLD_mainnet.sol                | X   0% (0/2)       | X   0% (0/1)       | ✓ 100% (0/0)     | X   0% (0/1)     |
 | src/mainnet/Aggregator_USDE_SILVER_mainnet.sol              | X   0% (0/2)       | X   0% (0/1)       | ✓ 100% (0/0)     | X   0% (0/1)     |
 | src/mainnet/Aggregator_fxUSD_GOLD_mainnet.sol               | X   0% (0/2)       | X   0% (0/1)       | ✓ 100% (0/0)     | X   0% (0/1)     |
 | src/mainnet/Aggregator_fxUSD_SILVER_mainnet.sol             | X   0% (0/2)       | X   0% (0/1)       | ✓ 100% (0/0)     | X   0% (0/1)     |
 | src/mainnet/Aggregator_stETH_GOLD_mainnet.sol               | X   0% (0/2)       | X   0% (0/1)       | ✓ 100% (0/0)     | X   0% (0/1)     |
 | src/mainnet/Aggregator_stETH_SILVER_mainnet.sol             | X   0% (0/2)       | X   0% (0/1)       | ✓ 100% (0/0)     | X   0% (0/1)     |
-| src/mainnet/EthPriceAggregator_BTC_mainnet.sol              | X   0% (0/2)       | X   0% (0/1)       | ✓ 100% (0/0)     | X   0% (0/1)     |
-| src/mainnet/EthPriceAggregator_EUR_mainnet.sol              | X   0% (0/2)       | X   0% (0/1)       | ✓ 100% (0/0)     | X   0% (0/1)     |
-| src/mainnet/EthPriceAggregator_GOLD_mainnet.sol             | X   0% (0/2)       | X   0% (0/1)       | ✓ 100% (0/0)     | X   0% (0/1)     |
-| src/mainnet/EthPriceAggregator_MCAP_mainnet.sol             | X   0% (0/2)       | X   0% (0/1)       | ✓ 100% (0/0)     | X   0% (0/1)     |
-| src/mainnet/EthPriceAggregator_SILVER_mainnet.sol           | X   0% (0/2)       | X   0% (0/1)       | ✓ 100% (0/0)     | X   0% (0/1)     |
 | src/prices/DoubleFeedPriceLib.sol                           | ✓ 100% (6/6)       | ✓ 100% (8/8)       | ✓ 100% (1/1)     | ✓ 100% (1/1)     |
 | src/prices/MultiFeedDivPriceLib.sol                         | ✓ 100% (12/12)     | ✓ 100% (20/20)     | ✓ 100% (5/5)     | ✓ 100% (1/1)     |
 | src/prices/MultiFeedNormalizedPriceLib.sol                  | ✓ 100% (13/13)     | ✓ 100% (22/22)     | ✓ 100% (5/5)     | ✓ 100% (1/1)     |
@@ -109,4 +106,4 @@
 | src/rates/TwoFeedRatioRateLib.sol                           | X   0% (0/13)      | X   0% (0/20)      | X   0% (0/3)     | X   0% (0/2)     |
 | src/rates/USDMYRateLib.sol                                  | ✓ 100% (8/8)       | ✓ 100% (9/9)       | ✓ 100% (1/1)     | ✓ 100% (3/3)     |
 | src/rates/WstETHRateLib.sol                                 | ✓ 100% (8/8)       | ✓ 100% (11/11)     | ✓ 100% (1/1)     | ✓ 100% (3/3)     |
-| Total                                                       | X  76% (2322/3074) | X  77% (2260/2953) | X  77% (261/337) | X  72% (566/788) |
+| Total                                                       | X  76% (2322/3040) | X  77% (2260/2920) | X  77% (261/337) | X  72% (566/782) |

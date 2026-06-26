@@ -2,13 +2,19 @@
 |---------------------------------------|--------------------|----------------------|---------------------|--------------|-------------------|
 | AAPL_USD                              |                 57 |               24,519 |                  85 |       12,250 |              1.23 |
 | AMZN_USD                              |                 57 |               24,519 |                  85 |       12,250 |              1.23 |
+| Aggregator_BTC_ETH_mainnet            |              3,273 |               21,303 |               4,113 |      695,730 |             69.57 |
 | Aggregator_BTC_USD                    |              3,118 |               21,458 |               3,900 |      662,600 |             66.26 |
 | Aggregator_BTC_USD_megaeth            |              3,118 |               21,458 |               3,802 |      661,620 |             66.16 |
 | Aggregator_BTCb_USD                   |              3,120 |               21,456 |               3,902 |      663,020 |             66.30 |
 | Aggregator_BTCb_USD_megaeth           |              3,120 |               21,456 |               3,804 |      662,040 |             66.20 |
 | Aggregator_ETH_ETH                    |              1,838 |               22,738 |               2,219 |      389,790 |             38.98 |
+| Aggregator_ETH_ETH_mainnet            |              1,838 |               22,738 |               2,219 |      389,790 |             38.98 |
+| Aggregator_EUR_ETH_mainnet            |              3,273 |               21,303 |               4,113 |      695,730 |             69.57 |
+| Aggregator_GOLD_ETH_mainnet           |              3,274 |               21,302 |               4,114 |      695,940 |             69.59 |
+| Aggregator_MCAP_ETH_mainnet           |              3,274 |               21,302 |               4,114 |      695,940 |             69.59 |
 | Aggregator_PAXG_USD                   |              3,119 |               21,457 |               3,901 |      662,810 |             66.28 |
 | Aggregator_PAXG_USD_mainnet           |              3,119 |               21,457 |               3,803 |      661,830 |             66.18 |
+| Aggregator_SILVER_ETH_mainnet         |              3,276 |               21,300 |               4,116 |      696,360 |             69.64 |
 | Aggregator_USDE_AAPL                  |              4,103 |               20,473 |               5,156 |      872,160 |             87.22 |
 | Aggregator_USDE_AAPL_arbitrum         |              4,103 |               20,473 |               5,032 |      870,920 |             87.09 |
 | Aggregator_USDE_AMZN                  |              4,103 |               20,473 |               5,156 |      872,160 |             87.22 |
@@ -137,12 +143,6 @@
 | DOGE_USD                              |                 57 |               24,519 |                  85 |       12,250 |              1.23 |
 | DoubleFeedPriceLib                    |                 57 |               24,519 |                  85 |       12,250 |              1.23 |
 | EUR_USD                               |                 57 |               24,519 |                  85 |       12,250 |              1.23 |
-| EthPriceAggregator_BTC_mainnet        |              3,273 |               21,303 |               4,113 |      695,730 |             69.57 |
-| EthPriceAggregator_ETH_mainnet        |              1,838 |               22,738 |               2,219 |      389,790 |             38.98 |
-| EthPriceAggregator_EUR_mainnet        |              3,273 |               21,303 |               4,113 |      695,730 |             69.57 |
-| EthPriceAggregator_GOLD_mainnet       |              3,274 |               21,302 |               4,114 |      695,940 |             69.59 |
-| EthPriceAggregator_MCAP_mainnet       |              3,274 |               21,302 |               4,114 |      695,940 |             69.59 |
-| EthPriceAggregator_SILVER_mainnet     |              3,276 |               21,300 |               4,116 |      696,360 |             69.64 |
 | FxSaveRateLib                         |                 57 |               24,519 |                  85 |       12,250 |              1.23 |
 | GOOGL_USD                             |                 57 |               24,519 |                  85 |       12,250 |              1.23 |
 | HYPE_USD                              |                 57 |               24,519 |                  85 |       12,250 |              1.23 |

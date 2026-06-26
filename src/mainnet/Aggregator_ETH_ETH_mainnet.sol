@@ -7,4 +7,4 @@ import {Aggregator_ETH_ETH} from "@harbor-price/aggregators/mainnet/Aggregator_E
 /// @dev Hard-coded wiring for mainnet; deploy scripts select this bytecode by chain.
 /// @custom:oz-upgrades-unsafe-allow constructor
 // solhint-disable-next-line contract-name-capwords,no-empty-blocks
-contract EthPriceAggregator_ETH_mainnet is Aggregator_ETH_ETH {}
+contract Aggregator_ETH_ETH_mainnet is Aggregator_ETH_ETH {}
