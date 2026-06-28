@@ -2,7 +2,10 @@
   "license": "MIT",
   "scripts": {
     "uv": "uv sync; echo \"to enable vyper builds, run:\n   source ./.venv/bin/activate\"",
+    "uv:install": "curl -LsSf https://astral.sh/uv/install.sh | sh",
+    "uv:upgrade": "uv self update",
     "foundryup": "curl -L https://foundry.paradigm.xyz | bash && foundryup",
+    "doctor": "./lib/bao-base/run doctor",
     "CI": "./lib/bao-base/run CI",
     "CI-act": "./lib/bao-base/run CI-act",
     "doctor": "./lib/bao-base/run doctor",
@@ -33,7 +36,6 @@
     "doc": "forge doc",
     "svg": "cd results && find . -name \"*.gp\" -exec gnuplot -e \"set output '{}.svg'\" {} \\;",
     "png": "cd results && find . -name \"*.svg\" -exec convert {} {}.png \\;",
-    "maul": "./lib/bao-base/run maul",
     "deploy": "script/deploy-harbor",
     "deploy:local": "yarn deploy --network local",
     "factory": "./lib/bao-base/lib/bao-factory/script/bao-factory --status --network mainnet",
