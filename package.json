@@ -8,7 +8,6 @@
     "doctor": "./lib/bao-base/run doctor",
     "CI": "./lib/bao-base/run CI",
     "CI-act": "./lib/bao-base/run CI-act",
-    "doctor": "./lib/bao-base/run doctor",
     "clean": "./lib/bao-base/run clean",
     "git-diffs": "./lib/bao-base/run git-diffs",
     "prettier": "prettier --log-level warn '{src,test,script}/**/*.sol'",
