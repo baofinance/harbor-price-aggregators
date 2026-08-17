@@ -63,5 +63,49 @@
       "contractPath": "src/Aggregator_stETH_XAU_mainnet.sol:Aggregator_stETH_XAU_mainnet",
       "deprecated": true
     }
+  },
+  "implementations": {
+    "0xbE19765f4711Ba7e88D98Eec096d7f21a3E0eeCf": {
+      "contractName": "Aggregator_fxUSD_STRC_mainnet",
+      "deployedAt": "2026-08-17T21:24:13Z"
+    },
+    "0x690D6cad065F39abd0E166086CFa1935219B68da": {
+      "contractName": "Aggregator_stETH_STRC_mainnet",
+      "deployedAt": "2026-08-17T21:24:36Z"
+    },
+    "0x2EFe29a59C0E2330F06DCB18F70602C3875855d1": {
+      "contractName": "Aggregator_fxUSD_SPCX_mainnet",
+      "deployedAt": "2026-08-17T21:25:13Z"
+    },
+    "0x22708015318eBa553EE596Fb56786a7aD7133217": {
+      "contractName": "Aggregator_stETH_SPCX_mainnet",
+      "deployedAt": "2026-08-17T21:25:39Z"
+    }
+  },
+  "proxies": {
+    "fxUSD_STRC": {
+      "salt": "harbor_v1::fxUSD::STRC::wrappedPriceAggregator",
+      "address": "0x86C0fcA1d569392E077B19fB65A73281355e2F6f",
+      "implementation": "0xbE19765f4711Ba7e88D98Eec096d7f21a3E0eeCf",
+      "deployedAt": "2026-08-17T21:24:25Z"
+    },
+    "stETH_STRC": {
+      "salt": "harbor_v1::stETH::STRC::wrappedPriceAggregator",
+      "address": "0xA48E06546c41F684fF1b7D7681eEb03bbfADa9Cd",
+      "implementation": "0x690D6cad065F39abd0E166086CFa1935219B68da",
+      "deployedAt": "2026-08-17T21:24:50Z"
+    },
+    "fxUSD_SPCX": {
+      "salt": "harbor_v1::fxUSD::SPCX::wrappedPriceAggregator",
+      "address": "0x92A0bFB958bC0b375c9dA0e47FD557cF250b855b",
+      "implementation": "0x2EFe29a59C0E2330F06DCB18F70602C3875855d1",
+      "deployedAt": "2026-08-17T21:25:27Z"
+    },
+    "stETH_SPCX": {
+      "salt": "harbor_v1::stETH::SPCX::wrappedPriceAggregator",
+      "address": "0xeC850e0Cd9977f0c7cfE7b7cf51C304Caf987aDC",
+      "implementation": "0x22708015318eBa553EE596Fb56786a7aD7133217",
+      "deployedAt": "2026-08-17T21:26:02Z"
+    }
   }
 }

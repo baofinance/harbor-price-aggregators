@@ -40,11 +40,15 @@ To add a new aggregator, see [doc/v3-aggregator-authoring-guide.md](doc/v3-aggre
 | fxUSD/GOLD   | fxSAVE | XAU/USD                     |
 | fxUSD/MCAP   | fxSAVE | MCAP/USD                    |
 | fxUSD/SILVER | fxSAVE | XAG/USD                     |
+| fxUSD/STRC   | fxSAVE | STRC/USD (inverted)         |
+| fxUSD/SPCX   | fxSAVE | SPCX/USD (inverted)         |
 | stETH/BTC    | wstETH | ETH/USD, BTC/USD            |
 | stETH/EUR    | wstETH | ETH/USD, EUR/USD (inverted) |
 | stETH/GOLD   | wstETH | ETH/USD, XAU/USD            |
 | stETH/MCAP   | wstETH | ETH/USD, MCAP/USD           |
 | stETH/SILVER | wstETH | ETH/USD, XAG/USD            |
+| stETH/STRC   | wstETH | ETH/USD, STRC/USD           |
+| stETH/SPCX   | wstETH | ETH/USD, SPCX/USD           |
 
 **GOLD / SILVER vs XAU / XAG:** We use **GOLD** and **SILVER** for external naming (oracle names, mainnet wiring in `src/mainnet`, deploy scripts). The formula contracts in `src/aggregators/mainnet` and Chainlink feeds stay as **XAU** (gold) and **XAG** (silver); mainnet contracts extend those and expose the quote as GOLD or SILVER. No duplicate XAU/XAG mainnet wiring—only GOLD and SILVER are deployed.
 
