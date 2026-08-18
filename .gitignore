@@ -54,5 +54,8 @@ docs/
 # log files
 *.log
 
+# macOS
+.DS_Store
+
 # temp or prliminary files
 *.*-
