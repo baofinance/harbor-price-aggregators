@@ -83,4 +83,3 @@ contract Aggregator_USDE_BTC_Test is DoubleFeedUSDEAggregatorTestBase {
         );
     }
 }
-

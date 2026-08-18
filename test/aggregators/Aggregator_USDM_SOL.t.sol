@@ -83,4 +83,3 @@ contract Aggregator_USDM_SOL_Test is DoubleFeedUSDMAggregatorTestBase {
         );
     }
 }
-

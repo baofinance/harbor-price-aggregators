@@ -7,6 +7,7 @@ import {STETH_USD} from "@harbor-price/feeds/chainlink/monad/STETH_USD.sol";
 import {BTC_USD} from "@harbor-price/feeds/chainlink/monad/BTC_USD.sol";
 
 /// @notice Monad wstETH/BTC oracle (rate: WSTETH_USD/STETH_USD, price: WSTETH_USD/BTC_USD). CL only.
+/// @custom:oz-upgrades-unsafe-allow constructor
 // solhint-disable-next-line contract-name-capwords
 contract Aggregator_wstETH_BTC_monad is Aggregator_DoubleFeed_TwoFeedRate {
     constructor()

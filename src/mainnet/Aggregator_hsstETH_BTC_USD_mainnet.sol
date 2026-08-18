@@ -11,12 +11,6 @@ import {Aggregator_hsstETH_BTC_USD} from "@harbor-price/aggregators/mainnet/Aggr
 // solhint-disable-next-line contract-name-capwords
 contract Aggregator_hsstETH_BTC_USD_mainnet is Aggregator_hsstETH_BTC_USD {
     constructor()
-        Aggregator_hsstETH_BTC_USD(
-            MainnetRateSources.MINTER_HSSTETH_BTC,
-            BTC_USD.FEED,
-            BTC_USD.HEARTBEAT,
-            1,
-            false
-        )
+        Aggregator_hsstETH_BTC_USD(MainnetRateSources.MINTER_HSSTETH_BTC, BTC_USD.FEED, BTC_USD.HEARTBEAT, 1, false)
     {}
 }

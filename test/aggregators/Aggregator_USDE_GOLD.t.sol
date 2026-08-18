@@ -89,4 +89,3 @@ contract Aggregator_USDE_GOLD_Test is DoubleFeedUSDEAggregatorTestBase {
         );
     }
 }
-

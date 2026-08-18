@@ -87,4 +87,3 @@ contract Aggregator_USDM_SOL is HarborAggregator_v3 {
         return (price, price, rate, rate);
     }
 }
-

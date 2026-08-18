@@ -18,9 +18,7 @@ contract Aggregator_stETH_USD_Test is SingleFeedStETHAggregatorTestBase {
         bool invert
     ) internal override returns (IHarborPriceAggregatorV3) {
         return
-            IHarborPriceAggregatorV3(
-                address(new Aggregator_stETH_USD(wsteth, priceFeed, heartbeat, divisor, invert))
-            );
+            IHarborPriceAggregatorV3(address(new Aggregator_stETH_USD(wsteth, priceFeed, heartbeat, divisor, invert)));
     }
 
     function _createWithZeroWsteth() internal override {
@@ -35,4 +33,3 @@ contract Aggregator_stETH_USD_Test is SingleFeedStETHAggregatorTestBase {
         new Aggregator_stETH_USD(address(mockWstETH), address(mockPriceFeed), DEFAULT_HEARTBEAT, 0, false);
     }
 }
-

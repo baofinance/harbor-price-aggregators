@@ -83,4 +83,3 @@ contract Aggregator_USDM_ETH_Test is DoubleFeedUSDMAggregatorTestBase {
         );
     }
 }
-

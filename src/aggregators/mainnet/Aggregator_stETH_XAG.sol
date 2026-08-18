@@ -65,6 +65,7 @@ contract Aggregator_stETH_XAG is HarborAggregator_v3 {
         return "stETH";
     }
 
+    // slither-disable-next-line dead-code
     function _quoteName() internal pure virtual override returns (string memory) {
         return "XAG";
     }

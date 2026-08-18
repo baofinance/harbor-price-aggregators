@@ -73,4 +73,3 @@ contract Aggregator_stETH_USD is HarborAggregator_v3 {
         return (price, price, rate, rate);
     }
 }
-

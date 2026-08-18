@@ -27,4 +27,3 @@ contract Aggregator_USDE_GOLD_mainnet is Aggregator_USDE_XAU {
         return "GOLD";
     }
 }
-

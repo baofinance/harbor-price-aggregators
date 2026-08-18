@@ -13,7 +13,7 @@ abstract contract Aggregator_DoubleFeed_NoRate is HarborAggregator_v3 {
     error InvalidAddress(address value);
     error InvalidDivisor(uint256 divisor);
 
-    uint256 internal constant FIXED_RATE = 1e18;
+    uint256 public constant FIXED_RATE = 1e18;
 
     AggregatorV3Interface public immutable FIRST_FEED;
     uint8 public immutable FIRST_FEED_DECIMALS;

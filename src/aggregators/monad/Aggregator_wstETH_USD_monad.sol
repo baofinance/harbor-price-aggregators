@@ -6,6 +6,7 @@ import {WSTETH_USD} from "@harbor-price/feeds/chainlink/monad/WSTETH_USD.sol";
 import {STETH_USD} from "@harbor-price/feeds/chainlink/monad/STETH_USD.sol";
 
 /// @notice Monad wstETH/USD oracle: direct WSTETH_USD price, rate = WSTETH_USD/STETH_USD (for harvest based on stETH). CL only.
+/// @custom:oz-upgrades-unsafe-allow constructor
 // solhint-disable-next-line contract-name-capwords
 contract Aggregator_wstETH_USD_monad is Aggregator_DirectPrice_TwoFeedRate {
     constructor()

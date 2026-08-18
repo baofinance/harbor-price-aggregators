@@ -10,14 +10,5 @@ import {Aggregator_wBTC_USD} from "@harbor-price/aggregators/mainnet/Aggregator_
 /// @custom:oz-upgrades-unsafe-allow constructor
 // solhint-disable-next-line contract-name-capwords
 contract Aggregator_wBTC_USD_mainnet is Aggregator_wBTC_USD {
-    constructor()
-        Aggregator_wBTC_USD(
-            WBTC_BTC.FEED,
-            WBTC_BTC.HEARTBEAT,
-            BTC_USD.FEED,
-            BTC_USD.HEARTBEAT,
-            1,
-            false
-        )
-    {}
+    constructor() Aggregator_wBTC_USD(WBTC_BTC.FEED, WBTC_BTC.HEARTBEAT, BTC_USD.FEED, BTC_USD.HEARTBEAT, 1, false) {}
 }

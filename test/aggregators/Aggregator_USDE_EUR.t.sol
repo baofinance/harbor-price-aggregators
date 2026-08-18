@@ -83,4 +83,3 @@ contract Aggregator_USDE_EUR_Test is DoubleFeedUSDEAggregatorTestBase {
         );
     }
 }
-

@@ -23,4 +23,3 @@ contract Aggregator_USDM_SOL_megaeth is Aggregator_USDM_SOL {
         )
     {}
 }
-

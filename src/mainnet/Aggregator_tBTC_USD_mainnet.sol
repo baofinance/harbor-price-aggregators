@@ -9,12 +9,5 @@ import {Aggregator_tBTC_USD} from "@harbor-price/aggregators/mainnet/Aggregator_
 /// @custom:oz-upgrades-unsafe-allow constructor
 // solhint-disable-next-line contract-name-capwords
 contract Aggregator_tBTC_USD_mainnet is Aggregator_tBTC_USD {
-    constructor()
-        Aggregator_tBTC_USD(
-            TBTC_USD.FEED,
-            TBTC_USD.HEARTBEAT,
-            1,
-            false
-        )
-    {}
+    constructor() Aggregator_tBTC_USD(TBTC_USD.FEED, TBTC_USD.HEARTBEAT, 1, false) {}
 }

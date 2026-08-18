@@ -11,12 +11,6 @@ import {Aggregator_hsfxUSD_EUR_USD} from "@harbor-price/aggregators/mainnet/Aggr
 // solhint-disable-next-line contract-name-capwords
 contract Aggregator_hsfxUSD_EUR_USD_mainnet is Aggregator_hsfxUSD_EUR_USD {
     constructor()
-        Aggregator_hsfxUSD_EUR_USD(
-            MainnetRateSources.MINTER_HSFXUSD_EUR,
-            EUR_USD.FEED,
-            EUR_USD.HEARTBEAT,
-            1,
-            false
-        )
+        Aggregator_hsfxUSD_EUR_USD(MainnetRateSources.MINTER_HSFXUSD_EUR, EUR_USD.FEED, EUR_USD.HEARTBEAT, 1, false)
     {}
 }

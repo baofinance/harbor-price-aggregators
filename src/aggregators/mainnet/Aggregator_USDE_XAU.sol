@@ -65,6 +65,7 @@ contract Aggregator_USDE_XAU is HarborAggregator_v3 {
         return "USDE";
     }
 
+    // slither-disable-next-line dead-code
     function _quoteName() internal pure virtual override returns (string memory) {
         return "XAU";
     }
@@ -87,4 +88,3 @@ contract Aggregator_USDE_XAU is HarborAggregator_v3 {
         return (price, price, rate, rate);
     }
 }
-

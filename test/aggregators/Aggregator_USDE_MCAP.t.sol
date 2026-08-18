@@ -83,4 +83,3 @@ contract Aggregator_USDE_MCAP_Test is DoubleFeedUSDEAggregatorTestBase {
         );
     }
 }
-

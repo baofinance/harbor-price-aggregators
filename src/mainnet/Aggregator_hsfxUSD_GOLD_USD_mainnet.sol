@@ -11,12 +11,6 @@ import {Aggregator_hsfxUSD_GOLD_USD} from "@harbor-price/aggregators/mainnet/Agg
 // solhint-disable-next-line contract-name-capwords
 contract Aggregator_hsfxUSD_GOLD_USD_mainnet is Aggregator_hsfxUSD_GOLD_USD {
     constructor()
-        Aggregator_hsfxUSD_GOLD_USD(
-            MainnetRateSources.MINTER_HSFXUSD_GOLD,
-            XAU_USD.FEED,
-            XAU_USD.HEARTBEAT,
-            1,
-            false
-        )
+        Aggregator_hsfxUSD_GOLD_USD(MainnetRateSources.MINTER_HSFXUSD_GOLD, XAU_USD.FEED, XAU_USD.HEARTBEAT, 1, false)
     {}
 }

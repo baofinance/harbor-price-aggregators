@@ -56,14 +56,14 @@ To add a new aggregator, see [doc/v3-aggregator-authoring-guide.md](doc/v3-aggre
 
 Single-feed leveraged token oracles (e.g. **hsfxUSD-BTC/USD**) use the same formula contract for both USD- and BTC-denominated output. Only the constructor’s last argument (**invert**) changes:
 
-| `invert` | Output |
-| -------- | ------ |
-| `false` | **Price in USD** — `output = rate × BTC/USD` |
-| `true`  | **Price in BTC** (leverage terms) — `output = rate × (1e18 / BTC/USD)` |
+| `invert` | Output                                                                 |
+| -------- | ---------------------------------------------------------------------- |
+| `false`  | **Price in USD** — `output = rate × BTC/USD`                           |
+| `true`   | **Price in BTC** (leverage terms) — `output = rate × (1e18 / BTC/USD)` |
 
 No other code changes are required: same formula contract, same mainnet contract type; wire a separate mainnet deployment with `invert = true` if you want a feed in BTC instead of USD.
 
-**Current mainnet deployments** expose the **USD price** (`invert = false`). Integrators should use these feeds when consuming the leveraged token oracles (hsfxUSD-*, hsstETH-*).
+**Current mainnet deployments** expose the **USD price** (`invert = false`). Integrators should use these feeds when consuming the leveraged token oracles (hsfxUSD-_, hsstETH-_).
 
 ## Arbitrum v3 Oracles
 
@@ -316,7 +316,7 @@ State: `deployments/mainnet/v4-oracles.json`. Verify: `./script/verify-mainnet-v
 
 ### Deploy mainnet leveraged token (haUSD) oracles
 
-To deploy **leveraged token USD** oracles (hsfxUSD-*, hsstETH-*):
+To deploy **leveraged token USD** oracles (hsfxUSD-_, hsstETH-_):
 
 ```bash
 ./script/deploy-mainnet-leverage-v4-oracles.sh

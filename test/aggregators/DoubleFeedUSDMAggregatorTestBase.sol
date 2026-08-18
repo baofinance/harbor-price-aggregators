@@ -228,4 +228,3 @@ abstract contract DoubleFeedUSDMAggregatorTestBase is Test {
         assertEq(newImpl, address(impl2), "Implementation slot should point to impl2");
     }
 }
-

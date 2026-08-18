@@ -89,4 +89,3 @@ contract Aggregator_USDE_SILVER_Test is DoubleFeedUSDEAggregatorTestBase {
         );
     }
 }
-

@@ -54,6 +54,7 @@ contract Aggregator_fxUSD_XAG is HarborAggregator_v3 {
         return "fxUSD";
     }
 
+    // slither-disable-next-line dead-code
     function _quoteName() internal pure virtual override returns (string memory) {
         return "XAG";
     }

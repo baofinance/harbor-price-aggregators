@@ -10,14 +10,5 @@ import {Aggregator_stETH_USD} from "@harbor-price/aggregators/mainnet/Aggregator
 /// @custom:oz-upgrades-unsafe-allow constructor
 // solhint-disable-next-line contract-name-capwords
 contract Aggregator_stETH_USD_mainnet is Aggregator_stETH_USD {
-    constructor()
-        Aggregator_stETH_USD(
-            MainnetRateSources.WSTETH,
-            STETH_USD.FEED,
-            STETH_USD.HEARTBEAT,
-            1,
-            false
-        )
-    {}
+    constructor() Aggregator_stETH_USD(MainnetRateSources.WSTETH, STETH_USD.FEED, STETH_USD.HEARTBEAT, 1, false) {}
 }
-

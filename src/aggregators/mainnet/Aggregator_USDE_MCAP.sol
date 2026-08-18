@@ -87,4 +87,3 @@ contract Aggregator_USDE_MCAP is HarborAggregator_v3 {
         return (price, price, rate, rate);
     }
 }
-
