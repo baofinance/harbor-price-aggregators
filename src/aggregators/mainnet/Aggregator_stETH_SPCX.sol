@@ -8,7 +8,7 @@ import {IWstETH} from "@bao/interfaces/IWstETH.sol";
 import {WstETHRateLib} from "@harbor-price/rates/WstETHRateLib.sol";
 import {DoubleFeedPriceLib} from "@harbor-price/prices/DoubleFeedPriceLib.sol";
 
-/// @notice stETH/SPCX oracle (rate: wstETH, price: (ETH/USD)/(SPCX/USD)).
+/// @notice stETH/SPCX oracle (rate: wstETH, price: (stETH/USD)/(SPCX/USD)).
 /// @dev This is the formula contract; wiring (feeds/addresses) is provided via constructor.
 /// @custom:oz-upgrades-unsafe-allow state-variable-immutable constructor
 // solhint-disable-next-line contract-name-capwords

@@ -10,6 +10,7 @@ import {MockFxSAVE} from "@harbor-test/mock/MockFxSAVE.sol";
 import {MockWstETH} from "@harbor-test/mock/MockWstETH.sol";
 import {IHarborPriceAggregatorV3} from "@harbor-price/interfaces/IHarborPriceAggregatorV3.sol";
 import {IBaoFixedOwnable} from "@bao/interfaces/IBaoFixedOwnable.sol";
+import {ChainlinkFeedLib} from "@harbor-price/feeds/chainlink/ChainlinkFeedLib.sol";
 
 /// @title Base test contract for leveraged token/USD v3 aggregators
 /// @notice Provides all tests; concrete contracts only implement factory + identity
@@ -132,6 +133,13 @@ abstract contract LeveragedTokenUSDAggregatorTestBase is Test {
         assertEq(p1, p2, "price1 == price2");
         assertEq(r1, VALID_LEVERAGED_TOKEN_PRICE, "rate1");
         assertEq(r1, r2, "rate1 == rate2");
+    }
+
+    function test_latestAnswer_zeroFeedPrice_reverts() public {
+        mockUnderlyingUsdFeed.setAnswer(0, block.timestamp);
+
+        vm.expectRevert(abi.encodeWithSelector(ChainlinkFeedLib.ZeroPrice.selector, address(mockUnderlyingUsdFeed), 0));
+        aggregator.latestAnswer();
     }
 
     // =========================================================================
