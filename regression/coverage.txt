@@ -83,7 +83,7 @@
 | src/aggregators/monad/Aggregator_wstETH_BTC_monad.sol       | X   0% (0/4)       | X   0% (0/2)       | ✓ 100% (0/0)     | X   0% (0/2)     |
 | src/aggregators/monad/Aggregator_wstETH_USD_monad.sol       | X   0% (0/4)       | X   0% (0/2)       | ✓ 100% (0/0)     | X   0% (0/2)     |
 | src/aggregators/monad/Aggregator_wstETH_XAU_monad.sol       | X   0% (0/4)       | X   0% (0/2)       | ✓ 100% (0/0)     | X   0% (0/2)     |
-| src/feeds/chainlink/ChainlinkFeedLib.sol                    | ✓ 100% (14/14)     | ✓ 100% (16/16)     | ✓ 100% (5/5)     | ✓ 100% (2/2)     |
+| src/feeds/chainlink/ChainlinkFeedLib.sol                    | ✓ 100% (16/16)     | ✓ 100% (18/18)     | ✓ 100% (6/6)     | ✓ 100% (2/2)     |
 | src/format/UtcTimestampFormatter.sol                        | X   0% (0/40)      | X   0% (0/59)      | X   0% (0/1)     | X   0% (0/1)     |
 | src/mainnet/Aggregator_USDE_GOLD_mainnet.sol                | X   0% (0/2)       | X   0% (0/1)       | ✓ 100% (0/0)     | X   0% (0/1)     |
 | src/mainnet/Aggregator_USDE_SILVER_mainnet.sol              | X   0% (0/2)       | X   0% (0/1)       | ✓ 100% (0/0)     | X   0% (0/1)     |
@@ -102,4 +102,4 @@
 | src/rates/TwoFeedRatioRateLib.sol                           | X   0% (0/13)      | X   0% (0/20)      | X   0% (0/3)     | X   0% (0/2)     |
 | src/rates/USDMYRateLib.sol                                  | ✓ 100% (8/8)       | ✓ 100% (9/9)       | ✓ 100% (1/1)     | ✓ 100% (3/3)     |
 | src/rates/WstETHRateLib.sol                                 | ✓ 100% (8/8)       | ✓ 100% (11/11)     | ✓ 100% (1/1)     | ✓ 100% (3/3)     |
-| Total                                                       | X  75% (2427/3225) | X  75% (2350/3122) | X  76% (272/356) | X  73% (598/814) |
+| Total                                                       | X  75% (2429/3227) | X  75% (2352/3124) | X  76% (273/357) | X  73% (598/814) |
