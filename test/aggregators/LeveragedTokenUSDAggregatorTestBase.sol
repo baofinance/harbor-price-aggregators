@@ -10,7 +10,6 @@ import {MockFxSAVE} from "@harbor-test/mock/MockFxSAVE.sol";
 import {MockWstETH} from "@harbor-test/mock/MockWstETH.sol";
 import {IHarborPriceAggregatorV3} from "@harbor-price/interfaces/IHarborPriceAggregatorV3.sol";
 import {IBaoFixedOwnable} from "@bao/interfaces/IBaoFixedOwnable.sol";
-import {ChainlinkFeedLib} from "@harbor-price/feeds/chainlink/ChainlinkFeedLib.sol";
 
 /// @title Base test contract for leveraged token/USD v3 aggregators
 /// @notice Provides all tests; concrete contracts only implement factory + identity
