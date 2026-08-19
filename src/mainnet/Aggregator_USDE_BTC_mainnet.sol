@@ -23,4 +23,3 @@ contract Aggregator_USDE_BTC_mainnet is Aggregator_USDE_BTC {
         )
     {}
 }
-

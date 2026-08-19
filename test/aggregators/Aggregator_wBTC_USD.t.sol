@@ -27,25 +27,11 @@ contract Aggregator_wBTC_USD_Test is DoubleFeedNoRateAggregatorTestBase {
     }
 
     function _createWithZeroFirstFeed() internal override {
-        new Aggregator_wBTC_USD(
-            address(0),
-            DEFAULT_HEARTBEAT,
-            address(mockSecondFeed),
-            DEFAULT_HEARTBEAT,
-            1,
-            false
-        );
+        new Aggregator_wBTC_USD(address(0), DEFAULT_HEARTBEAT, address(mockSecondFeed), DEFAULT_HEARTBEAT, 1, false);
     }
 
     function _createWithZeroSecondFeed() internal override {
-        new Aggregator_wBTC_USD(
-            address(mockFirstFeed),
-            DEFAULT_HEARTBEAT,
-            address(0),
-            DEFAULT_HEARTBEAT,
-            1,
-            false
-        );
+        new Aggregator_wBTC_USD(address(mockFirstFeed), DEFAULT_HEARTBEAT, address(0), DEFAULT_HEARTBEAT, 1, false);
     }
 
     function _createWithZeroDivisor() internal override {

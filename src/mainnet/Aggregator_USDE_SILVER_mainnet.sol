@@ -27,4 +27,3 @@ contract Aggregator_USDE_SILVER_mainnet is Aggregator_USDE_XAG {
         return "SILVER";
     }
 }
-

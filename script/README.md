@@ -64,8 +64,8 @@ deployments/local/<network>/v3-aggregators.json
 
 Chain-specific deploy and verify scripts live under **script/\<chain\>/deploy/** and **script/\<chain\>/verify/**:
 
-| Chain    | Deploy | Verify |
-|----------|--------|--------|
+| Chain        | Deploy                    | Verify                    |
+| ------------ | ------------------------- | ------------------------- |
 | **megaeth**  | `script/megaeth/deploy/`  | `script/megaeth/verify/`  |
 | **mainnet**  | `script/mainnet/deploy/`  | `script/mainnet/verify/`  |
 | **arbitrum** | `script/arbitrum/deploy/` | `script/arbitrum/verify/` |
@@ -389,10 +389,10 @@ script/check-verify --network mainnet --local
 
 **Output format (markdown table):**
 
-| Pair | Proxy | Source | Impl | Proxy Flag | Implementation | Impl Verified |
-|------|-------|--------|------|------------|----------------|---------------|
-| fxUSD/ETH | [0xea52...](link) | ✅ | ✅ | ✅ | [0x78D7...](link) | ✅ |
-| fxUSD/BTC | [0xF765...](link) | ✅ | ✅ | ✅ | [0x9f62...](link) | ✅ |
+| Pair      | Proxy             | Source | Impl | Proxy Flag | Implementation    | Impl Verified |
+| --------- | ----------------- | ------ | ---- | ---------- | ----------------- | ------------- |
+| fxUSD/ETH | [0xea52...](link) | ✅     | ✅   | ✅         | [0x78D7...](link) | ✅            |
+| fxUSD/BTC | [0xF765...](link) | ✅     | ✅   | ✅         | [0x9f62...](link) | ✅            |
 
 **Verification columns:**
 

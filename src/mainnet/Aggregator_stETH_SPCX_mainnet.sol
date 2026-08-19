@@ -2,7 +2,7 @@
 pragma solidity 0.8.30;
 
 import {MainnetRateSources} from "@harbor-price/rates/mainnet/MainnetRateSources.sol";
-import {ETH_USD} from "@harbor-price/feeds/chainlink/mainnet/ETH_USD.sol";
+import {STETH_USD} from "@harbor-price/feeds/chainlink/mainnet/STETH_USD.sol";
 import {SPCX_USD} from "@harbor-price/feeds/chainlink/mainnet/SPCX_USD.sol";
 import {Aggregator_stETH_SPCX} from "@harbor-price/aggregators/mainnet/Aggregator_stETH_SPCX.sol";
 
@@ -14,8 +14,8 @@ contract Aggregator_stETH_SPCX_mainnet is Aggregator_stETH_SPCX {
     constructor()
         Aggregator_stETH_SPCX(
             MainnetRateSources.WSTETH,
-            ETH_USD.FEED,
-            ETH_USD.HEARTBEAT,
+            STETH_USD.FEED,
+            STETH_USD.HEARTBEAT,
             SPCX_USD.FEED,
             SPCX_USD.HEARTBEAT,
             1,

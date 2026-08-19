@@ -80,14 +80,7 @@ abstract contract LeveragedTokenUSDAggregatorTestBase is Test {
         mockUnderlyingUsdFeed.setAnswer(3000e8, block.timestamp); // stETH/USD = 3000
 
         // Default setup for fxSAVE underlying (type 0)
-        aggregator = _createAggregator(
-            address(mockMinter),
-            0,
-            address(mockFxSAVE),
-            address(0),
-            0,
-            _expectedBaseName()
-        );
+        aggregator = _createAggregator(address(mockMinter), 0, address(mockFxSAVE), address(0), 0, _expectedBaseName());
     }
 
     // =========================================================================
@@ -140,6 +133,13 @@ abstract contract LeveragedTokenUSDAggregatorTestBase is Test {
         assertEq(p1, p2, "price1 == price2");
         assertEq(r1, VALID_LEVERAGED_TOKEN_PRICE, "rate1");
         assertEq(r1, r2, "rate1 == rate2");
+    }
+
+    function test_latestAnswer_zeroFeedPrice_reverts() public {
+        mockUnderlyingUsdFeed.setAnswer(0, block.timestamp);
+
+        vm.expectRevert(abi.encodeWithSelector(ChainlinkFeedLib.ZeroPrice.selector, address(mockUnderlyingUsdFeed), 0));
+        aggregator.latestAnswer();
     }
 
     // =========================================================================

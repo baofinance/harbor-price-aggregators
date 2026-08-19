@@ -13,7 +13,7 @@ import {Aggregator_fxUSD_SPCX_mainnet} from "@harbor-price/mainnet/Aggregator_fx
 import {Aggregator_stETH_SPCX_mainnet} from "@harbor-price/mainnet/Aggregator_stETH_SPCX_mainnet.sol";
 import {STRC_USD} from "@harbor-price/feeds/chainlink/mainnet/STRC_USD.sol";
 import {SPCX_USD} from "@harbor-price/feeds/chainlink/mainnet/SPCX_USD.sol";
-import {ETH_USD} from "@harbor-price/feeds/chainlink/mainnet/ETH_USD.sol";
+import {STETH_USD} from "@harbor-price/feeds/chainlink/mainnet/STETH_USD.sol";
 import {MainnetRateSources} from "@harbor-price/rates/mainnet/MainnetRateSources.sol";
 
 /// @notice Mainnet fork checks that STRC/SPCX aggregators match live Chainlink + rate sources.
@@ -26,7 +26,7 @@ contract StrcSpcxOraclesForkTest is Test {
 
     uint256 internal strcUsd;
     uint256 internal spcxUsd;
-    uint256 internal ethUsd;
+    uint256 internal stethUsd;
     uint256 internal fxSaveRate;
     uint256 internal wstethRate;
 
@@ -46,7 +46,7 @@ contract StrcSpcxOraclesForkTest is Test {
 
         strcUsd = _normalizedFeed(STRC_USD.FEED);
         spcxUsd = _normalizedFeed(SPCX_USD.FEED);
-        ethUsd = _normalizedFeed(ETH_USD.FEED);
+        stethUsd = _normalizedFeed(STETH_USD.FEED);
         fxSaveRate = IFxSAVE(MainnetRateSources.FXSAVE).convertToAssets(1e18);
         wstethRate = IWstETH(MainnetRateSources.WSTETH).getStETHByWstETH(1e18);
     }
@@ -64,16 +64,16 @@ contract StrcSpcxOraclesForkTest is Test {
     }
 
     function test_fork_stETH_STRC_matchesLiveFeeds() public view {
-        uint256 expectedPrice = Math.mulDiv(ethUsd, 1e18, strcUsd);
+        uint256 expectedPrice = Math.mulDiv(stethUsd, 1e18, strcUsd);
         _assertOracle("stETH/STRC", stEthStrc, "stETH", "STRC", expectedPrice, wstethRate, MainnetRateSources.WSTETH);
-        _logUsd("ETH/USD (Chainlink)", ethUsd);
+        _logUsd("stETH/USD (Chainlink)", stethUsd);
         _logUsd("STRC/USD (Chainlink)", strcUsd);
     }
 
     function test_fork_stETH_SPCX_matchesLiveFeeds() public view {
-        uint256 expectedPrice = Math.mulDiv(ethUsd, 1e18, spcxUsd);
+        uint256 expectedPrice = Math.mulDiv(stethUsd, 1e18, spcxUsd);
         _assertOracle("stETH/SPCX", stEthSpcx, "stETH", "SPCX", expectedPrice, wstethRate, MainnetRateSources.WSTETH);
-        _logUsd("ETH/USD (Chainlink)", ethUsd);
+        _logUsd("stETH/USD (Chainlink)", stethUsd);
         _logUsd("SPCX/USD (Chainlink)", spcxUsd);
     }
 

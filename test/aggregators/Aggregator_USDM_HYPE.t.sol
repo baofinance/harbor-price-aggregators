@@ -83,4 +83,3 @@ contract Aggregator_USDM_HYPE_Test is DoubleFeedUSDMAggregatorTestBase {
         );
     }
 }
-

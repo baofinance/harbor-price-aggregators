@@ -179,6 +179,20 @@ abstract contract DoubleFeedUSDEAggregatorTestBase is Test {
         aggregator.latestAnswer();
     }
 
+    function test_latestAnswer_zeroFirstFeed_reverts() public {
+        mockFirstFeed.setAnswer(0, block.timestamp);
+
+        vm.expectRevert(abi.encodeWithSelector(ChainlinkFeedLib.ZeroPrice.selector, address(mockFirstFeed), 0));
+        aggregator.latestAnswer();
+    }
+
+    function test_latestAnswer_zeroSecondFeed_reverts() public {
+        mockSecondFeed.setAnswer(0, block.timestamp);
+
+        vm.expectRevert(abi.encodeWithSelector(ChainlinkFeedLib.ZeroPrice.selector, address(mockSecondFeed), 0));
+        aggregator.latestAnswer();
+    }
+
     function test_latestAnswer_rateBelowMin_reverts() public {
         uint256 lowRate = 0.8e18;
         mockSUSDe.setAssetsPerShare(lowRate);
@@ -228,4 +242,3 @@ abstract contract DoubleFeedUSDEAggregatorTestBase is Test {
         assertEq(newImpl, address(impl2), "Implementation slot should point to impl2");
     }
 }
-

@@ -60,7 +60,11 @@ contract Aggregator_stETH_USD is HarborAggregator_v3 {
     /// @inheritdoc IWrappedPriceOracle
     function latestAnswer() external view override(IWrappedPriceOracle) returns (uint256, uint256, uint256, uint256) {
         uint256 rate = ChainlinkRateLib.getRate(RATE_FEED);
-        uint256 stethEth = ChainlinkFeedLib.latestAnswerNormalized(STETH_ETH_FEED, STETH_ETH_DECIMALS, STETH_ETH_HEARTBEAT);
+        uint256 stethEth = ChainlinkFeedLib.latestAnswerNormalized(
+            STETH_ETH_FEED,
+            STETH_ETH_DECIMALS,
+            STETH_ETH_HEARTBEAT
+        );
         uint256 ethUsd = ChainlinkFeedLib.latestAnswerNormalized(ETH_USD_FEED, ETH_USD_DECIMALS, ETH_USD_HEARTBEAT);
         uint256 price = Math.mulDiv(stethEth, ethUsd, 1e18);
         return (price, price, rate, rate);

@@ -83,4 +83,3 @@ contract Aggregator_USDM_BTC_Test is DoubleFeedUSDMAggregatorTestBase {
         );
     }
 }
-

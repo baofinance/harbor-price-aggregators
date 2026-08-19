@@ -163,6 +163,13 @@ abstract contract SingleFeedNoRateAggregatorTestBase is Test {
         aggregator.latestAnswer();
     }
 
+    function test_latestAnswer_zeroFeedPrice_reverts() public {
+        mockPriceFeed.setAnswer(0, block.timestamp);
+
+        vm.expectRevert(abi.encodeWithSelector(ChainlinkFeedLib.ZeroPrice.selector, address(mockPriceFeed), 0));
+        aggregator.latestAnswer();
+    }
+
     // =========================================================================
     // UUPS Upgrade
     // =========================================================================
@@ -170,12 +177,7 @@ abstract contract SingleFeedNoRateAggregatorTestBase is Test {
     /// @notice Verifies upgrade authorization and observable behavior change
     function test_upgrade() public {
         // Deploy impl1 with divisor=1
-        IHarborPriceAggregatorV3 impl1 = _createAggregator(
-            address(mockPriceFeed),
-            DEFAULT_HEARTBEAT,
-            1,
-            false
-        );
+        IHarborPriceAggregatorV3 impl1 = _createAggregator(address(mockPriceFeed), DEFAULT_HEARTBEAT, 1, false);
         ERC1967Proxy proxy = new ERC1967Proxy(address(impl1), "");
         IHarborPriceAggregatorV3 proxied = IHarborPriceAggregatorV3(address(proxy));
 
@@ -184,12 +186,7 @@ abstract contract SingleFeedNoRateAggregatorTestBase is Test {
         assertGt(price1, 0, "impl1 price should be positive");
 
         // Deploy impl2 with divisor=2 (halves the price)
-        IHarborPriceAggregatorV3 impl2 = _createAggregator(
-            address(mockPriceFeed),
-            DEFAULT_HEARTBEAT,
-            2,
-            false
-        );
+        IHarborPriceAggregatorV3 impl2 = _createAggregator(address(mockPriceFeed), DEFAULT_HEARTBEAT, 2, false);
 
         // Non-owner cannot upgrade
         address notOwner = makeAddr("notOwner");

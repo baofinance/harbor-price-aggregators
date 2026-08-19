@@ -9,12 +9,5 @@ import {Aggregator_PAXG_USD} from "@harbor-price/aggregators/mainnet/Aggregator_
 /// @custom:oz-upgrades-unsafe-allow constructor
 // solhint-disable-next-line contract-name-capwords
 contract Aggregator_PAXG_USD_mainnet is Aggregator_PAXG_USD {
-    constructor()
-        Aggregator_PAXG_USD(
-            PAXG_USD.FEED,
-            PAXG_USD.HEARTBEAT,
-            1,
-            false
-        )
-    {}
+    constructor() Aggregator_PAXG_USD(PAXG_USD.FEED, PAXG_USD.HEARTBEAT, 1, false) {}
 }

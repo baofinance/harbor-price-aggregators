@@ -9,12 +9,5 @@ import {Aggregator_BTCb_USD} from "@harbor-price/aggregators/megaeth/Aggregator_
 /// @custom:oz-upgrades-unsafe-allow constructor
 // solhint-disable-next-line contract-name-capwords
 contract Aggregator_BTCb_USD_megaeth is Aggregator_BTCb_USD {
-    constructor()
-        Aggregator_BTCb_USD(
-            BTCb_USD.FEED,
-            BTCb_USD.HEARTBEAT,
-            1,
-            false
-        )
-    {}
+    constructor() Aggregator_BTCb_USD(BTCb_USD.FEED, BTCb_USD.HEARTBEAT, 1, false) {}
 }

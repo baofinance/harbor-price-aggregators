@@ -23,4 +23,3 @@ contract Aggregator_USDE_EUR_mainnet is Aggregator_USDE_EUR {
         )
     {}
 }
-

@@ -26,46 +26,20 @@ contract Aggregator_hsfxUSD_ETH_USD_Test is LeveragedTokenUSDAggregatorTestBase 
         if (underlyingUsdHeartbeat == 0) underlyingUsdHeartbeat = DEFAULT_HEARTBEAT;
         return
             IHarborPriceAggregatorV3(
-                address(
-                    new Aggregator_hsfxUSD_ETH_USD(
-                        minter,
-                        underlyingUsdFeed,
-                        underlyingUsdHeartbeat,
-                        1,
-                        false
-                    )
-                )
+                address(new Aggregator_hsfxUSD_ETH_USD(minter, underlyingUsdFeed, underlyingUsdHeartbeat, 1, false))
             );
     }
 
     function _createWithZeroMinter() internal override {
-        new Aggregator_hsfxUSD_ETH_USD(
-            address(0),
-            address(mockUnderlyingUsdFeed),
-            DEFAULT_HEARTBEAT,
-            1,
-            false
-        );
+        new Aggregator_hsfxUSD_ETH_USD(address(0), address(mockUnderlyingUsdFeed), DEFAULT_HEARTBEAT, 1, false);
     }
 
     function _createWithZeroUnderlying() internal override {
-        new Aggregator_hsfxUSD_ETH_USD(
-            address(mockMinter),
-            address(0),
-            DEFAULT_HEARTBEAT,
-            1,
-            false
-        );
+        new Aggregator_hsfxUSD_ETH_USD(address(mockMinter), address(0), DEFAULT_HEARTBEAT, 1, false);
     }
 
     function _createWithZeroUnderlyingUsdFeed() internal override {
-        new Aggregator_hsfxUSD_ETH_USD(
-            address(mockMinter),
-            address(0),
-            DEFAULT_HEARTBEAT,
-            1,
-            false
-        );
+        new Aggregator_hsfxUSD_ETH_USD(address(mockMinter), address(0), DEFAULT_HEARTBEAT, 1, false);
     }
 
     function test_latestAnswer_priceIsRateTimesFeedPrice() public view {

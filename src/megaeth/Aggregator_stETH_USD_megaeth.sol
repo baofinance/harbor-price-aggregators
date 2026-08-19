@@ -12,12 +12,6 @@ import {Aggregator_stETH_USD} from "@harbor-price/aggregators/megaeth/Aggregator
 // solhint-disable-next-line contract-name-capwords
 contract Aggregator_stETH_USD_megaeth is Aggregator_stETH_USD {
     constructor()
-        Aggregator_stETH_USD(
-            WSTETH_STETH.FEED,
-            STETH_ETH.FEED,
-            STETH_ETH.HEARTBEAT,
-            ETH_USD.FEED,
-            ETH_USD.HEARTBEAT
-        )
+        Aggregator_stETH_USD(WSTETH_STETH.FEED, STETH_ETH.FEED, STETH_ETH.HEARTBEAT, ETH_USD.FEED, ETH_USD.HEARTBEAT)
     {}
 }

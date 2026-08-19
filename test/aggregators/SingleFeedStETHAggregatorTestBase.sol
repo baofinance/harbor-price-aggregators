@@ -178,6 +178,13 @@ abstract contract SingleFeedStETHAggregatorTestBase is Test {
         aggregator.latestAnswer();
     }
 
+    function test_latestAnswer_zeroFeedPrice_reverts() public {
+        mockPriceFeed.setAnswer(0, block.timestamp);
+
+        vm.expectRevert(abi.encodeWithSelector(ChainlinkFeedLib.ZeroPrice.selector, address(mockPriceFeed), 0));
+        aggregator.latestAnswer();
+    }
+
     function test_latestAnswer_invalidRate_reverts() public {
         uint256 lowRate = 0.9e18;
         mockWstETH.setStEthPerToken(lowRate);
@@ -235,4 +242,3 @@ abstract contract SingleFeedStETHAggregatorTestBase is Test {
         assertEq(newImpl, address(impl2), "Implementation slot should point to impl2");
     }
 }
-

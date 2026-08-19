@@ -47,17 +47,12 @@ contract ChainlinkFeedLibTest is Test {
         assertTrue(reverted, "Should revert on negative price");
     }
 
-    /// @notice Zero price is allowed (some feeds can legitimately return 0)
-    function test_latestAnswerNormalized_zeroPrice_succeeds() public {
+    /// @notice Zero price reverts (Harbor minter treats price as non-zero)
+    function test_latestAnswerNormalized_zeroPrice_reverts() public {
         feed.setAnswer(0, block.timestamp);
 
-        uint256 price = ChainlinkFeedLib.latestAnswerNormalized(
-            AggregatorV3Interface(address(feed)),
-            DECIMALS,
-            HEARTBEAT
-        );
-
-        assertEq(price, 0);
+        vm.expectRevert(abi.encodeWithSelector(ChainlinkFeedLib.ZeroPrice.selector, address(feed), 0));
+        this.callLatestAnswerNormalized(address(feed), DECIMALS);
     }
 
     /// @notice Test normalization with different decimal values

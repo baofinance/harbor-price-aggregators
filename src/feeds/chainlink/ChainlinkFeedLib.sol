@@ -35,6 +35,11 @@ library ChainlinkFeedLib {
     /// @param rawAnswer The raw answer from the feed
     error NegativePrice(address feed, int256 rawAnswer);
 
+    /// @notice Thrown when normalized price is zero
+    /// @param feed The feed address
+    /// @param rawAnswer The raw answer from the feed
+    error ZeroPrice(address feed, int256 rawAnswer);
+
     /// @notice Read the latest answer from a Chainlink feed, normalized to 18 decimals.
     /// @param feed The Chainlink aggregator interface
     /// @param decimals The number of decimals the feed reports
@@ -60,9 +65,12 @@ library ChainlinkFeedLib {
         }
 
         int256 normalized = normaliseTo18(answer, decimals);
-        // Chainlink price feeds should never return negative values
+        // Chainlink price feeds should never return negative or zero values
         if (normalized < 0) {
             revert NegativePrice(address(feed), answer);
+        }
+        if (normalized == 0) {
+            revert ZeroPrice(address(feed), answer);
         }
         return uint256(normalized);
     }

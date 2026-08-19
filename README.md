@@ -42,13 +42,13 @@ To add a new aggregator, see [doc/v3-aggregator-authoring-guide.md](doc/v3-aggre
 | fxUSD/SILVER | fxSAVE | XAG/USD                     |
 | fxUSD/STRC   | fxSAVE | STRC/USD (inverted)         |
 | fxUSD/SPCX   | fxSAVE | SPCX/USD (inverted)         |
-| stETH/BTC    | wstETH | ETH/USD, BTC/USD            |
-| stETH/EUR    | wstETH | ETH/USD, EUR/USD (inverted) |
-| stETH/GOLD   | wstETH | ETH/USD, XAU/USD            |
-| stETH/MCAP   | wstETH | ETH/USD, MCAP/USD           |
-| stETH/SILVER | wstETH | ETH/USD, XAG/USD            |
-| stETH/STRC   | wstETH | ETH/USD, STRC/USD           |
-| stETH/SPCX   | wstETH | ETH/USD, SPCX/USD           |
+| stETH/BTC    | wstETH | stETH/USD, BTC/USD          |
+| stETH/EUR    | wstETH | stETH/USD, EUR/USD          |
+| stETH/GOLD   | wstETH | stETH/USD, XAU/USD          |
+| stETH/MCAP   | wstETH | stETH/USD, MCAP/USD         |
+| stETH/SILVER | wstETH | stETH/USD, XAG/USD          |
+| stETH/STRC   | wstETH | stETH/USD, STRC/USD         |
+| stETH/SPCX   | wstETH | stETH/USD, SPCX/USD         |
 
 **GOLD / SILVER vs XAU / XAG:** We use **GOLD** and **SILVER** for external naming (oracle names, mainnet wiring in `src/mainnet`, deploy scripts). The formula contracts in `src/aggregators/mainnet` and Chainlink feeds stay as **XAU** (gold) and **XAG** (silver); mainnet contracts extend those and expose the quote as GOLD or SILVER. No duplicate XAU/XAG mainnet wiring—only GOLD and SILVER are deployed.
 
@@ -56,14 +56,14 @@ To add a new aggregator, see [doc/v3-aggregator-authoring-guide.md](doc/v3-aggre
 
 Single-feed leveraged token oracles (e.g. **hsfxUSD-BTC/USD**) use the same formula contract for both USD- and BTC-denominated output. Only the constructor’s last argument (**invert**) changes:
 
-| `invert` | Output |
-| -------- | ------ |
-| `false` | **Price in USD** — `output = rate × BTC/USD` |
-| `true`  | **Price in BTC** (leverage terms) — `output = rate × (1e18 / BTC/USD)` |
+| `invert` | Output                                                                 |
+| -------- | ---------------------------------------------------------------------- |
+| `false`  | **Price in USD** — `output = rate × BTC/USD`                           |
+| `true`   | **Price in BTC** (leverage terms) — `output = rate × (1e18 / BTC/USD)` |
 
 No other code changes are required: same formula contract, same mainnet contract type; wire a separate mainnet deployment with `invert = true` if you want a feed in BTC instead of USD.
 
-**Current mainnet deployments** expose the **USD price** (`invert = false`). Integrators should use these feeds when consuming the leveraged token oracles (hsfxUSD-*, hsstETH-*).
+**Current mainnet deployments** expose the **USD price** (`invert = false`). Integrators should use these feeds when consuming the leveraged token oracles (hsfxUSD-_, hsstETH-_).
 
 ## Arbitrum v3 Oracles
 
@@ -316,7 +316,7 @@ State: `deployments/mainnet/v4-oracles.json`. Verify: `./script/verify-mainnet-v
 
 ### Deploy mainnet leveraged token (haUSD) oracles
 
-To deploy **leveraged token USD** oracles (hsfxUSD-*, hsstETH-*):
+To deploy **leveraged token USD** oracles (hsfxUSD-_, hsstETH-_):
 
 ```bash
 ./script/deploy-mainnet-leverage-v4-oracles.sh
