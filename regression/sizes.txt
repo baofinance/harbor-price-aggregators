@@ -2,12 +2,19 @@
 |---------------------------------------|--------------------|----------------------|---------------------|--------------|-------------------|
 | AAPL_USD                              |                 57 |               24,519 |                  85 |       12,250 |              1.23 |
 | AMZN_USD                              |                 57 |               24,519 |                  85 |       12,250 |              1.23 |
+| Aggregator_BTC_ETH_mainnet            |              3,300 |               21,276 |               4,140 |      701,400 |             70.14 |
 | Aggregator_BTC_USD                    |              3,190 |               21,386 |               3,972 |      677,720 |             67.77 |
 | Aggregator_BTC_USD_megaeth            |              3,190 |               21,386 |               3,874 |      676,740 |             67.67 |
 | Aggregator_BTCb_USD                   |              3,192 |               21,384 |               3,974 |      678,140 |             67.81 |
 | Aggregator_BTCb_USD_megaeth           |              3,192 |               21,384 |               3,876 |      677,160 |             67.72 |
+| Aggregator_ETH_ETH                    |              1,838 |               22,738 |               2,219 |      389,790 |             38.98 |
+| Aggregator_ETH_ETH_mainnet            |              1,838 |               22,738 |               2,219 |      389,790 |             38.98 |
+| Aggregator_EUR_ETH_mainnet            |              3,300 |               21,276 |               4,140 |      701,400 |             70.14 |
+| Aggregator_GOLD_ETH_mainnet           |              3,301 |               21,275 |               4,141 |      701,610 |             70.16 |
+| Aggregator_MCAP_ETH_mainnet           |              3,301 |               21,275 |               4,141 |      701,610 |             70.16 |
 | Aggregator_PAXG_USD                   |              3,191 |               21,385 |               3,973 |      677,930 |             67.79 |
 | Aggregator_PAXG_USD_mainnet           |              3,191 |               21,385 |               3,875 |      676,950 |             67.70 |
+| Aggregator_SILVER_ETH_mainnet         |              3,303 |               21,273 |               4,143 |      702,030 |             70.20 |
 | Aggregator_USDE_AAPL                  |              4,130 |               20,446 |               5,183 |      877,830 |             87.78 |
 | Aggregator_USDE_AAPL_arbitrum         |              4,130 |               20,446 |               5,059 |      876,590 |             87.66 |
 | Aggregator_USDE_AMZN                  |              4,130 |               20,446 |               5,183 |      877,830 |             87.78 |
@@ -97,6 +104,8 @@
 | Aggregator_stETH_BOM5_base            |              6,534 |               18,042 |               8,677 |    1,393,570 |            139.36 |
 | Aggregator_stETH_BTC                  |              3,789 |               20,787 |               4,842 |      806,220 |             80.62 |
 | Aggregator_stETH_BTC_mainnet          |              3,789 |               20,787 |               4,718 |      804,980 |             80.50 |
+| Aggregator_stETH_ETH                  |              3,383 |               21,193 |               4,236 |      718,960 |             71.90 |
+| Aggregator_stETH_ETH_mainnet          |              3,383 |               21,193 |               4,109 |      717,690 |             71.77 |
 | Aggregator_stETH_EUR                  |              3,789 |               20,787 |               4,842 |      806,220 |             80.62 |
 | Aggregator_stETH_EUR_mainnet          |              3,789 |               20,787 |               4,718 |      804,980 |             80.50 |
 | Aggregator_stETH_GOLD_mainnet         |              3,790 |               20,786 |               4,719 |      805,190 |             80.52 |
