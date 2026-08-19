@@ -215,6 +215,20 @@ abstract contract DoubleFeedAggregatorTestBase is Test {
         aggregator.latestAnswer();
     }
 
+    function test_latestAnswer_zeroFirstFeed_reverts() public {
+        mockFirstFeed.setAnswer(0, block.timestamp);
+
+        vm.expectRevert(abi.encodeWithSelector(ChainlinkFeedLib.ZeroPrice.selector, address(mockFirstFeed), 0));
+        aggregator.latestAnswer();
+    }
+
+    function test_latestAnswer_zeroSecondFeed_reverts() public {
+        mockSecondFeed.setAnswer(0, block.timestamp);
+
+        vm.expectRevert(abi.encodeWithSelector(ChainlinkFeedLib.ZeroPrice.selector, address(mockSecondFeed), 0));
+        aggregator.latestAnswer();
+    }
+
     function test_latestAnswer_rateBelowMin_reverts() public {
         uint256 lowRate = 0.9e18;
         mockWstETH.setStEthPerToken(lowRate);

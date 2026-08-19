@@ -4,6 +4,7 @@ pragma solidity 0.8.30;
 import {Test} from "forge-std/Test.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 import {DoubleFeedPriceLib} from "@harbor-price/prices/DoubleFeedPriceLib.sol";
+import {ChainlinkFeedLib} from "@harbor-price/feeds/chainlink/ChainlinkFeedLib.sol";
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
 import {MockAggregatorV3} from "@harbor-price-test/mock/MockAggregatorV3.sol";
 
@@ -64,6 +65,40 @@ contract DoubleFeedPriceLibTest is Test {
             false
         );
         assertEq(result, 1e18, "Equal feeds should yield 1e18");
+    }
+
+    function test_getPrice_zeroFirstFeed_reverts() public {
+        firstFeed.setAnswer(0, block.timestamp);
+        secondFeed.setAnswer(2000e18, block.timestamp);
+
+        vm.expectRevert(abi.encodeWithSelector(ChainlinkFeedLib.ZeroPrice.selector, address(firstFeed), 0));
+        this.callGetPrice(
+            AggregatorV3Interface(address(firstFeed)),
+            18,
+            DEFAULT_HEARTBEAT,
+            AggregatorV3Interface(address(secondFeed)),
+            18,
+            DEFAULT_HEARTBEAT,
+            1,
+            false
+        );
+    }
+
+    function test_getPrice_zeroSecondFeed_reverts() public {
+        firstFeed.setAnswer(2000e18, block.timestamp);
+        secondFeed.setAnswer(0, block.timestamp);
+
+        vm.expectRevert(abi.encodeWithSelector(ChainlinkFeedLib.ZeroPrice.selector, address(secondFeed), 0));
+        this.callGetPrice(
+            AggregatorV3Interface(address(firstFeed)),
+            18,
+            DEFAULT_HEARTBEAT,
+            AggregatorV3Interface(address(secondFeed)),
+            18,
+            DEFAULT_HEARTBEAT,
+            1,
+            false
+        );
     }
 
     /// @notice Direct: firstFeed > secondFeed

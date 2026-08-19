@@ -178,6 +178,13 @@ abstract contract SingleFeedAggregatorTestBase is Test {
         aggregator.latestAnswer();
     }
 
+    function test_latestAnswer_zeroFeedPrice_reverts() public {
+        mockPriceFeed.setAnswer(0, block.timestamp);
+
+        vm.expectRevert(abi.encodeWithSelector(ChainlinkFeedLib.ZeroPrice.selector, address(mockPriceFeed), 0));
+        aggregator.latestAnswer();
+    }
+
     function test_latestAnswer_invalidRate_reverts() public {
         uint256 lowRate = 0.8e18;
         mockFxSave.setAssetsPerShare(lowRate);

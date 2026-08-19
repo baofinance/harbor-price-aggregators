@@ -3,6 +3,7 @@ pragma solidity 0.8.30;
 
 import {Test} from "forge-std/Test.sol";
 import {SingleFeedPriceLib} from "@harbor-price/prices/SingleFeedPriceLib.sol";
+import {ChainlinkFeedLib} from "@harbor-price/feeds/chainlink/ChainlinkFeedLib.sol";
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
 import {MockAggregatorV3} from "@harbor-price-test/mock/MockAggregatorV3.sol";
 
@@ -68,6 +69,13 @@ contract SingleFeedPriceLibTest is Test {
 
         uint256 result = this.callGetPrice(AggregatorV3Interface(address(feed8)), 8, DEFAULT_HEARTBEAT, 1, false);
         assertEq(result, 2000e18, "8 decimal feed should normalize to 18");
+    }
+
+    function test_getPrice_zeroAnswer_reverts() public {
+        feed.setAnswer(0, block.timestamp);
+
+        vm.expectRevert(abi.encodeWithSelector(ChainlinkFeedLib.ZeroPrice.selector, address(feed), 0));
+        this.callGetPrice(AggregatorV3Interface(address(feed)), 18, DEFAULT_HEARTBEAT, 1, false);
     }
 
     // =========================================================================

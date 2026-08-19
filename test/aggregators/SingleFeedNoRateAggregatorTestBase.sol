@@ -163,6 +163,13 @@ abstract contract SingleFeedNoRateAggregatorTestBase is Test {
         aggregator.latestAnswer();
     }
 
+    function test_latestAnswer_zeroFeedPrice_reverts() public {
+        mockPriceFeed.setAnswer(0, block.timestamp);
+
+        vm.expectRevert(abi.encodeWithSelector(ChainlinkFeedLib.ZeroPrice.selector, address(mockPriceFeed), 0));
+        aggregator.latestAnswer();
+    }
+
     // =========================================================================
     // UUPS Upgrade
     // =========================================================================

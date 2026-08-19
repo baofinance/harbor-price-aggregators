@@ -7,10 +7,12 @@ Tests for Base oracle contracts (stETH/BOM5). Includes both unit tests (with moc
 ### Unit Tests
 
 Unit tests use mocks and follow the mainnet test pattern:
+
 - **Normalized multi-feed aggregator**: `Aggregator_stETH_BOM5.t.sol`
 - **Test base class**: `BaseMultiFeedNormalizedAggregatorTestBase.sol`
 
 Unit tests are fast, deterministic, and don't require an RPC endpoint. They test:
+
 - Constructor validation (zero address/parameter checks)
 - Interface compliance (baseName, quoteName, oracleName, version, rateProvider)
 - Price and rate calculations
@@ -22,6 +24,7 @@ Unit tests are fast, deterministic, and don't require an RPC endpoint. They test
 ### Fork Tests
 
 Fork tests run against live Base mainnet and test the actual wiring contract:
+
 - **BOM5 oracle**: `BaseBOM5OracleFork.t.sol`
 
 Fork tests verify that the deployed contract works correctly with real Chainlink feeds on Base.
@@ -70,6 +73,7 @@ forge test --match-path "test/base/BaseBOM5OracleFork.t.sol" --match-test "test_
 ### Unit Tests
 
 Unit tests output console logs showing:
+
 - Bid/Ask Price (18 decimals)
 - Bid/Ask Rate (18 decimals)
 - Oracle metadata (baseName, quoteName, oracleName, rateProvider)
@@ -77,6 +81,7 @@ Unit tests output console logs showing:
 ### Fork Tests
 
 Fork tests output:
+
 - Bid/Ask Price (18 decimals)
 - Bid/Ask Rate (18 decimals)
 - Oracle metadata (base, rateProvider, quoteName, oracleName, feedCount)

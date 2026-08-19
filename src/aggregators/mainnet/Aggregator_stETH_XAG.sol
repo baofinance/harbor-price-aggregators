@@ -8,7 +8,7 @@ import {IWstETH} from "@bao/interfaces/IWstETH.sol";
 import {WstETHRateLib} from "@harbor-price/rates/WstETHRateLib.sol";
 import {DoubleFeedPriceLib} from "@harbor-price/prices/DoubleFeedPriceLib.sol";
 
-/// @notice stETH/XAG oracle (rate: wstETH, price: (ETH/USD)/(XAG/USD)).
+/// @notice stETH/XAG oracle (rate: wstETH, price: (stETH/USD)/(XAG/USD)).
 /// @dev This is the formula contract; wiring (feeds/addresses) is provided via constructor.
 /// @custom:oz-upgrades-unsafe-allow state-variable-immutable constructor
 // solhint-disable-next-line contract-name-capwords
@@ -65,7 +65,7 @@ contract Aggregator_stETH_XAG is HarborAggregator_v3 {
         return "stETH";
     }
 
-    // slither-disable-next-line dead-code // false positive: this base is itself deployable, so quoteName()->_quoteName() is reachable; slither only models leaf-contract deployment
+    // slither-disable-next-line dead-code
     function _quoteName() internal pure virtual override returns (string memory) {
         return "XAG";
     }

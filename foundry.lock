@@ -1,8 +1,8 @@
 {
   "lib/bao-base": {
-    "branch": {
-      "name": "main",
-      "rev": "97401b5bef33aa287bdfae259c3b35a5fef1c0d2"
+    "tag": {
+      "name": "deploy/harbor-1.2",
+      "rev": "2912b249b17d72e9dc1883eb1eb9b27b3afa8907"
     }
   },
   "lib/chainlink-brownie-contracts": {

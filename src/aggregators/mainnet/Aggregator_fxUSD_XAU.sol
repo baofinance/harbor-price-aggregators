@@ -54,7 +54,7 @@ contract Aggregator_fxUSD_XAU is HarborAggregator_v3 {
         return "fxUSD";
     }
 
-    // slither-disable-next-line dead-code // false positive: this base is itself deployable, so quoteName()->_quoteName() is reachable; slither only models leaf-contract deployment
+    // slither-disable-next-line dead-code
     function _quoteName() internal pure virtual override returns (string memory) {
         return "XAU";
     }

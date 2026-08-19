@@ -19,13 +19,13 @@ Every v3 aggregator:
 
 ## Where code goes
 
-| Component | Location | Example |
-|-----------|----------|---------|
-| Formula contract | `src/aggregators/Aggregator_<BASE>_<QUOTE>.sol` | `Aggregator_fxUSD_ETH.sol` |
-| Mainnet wiring | `src/Aggregator_<BASE>_<QUOTE>_mainnet.sol` | `Aggregator_fxUSD_ETH_mainnet.sol` |
-| Rate library | `src/rates/*RateLib.sol` | `FxSaveRateLib.sol`, `WstETHRateLib.sol` |
-| Price library | `src/prices/*PriceLib.sol` | `SingleFeedPriceLib.sol`, `DoubleFeedPriceLib.sol` |
-| Feed addresses | `src/feeds/chainlink/mainnet/<PAIR>.sol` | `ETH_USD.sol`, `BTC_USD.sol` |
+| Component        | Location                                        | Example                                            |
+| ---------------- | ----------------------------------------------- | -------------------------------------------------- |
+| Formula contract | `src/aggregators/Aggregator_<BASE>_<QUOTE>.sol` | `Aggregator_fxUSD_ETH.sol`                         |
+| Mainnet wiring   | `src/Aggregator_<BASE>_<QUOTE>_mainnet.sol`     | `Aggregator_fxUSD_ETH_mainnet.sol`                 |
+| Rate library     | `src/rates/*RateLib.sol`                        | `FxSaveRateLib.sol`, `WstETHRateLib.sol`           |
+| Price library    | `src/prices/*PriceLib.sol`                      | `SingleFeedPriceLib.sol`, `DoubleFeedPriceLib.sol` |
+| Feed addresses   | `src/feeds/chainlink/mainnet/<PAIR>.sol`        | `ETH_USD.sol`, `BTC_USD.sol`                       |
 
 ## Steps
 
@@ -67,49 +67,55 @@ Minimal skeleton:
 
 ```solidity
 contract Aggregator_EXAMPLE is HarborAggregator_v3 {
-    using FxSaveRateLib for IFxSAVE;  // or WstETHRateLib for IWstETH
+  using FxSaveRateLib for IFxSAVE; // or WstETHRateLib for IWstETH
 
-    error InvalidAddress(address value);
-    error InvalidDivisor(uint256 divisor);
+  error InvalidAddress(address value);
+  error InvalidDivisor(uint256 divisor);
 
-    IFxSAVE public immutable FXSAVE;
-    AggregatorV3Interface public immutable PRICE_FEED;
-    uint8 public immutable PRICE_FEED_DECIMALS;
-    uint256 public immutable PRICE_FEED_HEARTBEAT;
-    uint256 public immutable PRICE_DIVISOR;
-    bool public immutable INVERT_PRICE;
+  IFxSAVE public immutable FXSAVE;
+  AggregatorV3Interface public immutable PRICE_FEED;
+  uint8 public immutable PRICE_FEED_DECIMALS;
+  uint256 public immutable PRICE_FEED_HEARTBEAT;
+  uint256 public immutable PRICE_DIVISOR;
+  bool public immutable INVERT_PRICE;
 
-    constructor(
-        address fxsave_,
-        address priceFeed_,
-        uint256 priceFeedHeartbeat_,
-        uint256 divisor_,
-        bool invertPrice_
-    ) {
-        if (fxsave_ == address(0)) revert InvalidAddress(fxsave_);
-        if (priceFeed_ == address(0)) revert InvalidAddress(priceFeed_);
-        if (divisor_ == 0) revert InvalidDivisor(divisor_);
+  constructor(address fxsave_, address priceFeed_, uint256 priceFeedHeartbeat_, uint256 divisor_, bool invertPrice_) {
+    if (fxsave_ == address(0)) revert InvalidAddress(fxsave_);
+    if (priceFeed_ == address(0)) revert InvalidAddress(priceFeed_);
+    if (divisor_ == 0) revert InvalidDivisor(divisor_);
 
-        FXSAVE = IFxSAVE(fxsave_);
-        PRICE_FEED = AggregatorV3Interface(priceFeed_);
-        PRICE_FEED_DECIMALS = PRICE_FEED.decimals();
-        PRICE_FEED_HEARTBEAT = priceFeedHeartbeat_;
-        PRICE_DIVISOR = divisor_;
-        INVERT_PRICE = invertPrice_;
-    }
+    FXSAVE = IFxSAVE(fxsave_);
+    PRICE_FEED = AggregatorV3Interface(priceFeed_);
+    PRICE_FEED_DECIMALS = PRICE_FEED.decimals();
+    PRICE_FEED_HEARTBEAT = priceFeedHeartbeat_;
+    PRICE_DIVISOR = divisor_;
+    INVERT_PRICE = invertPrice_;
+  }
 
-    function base() external view returns (address) { return address(FXSAVE); }
-    function rateProvider() external view returns (address) { return address(FXSAVE); }
-    function quoteName() external pure returns (string memory) { return "QUOTE"; }
-    function oracleName() external pure returns (string memory) { return "BASE/QUOTE"; }
+  function base() external view returns (address) {
+    return address(FXSAVE);
+  }
+  function rateProvider() external view returns (address) {
+    return address(FXSAVE);
+  }
+  function quoteName() external pure returns (string memory) {
+    return "QUOTE";
+  }
+  function oracleName() external pure returns (string memory) {
+    return "BASE/QUOTE";
+  }
 
-    function latestAnswer() external view returns (uint256, uint256, uint256, uint256) {
-        uint256 rate = FXSAVE.getRate();
-        uint256 price = SingleFeedPriceLib.getPrice(
-            PRICE_FEED, PRICE_FEED_DECIMALS, PRICE_FEED_HEARTBEAT, PRICE_DIVISOR, INVERT_PRICE
-        );
-        return (price, price, rate, rate);
-    }
+  function latestAnswer() external view returns (uint256, uint256, uint256, uint256) {
+    uint256 rate = FXSAVE.getRate();
+    uint256 price = SingleFeedPriceLib.getPrice(
+      PRICE_FEED,
+      PRICE_FEED_DECIMALS,
+      PRICE_FEED_HEARTBEAT,
+      PRICE_DIVISOR,
+      INVERT_PRICE
+    );
+    return (price, price, rate, rate);
+  }
 }
 ```
 
@@ -129,29 +135,33 @@ Notes:
 This is a tiny contract that passes canonical addresses to the formula constructor.
 
 Feed addresses are in `src/feeds/chainlink/mainnet/`:
+
 - `ETH_USD.FEED`, `ETH_USD.HEARTBEAT`
 - `BTC_USD.FEED`, `BTC_USD.HEARTBEAT`
 - etc.
 
 Rate sources are in `src/rates/mainnet/`:
+
 - `MainnetRateSources.FXSAVE`
 - `MainnetRateSources.WSTETH`
 
 Example:
 
 ```solidity
-import {MainnetRateSources} from "@harbor-price/rates/mainnet/MainnetRateSources.sol";
-import {ETH_USD} from "@harbor-price/feeds/chainlink/mainnet/ETH_USD.sol";
-import {Aggregator_fxUSD_ETH} from "@harbor-price/oracles/Aggregator_fxUSD_ETH.sol";
+import { MainnetRateSources } from "@harbor-price/rates/mainnet/MainnetRateSources.sol";
+import { ETH_USD } from "@harbor-price/feeds/chainlink/mainnet/ETH_USD.sol";
+import { Aggregator_fxUSD_ETH } from "@harbor-price/oracles/Aggregator_fxUSD_ETH.sol";
 
 contract Aggregator_fxUSD_ETH_mainnet is Aggregator_fxUSD_ETH {
-    constructor() Aggregator_fxUSD_ETH(
-        MainnetRateSources.FXSAVE,
-        ETH_USD.FEED,
-        ETH_USD.HEARTBEAT,
-        1,      // divisor
-        true    // invert (ETH/USD → USD/ETH)
-    ) {}
+  constructor()
+    Aggregator_fxUSD_ETH(
+      MainnetRateSources.FXSAVE,
+      ETH_USD.FEED,
+      ETH_USD.HEARTBEAT,
+      1, // divisor
+      true // invert (ETH/USD → USD/ETH)
+    )
+  {}
 }
 ```
 

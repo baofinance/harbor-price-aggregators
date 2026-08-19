@@ -4,6 +4,7 @@ pragma solidity 0.8.30;
 import {Test} from "forge-std/Test.sol";
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
 import {MultiFeedDivPriceLib} from "@harbor-price/prices/MultiFeedDivPriceLib.sol";
+import {ChainlinkFeedLib} from "@harbor-price/feeds/chainlink/ChainlinkFeedLib.sol";
 import {MockAggregatorV3} from "@harbor-price-test/mock/MockAggregatorV3.sol";
 
 /// @title MultiFeedDivPriceLib Unit Tests
@@ -344,8 +345,8 @@ contract MultiFeedDivPriceLibTest is Test {
     // Edge cases
     // =========================================================================
 
-    /// @notice Zero prices sum to zero
-    function test_getPrice_zeroPrices_returnsZero() public {
+    /// @notice Zero feed prices revert
+    function test_getPrice_zeroPrices_reverts() public {
         uint256[] memory prices = new uint256[](3);
         prices[0] = 0;
         prices[1] = 0;
@@ -361,9 +362,8 @@ contract MultiFeedDivPriceLibTest is Test {
             feedInterfaces[i] = AggregatorV3Interface(address(testFeeds[i]));
         }
 
-        uint256 divisor = 3;
-        uint256 result = this.callGetPrice(feedInterfaces, decimals, heartbeats, divisor);
-        assertEq(result, 0, "Zero prices should return zero");
+        vm.expectRevert(abi.encodeWithSelector(ChainlinkFeedLib.ZeroPrice.selector, address(testFeeds[0]), 0));
+        this.callGetPrice(feedInterfaces, decimals, heartbeats, 3);
     }
 
     /// @notice Large divisor results in small price

@@ -2,18 +2,23 @@
 pragma solidity 0.8.30;
 
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
-import {HarborAggregator_v3} from "@harbor-price/aggregators/HarborAggregator_v3.sol";
+import {IFxSAVE} from "@harbor-price/interfaces/IFxSAVE.sol";
 import {IWrappedPriceOracle} from "@harbor-price/interfaces/IWrappedPriceOracle.sol";
+import {HarborAggregator_v3} from "@harbor-price/aggregators/HarborAggregator_v3.sol";
+import {FxSaveRateLib} from "@harbor-price/rates/FxSaveRateLib.sol";
 import {SingleFeedPriceLib} from "@harbor-price/prices/SingleFeedPriceLib.sol";
 
-/// @notice BTC.b/USD oracle (price: BTC.b/USD feed, no rate modifier).
-/// @dev Alternative to BTC/USD for wrapped BTC.b; same formula, different feed.
+/// @notice fxUSD/SPCX oracle (rate: fxSAVE, price: inverted SPCX/USD).
+/// @dev This is the formula contract; wiring (feeds/addresses) is provided via constructor.
 /// @custom:oz-upgrades-unsafe-allow state-variable-immutable constructor
 // solhint-disable-next-line contract-name-capwords
-contract Aggregator_BTCb_USD is HarborAggregator_v3 {
+contract Aggregator_fxUSD_SPCX is HarborAggregator_v3 {
+    using FxSaveRateLib for IFxSAVE;
+
     error InvalidAddress(address value);
     error InvalidDivisor(uint256 divisor);
-    uint256 public constant FIXED_RATE = 1e18;
+
+    IFxSAVE public immutable FXSAVE;
 
     AggregatorV3Interface public immutable PRICE_FEED;
     uint8 public immutable PRICE_FEED_DECIMALS;
@@ -21,9 +26,18 @@ contract Aggregator_BTCb_USD is HarborAggregator_v3 {
     uint256 public immutable PRICE_DIVISOR;
     bool public immutable INVERT_PRICE;
 
-    constructor(address priceFeed_, uint256 priceHeartbeat_, uint256 priceDivisor_, bool invertPrice_) {
+    constructor(
+        address fxsave_,
+        address priceFeed_,
+        uint256 priceHeartbeat_,
+        uint256 priceDivisor_,
+        bool invertPrice_
+    ) {
+        if (fxsave_ == address(0)) revert InvalidAddress(fxsave_);
         if (priceFeed_ == address(0)) revert InvalidAddress(priceFeed_);
         if (priceDivisor_ == 0) revert InvalidDivisor(priceDivisor_);
+
+        FXSAVE = IFxSAVE(fxsave_);
 
         PRICE_FEED = AggregatorV3Interface(priceFeed_);
         PRICE_FEED_DECIMALS = PRICE_FEED.decimals();
@@ -32,20 +46,22 @@ contract Aggregator_BTCb_USD is HarborAggregator_v3 {
         INVERT_PRICE = invertPrice_;
     }
 
-    function rateProvider() external pure returns (address) {
-        return address(0);
+    function rateProvider() external view returns (address) {
+        return address(FXSAVE);
     }
 
     function _baseName() internal pure override returns (string memory) {
-        return "BTC.b";
+        return "fxUSD";
     }
 
     function _quoteName() internal pure override returns (string memory) {
-        return "USD";
+        return "SPCX";
     }
 
     /// @inheritdoc IWrappedPriceOracle
     function latestAnswer() external view override(IWrappedPriceOracle) returns (uint256, uint256, uint256, uint256) {
+        uint256 rate = FXSAVE.getRate();
+
         uint256 price = SingleFeedPriceLib.getPrice(
             PRICE_FEED,
             PRICE_FEED_DECIMALS,
@@ -54,6 +70,6 @@ contract Aggregator_BTCb_USD is HarborAggregator_v3 {
             INVERT_PRICE
         );
 
-        return (price, price, FIXED_RATE, FIXED_RATE);
+        return (price, price, rate, rate);
     }
 }
