@@ -2,7 +2,7 @@
 pragma solidity 0.8.30;
 
 import {Test, console} from "forge-std/Test.sol";
-import {Aggregator_USDE_MAG7i26_arbitrum} from "../../src/arbitrum/Aggregator_USDE_MAG7i26_arbitrum.sol";
+import {Aggregator_USDE_MAG7i26_arbitrum} from "@harbor-price/arbitrum/Aggregator_USDE_MAG7i26_arbitrum.sol";
 
 /// @notice Fork tests for Arbitrum MAG7.i26 indexed oracles (USDE)
 /// @dev Run with: forge test --match-path "test/arbitrum/*MAG7i26*USDE*.t.sol" --fork-url $arbitrum -vvv

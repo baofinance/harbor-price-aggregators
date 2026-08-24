@@ -2,9 +2,9 @@
 pragma solidity 0.8.30;
 
 import {Test} from "forge-std/Test.sol";
-import {MockAggregatorV3} from "@harbor-test/mock/MockAggregatorV3.sol";
-import {MockFxSAVE} from "@harbor-test/mock/MockFxSAVE.sol";
-import {MockWstETH} from "@harbor-test/mock/MockWstETH.sol";
+import {MockAggregatorV3} from "@harbor-price-test/mock/MockAggregatorV3.sol";
+import {MockFxSAVE} from "@harbor-price-test/mock/MockFxSAVE.sol";
+import {MockWstETH} from "@harbor-price-test/mock/MockWstETH.sol";
 import {Aggregator_fxUSD_BTC} from "@harbor-price/aggregators/mainnet/Aggregator_fxUSD_BTC.sol";
 import {Aggregator_stETH_BTC} from "@harbor-price/aggregators/mainnet/Aggregator_stETH_BTC.sol";
 import {FxSaveRateLib} from "@harbor-price/rates/FxSaveRateLib.sol";
@@ -427,8 +427,8 @@ contract Aggregator_v3_Test is Test {
             false
         );
 
-        // Set rate below minimum (1e18)
-        uint256 lowRate = 0.9e18;
+        // Set rate below minimum (0.9e18)
+        uint256 lowRate = 0.9e18 - 1;
         mockWstETH.setStEthPerToken(lowRate);
 
         vm.expectRevert(abi.encodeWithSelector(WstETHRateLib.InvalidRate.selector, lowRate));
@@ -446,8 +446,8 @@ contract Aggregator_v3_Test is Test {
             false
         );
 
-        // Set rate above maximum (2e18)
-        uint256 highRate = 2.1e18;
+        // Set rate above maximum (3e18)
+        uint256 highRate = 3e18 + 1;
         mockWstETH.setStEthPerToken(highRate);
 
         vm.expectRevert(abi.encodeWithSelector(WstETHRateLib.InvalidRate.selector, highRate));

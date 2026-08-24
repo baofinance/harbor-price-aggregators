@@ -1,0 +1,3 @@
+# deployed source files — must not be modified, so import checks are suppressed
+relative-imports src/interfaces/IHarborPriceAggregatorV3.sol
+relative-imports src/interfaces/IWrappedPriceOracle.sol

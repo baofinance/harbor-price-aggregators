@@ -1,0 +1,43 @@
+# Each deploy tag is scoped to exactly the contracts its deployment manifest
+# recorded — {path.json:field} reads that field's contract paths at the tag — so
+# only the deployed contracts are checked. Bytecode-neutral drift (renames,
+# NatSpec, added `virtual`, additive constants, import moves) auto-clears via the
+# bytecode-equivalence check, so it needs no entry. Anything still listed below is
+# a genuine, reviewed bytecode change in a deployed contract that is accepted.
+#
+# Syntax:
+#   tag {path.json:field}   scope to the manifest's deployed contracts
+#   tag {dir ...}           scope to directories (default is all of src/)
+#   tag ... file ...        accept drift in a specific in-scope contract
+# (v3-aggregators manifests use field "contractSource"; oracle manifests use
+# "contractPath".)
+
+deploy/v3-aggregators-arbitrum        {deployments/arbitrum/v3-aggregators.json:contractSource}
+deploy/v3-aggregators-base            {deployments/base/v3-aggregators.json:contractSource}
+deploy/v3-aggregators-mainnet-testEUR {deployments/mainnet/v3-aggregators-testEUR.json:contractSource}
+deploy/v3-oracles-arbitrum            {deployments/arbitrum/v3-oracles.json:contractPath}
+deploy/v3-oracles-base                {deployments/base/v3-oracles.json:contractPath}
+deploy/v3-oracles-mainnet             {deployments/mainnet/v3-oracles.json:contractPath}
+deploy/v4-oracles-mainnet-leverage    {deployments/mainnet/leverage-v4-oracles.json:contractPath}
+
+# Accepted drift on deploy/v3-aggregators-mainnet:
+#   USDE_ETH_mainnet  — sUSDe->USDE rename; the inherited _quoteName() string
+#     changed ("sUSDe"->"USDE"), an intended renaming of the oracle, no other
+#     change to the deployed contract.
+#   fxUSD_XAG/XAU_mainnet — XAU/XAG markets deprecated at v4; the source was
+#     deleted, but the contracts remain deployed on-chain.
+#   hsfxUSD_ETH_USD_mainnet — a contract added after this tag that git's rename
+#     detection mis-paired with a deleted deployed contract; it is a new
+#     deployment, not a change to the deployed one.
+deploy/v3-aggregators-mainnet         {deployments/mainnet/v3-aggregators.json:contractSource} src/mainnet/Aggregator_USDE_ETH_mainnet.sol src/mainnet/Aggregator_fxUSD_XAG_mainnet.sol src/mainnet/Aggregator_fxUSD_XAU_mainnet.sol src/mainnet/Aggregator_hsfxUSD_ETH_USD_mainnet.sol
+
+# Accepted drift on deploy/v4-oracles-mainnet:
+#   USDE_* — sUSDe->USDE rename; inherited _quoteName() string change only.
+#   stETH_USD_mainnet — new contract mis-paired by rename detection with a
+#     deleted deployed contract; a new deployment, not a change to the old one.
+deploy/v4-oracles-mainnet             {deployments/mainnet/v4-oracles.json:contractPath} src/mainnet/Aggregator_USDE_BTC_mainnet.sol src/mainnet/Aggregator_USDE_ETH_mainnet.sol src/mainnet/Aggregator_USDE_EUR_mainnet.sol src/mainnet/Aggregator_USDE_GOLD_mainnet.sol src/mainnet/Aggregator_USDE_MCAP_mainnet.sol src/mainnet/Aggregator_USDE_SILVER_mainnet.sol src/mainnet/Aggregator_stETH_USD_mainnet.sol
+
+# Accepted drift on deploy/v4-oracles-megaeth:
+#   USDM_* — USDMY->USDM rename; inherited _quoteName() string change only.
+#   stETH_USD_megaeth — new contract mis-paired by rename detection.
+deploy/v4-oracles-megaeth             {deployments/megaeth/v4-oracles.json:contractPath} src/megaeth/Aggregator_USDM_BTC_megaeth.sol src/megaeth/Aggregator_USDM_ETH_megaeth.sol src/megaeth/Aggregator_USDM_HYPE_megaeth.sol src/megaeth/Aggregator_USDM_SOL_megaeth.sol src/megaeth/Aggregator_stETH_USD_megaeth.sol

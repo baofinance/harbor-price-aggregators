@@ -4,7 +4,7 @@ pragma solidity 0.8.30;
 import {Test} from "forge-std/Test.sol";
 import {IFxSAVE} from "@harbor-price/interfaces/IFxSAVE.sol";
 import {FxSaveRateLib} from "@harbor-price/rates/FxSaveRateLib.sol";
-import {MockFxSAVE} from "@harbor-test/mock/MockFxSAVE.sol";
+import {MockFxSAVE} from "@harbor-price-test/mock/MockFxSAVE.sol";
 
 /// @title FxSaveRateLib Unit Tests
 /// @notice Tests for FxSaveRateLib rate retrieval and validation

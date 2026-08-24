@@ -4,8 +4,8 @@ pragma solidity 0.8.30;
 import {Test} from "forge-std/Test.sol";
 import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import {MockAggregatorV3} from "@harbor-test/mock/MockAggregatorV3.sol";
-import {MockWstETH} from "@harbor-test/mock/MockWstETH.sol";
+import {MockAggregatorV3} from "@harbor-price-test/mock/MockAggregatorV3.sol";
+import {MockWstETH} from "@harbor-price-test/mock/MockWstETH.sol";
 import {IHarborPriceAggregatorV3} from "@harbor-price/interfaces/IHarborPriceAggregatorV3.sol";
 import {IBaoFixedOwnable} from "@bao/interfaces/IBaoFixedOwnable.sol";
 import {WstETHRateLib} from "@harbor-price/rates/WstETHRateLib.sol";
@@ -186,7 +186,7 @@ abstract contract SingleFeedStETHAggregatorTestBase is Test {
     }
 
     function test_latestAnswer_invalidRate_reverts() public {
-        uint256 lowRate = 0.9e18;
+        uint256 lowRate = 0.9e18 - 1;
         mockWstETH.setStEthPerToken(lowRate);
 
         vm.expectRevert(abi.encodeWithSelector(WstETHRateLib.InvalidRate.selector, lowRate));

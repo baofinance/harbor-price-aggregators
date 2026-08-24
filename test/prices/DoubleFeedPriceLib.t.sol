@@ -6,7 +6,7 @@ import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 import {DoubleFeedPriceLib} from "@harbor-price/prices/DoubleFeedPriceLib.sol";
 import {ChainlinkFeedLib} from "@harbor-price/feeds/chainlink/ChainlinkFeedLib.sol";
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
-import {MockAggregatorV3} from "@harbor-test/mock/MockAggregatorV3.sol";
+import {MockAggregatorV3} from "@harbor-price-test/mock/MockAggregatorV3.sol";
 
 /// @title DoubleFeedPriceLib Unit Tests
 /// @notice Tests for DoubleFeedPriceLib price computation logic

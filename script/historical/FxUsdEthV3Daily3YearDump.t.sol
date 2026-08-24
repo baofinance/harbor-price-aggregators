@@ -8,7 +8,7 @@ import {MainnetRateSources} from "@harbor-price/rates/mainnet/MainnetRateSources
 import {ETH_USD} from "@harbor-price/feeds/chainlink/mainnet/ETH_USD.sol";
 import {Aggregator_fxUSD_ETH} from "@harbor-price/aggregators/mainnet/Aggregator_fxUSD_ETH.sol";
 import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-import {LatestAnswerErrorClassifier} from "./LatestAnswerErrorClassifier.sol";
+import {LatestAnswerErrorClassifier} from "@harbor-price-script/historical/LatestAnswerErrorClassifier.sol";
 import {UtcTimestampFormatter} from "@harbor-price/format/UtcTimestampFormatter.sol";
 
 /// @title fxUSD/ETH v3 Daily 3-Year Dump

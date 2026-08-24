@@ -2,8 +2,8 @@
 pragma solidity 0.8.30;
 
 import {Test, console} from "forge-std/Test.sol";
-import {Aggregator_stETH_MAG7_arbitrum} from "../../src/arbitrum/Aggregator_stETH_MAG7_arbitrum.sol";
-import {Aggregator_USDE_MAG7_arbitrum} from "../../src/arbitrum/Aggregator_USDE_MAG7_arbitrum.sol";
+import {Aggregator_stETH_MAG7_arbitrum} from "@harbor-price/arbitrum/Aggregator_stETH_MAG7_arbitrum.sol";
+import {Aggregator_USDE_MAG7_arbitrum} from "@harbor-price/arbitrum/Aggregator_USDE_MAG7_arbitrum.sol";
 
 /// @notice Fork tests for Arbitrum MAG7 oracles
 /// @dev Run with: forge test --match-path "test/arbitrum/*MAG7*.t.sol" --fork-url $arbitrum -vvv

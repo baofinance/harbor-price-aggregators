@@ -5,7 +5,7 @@ import {Test} from "forge-std/Test.sol";
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
 import {MultiFeedDivPriceLib} from "@harbor-price/prices/MultiFeedDivPriceLib.sol";
 import {ChainlinkFeedLib} from "@harbor-price/feeds/chainlink/ChainlinkFeedLib.sol";
-import {MockAggregatorV3} from "@harbor-test/mock/MockAggregatorV3.sol";
+import {MockAggregatorV3} from "@harbor-price-test/mock/MockAggregatorV3.sol";
 
 /// @title MultiFeedDivPriceLib Unit Tests
 /// @notice Tests for MultiFeedDivPriceLib price computation with custom divisor

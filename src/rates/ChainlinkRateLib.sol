@@ -7,8 +7,8 @@ library ChainlinkRateLib {
     error InvalidRate(uint256 rate);
     error StaleRateSource(address source, uint256 updatedAt);
 
-    uint256 internal constant DEFAULT_MIN_RATE = 1e18;
-    uint256 internal constant DEFAULT_MAX_RATE = 2e18;
+    uint256 internal constant DEFAULT_MIN_RATE = 9e17; // 0.9
+    uint256 internal constant DEFAULT_MAX_RATE = 3e18;
     uint64 internal constant DEFAULT_MAX_AGE = 86_400; // 24 hours (matches feed heartbeats)
 
     /// @notice Get the rate from a Chainlink feed with default validation.
