@@ -11,8 +11,8 @@ import {MockAggregatorV3} from "@harbor-price-test/mock/MockAggregatorV3.sol";
 contract ChainlinkRateLibTest is Test {
     MockAggregatorV3 feed;
 
-    uint256 constant DEFAULT_MIN_RATE = 1e18;
-    uint256 constant DEFAULT_MAX_RATE = 2e18;
+    uint256 constant DEFAULT_MIN_RATE = 9e17; // 0.9 - matches library constant
+    uint256 constant DEFAULT_MAX_RATE = 3e18;
     uint256 constant DEFAULT_MAX_AGE = 86400; // 24 hours
 
     function setUp() public {
@@ -42,7 +42,7 @@ contract ChainlinkRateLibTest is Test {
 
     /// @notice Valid rate within default bounds is returned correctly
     function test_getRate_validRate_succeeds() public {
-        uint256 rate = 1.5e18; // Within [1e18, 2e18]
+        uint256 rate = 1.5e18; // Within [0.9e18, 3e18]
         feed.setAnswer(int256(rate), block.timestamp);
 
         uint256 result = this.callGetRate(AggregatorV3Interface(address(feed)));
@@ -118,8 +118,8 @@ contract ChainlinkRateLibTest is Test {
     /// @notice Custom bounds are respected - rate within custom range
     function test_getRate_customBounds_succeeds() public {
         uint256 customMin = 0.5e18;
-        uint256 customMax = 3e18;
-        uint256 rate = 2.5e18; // Within custom range, outside default range
+        uint256 customMax = 4e18;
+        uint256 rate = 3.5e18; // Within custom range, outside default 0.9–3
         feed.setAnswer(int256(rate), block.timestamp);
 
         uint256 result = this.callGetRateWithParams(
@@ -276,7 +276,7 @@ contract ChainlinkRateLibTest is Test {
 
     /// @notice Fuzz test for valid rates with default bounds
     function test_Fuzz_getRate_validRange(uint256 rate) public {
-        // Bound to valid range: [1e18, 2e18]
+        // Bound to valid range: [0.9e18, 3e18]
         rate = bound(rate, DEFAULT_MIN_RATE, DEFAULT_MAX_RATE);
         feed.setAnswer(int256(rate), block.timestamp);
 

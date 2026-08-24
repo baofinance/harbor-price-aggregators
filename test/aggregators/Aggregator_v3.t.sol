@@ -427,8 +427,8 @@ contract Aggregator_v3_Test is Test {
             false
         );
 
-        // Set rate below minimum (1e18)
-        uint256 lowRate = 0.9e18;
+        // Set rate below minimum (0.9e18)
+        uint256 lowRate = 0.9e18 - 1;
         mockWstETH.setStEthPerToken(lowRate);
 
         vm.expectRevert(abi.encodeWithSelector(WstETHRateLib.InvalidRate.selector, lowRate));
@@ -446,8 +446,8 @@ contract Aggregator_v3_Test is Test {
             false
         );
 
-        // Set rate above maximum (2e18)
-        uint256 highRate = 2.1e18;
+        // Set rate above maximum (3e18)
+        uint256 highRate = 3e18 + 1;
         mockWstETH.setStEthPerToken(highRate);
 
         vm.expectRevert(abi.encodeWithSelector(WstETHRateLib.InvalidRate.selector, highRate));

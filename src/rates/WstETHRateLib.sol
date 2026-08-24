@@ -6,8 +6,8 @@ import {IWstETH} from "@bao/interfaces/IWstETH.sol";
 library WstETHRateLib {
     error InvalidRate(uint256 rate);
 
-    uint256 internal constant DEFAULT_MIN_RATE = 1e18;
-    uint256 internal constant DEFAULT_MAX_RATE = 2e18;
+    uint256 internal constant DEFAULT_MIN_RATE = 9e17; // 0.9
+    uint256 internal constant DEFAULT_MAX_RATE = 3e18;
 
     function getRaw(IWstETH wsteth, uint256 wstethAmount) internal view returns (uint256) {
         return wsteth.getStETHByWstETH(wstethAmount);

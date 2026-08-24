@@ -186,7 +186,7 @@ abstract contract SingleFeedStETHAggregatorTestBase is Test {
     }
 
     function test_latestAnswer_invalidRate_reverts() public {
-        uint256 lowRate = 0.9e18;
+        uint256 lowRate = 0.9e18 - 1;
         mockWstETH.setStEthPerToken(lowRate);
 
         vm.expectRevert(abi.encodeWithSelector(WstETHRateLib.InvalidRate.selector, lowRate));

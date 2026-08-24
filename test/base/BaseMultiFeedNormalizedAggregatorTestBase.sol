@@ -300,7 +300,7 @@ abstract contract BaseMultiFeedNormalizedAggregatorTestBase is Test {
     }
 
     function test_latestAnswer_rateBelowMin_reverts() public {
-        uint256 lowRate = 0.9e18;
+        uint256 lowRate = 0.9e18 - 1;
         mockRateFeed.setAnswer(int256(lowRate), block.timestamp);
 
         vm.expectRevert(abi.encodeWithSelector(ChainlinkRateLib.InvalidRate.selector, lowRate));
@@ -308,7 +308,7 @@ abstract contract BaseMultiFeedNormalizedAggregatorTestBase is Test {
     }
 
     function test_latestAnswer_rateAboveMax_reverts() public {
-        uint256 highRate = 2.1e18;
+        uint256 highRate = 3e18 + 1;
         mockRateFeed.setAnswer(int256(highRate), block.timestamp);
 
         vm.expectRevert(abi.encodeWithSelector(ChainlinkRateLib.InvalidRate.selector, highRate));

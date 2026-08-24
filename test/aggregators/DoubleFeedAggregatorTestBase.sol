@@ -230,7 +230,7 @@ abstract contract DoubleFeedAggregatorTestBase is Test {
     }
 
     function test_latestAnswer_rateBelowMin_reverts() public {
-        uint256 lowRate = 0.9e18;
+        uint256 lowRate = 0.9e18 - 1;
         mockWstETH.setStEthPerToken(lowRate);
 
         vm.expectRevert(abi.encodeWithSelector(WstETHRateLib.InvalidRate.selector, lowRate));
@@ -238,7 +238,7 @@ abstract contract DoubleFeedAggregatorTestBase is Test {
     }
 
     function test_latestAnswer_rateAboveMax_reverts() public {
-        uint256 highRate = 2.1e18;
+        uint256 highRate = 3e18 + 1;
         mockWstETH.setStEthPerToken(highRate);
 
         vm.expectRevert(abi.encodeWithSelector(WstETHRateLib.InvalidRate.selector, highRate));

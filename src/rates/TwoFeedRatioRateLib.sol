@@ -30,7 +30,7 @@ library TwoFeedRatioRateLib {
         return rate;
     }
 
-    /// @notice Get rate with optional min/max validation (e.g. wstETH/stETH ~1–2, sUSDE/USDE ~0.9–1.1).
+    /// @notice Get rate with optional min/max validation (e.g. wstETH/stETH ~0.9–3, sUSDE/USDE ~0.9–1.1).
     function getRate(
         AggregatorV3Interface numeratorFeed,
         AggregatorV3Interface denominatorFeed,
