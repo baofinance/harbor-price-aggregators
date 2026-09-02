@@ -4,7 +4,7 @@ pragma solidity 0.8.30;
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 import {HarborAggregator_v3} from "@harbor-price/aggregators/HarborAggregator_v3.sol";
-import {IWrappedPriceOracle} from "@harbor-price/interfaces/IWrappedPriceOracle.sol";
+import {IWrappedPriceOracle} from "@bao/interfaces/IWrappedPriceOracle.sol";
 import {ChainlinkRateLib} from "@harbor-price/rates/ChainlinkRateLib.sol";
 import {SingleFeedPriceLib} from "@harbor-price/prices/SingleFeedPriceLib.sol";
 
@@ -12,9 +12,6 @@ import {SingleFeedPriceLib} from "@harbor-price/prices/SingleFeedPriceLib.sol";
 /// @custom:oz-upgrades-unsafe-allow state-variable-immutable constructor
 // solhint-disable-next-line contract-name-capwords
 abstract contract Aggregator_SingleRate_SinglePrice is HarborAggregator_v3 {
-    error InvalidAddress(address value);
-    error InvalidDivisor(uint256 divisor);
-
     AggregatorV3Interface public immutable RATE_FEED;
     AggregatorV3Interface public immutable PRICE_FEED;
     uint8 public immutable PRICE_FEED_DECIMALS;

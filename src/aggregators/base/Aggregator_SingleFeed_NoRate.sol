@@ -3,16 +3,13 @@ pragma solidity 0.8.30;
 
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
 import {HarborAggregator_v3} from "@harbor-price/aggregators/HarborAggregator_v3.sol";
-import {IWrappedPriceOracle} from "@harbor-price/interfaces/IWrappedPriceOracle.sol";
+import {IWrappedPriceOracle} from "@bao/interfaces/IWrappedPriceOracle.sol";
 import {SingleFeedPriceLib} from "@harbor-price/prices/SingleFeedPriceLib.sol";
 
 /// @notice Oracle with a single price feed and fixed rate 1e18 (e.g. MON/USD).
 /// @custom:oz-upgrades-unsafe-allow state-variable-immutable constructor
 // solhint-disable-next-line contract-name-capwords
 abstract contract Aggregator_SingleFeed_NoRate is HarborAggregator_v3 {
-    error InvalidAddress(address value);
-    error InvalidDivisor(uint256 divisor);
-
     uint256 public constant FIXED_RATE = 1e18;
 
     AggregatorV3Interface public immutable PRICE_FEED;

@@ -5,6 +5,7 @@ import {Test} from "forge-std/Test.sol";
 import {ISUSDe} from "@harbor-price/interfaces/ISUSDe.sol";
 import {SUSDeRateLib} from "@harbor-price/rates/SUSDeRateLib.sol";
 import {MockSUSDe} from "@harbor-price-test/mock/MockSUSDe.sol";
+import {IPriceOracleErrors} from "@bao/interfaces/IPriceOracleErrors.sol";
 
 /// @title SUSDeRateLib Unit Tests
 /// @notice Tests for SUSDeRateLib rate retrieval and validation
@@ -55,7 +56,7 @@ contract SUSDeRateLibTest is Test {
         uint256 lowRate = DEFAULT_MIN_RATE - 1;
         mock.setAssetsPerShare(lowRate);
 
-        vm.expectRevert(abi.encodeWithSelector(SUSDeRateLib.InvalidRate.selector, lowRate));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidRate.selector, lowRate));
         this.callGetRate(ISUSDe(address(mock)));
     }
 
@@ -63,7 +64,7 @@ contract SUSDeRateLibTest is Test {
     function test_getRate_zero_reverts() public {
         mock.setAssetsPerShare(0);
 
-        vm.expectRevert(abi.encodeWithSelector(SUSDeRateLib.InvalidRate.selector, 0));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidRate.selector, 0));
         this.callGetRate(ISUSDe(address(mock)));
     }
 
@@ -84,7 +85,7 @@ contract SUSDeRateLibTest is Test {
         uint256 rate = 1.0e18; // Below custom min
         mock.setAssetsPerShare(rate);
 
-        vm.expectRevert(abi.encodeWithSelector(SUSDeRateLib.InvalidRate.selector, rate));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidRate.selector, rate));
         this.callGetRateWithMin(ISUSDe(address(mock)), customMin);
     }
 

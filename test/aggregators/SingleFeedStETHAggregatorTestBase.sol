@@ -10,6 +10,7 @@ import {IHarborPriceAggregatorV3} from "@harbor-price/interfaces/IHarborPriceAgg
 import {IBaoFixedOwnable} from "@bao/interfaces/IBaoFixedOwnable.sol";
 import {WstETHRateLib} from "@harbor-price/rates/WstETHRateLib.sol";
 import {ChainlinkFeedLib} from "@harbor-price/feeds/chainlink/ChainlinkFeedLib.sol";
+import {IPriceOracleErrors} from "@bao/interfaces/IPriceOracleErrors.sol";
 
 /// @title Base test contract for single-feed v3 aggregators with wstETH rate (stETH/USD pattern)
 /// @notice Provides all tests; concrete contracts only implement factory + identity
@@ -168,7 +169,7 @@ abstract contract SingleFeedStETHAggregatorTestBase is Test {
 
         vm.expectRevert(
             abi.encodeWithSelector(
-                ChainlinkFeedLib.StaleFeedData.selector,
+                IPriceOracleErrors.StaleFeedData.selector,
                 address(mockPriceFeed),
                 staleTime,
                 block.timestamp,
@@ -181,7 +182,7 @@ abstract contract SingleFeedStETHAggregatorTestBase is Test {
     function test_latestAnswer_zeroFeedPrice_reverts() public {
         mockPriceFeed.setAnswer(0, block.timestamp);
 
-        vm.expectRevert(abi.encodeWithSelector(ChainlinkFeedLib.ZeroPrice.selector, address(mockPriceFeed), 0));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.ZeroPrice.selector, address(mockPriceFeed), 0));
         aggregator.latestAnswer();
     }
 
@@ -189,7 +190,7 @@ abstract contract SingleFeedStETHAggregatorTestBase is Test {
         uint256 lowRate = 0.9e18 - 1;
         mockWstETH.setStEthPerToken(lowRate);
 
-        vm.expectRevert(abi.encodeWithSelector(WstETHRateLib.InvalidRate.selector, lowRate));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidRate.selector, lowRate));
         aggregator.latestAnswer();
     }
 

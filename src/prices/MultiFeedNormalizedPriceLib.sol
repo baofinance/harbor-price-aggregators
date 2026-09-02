@@ -4,11 +4,9 @@ pragma solidity 0.8.30;
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
 import {ChainlinkFeedLib} from "@harbor-price/feeds/chainlink/ChainlinkFeedLib.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
+import {IPriceOracleErrors} from "@bao/interfaces/IPriceOracleErrors.sol";
 
 library MultiFeedNormalizedPriceLib {
-    error EmptyFeeds();
-    error InvalidFeedCount(uint256 count);
-
     /// @notice Get the normalized average price from multiple feeds.
     /// @dev Each feed's price is multiplied by its normalization factor, then summed and divided by feed count.
     ///      Formula: normalized_price = (original_price * normalization_factor) / feed_count
@@ -24,11 +22,12 @@ library MultiFeedNormalizedPriceLib {
         uint256[] memory normalizationFactors
     ) internal view returns (uint256) {
         uint256 feedCount = feeds.length;
-        if (feedCount == 0) revert EmptyFeeds();
-        if (feedCount > 50) revert InvalidFeedCount(feedCount); // Reasonable limit
-        if (feedDecimals.length != feedCount) revert InvalidFeedCount(feedDecimals.length);
-        if (feedHeartbeats.length != feedCount) revert InvalidFeedCount(feedHeartbeats.length);
-        if (normalizationFactors.length != feedCount) revert InvalidFeedCount(normalizationFactors.length);
+        if (feedCount == 0) revert IPriceOracleErrors.EmptyFeeds();
+        if (feedCount > 50) revert IPriceOracleErrors.InvalidFeedCount(feedCount); // Reasonable limit
+        if (feedDecimals.length != feedCount) revert IPriceOracleErrors.InvalidFeedCount(feedDecimals.length);
+        if (feedHeartbeats.length != feedCount) revert IPriceOracleErrors.InvalidFeedCount(feedHeartbeats.length);
+        if (normalizationFactors.length != feedCount)
+            revert IPriceOracleErrors.InvalidFeedCount(normalizationFactors.length);
 
         uint256 sum = 0;
         for (uint256 i = 0; i < feedCount; i++) {

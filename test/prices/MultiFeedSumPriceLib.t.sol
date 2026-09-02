@@ -6,6 +6,7 @@ import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/Aggr
 import {MultiFeedSumPriceLib} from "@harbor-price/prices/MultiFeedSumPriceLib.sol";
 import {ChainlinkFeedLib} from "@harbor-price/feeds/chainlink/ChainlinkFeedLib.sol";
 import {MockAggregatorV3} from "@harbor-price-test/mock/MockAggregatorV3.sol";
+import {IPriceOracleErrors} from "@bao/interfaces/IPriceOracleErrors.sol";
 
 /// @title MultiFeedSumPriceLib Unit Tests
 /// @notice Tests for MultiFeedSumPriceLib price sum computation
@@ -147,7 +148,7 @@ contract MultiFeedSumPriceLibTest is Test {
         uint8[] memory decimals = new uint8[](0);
         uint256[] memory heartbeats = new uint256[](0);
 
-        vm.expectRevert(MultiFeedSumPriceLib.EmptyFeeds.selector);
+        vm.expectRevert(IPriceOracleErrors.EmptyFeeds.selector);
         this.callGetPrice(feedInterfaces, decimals, heartbeats);
     }
 
@@ -169,7 +170,7 @@ contract MultiFeedSumPriceLibTest is Test {
         heartbeats[0] = DEFAULT_HEARTBEAT;
         heartbeats[1] = DEFAULT_HEARTBEAT;
 
-        vm.expectRevert(abi.encodeWithSelector(MultiFeedSumPriceLib.InvalidFeedCount.selector, 1));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidFeedCount.selector, 1));
         this.callGetPrice(feedInterfaces, decimals, heartbeats);
     }
 
@@ -191,7 +192,7 @@ contract MultiFeedSumPriceLibTest is Test {
         uint256[] memory heartbeats = new uint256[](1); // Wrong length
         heartbeats[0] = DEFAULT_HEARTBEAT;
 
-        vm.expectRevert(abi.encodeWithSelector(MultiFeedSumPriceLib.InvalidFeedCount.selector, 1));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidFeedCount.selector, 1));
         this.callGetPrice(feedInterfaces, decimals, heartbeats);
     }
 
@@ -210,7 +211,7 @@ contract MultiFeedSumPriceLibTest is Test {
             heartbeats[i] = DEFAULT_HEARTBEAT;
         }
 
-        vm.expectRevert(abi.encodeWithSelector(MultiFeedSumPriceLib.InvalidFeedCount.selector, feedCount));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidFeedCount.selector, feedCount));
         this.callGetPrice(feedInterfaces, decimals, heartbeats);
     }
 
@@ -235,7 +236,7 @@ contract MultiFeedSumPriceLibTest is Test {
             feedInterfaces[i] = AggregatorV3Interface(address(testFeeds[i]));
         }
 
-        vm.expectRevert(abi.encodeWithSelector(ChainlinkFeedLib.ZeroPrice.selector, address(testFeeds[0]), 0));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.ZeroPrice.selector, address(testFeeds[0]), 0));
         this.callGetPrice(feedInterfaces, decimals, heartbeats);
     }
 

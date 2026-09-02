@@ -2,7 +2,7 @@
 pragma solidity 0.8.30;
 
 import {HarborAggregator_v3} from "@harbor-price/aggregators/HarborAggregator_v3.sol";
-import {IWrappedPriceOracle} from "@harbor-price/interfaces/IWrappedPriceOracle.sol";
+import {IWrappedPriceOracle} from "@bao/interfaces/IWrappedPriceOracle.sol";
 
 /// @notice Trivial ETH/ETH oracle for haETH markets where the peg asset is ETH itself.
 /// @dev Returns constant (1e18, 1e18, 1e18, 1e18) — no feeds required.

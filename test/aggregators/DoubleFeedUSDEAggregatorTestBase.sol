@@ -10,6 +10,7 @@ import {IHarborPriceAggregatorV3} from "@harbor-price/interfaces/IHarborPriceAgg
 import {IBaoFixedOwnable} from "@bao/interfaces/IBaoFixedOwnable.sol";
 import {SUSDeRateLib} from "@harbor-price/rates/SUSDeRateLib.sol";
 import {ChainlinkFeedLib} from "@harbor-price/feeds/chainlink/ChainlinkFeedLib.sol";
+import {IPriceOracleErrors} from "@bao/interfaces/IPriceOracleErrors.sol";
 
 /// @title Base test contract for double-feed v3 aggregators with sUSDe rate (USDE naming)
 /// @notice Provides all tests; concrete contracts only implement factory + identity
@@ -153,7 +154,7 @@ abstract contract DoubleFeedUSDEAggregatorTestBase is Test {
 
         vm.expectRevert(
             abi.encodeWithSelector(
-                ChainlinkFeedLib.StaleFeedData.selector,
+                IPriceOracleErrors.StaleFeedData.selector,
                 address(mockFirstFeed),
                 staleTime,
                 block.timestamp,
@@ -169,7 +170,7 @@ abstract contract DoubleFeedUSDEAggregatorTestBase is Test {
 
         vm.expectRevert(
             abi.encodeWithSelector(
-                ChainlinkFeedLib.StaleFeedData.selector,
+                IPriceOracleErrors.StaleFeedData.selector,
                 address(mockSecondFeed),
                 staleTime,
                 block.timestamp,
@@ -182,14 +183,14 @@ abstract contract DoubleFeedUSDEAggregatorTestBase is Test {
     function test_latestAnswer_zeroFirstFeed_reverts() public {
         mockFirstFeed.setAnswer(0, block.timestamp);
 
-        vm.expectRevert(abi.encodeWithSelector(ChainlinkFeedLib.ZeroPrice.selector, address(mockFirstFeed), 0));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.ZeroPrice.selector, address(mockFirstFeed), 0));
         aggregator.latestAnswer();
     }
 
     function test_latestAnswer_zeroSecondFeed_reverts() public {
         mockSecondFeed.setAnswer(0, block.timestamp);
 
-        vm.expectRevert(abi.encodeWithSelector(ChainlinkFeedLib.ZeroPrice.selector, address(mockSecondFeed), 0));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.ZeroPrice.selector, address(mockSecondFeed), 0));
         aggregator.latestAnswer();
     }
 
@@ -197,7 +198,7 @@ abstract contract DoubleFeedUSDEAggregatorTestBase is Test {
         uint256 lowRate = 0.8e18;
         mockSUSDe.setAssetsPerShare(lowRate);
 
-        vm.expectRevert(abi.encodeWithSelector(SUSDeRateLib.InvalidRate.selector, lowRate));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidRate.selector, lowRate));
         aggregator.latestAnswer();
     }
 

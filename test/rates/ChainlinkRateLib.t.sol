@@ -5,6 +5,7 @@ import {Test} from "forge-std/Test.sol";
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
 import {ChainlinkRateLib} from "@harbor-price/rates/ChainlinkRateLib.sol";
 import {MockAggregatorV3} from "@harbor-price-test/mock/MockAggregatorV3.sol";
+import {IPriceOracleErrors} from "@bao/interfaces/IPriceOracleErrors.sol";
 
 /// @title ChainlinkRateLib Unit Tests
 /// @notice Tests for ChainlinkRateLib rate retrieval and validation
@@ -70,7 +71,7 @@ contract ChainlinkRateLibTest is Test {
         uint256 lowRate = DEFAULT_MIN_RATE - 1;
         feed.setAnswer(int256(lowRate), block.timestamp);
 
-        vm.expectRevert(abi.encodeWithSelector(ChainlinkRateLib.InvalidRate.selector, lowRate));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidRate.selector, lowRate));
         this.callGetRate(AggregatorV3Interface(address(feed)));
     }
 
@@ -79,7 +80,7 @@ contract ChainlinkRateLibTest is Test {
         uint256 highRate = DEFAULT_MAX_RATE + 1;
         feed.setAnswer(int256(highRate), block.timestamp);
 
-        vm.expectRevert(abi.encodeWithSelector(ChainlinkRateLib.InvalidRate.selector, highRate));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidRate.selector, highRate));
         this.callGetRate(AggregatorV3Interface(address(feed)));
     }
 
@@ -87,7 +88,7 @@ contract ChainlinkRateLibTest is Test {
     function test_getRate_zero_reverts() public {
         feed.setAnswer(0, block.timestamp);
 
-        vm.expectRevert(abi.encodeWithSelector(ChainlinkRateLib.InvalidRate.selector, 0));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidRate.selector, 0));
         this.callGetRate(AggregatorV3Interface(address(feed)));
     }
 
@@ -107,7 +108,7 @@ contract ChainlinkRateLibTest is Test {
         uint256 staleTime = block.timestamp - DEFAULT_MAX_AGE - 1;
         feed.setAnswer(int256(DEFAULT_MIN_RATE), staleTime);
 
-        vm.expectRevert(abi.encodeWithSelector(ChainlinkRateLib.StaleRateSource.selector, address(feed), staleTime));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.StaleRateSource.selector, address(feed), staleTime));
         this.callGetRate(AggregatorV3Interface(address(feed)));
     }
 
@@ -139,7 +140,7 @@ contract ChainlinkRateLibTest is Test {
         uint256 rate = 1.4e18; // Below custom min
         feed.setAnswer(int256(rate), block.timestamp);
 
-        vm.expectRevert(abi.encodeWithSelector(ChainlinkRateLib.InvalidRate.selector, rate));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidRate.selector, rate));
         this.callGetRateWithParams(
             AggregatorV3Interface(address(feed)),
             18,
@@ -156,7 +157,7 @@ contract ChainlinkRateLibTest is Test {
         uint256 rate = 1.6e18; // Above custom max
         feed.setAnswer(int256(rate), block.timestamp);
 
-        vm.expectRevert(abi.encodeWithSelector(ChainlinkRateLib.InvalidRate.selector, rate));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidRate.selector, rate));
         this.callGetRateWithParams(
             AggregatorV3Interface(address(feed)),
             18,
@@ -188,7 +189,7 @@ contract ChainlinkRateLibTest is Test {
         uint256 staleTime = block.timestamp - customMaxAge - 1;
         feed.setAnswer(int256(DEFAULT_MIN_RATE), staleTime);
 
-        vm.expectRevert(abi.encodeWithSelector(ChainlinkRateLib.StaleRateSource.selector, address(feed), staleTime));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.StaleRateSource.selector, address(feed), staleTime));
         this.callGetRateWithParams(
             AggregatorV3Interface(address(feed)),
             18,

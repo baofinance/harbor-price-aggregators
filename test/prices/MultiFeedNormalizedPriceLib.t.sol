@@ -6,6 +6,7 @@ import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/Aggr
 import {MultiFeedNormalizedPriceLib} from "@harbor-price/prices/MultiFeedNormalizedPriceLib.sol";
 import {MockAggregatorV3} from "@harbor-price-test/mock/MockAggregatorV3.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
+import {IPriceOracleErrors} from "@bao/interfaces/IPriceOracleErrors.sol";
 
 /// @title MultiFeedNormalizedPriceLib Unit Tests
 /// @notice Tests for MultiFeedNormalizedPriceLib normalized average price computation
@@ -196,7 +197,7 @@ contract MultiFeedNormalizedPriceLibTest is Test {
         uint256[] memory heartbeats = new uint256[](0);
         uint256[] memory normFactors = new uint256[](0);
 
-        vm.expectRevert(MultiFeedNormalizedPriceLib.EmptyFeeds.selector);
+        vm.expectRevert(IPriceOracleErrors.EmptyFeeds.selector);
         this.callGetPrice(feedInterfaces, decimals, heartbeats, normFactors);
     }
 
@@ -222,7 +223,7 @@ contract MultiFeedNormalizedPriceLibTest is Test {
         normFactors[0] = 1e18;
         normFactors[1] = 1e18;
 
-        vm.expectRevert(abi.encodeWithSelector(MultiFeedNormalizedPriceLib.InvalidFeedCount.selector, 1));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidFeedCount.selector, 1));
         this.callGetPrice(feedInterfaces, decimals, heartbeats, normFactors);
     }
 
@@ -248,7 +249,7 @@ contract MultiFeedNormalizedPriceLibTest is Test {
         normFactors[0] = 1e18;
         normFactors[1] = 1e18;
 
-        vm.expectRevert(abi.encodeWithSelector(MultiFeedNormalizedPriceLib.InvalidFeedCount.selector, 1));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidFeedCount.selector, 1));
         this.callGetPrice(feedInterfaces, decimals, heartbeats, normFactors);
     }
 
@@ -274,7 +275,7 @@ contract MultiFeedNormalizedPriceLibTest is Test {
         uint256[] memory normFactors = new uint256[](1); // Wrong length
         normFactors[0] = 1e18;
 
-        vm.expectRevert(abi.encodeWithSelector(MultiFeedNormalizedPriceLib.InvalidFeedCount.selector, 1));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidFeedCount.selector, 1));
         this.callGetPrice(feedInterfaces, decimals, heartbeats, normFactors);
     }
 
@@ -295,7 +296,7 @@ contract MultiFeedNormalizedPriceLibTest is Test {
             normFactors[i] = 1e18;
         }
 
-        vm.expectRevert(abi.encodeWithSelector(MultiFeedNormalizedPriceLib.InvalidFeedCount.selector, feedCount));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidFeedCount.selector, feedCount));
         this.callGetPrice(feedInterfaces, decimals, heartbeats, normFactors);
     }
 

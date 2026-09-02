@@ -3,13 +3,12 @@ pragma solidity 0.8.30;
 
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
+import {IPriceOracleErrors} from "@bao/interfaces/IPriceOracleErrors.sol";
 import {ChainlinkFeedLib} from "@harbor-price/feeds/chainlink/ChainlinkFeedLib.sol";
 
 /// @notice Library to compute a rate as the ratio of two Chainlink price feeds (numerator/denominator).
 /// @dev Use when no direct rate feed exists (e.g. Monad: wstETH/stETH = wstETH_USD / stETH_USD).
 library TwoFeedRatioRateLib {
-    error InvalidRate(uint256 rate);
-
     /// @notice Get rate = numeratorFeedPrice / denominatorFeedPrice (18 decimals).
     /// @param numeratorFeed Feed for numerator (e.g. wstETH/USD)
     /// @param denominatorFeed Feed for denominator (e.g. stETH/USD)
@@ -24,9 +23,9 @@ library TwoFeedRatioRateLib {
         uint8 denDec = denominatorFeed.decimals();
         uint256 numPrice = ChainlinkFeedLib.latestAnswerNormalized(numeratorFeed, numDec, heartbeat);
         uint256 denPrice = ChainlinkFeedLib.latestAnswerNormalized(denominatorFeed, denDec, heartbeat);
-        if (denPrice == 0) revert InvalidRate(0);
+        if (denPrice == 0) revert IPriceOracleErrors.InvalidRate(0);
         rate = Math.mulDiv(numPrice, 1e18, denPrice);
-        if (rate == 0) revert InvalidRate(0);
+        if (rate == 0) revert IPriceOracleErrors.InvalidRate(0);
         return rate;
     }
 
@@ -39,7 +38,7 @@ library TwoFeedRatioRateLib {
         uint256 maxRate
     ) internal view returns (uint256 rate) {
         rate = getRate(numeratorFeed, denominatorFeed, heartbeat);
-        if (rate < minRate || rate > maxRate) revert InvalidRate(rate);
+        if (rate < minRate || rate > maxRate) revert IPriceOracleErrors.InvalidRate(rate);
         return rate;
     }
 }

@@ -3,7 +3,7 @@ pragma solidity 0.8.30;
 
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
 import {HarborAggregator_v3} from "@harbor-price/aggregators/HarborAggregator_v3.sol";
-import {IWrappedPriceOracle} from "@harbor-price/interfaces/IWrappedPriceOracle.sol";
+import {IWrappedPriceOracle} from "@bao/interfaces/IWrappedPriceOracle.sol";
 import {ChainlinkRateLib} from "@harbor-price/rates/ChainlinkRateLib.sol";
 import {MultiFeedNormalizedPriceLib} from "@harbor-price/prices/MultiFeedNormalizedPriceLib.sol";
 import {SingleFeedPriceLib} from "@harbor-price/prices/SingleFeedPriceLib.sol";
@@ -15,9 +15,6 @@ import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 /// @custom:oz-upgrades-unsafe-allow state-variable-immutable constructor
 // solhint-disable-next-line contract-name-capwords
 contract Aggregator_stETH_BOM5 is HarborAggregator_v3 {
-    error InvalidAddress(address value);
-    error InvalidFeedCount(uint256 count);
-
     struct FeedConfig {
         address feed;
         uint256 heartbeat;

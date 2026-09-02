@@ -8,6 +8,7 @@ import {MockAggregatorV3} from "@harbor-price-test/mock/MockAggregatorV3.sol";
 import {IHarborPriceAggregatorV3} from "@harbor-price/interfaces/IHarborPriceAggregatorV3.sol";
 import {IBaoFixedOwnable} from "@bao/interfaces/IBaoFixedOwnable.sol";
 import {ChainlinkFeedLib} from "@harbor-price/feeds/chainlink/ChainlinkFeedLib.sol";
+import {IPriceOracleErrors} from "@bao/interfaces/IPriceOracleErrors.sol";
 
 /// @title Base test contract for double-feed v3 aggregators without rate (wBTC/USD, tBTC/BTC pattern)
 /// @notice Provides all tests; concrete contracts only implement factory + identity
@@ -174,7 +175,7 @@ abstract contract DoubleFeedNoRateAggregatorTestBase is Test {
 
         vm.expectRevert(
             abi.encodeWithSelector(
-                ChainlinkFeedLib.StaleFeedData.selector,
+                IPriceOracleErrors.StaleFeedData.selector,
                 address(mockFirstFeed),
                 staleTime,
                 block.timestamp,
@@ -190,7 +191,7 @@ abstract contract DoubleFeedNoRateAggregatorTestBase is Test {
 
         vm.expectRevert(
             abi.encodeWithSelector(
-                ChainlinkFeedLib.StaleFeedData.selector,
+                IPriceOracleErrors.StaleFeedData.selector,
                 address(mockSecondFeed),
                 staleTime,
                 block.timestamp,
@@ -203,14 +204,14 @@ abstract contract DoubleFeedNoRateAggregatorTestBase is Test {
     function test_latestAnswer_zeroFirstFeed_reverts() public {
         mockFirstFeed.setAnswer(0, block.timestamp);
 
-        vm.expectRevert(abi.encodeWithSelector(ChainlinkFeedLib.ZeroPrice.selector, address(mockFirstFeed), 0));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.ZeroPrice.selector, address(mockFirstFeed), 0));
         aggregator.latestAnswer();
     }
 
     function test_latestAnswer_zeroSecondFeed_reverts() public {
         mockSecondFeed.setAnswer(0, block.timestamp);
 
-        vm.expectRevert(abi.encodeWithSelector(ChainlinkFeedLib.ZeroPrice.selector, address(mockSecondFeed), 0));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.ZeroPrice.selector, address(mockSecondFeed), 0));
         aggregator.latestAnswer();
     }
 

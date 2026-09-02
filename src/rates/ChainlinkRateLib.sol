@@ -2,11 +2,9 @@
 pragma solidity 0.8.30;
 
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
+import {IPriceOracleErrors} from "@bao/interfaces/IPriceOracleErrors.sol";
 
 library ChainlinkRateLib {
-    error InvalidRate(uint256 rate);
-    error StaleRateSource(address source, uint256 updatedAt);
-
     uint256 internal constant DEFAULT_MIN_RATE = 9e17; // 0.9
     uint256 internal constant DEFAULT_MAX_RATE = 3e18;
     uint64 internal constant DEFAULT_MAX_AGE = 86_400; // 24 hours (matches feed heartbeats)
@@ -38,11 +36,11 @@ library ChainlinkRateLib {
         (, int256 answer, , uint256 updatedAt, ) = feed.latestRoundData();
 
         // Validate answer is positive
-        if (answer <= 0) revert InvalidRate(uint256(answer));
+        if (answer <= 0) revert IPriceOracleErrors.InvalidRate(uint256(answer));
 
         // Validate feed is not stale
         // slither-disable-next-line timestamp
-        if (block.timestamp - updatedAt > maxAge) revert StaleRateSource(address(feed), updatedAt);
+        if (block.timestamp - updatedAt > maxAge) revert IPriceOracleErrors.StaleRateSource(address(feed), updatedAt);
 
         // Normalize to 18 decimals
         int256 normalized;
@@ -55,11 +53,11 @@ library ChainlinkRateLib {
         }
 
         // Validate normalized value is positive
-        if (normalized <= 0) revert InvalidRate(uint256(-normalized));
+        if (normalized <= 0) revert IPriceOracleErrors.InvalidRate(uint256(-normalized));
         uint256 rate = uint256(normalized);
 
         // Validate rate bounds
-        if (rate < minRate || rate > maxRate) revert InvalidRate(rate);
+        if (rate < minRate || rate > maxRate) revert IPriceOracleErrors.InvalidRate(rate);
 
         return rate;
     }

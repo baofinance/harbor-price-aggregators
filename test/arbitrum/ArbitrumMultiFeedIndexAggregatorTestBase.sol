@@ -9,6 +9,7 @@ import {IHarborPriceAggregatorV3} from "@harbor-price/interfaces/IHarborPriceAgg
 import {IBaoFixedOwnable} from "@bao/interfaces/IBaoFixedOwnable.sol";
 import {ChainlinkFeedLib} from "@harbor-price/feeds/chainlink/ChainlinkFeedLib.sol";
 import {ChainlinkRateLib} from "@harbor-price/rates/ChainlinkRateLib.sol";
+import {IPriceOracleErrors} from "@bao/interfaces/IPriceOracleErrors.sol";
 
 /// @title Base test contract for Arbitrum multi-feed indexed v3 aggregators (MAG7i26 pattern: 7 feeds, rate feed, base USD feed, index price)
 /// @notice Provides all tests; concrete contracts only implement factory + identity
@@ -241,7 +242,7 @@ abstract contract ArbitrumMultiFeedIndexAggregatorTestBase is Test {
         mockRateFeed.setAnswer(int256(VALID_RATE), staleTime);
 
         vm.expectRevert(
-            abi.encodeWithSelector(ChainlinkRateLib.StaleRateSource.selector, address(mockRateFeed), staleTime)
+            abi.encodeWithSelector(IPriceOracleErrors.StaleRateSource.selector, address(mockRateFeed), staleTime)
         );
         aggregator.latestAnswer();
     }
@@ -252,7 +253,7 @@ abstract contract ArbitrumMultiFeedIndexAggregatorTestBase is Test {
 
         vm.expectRevert(
             abi.encodeWithSelector(
-                ChainlinkFeedLib.StaleFeedData.selector,
+                IPriceOracleErrors.StaleFeedData.selector,
                 address(mockBaseUsdFeed),
                 staleTime,
                 block.timestamp,
@@ -268,7 +269,7 @@ abstract contract ArbitrumMultiFeedIndexAggregatorTestBase is Test {
 
         vm.expectRevert(
             abi.encodeWithSelector(
-                ChainlinkFeedLib.StaleFeedData.selector,
+                IPriceOracleErrors.StaleFeedData.selector,
                 address(mockFeeds[0]),
                 staleTime,
                 block.timestamp,
@@ -282,7 +283,7 @@ abstract contract ArbitrumMultiFeedIndexAggregatorTestBase is Test {
         uint256 lowRate = 0.9e18 - 1;
         mockRateFeed.setAnswer(int256(lowRate), block.timestamp);
 
-        vm.expectRevert(abi.encodeWithSelector(ChainlinkRateLib.InvalidRate.selector, lowRate));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidRate.selector, lowRate));
         aggregator.latestAnswer();
     }
 
@@ -290,7 +291,7 @@ abstract contract ArbitrumMultiFeedIndexAggregatorTestBase is Test {
         uint256 highRate = 3e18 + 1;
         mockRateFeed.setAnswer(int256(highRate), block.timestamp);
 
-        vm.expectRevert(abi.encodeWithSelector(ChainlinkRateLib.InvalidRate.selector, highRate));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidRate.selector, highRate));
         aggregator.latestAnswer();
     }
 

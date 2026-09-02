@@ -2,7 +2,7 @@
 pragma solidity 0.8.30;
 
 import "forge-std/Test.sol";
-import {IWrappedPriceOracle} from "@harbor-price/interfaces/IWrappedPriceOracle.sol";
+import {IWrappedPriceOracle} from "@bao/interfaces/IWrappedPriceOracle.sol";
 import {HarborAggregator_v3} from "@harbor-price/aggregators/HarborAggregator_v3.sol";
 import {MainnetRateSources} from "@harbor-price/rates/mainnet/MainnetRateSources.sol";
 import {ETH_USD} from "@harbor-price/feeds/chainlink/mainnet/ETH_USD.sol";

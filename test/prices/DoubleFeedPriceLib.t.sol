@@ -7,6 +7,7 @@ import {DoubleFeedPriceLib} from "@harbor-price/prices/DoubleFeedPriceLib.sol";
 import {ChainlinkFeedLib} from "@harbor-price/feeds/chainlink/ChainlinkFeedLib.sol";
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
 import {MockAggregatorV3} from "@harbor-price-test/mock/MockAggregatorV3.sol";
+import {IPriceOracleErrors} from "@bao/interfaces/IPriceOracleErrors.sol";
 
 /// @title DoubleFeedPriceLib Unit Tests
 /// @notice Tests for DoubleFeedPriceLib price computation logic
@@ -71,7 +72,7 @@ contract DoubleFeedPriceLibTest is Test {
         firstFeed.setAnswer(0, block.timestamp);
         secondFeed.setAnswer(2000e18, block.timestamp);
 
-        vm.expectRevert(abi.encodeWithSelector(ChainlinkFeedLib.ZeroPrice.selector, address(firstFeed), 0));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.ZeroPrice.selector, address(firstFeed), 0));
         this.callGetPrice(
             AggregatorV3Interface(address(firstFeed)),
             18,
@@ -88,7 +89,7 @@ contract DoubleFeedPriceLibTest is Test {
         firstFeed.setAnswer(2000e18, block.timestamp);
         secondFeed.setAnswer(0, block.timestamp);
 
-        vm.expectRevert(abi.encodeWithSelector(ChainlinkFeedLib.ZeroPrice.selector, address(secondFeed), 0));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.ZeroPrice.selector, address(secondFeed), 0));
         this.callGetPrice(
             AggregatorV3Interface(address(firstFeed)),
             18,

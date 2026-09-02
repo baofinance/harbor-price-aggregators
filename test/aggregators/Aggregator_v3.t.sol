@@ -10,6 +10,7 @@ import {Aggregator_stETH_BTC} from "@harbor-price/aggregators/mainnet/Aggregator
 import {FxSaveRateLib} from "@harbor-price/rates/FxSaveRateLib.sol";
 import {WstETHRateLib} from "@harbor-price/rates/WstETHRateLib.sol";
 import {ChainlinkFeedLib} from "@harbor-price/feeds/chainlink/ChainlinkFeedLib.sol";
+import {IPriceOracleErrors} from "@bao/interfaces/IPriceOracleErrors.sol";
 
 /// @title v3 Aggregator Integration Tests
 /// @notice Tests for v3 aggregator contracts with mocked dependencies
@@ -51,17 +52,17 @@ contract Aggregator_v3_Test is Test {
     // -------------------------------------------------------------------------
 
     function test_SingleFeed_constructor_revertsOnZeroFxsave() public {
-        vm.expectRevert(abi.encodeWithSelector(Aggregator_fxUSD_BTC.InvalidAddress.selector, address(0)));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidAddress.selector, address(0)));
         new Aggregator_fxUSD_BTC(address(0), address(mockPriceFeed), DEFAULT_HEARTBEAT, 1, true);
     }
 
     function test_SingleFeed_constructor_revertsOnZeroPriceFeed() public {
-        vm.expectRevert(abi.encodeWithSelector(Aggregator_fxUSD_BTC.InvalidAddress.selector, address(0)));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidAddress.selector, address(0)));
         new Aggregator_fxUSD_BTC(address(mockFxSave), address(0), DEFAULT_HEARTBEAT, 1, true);
     }
 
     function test_SingleFeed_constructor_revertsOnZeroDivisor() public {
-        vm.expectRevert(abi.encodeWithSelector(Aggregator_fxUSD_BTC.InvalidDivisor.selector, 0));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidDivisor.selector, 0));
         new Aggregator_fxUSD_BTC(address(mockFxSave), address(mockPriceFeed), DEFAULT_HEARTBEAT, 0, true);
     }
 
@@ -170,7 +171,7 @@ contract Aggregator_v3_Test is Test {
 
         vm.expectRevert(
             abi.encodeWithSelector(
-                ChainlinkFeedLib.StaleFeedData.selector,
+                IPriceOracleErrors.StaleFeedData.selector,
                 address(mockPriceFeed),
                 staleTime,
                 block.timestamp,
@@ -193,7 +194,7 @@ contract Aggregator_v3_Test is Test {
         uint256 lowRate = 0.8e18;
         mockFxSave.setAssetsPerShare(lowRate);
 
-        vm.expectRevert(abi.encodeWithSelector(FxSaveRateLib.InvalidRate.selector, lowRate));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidRate.selector, lowRate));
         agg.latestAnswer();
     }
 
@@ -206,7 +207,7 @@ contract Aggregator_v3_Test is Test {
     // -------------------------------------------------------------------------
 
     function test_DoubleFeed_constructor_revertsOnZeroWsteth() public {
-        vm.expectRevert(abi.encodeWithSelector(Aggregator_stETH_BTC.InvalidAddress.selector, address(0)));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidAddress.selector, address(0)));
         new Aggregator_stETH_BTC(
             address(0), // wsteth
             address(mockFirstFeed),
@@ -219,7 +220,7 @@ contract Aggregator_v3_Test is Test {
     }
 
     function test_DoubleFeed_constructor_revertsOnZeroFirstFeed() public {
-        vm.expectRevert(abi.encodeWithSelector(Aggregator_stETH_BTC.InvalidAddress.selector, address(0)));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidAddress.selector, address(0)));
         new Aggregator_stETH_BTC(
             address(mockWstETH),
             address(0),
@@ -232,7 +233,7 @@ contract Aggregator_v3_Test is Test {
     }
 
     function test_DoubleFeed_constructor_revertsOnZeroSecondFeed() public {
-        vm.expectRevert(abi.encodeWithSelector(Aggregator_stETH_BTC.InvalidAddress.selector, address(0)));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidAddress.selector, address(0)));
         new Aggregator_stETH_BTC(
             address(mockWstETH),
             address(mockFirstFeed),
@@ -245,7 +246,7 @@ contract Aggregator_v3_Test is Test {
     }
 
     function test_DoubleFeed_constructor_revertsOnZeroDivisor() public {
-        vm.expectRevert(abi.encodeWithSelector(Aggregator_stETH_BTC.InvalidDivisor.selector, 0));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidDivisor.selector, 0));
         new Aggregator_stETH_BTC(
             address(mockWstETH),
             address(mockFirstFeed),
@@ -379,7 +380,7 @@ contract Aggregator_v3_Test is Test {
 
         vm.expectRevert(
             abi.encodeWithSelector(
-                ChainlinkFeedLib.StaleFeedData.selector,
+                IPriceOracleErrors.StaleFeedData.selector,
                 address(mockFirstFeed),
                 staleTime,
                 block.timestamp,
@@ -406,7 +407,7 @@ contract Aggregator_v3_Test is Test {
 
         vm.expectRevert(
             abi.encodeWithSelector(
-                ChainlinkFeedLib.StaleFeedData.selector,
+                IPriceOracleErrors.StaleFeedData.selector,
                 address(mockSecondFeed),
                 staleTime,
                 block.timestamp,
@@ -431,7 +432,7 @@ contract Aggregator_v3_Test is Test {
         uint256 lowRate = 0.9e18 - 1;
         mockWstETH.setStEthPerToken(lowRate);
 
-        vm.expectRevert(abi.encodeWithSelector(WstETHRateLib.InvalidRate.selector, lowRate));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidRate.selector, lowRate));
         agg.latestAnswer();
     }
 
@@ -450,7 +451,7 @@ contract Aggregator_v3_Test is Test {
         uint256 highRate = 3e18 + 1;
         mockWstETH.setStEthPerToken(highRate);
 
-        vm.expectRevert(abi.encodeWithSelector(WstETHRateLib.InvalidRate.selector, highRate));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidRate.selector, highRate));
         agg.latestAnswer();
     }
 }

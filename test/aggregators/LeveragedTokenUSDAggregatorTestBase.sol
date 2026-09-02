@@ -11,6 +11,7 @@ import {MockWstETH} from "@harbor-price-test/mock/MockWstETH.sol";
 import {IHarborPriceAggregatorV3} from "@harbor-price/interfaces/IHarborPriceAggregatorV3.sol";
 import {IBaoFixedOwnable} from "@bao/interfaces/IBaoFixedOwnable.sol";
 import {ChainlinkFeedLib} from "@harbor-price/feeds/chainlink/ChainlinkFeedLib.sol";
+import {IPriceOracleErrors} from "@bao/interfaces/IPriceOracleErrors.sol";
 
 /// @title Base test contract for leveraged token/USD v3 aggregators
 /// @notice Provides all tests; concrete contracts only implement factory + identity
@@ -138,7 +139,9 @@ abstract contract LeveragedTokenUSDAggregatorTestBase is Test {
     function test_latestAnswer_zeroFeedPrice_reverts() public {
         mockUnderlyingUsdFeed.setAnswer(0, block.timestamp);
 
-        vm.expectRevert(abi.encodeWithSelector(ChainlinkFeedLib.ZeroPrice.selector, address(mockUnderlyingUsdFeed), 0));
+        vm.expectRevert(
+            abi.encodeWithSelector(IPriceOracleErrors.ZeroPrice.selector, address(mockUnderlyingUsdFeed), 0)
+        );
         aggregator.latestAnswer();
     }
 
