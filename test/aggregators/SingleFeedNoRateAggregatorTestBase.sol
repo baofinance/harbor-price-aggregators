@@ -7,7 +7,6 @@ import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/U
 import {MockAggregatorV3} from "@harbor-price-test/mock/MockAggregatorV3.sol";
 import {IHarborPriceAggregatorV3} from "@harbor-price/interfaces/IHarborPriceAggregatorV3.sol";
 import {IBaoFixedOwnable} from "@bao/interfaces/IBaoFixedOwnable.sol";
-import {ChainlinkFeedLib} from "@harbor-price/feeds/chainlink/ChainlinkFeedLib.sol";
 import {IPriceOracleErrors} from "@bao/interfaces/IPriceOracleErrors.sol";
 
 /// @title Base test contract for single-feed v3 aggregators without rate (PAXG pattern)

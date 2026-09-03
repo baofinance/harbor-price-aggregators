@@ -7,9 +7,6 @@ import {MockFxSAVE} from "@harbor-price-test/mock/MockFxSAVE.sol";
 import {MockWstETH} from "@harbor-price-test/mock/MockWstETH.sol";
 import {Aggregator_fxUSD_BTC} from "@harbor-price/aggregators/mainnet/Aggregator_fxUSD_BTC.sol";
 import {Aggregator_stETH_BTC} from "@harbor-price/aggregators/mainnet/Aggregator_stETH_BTC.sol";
-import {FxSaveRateLib} from "@harbor-price/rates/FxSaveRateLib.sol";
-import {WstETHRateLib} from "@harbor-price/rates/WstETHRateLib.sol";
-import {ChainlinkFeedLib} from "@harbor-price/feeds/chainlink/ChainlinkFeedLib.sol";
 import {IPriceOracleErrors} from "@bao/interfaces/IPriceOracleErrors.sol";
 
 /// @title v3 Aggregator Integration Tests

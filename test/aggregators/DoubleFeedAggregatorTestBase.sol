@@ -8,8 +8,6 @@ import {MockAggregatorV3} from "@harbor-price-test/mock/MockAggregatorV3.sol";
 import {MockWstETH} from "@harbor-price-test/mock/MockWstETH.sol";
 import {IHarborPriceAggregatorV3} from "@harbor-price/interfaces/IHarborPriceAggregatorV3.sol";
 import {IBaoFixedOwnable} from "@bao/interfaces/IBaoFixedOwnable.sol";
-import {WstETHRateLib} from "@harbor-price/rates/WstETHRateLib.sol";
-import {ChainlinkFeedLib} from "@harbor-price/feeds/chainlink/ChainlinkFeedLib.sol";
 import {IPriceOracleErrors} from "@bao/interfaces/IPriceOracleErrors.sol";
 
 /// @title Base test contract for double-feed v3 aggregators (stETH pattern)

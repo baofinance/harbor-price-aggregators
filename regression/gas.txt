@@ -1,686 +1,688 @@
+# regression: better=lower abs=500 rel=0.001 display={:.3e} ratchet=on
+
 src/aggregators/arbitrum/Aggregator_USDE_AAPL.sol:Aggregator_USDE_AAPL
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 5.340e+02 |
-| latestAnswer     | 3.430e+04 |
-| oracleName       | 1.143e+03 |
-| proxiableUUID    | 3.680e+02 |
-| quoteName        | 5.560e+02 |
-| rateProvider     | 5.010e+02 |
-| upgradeToAndCall | 8.544e+03 |
-| version          | 3.510e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   534 | 5.340e+02 |
+| latestAnswer     | 34299 | 3.430e+04 |
+| oracleName       |  1143 | 1.143e+03 |
+| proxiableUUID    |   368 | 3.680e+02 |
+| quoteName        |   556 | 5.560e+02 |
+| rateProvider     |   501 | 5.010e+02 |
+| upgradeToAndCall |  8544 | 8.544e+03 |
+| version          |   351 | 3.510e+02 |
 
 src/aggregators/arbitrum/Aggregator_USDE_AMZN.sol:Aggregator_USDE_AMZN
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 5.340e+02 |
-| latestAnswer     | 3.430e+04 |
-| oracleName       | 1.143e+03 |
-| proxiableUUID    | 3.680e+02 |
-| quoteName        | 5.560e+02 |
-| rateProvider     | 5.010e+02 |
-| upgradeToAndCall | 8.544e+03 |
-| version          | 3.510e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   534 | 5.340e+02 |
+| latestAnswer     | 34299 | 3.430e+04 |
+| oracleName       |  1143 | 1.143e+03 |
+| proxiableUUID    |   368 | 3.680e+02 |
+| quoteName        |   556 | 5.560e+02 |
+| rateProvider     |   501 | 5.010e+02 |
+| upgradeToAndCall |  8544 | 8.544e+03 |
+| version          |   351 | 3.510e+02 |
 
 src/aggregators/arbitrum/Aggregator_USDE_GOOGL.sol:Aggregator_USDE_GOOGL
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 5.340e+02 |
-| latestAnswer     | 3.430e+04 |
-| oracleName       | 1.143e+03 |
-| proxiableUUID    | 3.680e+02 |
-| quoteName        | 5.560e+02 |
-| rateProvider     | 5.010e+02 |
-| upgradeToAndCall | 8.544e+03 |
-| version          | 3.510e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   534 | 5.340e+02 |
+| latestAnswer     | 34299 | 3.430e+04 |
+| oracleName       |  1143 | 1.143e+03 |
+| proxiableUUID    |   368 | 3.680e+02 |
+| quoteName        |   556 | 5.560e+02 |
+| rateProvider     |   501 | 5.010e+02 |
+| upgradeToAndCall |  8544 | 8.544e+03 |
+| version          |   351 | 3.510e+02 |
 
 src/aggregators/arbitrum/Aggregator_USDE_MAG7.sol:Aggregator_USDE_MAG7
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 6.270e+02 |
-| latestAnswer     | 1.017e+05 |
-| oracleName       | 1.356e+03 |
-| proxiableUUID    | 5.520e+02 |
-| quoteName        | 6.490e+02 |
-| rateProvider     | 6.850e+02 |
-| upgradeToAndCall | 8.909e+03 |
-| version          | 5.350e+02 |
+| function name    |    max |   display |
+|------------------|--------|-----------|
+| baseName         |    627 | 6.270e+02 |
+| latestAnswer     | 101694 | 1.017e+05 |
+| oracleName       |   1356 | 1.356e+03 |
+| proxiableUUID    |    552 | 5.520e+02 |
+| quoteName        |    649 | 6.490e+02 |
+| rateProvider     |    685 | 6.850e+02 |
+| upgradeToAndCall |   8909 | 8.909e+03 |
+| version          |    535 | 5.350e+02 |
 
 src/aggregators/arbitrum/Aggregator_USDE_MAG7i26.sol:Aggregator_USDE_MAG7i26
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 6.270e+02 |
-| latestAnswer     | 1.018e+05 |
-| oracleName       | 1.356e+03 |
-| proxiableUUID    | 5.520e+02 |
-| quoteName        | 6.490e+02 |
-| rateProvider     | 6.850e+02 |
-| upgradeToAndCall | 8.909e+03 |
-| version          | 5.350e+02 |
+| function name    |    max |   display |
+|------------------|--------|-----------|
+| baseName         |    627 | 6.270e+02 |
+| latestAnswer     | 101800 | 1.018e+05 |
+| oracleName       |   1356 | 1.356e+03 |
+| proxiableUUID    |    552 | 5.520e+02 |
+| quoteName        |    649 | 6.490e+02 |
+| rateProvider     |    685 | 6.850e+02 |
+| upgradeToAndCall |   8909 | 8.909e+03 |
+| version          |    535 | 5.350e+02 |
 
 src/aggregators/arbitrum/Aggregator_USDE_META.sol:Aggregator_USDE_META
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 5.340e+02 |
-| latestAnswer     | 3.430e+04 |
-| oracleName       | 1.143e+03 |
-| proxiableUUID    | 3.680e+02 |
-| quoteName        | 5.560e+02 |
-| rateProvider     | 5.010e+02 |
-| upgradeToAndCall | 8.544e+03 |
-| version          | 3.510e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   534 | 5.340e+02 |
+| latestAnswer     | 34299 | 3.430e+04 |
+| oracleName       |  1143 | 1.143e+03 |
+| proxiableUUID    |   368 | 3.680e+02 |
+| quoteName        |   556 | 5.560e+02 |
+| rateProvider     |   501 | 5.010e+02 |
+| upgradeToAndCall |  8544 | 8.544e+03 |
+| version          |   351 | 3.510e+02 |
 
 src/aggregators/arbitrum/Aggregator_USDE_MSFT.sol:Aggregator_USDE_MSFT
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 5.340e+02 |
-| latestAnswer     | 3.430e+04 |
-| oracleName       | 1.143e+03 |
-| proxiableUUID    | 3.680e+02 |
-| quoteName        | 5.560e+02 |
-| rateProvider     | 5.010e+02 |
-| upgradeToAndCall | 8.544e+03 |
-| version          | 3.510e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   534 | 5.340e+02 |
+| latestAnswer     | 34299 | 3.430e+04 |
+| oracleName       |  1143 | 1.143e+03 |
+| proxiableUUID    |   368 | 3.680e+02 |
+| quoteName        |   556 | 5.560e+02 |
+| rateProvider     |   501 | 5.010e+02 |
+| upgradeToAndCall |  8544 | 8.544e+03 |
+| version          |   351 | 3.510e+02 |
 
 src/aggregators/arbitrum/Aggregator_USDE_NVDA.sol:Aggregator_USDE_NVDA
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 5.340e+02 |
-| latestAnswer     | 3.430e+04 |
-| oracleName       | 1.143e+03 |
-| proxiableUUID    | 3.680e+02 |
-| quoteName        | 5.560e+02 |
-| rateProvider     | 5.010e+02 |
-| upgradeToAndCall | 8.544e+03 |
-| version          | 3.510e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   534 | 5.340e+02 |
+| latestAnswer     | 34299 | 3.430e+04 |
+| oracleName       |  1143 | 1.143e+03 |
+| proxiableUUID    |   368 | 3.680e+02 |
+| quoteName        |   556 | 5.560e+02 |
+| rateProvider     |   501 | 5.010e+02 |
+| upgradeToAndCall |  8544 | 8.544e+03 |
+| version          |   351 | 3.510e+02 |
 
 src/aggregators/arbitrum/Aggregator_USDE_SPY.sol:Aggregator_USDE_SPY
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 5.340e+02 |
-| latestAnswer     | 3.430e+04 |
-| oracleName       | 1.143e+03 |
-| proxiableUUID    | 3.680e+02 |
-| quoteName        | 5.560e+02 |
-| rateProvider     | 5.010e+02 |
-| upgradeToAndCall | 8.544e+03 |
-| version          | 3.510e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   534 | 5.340e+02 |
+| latestAnswer     | 34299 | 3.430e+04 |
+| oracleName       |  1143 | 1.143e+03 |
+| proxiableUUID    |   368 | 3.680e+02 |
+| quoteName        |   556 | 5.560e+02 |
+| rateProvider     |   501 | 5.010e+02 |
+| upgradeToAndCall |  8544 | 8.544e+03 |
+| version          |   351 | 3.510e+02 |
 
 src/aggregators/arbitrum/Aggregator_USDE_TSLA.sol:Aggregator_USDE_TSLA
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 5.340e+02 |
-| latestAnswer     | 3.430e+04 |
-| oracleName       | 1.143e+03 |
-| proxiableUUID    | 3.680e+02 |
-| quoteName        | 5.560e+02 |
-| rateProvider     | 5.010e+02 |
-| upgradeToAndCall | 8.544e+03 |
-| version          | 3.510e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   534 | 5.340e+02 |
+| latestAnswer     | 34299 | 3.430e+04 |
+| oracleName       |  1143 | 1.143e+03 |
+| proxiableUUID    |   368 | 3.680e+02 |
+| quoteName        |   556 | 5.560e+02 |
+| rateProvider     |   501 | 5.010e+02 |
+| upgradeToAndCall |  8544 | 8.544e+03 |
+| version          |   351 | 3.510e+02 |
 
 src/aggregators/arbitrum/Aggregator_stETH_AAPL.sol:Aggregator_stETH_AAPL
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 5.340e+02 |
-| latestAnswer     | 3.430e+04 |
-| oracleName       | 1.143e+03 |
-| proxiableUUID    | 3.680e+02 |
-| quoteName        | 5.560e+02 |
-| rateProvider     | 5.010e+02 |
-| upgradeToAndCall | 8.544e+03 |
-| version          | 3.510e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   534 | 5.340e+02 |
+| latestAnswer     | 34299 | 3.430e+04 |
+| oracleName       |  1143 | 1.143e+03 |
+| proxiableUUID    |   368 | 3.680e+02 |
+| quoteName        |   556 | 5.560e+02 |
+| rateProvider     |   501 | 5.010e+02 |
+| upgradeToAndCall |  8544 | 8.544e+03 |
+| version          |   351 | 3.510e+02 |
 
 src/aggregators/arbitrum/Aggregator_stETH_AMZN.sol:Aggregator_stETH_AMZN
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 5.340e+02 |
-| latestAnswer     | 3.430e+04 |
-| oracleName       | 1.143e+03 |
-| proxiableUUID    | 3.680e+02 |
-| quoteName        | 5.560e+02 |
-| rateProvider     | 5.010e+02 |
-| upgradeToAndCall | 8.544e+03 |
-| version          | 3.510e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   534 | 5.340e+02 |
+| latestAnswer     | 34299 | 3.430e+04 |
+| oracleName       |  1143 | 1.143e+03 |
+| proxiableUUID    |   368 | 3.680e+02 |
+| quoteName        |   556 | 5.560e+02 |
+| rateProvider     |   501 | 5.010e+02 |
+| upgradeToAndCall |  8544 | 8.544e+03 |
+| version          |   351 | 3.510e+02 |
 
 src/aggregators/arbitrum/Aggregator_stETH_GOOGL.sol:Aggregator_stETH_GOOGL
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 5.340e+02 |
-| latestAnswer     | 3.430e+04 |
-| oracleName       | 1.143e+03 |
-| proxiableUUID    | 3.680e+02 |
-| quoteName        | 5.560e+02 |
-| rateProvider     | 5.010e+02 |
-| upgradeToAndCall | 8.544e+03 |
-| version          | 3.510e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   534 | 5.340e+02 |
+| latestAnswer     | 34299 | 3.430e+04 |
+| oracleName       |  1143 | 1.143e+03 |
+| proxiableUUID    |   368 | 3.680e+02 |
+| quoteName        |   556 | 5.560e+02 |
+| rateProvider     |   501 | 5.010e+02 |
+| upgradeToAndCall |  8544 | 8.544e+03 |
+| version          |   351 | 3.510e+02 |
 
 src/aggregators/arbitrum/Aggregator_stETH_MAG7.sol:Aggregator_stETH_MAG7
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 6.270e+02 |
-| latestAnswer     | 1.017e+05 |
-| oracleName       | 1.356e+03 |
-| proxiableUUID    | 5.520e+02 |
-| quoteName        | 6.490e+02 |
-| rateProvider     | 6.850e+02 |
-| upgradeToAndCall | 8.909e+03 |
-| version          | 5.350e+02 |
+| function name    |    max |   display |
+|------------------|--------|-----------|
+| baseName         |    627 | 6.270e+02 |
+| latestAnswer     | 101694 | 1.017e+05 |
+| oracleName       |   1356 | 1.356e+03 |
+| proxiableUUID    |    552 | 5.520e+02 |
+| quoteName        |    649 | 6.490e+02 |
+| rateProvider     |    685 | 6.850e+02 |
+| upgradeToAndCall |   8909 | 8.909e+03 |
+| version          |    535 | 5.350e+02 |
 
 src/aggregators/arbitrum/Aggregator_stETH_MAG7i26.sol:Aggregator_stETH_MAG7i26
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 6.270e+02 |
-| latestAnswer     | 1.018e+05 |
-| oracleName       | 1.356e+03 |
-| proxiableUUID    | 5.520e+02 |
-| quoteName        | 6.490e+02 |
-| rateProvider     | 6.850e+02 |
-| upgradeToAndCall | 8.909e+03 |
-| version          | 5.350e+02 |
+| function name    |    max |   display |
+|------------------|--------|-----------|
+| baseName         |    627 | 6.270e+02 |
+| latestAnswer     | 101800 | 1.018e+05 |
+| oracleName       |   1356 | 1.356e+03 |
+| proxiableUUID    |    552 | 5.520e+02 |
+| quoteName        |    649 | 6.490e+02 |
+| rateProvider     |    685 | 6.850e+02 |
+| upgradeToAndCall |   8909 | 8.909e+03 |
+| version          |    535 | 5.350e+02 |
 
 src/aggregators/arbitrum/Aggregator_stETH_META.sol:Aggregator_stETH_META
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 5.340e+02 |
-| latestAnswer     | 3.430e+04 |
-| oracleName       | 1.143e+03 |
-| proxiableUUID    | 3.680e+02 |
-| quoteName        | 5.560e+02 |
-| rateProvider     | 5.010e+02 |
-| upgradeToAndCall | 8.544e+03 |
-| version          | 3.510e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   534 | 5.340e+02 |
+| latestAnswer     | 34299 | 3.430e+04 |
+| oracleName       |  1143 | 1.143e+03 |
+| proxiableUUID    |   368 | 3.680e+02 |
+| quoteName        |   556 | 5.560e+02 |
+| rateProvider     |   501 | 5.010e+02 |
+| upgradeToAndCall |  8544 | 8.544e+03 |
+| version          |   351 | 3.510e+02 |
 
 src/aggregators/arbitrum/Aggregator_stETH_MSFT.sol:Aggregator_stETH_MSFT
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 5.340e+02 |
-| latestAnswer     | 3.430e+04 |
-| oracleName       | 1.143e+03 |
-| proxiableUUID    | 3.680e+02 |
-| quoteName        | 5.560e+02 |
-| rateProvider     | 5.010e+02 |
-| upgradeToAndCall | 8.544e+03 |
-| version          | 3.510e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   534 | 5.340e+02 |
+| latestAnswer     | 34299 | 3.430e+04 |
+| oracleName       |  1143 | 1.143e+03 |
+| proxiableUUID    |   368 | 3.680e+02 |
+| quoteName        |   556 | 5.560e+02 |
+| rateProvider     |   501 | 5.010e+02 |
+| upgradeToAndCall |  8544 | 8.544e+03 |
+| version          |   351 | 3.510e+02 |
 
 src/aggregators/arbitrum/Aggregator_stETH_NVDA.sol:Aggregator_stETH_NVDA
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 5.340e+02 |
-| latestAnswer     | 3.430e+04 |
-| oracleName       | 1.143e+03 |
-| proxiableUUID    | 3.680e+02 |
-| quoteName        | 5.560e+02 |
-| rateProvider     | 5.010e+02 |
-| upgradeToAndCall | 8.544e+03 |
-| version          | 3.510e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   534 | 5.340e+02 |
+| latestAnswer     | 34299 | 3.430e+04 |
+| oracleName       |  1143 | 1.143e+03 |
+| proxiableUUID    |   368 | 3.680e+02 |
+| quoteName        |   556 | 5.560e+02 |
+| rateProvider     |   501 | 5.010e+02 |
+| upgradeToAndCall |  8544 | 8.544e+03 |
+| version          |   351 | 3.510e+02 |
 
 src/aggregators/arbitrum/Aggregator_stETH_SPY.sol:Aggregator_stETH_SPY
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 5.340e+02 |
-| latestAnswer     | 3.430e+04 |
-| oracleName       | 1.143e+03 |
-| proxiableUUID    | 3.680e+02 |
-| quoteName        | 5.560e+02 |
-| rateProvider     | 5.010e+02 |
-| upgradeToAndCall | 8.544e+03 |
-| version          | 3.510e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   534 | 5.340e+02 |
+| latestAnswer     | 34299 | 3.430e+04 |
+| oracleName       |  1143 | 1.143e+03 |
+| proxiableUUID    |   368 | 3.680e+02 |
+| quoteName        |   556 | 5.560e+02 |
+| rateProvider     |   501 | 5.010e+02 |
+| upgradeToAndCall |  8544 | 8.544e+03 |
+| version          |   351 | 3.510e+02 |
 
 src/aggregators/arbitrum/Aggregator_stETH_TSLA.sol:Aggregator_stETH_TSLA
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 5.340e+02 |
-| latestAnswer     | 3.430e+04 |
-| oracleName       | 1.143e+03 |
-| proxiableUUID    | 3.680e+02 |
-| quoteName        | 5.560e+02 |
-| rateProvider     | 5.010e+02 |
-| upgradeToAndCall | 8.544e+03 |
-| version          | 3.510e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   534 | 5.340e+02 |
+| latestAnswer     | 34299 | 3.430e+04 |
+| oracleName       |  1143 | 1.143e+03 |
+| proxiableUUID    |   368 | 3.680e+02 |
+| quoteName        |   556 | 5.560e+02 |
+| rateProvider     |   501 | 5.010e+02 |
+| upgradeToAndCall |  8544 | 8.544e+03 |
+| version          |   351 | 3.510e+02 |
 
 src/aggregators/base/Aggregator_stETH_BOM5.sol:Aggregator_stETH_BOM5
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 6.270e+02 |
-| latestAnswer     | 8.138e+04 |
-| oracleName       | 1.334e+03 |
-| proxiableUUID    | 5.300e+02 |
-| quoteName        | 6.490e+02 |
-| rateProvider     | 6.630e+02 |
-| upgradeToAndCall | 8.865e+03 |
-| version          | 5.130e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   627 | 6.270e+02 |
+| latestAnswer     | 81378 | 8.138e+04 |
+| oracleName       |  1334 | 1.334e+03 |
+| proxiableUUID    |   530 | 5.300e+02 |
+| quoteName        |   649 | 6.490e+02 |
+| rateProvider     |   663 | 6.630e+02 |
+| upgradeToAndCall |  8865 | 8.865e+03 |
+| version          |   513 | 5.130e+02 |
 
 src/aggregators/mainnet/Aggregator_PAXG_USD.sol:Aggregator_PAXG_USD
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 4.900e+02 |
-| latestAnswer     | 1.066e+04 |
-| oracleName       | 1.099e+03 |
-| proxiableUUID    | 3.460e+02 |
-| quoteName        | 5.120e+02 |
-| rateProvider     | 4.380e+02 |
-| upgradeToAndCall | 8.500e+03 |
-| version          | 3.290e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   490 | 4.900e+02 |
+| latestAnswer     | 10656 | 1.066e+04 |
+| oracleName       |  1099 | 1.099e+03 |
+| proxiableUUID    |   346 | 3.460e+02 |
+| quoteName        |   512 | 5.120e+02 |
+| rateProvider     |   438 | 4.380e+02 |
+| upgradeToAndCall |  8500 | 8.500e+03 |
+| version          |   329 | 3.290e+02 |
 
 src/aggregators/mainnet/Aggregator_USDE_BTC.sol:Aggregator_USDE_BTC
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 5.340e+02 |
-| latestAnswer     | 2.653e+04 |
-| oracleName       | 1.165e+03 |
-| proxiableUUID    | 3.900e+02 |
-| quoteName        | 5.560e+02 |
-| rateProvider     | 5.230e+02 |
-| upgradeToAndCall | 8.588e+03 |
-| version          | 3.730e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   534 | 5.340e+02 |
+| latestAnswer     | 26526 | 2.653e+04 |
+| oracleName       |  1165 | 1.165e+03 |
+| proxiableUUID    |   390 | 3.900e+02 |
+| quoteName        |   556 | 5.560e+02 |
+| rateProvider     |   523 | 5.230e+02 |
+| upgradeToAndCall |  8588 | 8.588e+03 |
+| version          |   373 | 3.730e+02 |
 
 src/aggregators/mainnet/Aggregator_USDE_ETH.sol:Aggregator_USDE_ETH
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 5.340e+02 |
-| latestAnswer     | 2.653e+04 |
-| oracleName       | 1.165e+03 |
-| proxiableUUID    | 3.900e+02 |
-| quoteName        | 5.560e+02 |
-| rateProvider     | 5.230e+02 |
-| upgradeToAndCall | 8.588e+03 |
-| version          | 3.730e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   534 | 5.340e+02 |
+| latestAnswer     | 26526 | 2.653e+04 |
+| oracleName       |  1165 | 1.165e+03 |
+| proxiableUUID    |   390 | 3.900e+02 |
+| quoteName        |   556 | 5.560e+02 |
+| rateProvider     |   523 | 5.230e+02 |
+| upgradeToAndCall |  8588 | 8.588e+03 |
+| version          |   373 | 3.730e+02 |
 
 src/aggregators/mainnet/Aggregator_USDE_EUR.sol:Aggregator_USDE_EUR
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 5.340e+02 |
-| latestAnswer     | 2.653e+04 |
-| oracleName       | 1.165e+03 |
-| proxiableUUID    | 3.900e+02 |
-| quoteName        | 5.560e+02 |
-| rateProvider     | 5.230e+02 |
-| upgradeToAndCall | 8.588e+03 |
-| version          | 3.730e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   534 | 5.340e+02 |
+| latestAnswer     | 26526 | 2.653e+04 |
+| oracleName       |  1165 | 1.165e+03 |
+| proxiableUUID    |   390 | 3.900e+02 |
+| quoteName        |   556 | 5.560e+02 |
+| rateProvider     |   523 | 5.230e+02 |
+| upgradeToAndCall |  8588 | 8.588e+03 |
+| version          |   373 | 3.730e+02 |
 
 src/aggregators/mainnet/Aggregator_USDE_MCAP.sol:Aggregator_USDE_MCAP
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 5.340e+02 |
-| latestAnswer     | 2.653e+04 |
-| oracleName       | 1.165e+03 |
-| proxiableUUID    | 3.900e+02 |
-| quoteName        | 5.560e+02 |
-| rateProvider     | 5.230e+02 |
-| upgradeToAndCall | 8.588e+03 |
-| version          | 3.730e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   534 | 5.340e+02 |
+| latestAnswer     | 26526 | 2.653e+04 |
+| oracleName       |  1165 | 1.165e+03 |
+| proxiableUUID    |   390 | 3.900e+02 |
+| quoteName        |   556 | 5.560e+02 |
+| rateProvider     |   523 | 5.230e+02 |
+| upgradeToAndCall |  8588 | 8.588e+03 |
+| version          |   373 | 3.730e+02 |
 
 src/aggregators/mainnet/Aggregator_USDE_XAG.sol:Aggregator_USDE_XAG
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 5.340e+02 |
-| latestAnswer     | 2.653e+04 |
-| oracleName       | 1.165e+03 |
-| proxiableUUID    | 3.900e+02 |
-| quoteName        | 5.560e+02 |
-| rateProvider     | 5.230e+02 |
-| upgradeToAndCall | 8.588e+03 |
-| version          | 3.730e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   534 | 5.340e+02 |
+| latestAnswer     | 26526 | 2.653e+04 |
+| oracleName       |  1165 | 1.165e+03 |
+| proxiableUUID    |   390 | 3.900e+02 |
+| quoteName        |   556 | 5.560e+02 |
+| rateProvider     |   523 | 5.230e+02 |
+| upgradeToAndCall |  8588 | 8.588e+03 |
+| version          |   373 | 3.730e+02 |
 
 src/aggregators/mainnet/Aggregator_USDE_XAU.sol:Aggregator_USDE_XAU
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 5.340e+02 |
-| latestAnswer     | 2.653e+04 |
-| oracleName       | 1.165e+03 |
-| proxiableUUID    | 3.900e+02 |
-| quoteName        | 5.560e+02 |
-| rateProvider     | 5.230e+02 |
-| upgradeToAndCall | 8.588e+03 |
-| version          | 3.730e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   534 | 5.340e+02 |
+| latestAnswer     | 26526 | 2.653e+04 |
+| oracleName       |  1165 | 1.165e+03 |
+| proxiableUUID    |   390 | 3.900e+02 |
+| quoteName        |   556 | 5.560e+02 |
+| rateProvider     |   523 | 5.230e+02 |
+| upgradeToAndCall |  8588 | 8.588e+03 |
+| version          |   373 | 3.730e+02 |
 
 src/aggregators/mainnet/Aggregator_fxUSD_BTC.sol:Aggregator_fxUSD_BTC
-| function name        |       max |
-|----------------------|-----------|
-| FXSAVE               | 3.690e+02 |
-| INVERT_PRICE         | 4.230e+02 |
-| PRICE_DIVISOR        | 5.020e+02 |
-| PRICE_FEED           | 2.370e+02 |
-| PRICE_FEED_DECIMALS  | 2.470e+02 |
-| PRICE_FEED_HEARTBEAT | 4.830e+02 |
-| baseName             | 4.900e+02 |
-| latestAnswer         | 1.613e+04 |
-| oracleName           | 1.121e+03 |
-| proxiableUUID        | 3.460e+02 |
-| quoteName            | 5.120e+02 |
-| rateProvider         | 4.570e+02 |
-| upgradeToAndCall     | 8.500e+03 |
-| version              | 3.290e+02 |
+| function name        |   max |   display |
+|----------------------|-------|-----------|
+| FXSAVE               |   369 | 3.690e+02 |
+| INVERT_PRICE         |   423 | 4.230e+02 |
+| PRICE_DIVISOR        |   502 | 5.020e+02 |
+| PRICE_FEED           |   237 | 2.370e+02 |
+| PRICE_FEED_DECIMALS  |   247 | 2.470e+02 |
+| PRICE_FEED_HEARTBEAT |   483 | 4.830e+02 |
+| baseName             |   490 | 4.900e+02 |
+| latestAnswer         | 16126 | 1.613e+04 |
+| oracleName           |  1121 | 1.121e+03 |
+| proxiableUUID        |   346 | 3.460e+02 |
+| quoteName            |   512 | 5.120e+02 |
+| rateProvider         |   457 | 4.570e+02 |
+| upgradeToAndCall     |  8500 | 8.500e+03 |
+| version              |   329 | 3.290e+02 |
 
 src/aggregators/mainnet/Aggregator_fxUSD_ETH.sol:Aggregator_fxUSD_ETH
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 4.900e+02 |
-| latestAnswer     | 1.613e+04 |
-| oracleName       | 1.121e+03 |
-| proxiableUUID    | 3.460e+02 |
-| quoteName        | 5.120e+02 |
-| rateProvider     | 4.570e+02 |
-| upgradeToAndCall | 8.500e+03 |
-| version          | 3.290e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   490 | 4.900e+02 |
+| latestAnswer     | 16126 | 1.613e+04 |
+| oracleName       |  1121 | 1.121e+03 |
+| proxiableUUID    |   346 | 3.460e+02 |
+| quoteName        |   512 | 5.120e+02 |
+| rateProvider     |   457 | 4.570e+02 |
+| upgradeToAndCall |  8500 | 8.500e+03 |
+| version          |   329 | 3.290e+02 |
 
 src/aggregators/mainnet/Aggregator_fxUSD_EUR.sol:Aggregator_fxUSD_EUR
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 4.900e+02 |
-| latestAnswer     | 1.613e+04 |
-| oracleName       | 1.121e+03 |
-| proxiableUUID    | 3.460e+02 |
-| quoteName        | 5.120e+02 |
-| rateProvider     | 4.570e+02 |
-| upgradeToAndCall | 8.500e+03 |
-| version          | 3.290e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   490 | 4.900e+02 |
+| latestAnswer     | 16126 | 1.613e+04 |
+| oracleName       |  1121 | 1.121e+03 |
+| proxiableUUID    |   346 | 3.460e+02 |
+| quoteName        |   512 | 5.120e+02 |
+| rateProvider     |   457 | 4.570e+02 |
+| upgradeToAndCall |  8500 | 8.500e+03 |
+| version          |   329 | 3.290e+02 |
 
 src/aggregators/mainnet/Aggregator_fxUSD_MCAP.sol:Aggregator_fxUSD_MCAP
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 4.900e+02 |
-| latestAnswer     | 1.613e+04 |
-| oracleName       | 1.121e+03 |
-| proxiableUUID    | 3.460e+02 |
-| quoteName        | 5.120e+02 |
-| rateProvider     | 4.570e+02 |
-| upgradeToAndCall | 8.500e+03 |
-| version          | 3.290e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   490 | 4.900e+02 |
+| latestAnswer     | 16126 | 1.613e+04 |
+| oracleName       |  1121 | 1.121e+03 |
+| proxiableUUID    |   346 | 3.460e+02 |
+| quoteName        |   512 | 5.120e+02 |
+| rateProvider     |   457 | 4.570e+02 |
+| upgradeToAndCall |  8500 | 8.500e+03 |
+| version          |   329 | 3.290e+02 |
 
 src/aggregators/mainnet/Aggregator_fxUSD_SPCX.sol:Aggregator_fxUSD_SPCX
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 4.900e+02 |
-| latestAnswer     | 1.613e+04 |
-| oracleName       | 1.121e+03 |
-| proxiableUUID    | 3.460e+02 |
-| quoteName        | 5.120e+02 |
-| rateProvider     | 4.570e+02 |
-| upgradeToAndCall | 8.500e+03 |
-| version          | 3.290e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   490 | 4.900e+02 |
+| latestAnswer     | 16126 | 1.613e+04 |
+| oracleName       |  1121 | 1.121e+03 |
+| proxiableUUID    |   346 | 3.460e+02 |
+| quoteName        |   512 | 5.120e+02 |
+| rateProvider     |   457 | 4.570e+02 |
+| upgradeToAndCall |  8500 | 8.500e+03 |
+| version          |   329 | 3.290e+02 |
 
 src/aggregators/mainnet/Aggregator_fxUSD_STRC.sol:Aggregator_fxUSD_STRC
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 4.900e+02 |
-| latestAnswer     | 1.613e+04 |
-| oracleName       | 1.121e+03 |
-| proxiableUUID    | 3.460e+02 |
-| quoteName        | 5.120e+02 |
-| rateProvider     | 4.570e+02 |
-| upgradeToAndCall | 8.500e+03 |
-| version          | 3.290e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   490 | 4.900e+02 |
+| latestAnswer     | 16126 | 1.613e+04 |
+| oracleName       |  1121 | 1.121e+03 |
+| proxiableUUID    |   346 | 3.460e+02 |
+| quoteName        |   512 | 5.120e+02 |
+| rateProvider     |   457 | 4.570e+02 |
+| upgradeToAndCall |  8500 | 8.500e+03 |
+| version          |   329 | 3.290e+02 |
 
 src/aggregators/mainnet/Aggregator_fxUSD_XAG.sol:Aggregator_fxUSD_XAG
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 4.900e+02 |
-| latestAnswer     | 1.613e+04 |
-| oracleName       | 1.121e+03 |
-| proxiableUUID    | 3.460e+02 |
-| quoteName        | 5.120e+02 |
-| rateProvider     | 4.570e+02 |
-| upgradeToAndCall | 8.500e+03 |
-| version          | 3.290e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   490 | 4.900e+02 |
+| latestAnswer     | 16126 | 1.613e+04 |
+| oracleName       |  1121 | 1.121e+03 |
+| proxiableUUID    |   346 | 3.460e+02 |
+| quoteName        |   512 | 5.120e+02 |
+| rateProvider     |   457 | 4.570e+02 |
+| upgradeToAndCall |  8500 | 8.500e+03 |
+| version          |   329 | 3.290e+02 |
 
 src/aggregators/mainnet/Aggregator_fxUSD_XAU.sol:Aggregator_fxUSD_XAU
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 4.900e+02 |
-| latestAnswer     | 1.613e+04 |
-| oracleName       | 1.121e+03 |
-| proxiableUUID    | 3.460e+02 |
-| quoteName        | 5.120e+02 |
-| rateProvider     | 4.570e+02 |
-| upgradeToAndCall | 8.500e+03 |
-| version          | 3.290e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   490 | 4.900e+02 |
+| latestAnswer     | 16126 | 1.613e+04 |
+| oracleName       |  1121 | 1.121e+03 |
+| proxiableUUID    |   346 | 3.460e+02 |
+| quoteName        |   512 | 5.120e+02 |
+| rateProvider     |   457 | 4.570e+02 |
+| upgradeToAndCall |  8500 | 8.500e+03 |
+| version          |   329 | 3.290e+02 |
 
 src/aggregators/mainnet/Aggregator_hsfxUSD_BTC_USD.sol:Aggregator_hsfxUSD_BTC_USD
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 4.840e+02 |
-| latestAnswer     | 1.596e+04 |
-| oracleName       | 1.093e+03 |
-| proxiableUUID    | 3.460e+02 |
-| quoteName        | 5.120e+02 |
-| rateProvider     | 4.350e+02 |
-| upgradeToAndCall | 8.500e+03 |
-| version          | 3.290e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   484 | 4.840e+02 |
+| latestAnswer     | 15958 | 1.596e+04 |
+| oracleName       |  1093 | 1.093e+03 |
+| proxiableUUID    |   346 | 3.460e+02 |
+| quoteName        |   512 | 5.120e+02 |
+| rateProvider     |   435 | 4.350e+02 |
+| upgradeToAndCall |  8500 | 8.500e+03 |
+| version          |   329 | 3.290e+02 |
 
 src/aggregators/mainnet/Aggregator_hsfxUSD_ETH_USD.sol:Aggregator_hsfxUSD_ETH_USD
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 4.840e+02 |
-| latestAnswer     | 1.596e+04 |
-| oracleName       | 1.093e+03 |
-| proxiableUUID    | 3.460e+02 |
-| quoteName        | 5.120e+02 |
-| rateProvider     | 4.350e+02 |
-| upgradeToAndCall | 8.500e+03 |
-| version          | 3.290e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   484 | 4.840e+02 |
+| latestAnswer     | 15958 | 1.596e+04 |
+| oracleName       |  1093 | 1.093e+03 |
+| proxiableUUID    |   346 | 3.460e+02 |
+| quoteName        |   512 | 5.120e+02 |
+| rateProvider     |   435 | 4.350e+02 |
+| upgradeToAndCall |  8500 | 8.500e+03 |
+| version          |   329 | 3.290e+02 |
 
 src/aggregators/mainnet/Aggregator_hsfxUSD_EUR_USD.sol:Aggregator_hsfxUSD_EUR_USD
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 4.840e+02 |
-| latestAnswer     | 1.596e+04 |
-| oracleName       | 1.093e+03 |
-| proxiableUUID    | 3.460e+02 |
-| quoteName        | 5.120e+02 |
-| rateProvider     | 4.350e+02 |
-| upgradeToAndCall | 8.500e+03 |
-| version          | 3.290e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   484 | 4.840e+02 |
+| latestAnswer     | 15958 | 1.596e+04 |
+| oracleName       |  1093 | 1.093e+03 |
+| proxiableUUID    |   346 | 3.460e+02 |
+| quoteName        |   512 | 5.120e+02 |
+| rateProvider     |   435 | 4.350e+02 |
+| upgradeToAndCall |  8500 | 8.500e+03 |
+| version          |   329 | 3.290e+02 |
 
 src/aggregators/mainnet/Aggregator_hsstETH_BTC_USD.sol:Aggregator_hsstETH_BTC_USD
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 4.840e+02 |
-| latestAnswer     | 1.596e+04 |
-| oracleName       | 1.093e+03 |
-| proxiableUUID    | 3.460e+02 |
-| quoteName        | 5.120e+02 |
-| rateProvider     | 4.350e+02 |
-| upgradeToAndCall | 8.500e+03 |
-| version          | 3.290e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   484 | 4.840e+02 |
+| latestAnswer     | 15958 | 1.596e+04 |
+| oracleName       |  1093 | 1.093e+03 |
+| proxiableUUID    |   346 | 3.460e+02 |
+| quoteName        |   512 | 5.120e+02 |
+| rateProvider     |   435 | 4.350e+02 |
+| upgradeToAndCall |  8500 | 8.500e+03 |
+| version          |   329 | 3.290e+02 |
 
 src/aggregators/mainnet/Aggregator_hsstETH_EUR_USD.sol:Aggregator_hsstETH_EUR_USD
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 4.840e+02 |
-| latestAnswer     | 1.596e+04 |
-| oracleName       | 1.093e+03 |
-| proxiableUUID    | 3.460e+02 |
-| quoteName        | 5.120e+02 |
-| rateProvider     | 4.350e+02 |
-| upgradeToAndCall | 8.500e+03 |
-| version          | 3.290e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   484 | 4.840e+02 |
+| latestAnswer     | 15958 | 1.596e+04 |
+| oracleName       |  1093 | 1.093e+03 |
+| proxiableUUID    |   346 | 3.460e+02 |
+| quoteName        |   512 | 5.120e+02 |
+| rateProvider     |   435 | 4.350e+02 |
+| upgradeToAndCall |  8500 | 8.500e+03 |
+| version          |   329 | 3.290e+02 |
 
 src/aggregators/mainnet/Aggregator_stETH_BTC.sol:Aggregator_stETH_BTC
-| function name         |       max |
-|-----------------------|-----------|
-| FIRST_FEED            | 2.150e+02 |
-| FIRST_FEED_DECIMALS   | 3.790e+02 |
-| FIRST_FEED_HEARTBEAT  | 4.170e+02 |
-| INVERT_PRICE          | 4.670e+02 |
-| PRICE_DIVISOR         | 5.680e+02 |
-| SECOND_FEED           | 5.450e+02 |
-| SECOND_FEED_DECIMALS  | 1.810e+02 |
-| SECOND_FEED_HEARTBEAT | 2.630e+02 |
-| WSTETH                | 5.670e+02 |
-| baseName              | 5.340e+02 |
-| latestAnswer          | 2.670e+04 |
-| oracleName            | 1.143e+03 |
-| proxiableUUID         | 3.680e+02 |
-| quoteName             | 5.560e+02 |
-| rateProvider          | 5.010e+02 |
-| upgradeToAndCall      | 8.544e+03 |
-| version               | 3.510e+02 |
+| function name         |   max |   display |
+|-----------------------|-------|-----------|
+| FIRST_FEED            |   215 | 2.150e+02 |
+| FIRST_FEED_DECIMALS   |   379 | 3.790e+02 |
+| FIRST_FEED_HEARTBEAT  |   417 | 4.170e+02 |
+| INVERT_PRICE          |   467 | 4.670e+02 |
+| PRICE_DIVISOR         |   568 | 5.680e+02 |
+| SECOND_FEED           |   545 | 5.450e+02 |
+| SECOND_FEED_DECIMALS  |   181 | 1.810e+02 |
+| SECOND_FEED_HEARTBEAT |   263 | 2.630e+02 |
+| WSTETH                |   567 | 5.670e+02 |
+| baseName              |   534 | 5.340e+02 |
+| latestAnswer          | 26700 | 2.670e+04 |
+| oracleName            |  1143 | 1.143e+03 |
+| proxiableUUID         |   368 | 3.680e+02 |
+| quoteName             |   556 | 5.560e+02 |
+| rateProvider          |   501 | 5.010e+02 |
+| upgradeToAndCall      |  8544 | 8.544e+03 |
+| version               |   351 | 3.510e+02 |
 
 src/aggregators/mainnet/Aggregator_stETH_ETH.sol:Aggregator_stETH_ETH
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 4.900e+02 |
-| latestAnswer     | 1.614e+04 |
-| oracleName       | 1.099e+03 |
-| proxiableUUID    | 3.460e+02 |
-| quoteName        | 5.120e+02 |
-| rateProvider     | 4.350e+02 |
-| upgradeToAndCall | 8.500e+03 |
-| version          | 3.290e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   490 | 4.900e+02 |
+| latestAnswer     | 16139 | 1.614e+04 |
+| oracleName       |  1099 | 1.099e+03 |
+| proxiableUUID    |   346 | 3.460e+02 |
+| quoteName        |   512 | 5.120e+02 |
+| rateProvider     |   435 | 4.350e+02 |
+| upgradeToAndCall |  8500 | 8.500e+03 |
+| version          |   329 | 3.290e+02 |
 
 src/aggregators/mainnet/Aggregator_stETH_EUR.sol:Aggregator_stETH_EUR
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 5.340e+02 |
-| latestAnswer     | 2.670e+04 |
-| oracleName       | 1.143e+03 |
-| proxiableUUID    | 3.680e+02 |
-| quoteName        | 5.560e+02 |
-| rateProvider     | 5.010e+02 |
-| upgradeToAndCall | 8.544e+03 |
-| version          | 3.510e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   534 | 5.340e+02 |
+| latestAnswer     | 26700 | 2.670e+04 |
+| oracleName       |  1143 | 1.143e+03 |
+| proxiableUUID    |   368 | 3.680e+02 |
+| quoteName        |   556 | 5.560e+02 |
+| rateProvider     |   501 | 5.010e+02 |
+| upgradeToAndCall |  8544 | 8.544e+03 |
+| version          |   351 | 3.510e+02 |
 
 src/aggregators/mainnet/Aggregator_stETH_MCAP.sol:Aggregator_stETH_MCAP
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 5.340e+02 |
-| latestAnswer     | 2.670e+04 |
-| oracleName       | 1.143e+03 |
-| proxiableUUID    | 3.680e+02 |
-| quoteName        | 5.560e+02 |
-| rateProvider     | 5.010e+02 |
-| upgradeToAndCall | 8.544e+03 |
-| version          | 3.510e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   534 | 5.340e+02 |
+| latestAnswer     | 26700 | 2.670e+04 |
+| oracleName       |  1143 | 1.143e+03 |
+| proxiableUUID    |   368 | 3.680e+02 |
+| quoteName        |   556 | 5.560e+02 |
+| rateProvider     |   501 | 5.010e+02 |
+| upgradeToAndCall |  8544 | 8.544e+03 |
+| version          |   351 | 3.510e+02 |
 
 src/aggregators/mainnet/Aggregator_stETH_SPCX.sol:Aggregator_stETH_SPCX
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 5.340e+02 |
-| latestAnswer     | 2.670e+04 |
-| oracleName       | 1.143e+03 |
-| proxiableUUID    | 3.680e+02 |
-| quoteName        | 5.560e+02 |
-| rateProvider     | 5.010e+02 |
-| upgradeToAndCall | 8.544e+03 |
-| version          | 3.510e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   534 | 5.340e+02 |
+| latestAnswer     | 26700 | 2.670e+04 |
+| oracleName       |  1143 | 1.143e+03 |
+| proxiableUUID    |   368 | 3.680e+02 |
+| quoteName        |   556 | 5.560e+02 |
+| rateProvider     |   501 | 5.010e+02 |
+| upgradeToAndCall |  8544 | 8.544e+03 |
+| version          |   351 | 3.510e+02 |
 
 src/aggregators/mainnet/Aggregator_stETH_STRC.sol:Aggregator_stETH_STRC
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 5.340e+02 |
-| latestAnswer     | 2.670e+04 |
-| oracleName       | 1.143e+03 |
-| proxiableUUID    | 3.680e+02 |
-| quoteName        | 5.560e+02 |
-| rateProvider     | 5.010e+02 |
-| upgradeToAndCall | 8.544e+03 |
-| version          | 3.510e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   534 | 5.340e+02 |
+| latestAnswer     | 26700 | 2.670e+04 |
+| oracleName       |  1143 | 1.143e+03 |
+| proxiableUUID    |   368 | 3.680e+02 |
+| quoteName        |   556 | 5.560e+02 |
+| rateProvider     |   501 | 5.010e+02 |
+| upgradeToAndCall |  8544 | 8.544e+03 |
+| version          |   351 | 3.510e+02 |
 
 src/aggregators/mainnet/Aggregator_stETH_USD.sol:Aggregator_stETH_USD
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 4.900e+02 |
-| latestAnswer     | 1.614e+04 |
-| oracleName       | 1.099e+03 |
-| proxiableUUID    | 3.460e+02 |
-| quoteName        | 5.120e+02 |
-| rateProvider     | 4.350e+02 |
-| upgradeToAndCall | 8.500e+03 |
-| version          | 3.290e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   490 | 4.900e+02 |
+| latestAnswer     | 16139 | 1.614e+04 |
+| oracleName       |  1099 | 1.099e+03 |
+| proxiableUUID    |   346 | 3.460e+02 |
+| quoteName        |   512 | 5.120e+02 |
+| rateProvider     |   435 | 4.350e+02 |
+| upgradeToAndCall |  8500 | 8.500e+03 |
+| version          |   329 | 3.290e+02 |
 
 src/aggregators/mainnet/Aggregator_stETH_XAG.sol:Aggregator_stETH_XAG
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 5.340e+02 |
-| latestAnswer     | 2.670e+04 |
-| oracleName       | 1.143e+03 |
-| proxiableUUID    | 3.680e+02 |
-| quoteName        | 5.560e+02 |
-| rateProvider     | 5.010e+02 |
-| upgradeToAndCall | 8.544e+03 |
-| version          | 3.510e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   534 | 5.340e+02 |
+| latestAnswer     | 26700 | 2.670e+04 |
+| oracleName       |  1143 | 1.143e+03 |
+| proxiableUUID    |   368 | 3.680e+02 |
+| quoteName        |   556 | 5.560e+02 |
+| rateProvider     |   501 | 5.010e+02 |
+| upgradeToAndCall |  8544 | 8.544e+03 |
+| version          |   351 | 3.510e+02 |
 
 src/aggregators/mainnet/Aggregator_stETH_XAU.sol:Aggregator_stETH_XAU
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 5.340e+02 |
-| latestAnswer     | 2.670e+04 |
-| oracleName       | 1.143e+03 |
-| proxiableUUID    | 3.680e+02 |
-| quoteName        | 5.560e+02 |
-| rateProvider     | 5.010e+02 |
-| upgradeToAndCall | 8.544e+03 |
-| version          | 3.510e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   534 | 5.340e+02 |
+| latestAnswer     | 26700 | 2.670e+04 |
+| oracleName       |  1143 | 1.143e+03 |
+| proxiableUUID    |   368 | 3.680e+02 |
+| quoteName        |   556 | 5.560e+02 |
+| rateProvider     |   501 | 5.010e+02 |
+| upgradeToAndCall |  8544 | 8.544e+03 |
+| version          |   351 | 3.510e+02 |
 
 src/aggregators/mainnet/Aggregator_tBTC_USD.sol:Aggregator_tBTC_USD
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 4.900e+02 |
-| latestAnswer     | 1.066e+04 |
-| oracleName       | 1.099e+03 |
-| proxiableUUID    | 3.460e+02 |
-| quoteName        | 5.120e+02 |
-| rateProvider     | 4.380e+02 |
-| upgradeToAndCall | 8.500e+03 |
-| version          | 3.290e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   490 | 4.900e+02 |
+| latestAnswer     | 10656 | 1.066e+04 |
+| oracleName       |  1099 | 1.099e+03 |
+| proxiableUUID    |   346 | 3.460e+02 |
+| quoteName        |   512 | 5.120e+02 |
+| rateProvider     |   438 | 4.380e+02 |
+| upgradeToAndCall |  8500 | 8.500e+03 |
+| version          |   329 | 3.290e+02 |
 
 src/aggregators/mainnet/Aggregator_wBTC_USD.sol:Aggregator_wBTC_USD
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 5.340e+02 |
-| latestAnswer     | 2.105e+04 |
-| oracleName       | 1.143e+03 |
-| proxiableUUID    | 3.680e+02 |
-| quoteName        | 5.560e+02 |
-| rateProvider     | 5.040e+02 |
-| upgradeToAndCall | 8.544e+03 |
-| version          | 3.510e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   534 | 5.340e+02 |
+| latestAnswer     | 21049 | 2.105e+04 |
+| oracleName       |  1143 | 1.143e+03 |
+| proxiableUUID    |   368 | 3.680e+02 |
+| quoteName        |   556 | 5.560e+02 |
+| rateProvider     |   504 | 5.040e+02 |
+| upgradeToAndCall |  8544 | 8.544e+03 |
+| version          |   351 | 3.510e+02 |
 
 src/aggregators/megaeth/Aggregator_USDM_BTC.sol:Aggregator_USDM_BTC
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 5.340e+02 |
-| latestAnswer     | 2.650e+04 |
-| oracleName       | 1.143e+03 |
-| proxiableUUID    | 3.680e+02 |
-| quoteName        | 5.560e+02 |
-| rateProvider     | 5.010e+02 |
-| upgradeToAndCall | 8.544e+03 |
-| version          | 3.510e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   534 | 5.340e+02 |
+| latestAnswer     | 26500 | 2.650e+04 |
+| oracleName       |  1143 | 1.143e+03 |
+| proxiableUUID    |   368 | 3.680e+02 |
+| quoteName        |   556 | 5.560e+02 |
+| rateProvider     |   501 | 5.010e+02 |
+| upgradeToAndCall |  8544 | 8.544e+03 |
+| version          |   351 | 3.510e+02 |
 
 src/aggregators/megaeth/Aggregator_USDM_ETH.sol:Aggregator_USDM_ETH
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 5.340e+02 |
-| latestAnswer     | 2.650e+04 |
-| oracleName       | 1.143e+03 |
-| proxiableUUID    | 3.680e+02 |
-| quoteName        | 5.560e+02 |
-| rateProvider     | 5.010e+02 |
-| upgradeToAndCall | 8.544e+03 |
-| version          | 3.510e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   534 | 5.340e+02 |
+| latestAnswer     | 26500 | 2.650e+04 |
+| oracleName       |  1143 | 1.143e+03 |
+| proxiableUUID    |   368 | 3.680e+02 |
+| quoteName        |   556 | 5.560e+02 |
+| rateProvider     |   501 | 5.010e+02 |
+| upgradeToAndCall |  8544 | 8.544e+03 |
+| version          |   351 | 3.510e+02 |
 
 src/aggregators/megaeth/Aggregator_USDM_HYPE.sol:Aggregator_USDM_HYPE
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 5.340e+02 |
-| latestAnswer     | 2.650e+04 |
-| oracleName       | 1.143e+03 |
-| proxiableUUID    | 3.680e+02 |
-| quoteName        | 5.560e+02 |
-| rateProvider     | 5.010e+02 |
-| upgradeToAndCall | 8.544e+03 |
-| version          | 3.510e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   534 | 5.340e+02 |
+| latestAnswer     | 26500 | 2.650e+04 |
+| oracleName       |  1143 | 1.143e+03 |
+| proxiableUUID    |   368 | 3.680e+02 |
+| quoteName        |   556 | 5.560e+02 |
+| rateProvider     |   501 | 5.010e+02 |
+| upgradeToAndCall |  8544 | 8.544e+03 |
+| version          |   351 | 3.510e+02 |
 
 src/aggregators/megaeth/Aggregator_USDM_SOL.sol:Aggregator_USDM_SOL
-| function name    |       max |
-|------------------|-----------|
-| baseName         | 5.340e+02 |
-| latestAnswer     | 2.650e+04 |
-| oracleName       | 1.143e+03 |
-| proxiableUUID    | 3.680e+02 |
-| quoteName        | 5.560e+02 |
-| rateProvider     | 5.010e+02 |
-| upgradeToAndCall | 8.544e+03 |
-| version          | 3.510e+02 |
+| function name    |   max |   display |
+|------------------|-------|-----------|
+| baseName         |   534 | 5.340e+02 |
+| latestAnswer     | 26500 | 2.650e+04 |
+| oracleName       |  1143 | 1.143e+03 |
+| proxiableUUID    |   368 | 3.680e+02 |
+| quoteName        |   556 | 5.560e+02 |
+| rateProvider     |   501 | 5.010e+02 |
+| upgradeToAndCall |  8544 | 8.544e+03 |
+| version          |   351 | 3.510e+02 |

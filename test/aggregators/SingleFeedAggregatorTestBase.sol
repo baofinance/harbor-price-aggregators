@@ -8,8 +8,6 @@ import {MockAggregatorV3} from "@harbor-price-test/mock/MockAggregatorV3.sol";
 import {MockFxSAVE} from "@harbor-price-test/mock/MockFxSAVE.sol";
 import {IHarborPriceAggregatorV3} from "@harbor-price/interfaces/IHarborPriceAggregatorV3.sol";
 import {IBaoFixedOwnable} from "@bao/interfaces/IBaoFixedOwnable.sol";
-import {FxSaveRateLib} from "@harbor-price/rates/FxSaveRateLib.sol";
-import {ChainlinkFeedLib} from "@harbor-price/feeds/chainlink/ChainlinkFeedLib.sol";
 import {IPriceOracleErrors} from "@bao/interfaces/IPriceOracleErrors.sol";
 
 /// @title Base test contract for single-feed v3 aggregators (fxUSD pattern)
