@@ -1,7 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.30;
 
-import {WrappedPriceOracleConformance} from "@harbor-price-test/conformance/WrappedPriceOracleConformance.sol";
+import {
+    OracleSourceConformance,
+    OracleSource,
+    SourceKind
+} from "@harbor-price-test/conformance/OracleSourceConformance.sol";
 import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import {MockAggregatorV3} from "@harbor-price-test/mock/MockAggregatorV3.sol";
@@ -12,7 +16,7 @@ import {IPriceOracleErrors} from "@bao/interfaces/IPriceOracleErrors.sol";
 
 /// @title Base test contract for double-feed v3 aggregators with USDM rate (rate sourced from USDMY)
 /// @notice Provides all tests; concrete contracts only implement factory + identity
-abstract contract DoubleFeedUSDMAggregatorTestBase is WrappedPriceOracleConformance {
+abstract contract DoubleFeedUSDMAggregatorTestBase is OracleSourceConformance {
     MockUSDMY mockUSDMY;
     MockAggregatorV3 mockFirstFeed;
     MockAggregatorV3 mockSecondFeed;
@@ -71,6 +75,14 @@ abstract contract DoubleFeedUSDMAggregatorTestBase is WrappedPriceOracleConforma
             }
         }
         revert("Part not found");
+    }
+
+    /// @notice Everything the aggregator under test reads.
+    function _sources() internal view override returns (OracleSource[] memory sources) {
+        sources = new OracleSource[](3);
+        sources[0] = OracleSource({at: address(mockUSDMY), kind: SourceKind.Erc4626Rate});
+        sources[1] = OracleSource({at: address(mockFirstFeed), kind: SourceKind.ChainlinkFeed});
+        sources[2] = OracleSource({at: address(mockSecondFeed), kind: SourceKind.ChainlinkFeed});
     }
 
     function setUp() public virtual {

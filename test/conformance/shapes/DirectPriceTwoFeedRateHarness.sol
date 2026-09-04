@@ -2,6 +2,7 @@
 pragma solidity 0.8.30;
 
 import {AggregatorHarness} from "@harbor-price-test/conformance/AggregatorHarness.sol";
+import {OracleSource, SourceKind} from "@harbor-price-test/conformance/OracleSourceConformance.sol";
 // solhint-disable-next-line max-line-length
 import {Aggregator_DirectPrice_TwoFeedRate} from "@harbor-price/aggregators/base/Aggregator_DirectPrice_TwoFeedRate.sol";
 
@@ -24,6 +25,14 @@ abstract contract DirectPriceTwoFeedRateHarness is AggregatorHarness {
         _installFeedOnce(_rateNumeratorFeed(), PRICE_FEED_DECIMALS, int256(RATE_NUMERATOR_ANSWER));
         _installFeedOnce(_rateDenominatorFeed(), PRICE_FEED_DECIMALS, int256(RATE_DENOMINATOR_ANSWER));
         _installFeedOnce(_priceFeed(), PRICE_FEED_DECIMALS, int256(PRICE_ANSWER));
+    }
+
+    /// @notice Everything the aggregator under test reads.
+    function _sources() internal pure override returns (OracleSource[] memory sources) {
+        sources = new OracleSource[](3);
+        sources[0] = OracleSource({at: _rateNumeratorFeed(), kind: SourceKind.ChainlinkFeed});
+        sources[1] = OracleSource({at: _rateDenominatorFeed(), kind: SourceKind.ChainlinkFeed});
+        sources[2] = OracleSource({at: _priceFeed(), kind: SourceKind.ChainlinkFeed});
     }
 
     /// @notice The aggregator reads exactly the feeds the test declared, so the mocks it was driven

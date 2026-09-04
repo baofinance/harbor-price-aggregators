@@ -1,7 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.30;
 
-import {WrappedPriceOracleConformance} from "@harbor-price-test/conformance/WrappedPriceOracleConformance.sol";
+import {
+    OracleSourceConformance,
+    OracleSource,
+    SourceKind
+} from "@harbor-price-test/conformance/OracleSourceConformance.sol";
 import {console} from "forge-std/Test.sol";
 import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
@@ -12,7 +16,7 @@ import {IPriceOracleErrors} from "@bao/interfaces/IPriceOracleErrors.sol";
 
 /// @title Base test contract for Arbitrum multi-feed indexed v3 aggregators (MAG7i26 pattern: 7 feeds, rate feed, base USD feed, index price)
 /// @notice Provides all tests; concrete contracts only implement factory + identity
-abstract contract ArbitrumMultiFeedIndexAggregatorTestBase is WrappedPriceOracleConformance {
+abstract contract ArbitrumMultiFeedIndexAggregatorTestBase is OracleSourceConformance {
     MockAggregatorV3 mockRateFeed;
     MockAggregatorV3 mockBaseUsdFeed;
     MockAggregatorV3[7] mockFeeds;
@@ -96,6 +100,16 @@ abstract contract ArbitrumMultiFeedIndexAggregatorTestBase is WrappedPriceOracle
     // =========================================================================
     // Setup
     // =========================================================================
+
+    /// @notice Everything the aggregator under test reads.
+    function _sources() internal view override returns (OracleSource[] memory sources) {
+        sources = new OracleSource[](2 + FEED_COUNT);
+        sources[0] = OracleSource({at: address(mockRateFeed), kind: SourceKind.ChainlinkFeed});
+        sources[1] = OracleSource({at: address(mockBaseUsdFeed), kind: SourceKind.ChainlinkFeed});
+        for (uint256 i = 0; i < FEED_COUNT; i++) {
+            sources[2 + i] = OracleSource({at: address(mockFeeds[i]), kind: SourceKind.ChainlinkFeed});
+        }
+    }
 
     function setUp() public virtual {
         vm.warp(100_000);

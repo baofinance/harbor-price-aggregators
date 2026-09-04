@@ -1,7 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.30;
 
-import {WrappedPriceOracleConformance} from "@harbor-price-test/conformance/WrappedPriceOracleConformance.sol";
+import {
+    OracleSourceConformance,
+    OracleSource,
+    SourceKind
+} from "@harbor-price-test/conformance/OracleSourceConformance.sol";
 import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import {MockAggregatorV3} from "@harbor-price-test/mock/MockAggregatorV3.sol";
@@ -14,11 +18,18 @@ import {IPriceOracleErrors} from "@bao/interfaces/IPriceOracleErrors.sol";
 
 /// @title Base test contract for leveraged token/USD v3 aggregators
 /// @notice Provides all tests; concrete contracts only implement factory + identity
-abstract contract LeveragedTokenUSDAggregatorTestBase is WrappedPriceOracleConformance {
+abstract contract LeveragedTokenUSDAggregatorTestBase is OracleSourceConformance {
     MockMinter mockMinter;
     MockFxSAVE mockFxSAVE;
     MockWstETH mockWstETH;
     MockAggregatorV3 mockUnderlyingUsdFeed;
+
+    /// @dev The Minter is the one source in the repo whose zero is a value rather than a fault.
+    function _sources() internal view override returns (OracleSource[] memory sources) {
+        sources = new OracleSource[](2);
+        sources[0] = OracleSource({at: address(mockMinter), kind: SourceKind.MinterLeveragedPrice});
+        sources[1] = OracleSource({at: address(mockUnderlyingUsdFeed), kind: SourceKind.ChainlinkFeed});
+    }
 
     uint256 constant DEFAULT_HEARTBEAT = 3600;
     uint256 constant VALID_LEVERAGED_TOKEN_PRICE = 1.2e18; // leveragedToken / underlying

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.30;
 
-import {WrappedPriceOracleConformance} from "@harbor-price-test/conformance/WrappedPriceOracleConformance.sol";
+import {OracleSourceConformance} from "@harbor-price-test/conformance/OracleSourceConformance.sol";
 import {MockAggregatorV3} from "@harbor-price-test/mock/MockAggregatorV3.sol";
 import {IHarborPriceAggregatorV3} from "@harbor-price/interfaces/IHarborPriceAggregatorV3.sol";
 
@@ -16,7 +16,7 @@ import {IHarborPriceAggregatorV3} from "@harbor-price/interfaces/IHarborPriceAgg
 ///      which would let the zero and staleness tests pass without exercising anything — cannot occur.
 ///      A construction revert in `setUp` therefore means a source the aggregator reads was not
 ///      declared, so no mock was installed at it.
-abstract contract AggregatorHarness is WrappedPriceOracleConformance {
+abstract contract AggregatorHarness is OracleSourceConformance {
     /// @dev Far enough from zero that a feed timestamp can be set in the past without underflowing.
     uint256 internal constant START_TIME = 100_000;
 
