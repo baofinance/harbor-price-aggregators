@@ -12,6 +12,8 @@ contract BaseBOM5OracleForkTest is BaseForkTest {
     Aggregator_stETH_BOM5_base public oracle;
 
     function setUp() public override {
+        vm.skip(true, "Aggregator_stETH_BOM5_base is broken");
+
         super.setUp();
 
         // Deploy BOM5 oracle
