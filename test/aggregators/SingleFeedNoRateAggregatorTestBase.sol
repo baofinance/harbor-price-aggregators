@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.30;
 
-import {Test} from "forge-std/Test.sol";
+import {WrappedPriceOracleConformance} from "@harbor-price-test/conformance/WrappedPriceOracleConformance.sol";
 import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import {MockAggregatorV3} from "@harbor-price-test/mock/MockAggregatorV3.sol";
@@ -11,10 +11,8 @@ import {IPriceOracleErrors} from "@bao/interfaces/IPriceOracleErrors.sol";
 
 /// @title Base test contract for single-feed v3 aggregators without rate (PAXG pattern)
 /// @notice Provides all tests; concrete contracts only implement factory + identity
-abstract contract SingleFeedNoRateAggregatorTestBase is Test {
+abstract contract SingleFeedNoRateAggregatorTestBase is WrappedPriceOracleConformance {
     MockAggregatorV3 mockPriceFeed;
-
-    IHarborPriceAggregatorV3 aggregator;
 
     uint256 constant DEFAULT_HEARTBEAT = 3600;
     uint256 constant FIXED_RATE = 1e18;
