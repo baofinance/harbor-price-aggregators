@@ -49,7 +49,9 @@ abstract contract SingleFeedNoRateAggregatorTestBase is WrappedPriceOracleConfor
     // =========================================================================
 
     /// @notice Parse "Aggregator_BASE_QUOTE" to extract BASE
-    function _expectedBaseName() internal pure returns (string memory) {
+    /// @dev Virtual because a base asset's name is not always a legal identifier: BTC.b is spelled
+    ///      BTCb in `Aggregator_BTCb_USD`, so that test states the real name instead.
+    function _expectedBaseName() internal pure virtual returns (string memory) {
         return _parseContractName(1);
     }
 

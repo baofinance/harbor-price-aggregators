@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.30;
 
-import {Test, console} from "forge-std/Test.sol";
+import {ArbitrumForkTest} from "@harbor-price-test/fork/ArbitrumForkTest.sol";
+import {console} from "forge-std/Test.sol";
 import {Aggregator_stETH_AAPL_arbitrum} from "@harbor-price/arbitrum/Aggregator_stETH_AAPL_arbitrum.sol";
 import {Aggregator_stETH_AMZN_arbitrum} from "@harbor-price/arbitrum/Aggregator_stETH_AMZN_arbitrum.sol";
 import {Aggregator_stETH_GOOGL_arbitrum} from "@harbor-price/arbitrum/Aggregator_stETH_GOOGL_arbitrum.sol";
@@ -14,7 +15,7 @@ import {Aggregator_stETH_TSLA_arbitrum} from "@harbor-price/arbitrum/Aggregator_
 /// @notice Fork tests for Arbitrum stETH oracles
 /// @dev Run with: forge test --match-path "test/arbitrum/ArbitrumOraclesFork.t.sol" --fork-url $arbitrum -vvv
 ///      Ensure ARBITRUM_RPC_URL environment variable is set in foundry.toml
-contract ArbitrumOraclesForkTest is Test {
+contract ArbitrumOraclesForkTest is ArbitrumForkTest {
     Aggregator_stETH_AAPL_arbitrum public oracleAAPL;
     Aggregator_stETH_AMZN_arbitrum public oracleAMZN;
     Aggregator_stETH_GOOGL_arbitrum public oracleGOOGL;
@@ -24,12 +25,8 @@ contract ArbitrumOraclesForkTest is Test {
     Aggregator_stETH_SPY_arbitrum public oracleSPY;
     Aggregator_stETH_TSLA_arbitrum public oracleTSLA;
 
-    function setUp() public {
-        vm.skip(true);
-        // Create fork - skip if RPC URL not available
-        try vm.createSelectFork("arbitrum") {} catch {
-            vm.skip(true);
-        }
+    function setUp() public override {
+        super.setUp();
 
         // Deploy all oracles
         oracleAAPL = new Aggregator_stETH_AAPL_arbitrum();

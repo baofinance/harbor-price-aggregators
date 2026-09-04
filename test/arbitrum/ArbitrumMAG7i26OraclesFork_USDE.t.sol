@@ -1,21 +1,18 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.30;
 
-import {Test, console} from "forge-std/Test.sol";
+import {ArbitrumForkTest} from "@harbor-price-test/fork/ArbitrumForkTest.sol";
+import {console} from "forge-std/Test.sol";
 import {Aggregator_USDE_MAG7i26_arbitrum} from "@harbor-price/arbitrum/Aggregator_USDE_MAG7i26_arbitrum.sol";
 
 /// @notice Fork tests for Arbitrum MAG7.i26 indexed oracles (USDE)
 /// @dev Run with: forge test --match-path "test/arbitrum/*MAG7i26*USDE*.t.sol" --fork-url $arbitrum -vvv
 ///      Ensure ARBITRUM_RPC_URL environment variable is set in foundry.toml
-contract ArbitrumMAG7i26OraclesFork_USDETest is Test {
+contract ArbitrumMAG7i26OraclesFork_USDETest is ArbitrumForkTest {
     Aggregator_USDE_MAG7i26_arbitrum public oracleUSDE;
 
-    function setUp() public {
-        vm.skip(true);
-        // Create fork - skip if RPC URL not available
-        try vm.createSelectFork("arbitrum") {} catch {
-            vm.skip(true);
-        }
+    function setUp() public override {
+        super.setUp();
 
         // Deploy USDE MAG7.i26 oracle
         oracleUSDE = new Aggregator_USDE_MAG7i26_arbitrum();

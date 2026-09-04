@@ -1,21 +1,18 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.30;
 
-import {Test, console} from "forge-std/Test.sol";
+import {BaseForkTest} from "@harbor-price-test/fork/BaseForkTest.sol";
+import {console} from "forge-std/Test.sol";
 import {Aggregator_stETH_BOM5_base} from "@harbor-price/base/Aggregator_stETH_BOM5_base.sol";
 
 /// @notice Fork tests for Base BOM5 oracle
 /// @dev Run with: forge test --match-path "test/base/*BOM5*.t.sol" --fork-url $base -vvv
 ///      Ensure BASE_RPC_URL environment variable is set in foundry.toml
-contract BaseBOM5OracleForkTest is Test {
+contract BaseBOM5OracleForkTest is BaseForkTest {
     Aggregator_stETH_BOM5_base public oracle;
 
-    function setUp() public {
-        vm.skip(true);
-        // Create fork - skip if RPC URL not available
-        try vm.createSelectFork("base") {} catch {
-            vm.skip(true);
-        }
+    function setUp() public override {
+        super.setUp();
 
         // Deploy BOM5 oracle
         oracle = new Aggregator_stETH_BOM5_base();
