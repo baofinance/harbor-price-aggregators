@@ -54,6 +54,15 @@ contract Aggregator_hsstETH_BTC_USD is HarborAggregator_v3 {
     }
 
     /// @inheritdoc IWrappedPriceOracle
+    /// @dev Zero is a legitimate answer, and means the leveraged token is worth nothing. The rate is the
+    ///      Minter's `leveragedTokenPrice()`, which is exactly zero once a market is fully capped, and the rate
+    ///      is also a factor of the price, so the whole answer becomes (0, 0, 0, 0). A consumer must report
+    ///      that as a value rather than treat it as a failure to price - see `IMinter.leveragedTokenPrice`.
+    ///
+    ///      Unavailability arrives as a revert instead, from either source: the Minter reads its own price
+    ///      oracle through a validating reader that reverts rather than return a zero price, and
+    ///      `SingleFeedPriceLib` rejects this contract's own feed when it is stale, negative or zero. So a zero
+    ///      here can only have come from a wiped-out junior claim, never from a source that could not answer.
     function latestAnswer() external view override(IWrappedPriceOracle) returns (uint256, uint256, uint256, uint256) {
         uint256 rate = MINTER.leveragedTokenPrice();
 
