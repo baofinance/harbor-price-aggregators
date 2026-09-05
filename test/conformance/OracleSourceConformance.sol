@@ -5,7 +5,7 @@ import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/Aggr
 import {WrappedPriceOracleConformance} from "@harbor-price-test/conformance/WrappedPriceOracleConformance.sol";
 import {IFxSAVE} from "@harbor-price/interfaces/IFxSAVE.sol";
 import {IWstETH} from "@bao/interfaces/IWstETH.sol";
-import {IMinter} from "@harbor-price/interfaces/IMinter.sol";
+import {IMinter_v3} from "@harbor-price/interfaces/IMinter_v3.sol";
 import {IPriceOracleErrors} from "@bao/interfaces/IPriceOracleErrors.sol";
 import {IWrappedPriceOracle} from "@bao/interfaces/IWrappedPriceOracle.sol";
 
@@ -149,7 +149,7 @@ abstract contract OracleSourceConformance is WrappedPriceOracleConformance {
         } else {
             vm.mockCall(
                 source.at,
-                abi.encodeWithSelector(IMinter.leveragedTokenPrice.selector),
+                abi.encodeWithSelector(IMinter_v3.leveragedTokenPrice.selector),
                 abi.encode(uint256(0))
             );
         }
@@ -207,7 +207,7 @@ abstract contract OracleSourceConformance is WrappedPriceOracleConformance {
             return abi.encodeWithSelector(IWstETH.getStETHByWstETH.selector);
         }
 
-        return abi.encodeWithSelector(IMinter.leveragedTokenPrice.selector);
+        return abi.encodeWithSelector(IMinter_v3.leveragedTokenPrice.selector);
     }
 
     // =========================================================================

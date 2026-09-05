@@ -5,7 +5,7 @@ import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/Aggr
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 import {HarborAggregator_v3} from "@harbor-price/aggregators/HarborAggregator_v3.sol";
 import {IWrappedPriceOracle} from "@bao/interfaces/IWrappedPriceOracle.sol";
-import {IMinter} from "@harbor-price/interfaces/IMinter.sol";
+import {IMinter_v3} from "@harbor-price/interfaces/IMinter_v3.sol";
 import {SingleFeedPriceLib} from "@harbor-price/prices/SingleFeedPriceLib.sol";
 
 /// @notice hsstETH-SILVER/USD oracle (rate: minter leveragedTokenPrice, price: rate × single-feed price).
@@ -13,7 +13,7 @@ import {SingleFeedPriceLib} from "@harbor-price/prices/SingleFeedPriceLib.sol";
 /// @custom:oz-upgrades-unsafe-allow state-variable-immutable constructor
 // solhint-disable-next-line contract-name-capwords
 contract Aggregator_hsstETH_SILVER_USD is HarborAggregator_v3 {
-    IMinter public immutable MINTER;
+    IMinter_v3 public immutable MINTER;
 
     AggregatorV3Interface public immutable PRICE_FEED;
     uint8 public immutable PRICE_FEED_DECIMALS;
@@ -32,7 +32,7 @@ contract Aggregator_hsstETH_SILVER_USD is HarborAggregator_v3 {
         if (priceFeed_ == address(0)) revert InvalidAddress(priceFeed_);
         if (priceDivisor_ == 0) revert InvalidDivisor(priceDivisor_);
 
-        MINTER = IMinter(minter_);
+        MINTER = IMinter_v3(minter_);
 
         PRICE_FEED = AggregatorV3Interface(priceFeed_);
         PRICE_FEED_DECIMALS = PRICE_FEED.decimals();
@@ -55,14 +55,17 @@ contract Aggregator_hsstETH_SILVER_USD is HarborAggregator_v3 {
 
     /// @inheritdoc IWrappedPriceOracle
     /// @dev Zero is a legitimate answer, and means the leveraged token is worth nothing. The rate is the
-    ///      Minter's `leveragedTokenPrice()`, which is exactly zero once a market is fully capped, and the rate
-    ///      is also a factor of the price, so the whole answer becomes (0, 0, 0, 0). A consumer must report
-    ///      that as a value rather than treat it as a failure to price - see `IMinter.leveragedTokenPrice`.
+    ///      Minter's `leveragedTokenPrice()`, which is exactly zero at any collateral ratio at or below 1 - an
+    ///      ordinary depeg, not an extreme one - and the rate is also a factor of the price, so the whole
+    ///      answer becomes (0, 0, 0, 0). A consumer must report that as a value rather than treat it as a
+    ///      failure to price - see `IMinter_v3.leveragedTokenPrice`.
     ///
-    ///      Unavailability arrives as a revert instead, from either source: the Minter reads its own price
-    ///      oracle through a validating reader that reverts rather than return a zero price, and
-    ///      `SingleFeedPriceLib` rejects this contract's own feed when it is stale, negative or zero. So a zero
-    ///      here can only have come from a wiped-out junior claim, never from a source that could not answer.
+    ///      Unavailability arrives as a revert instead, and on both sides it is the price source that owes it.
+    ///      `SingleFeedPriceLib` rejects this contract's own feed when it is stale, negative or zero. The rate
+    ///      side rests on the Minter's own price oracle conforming in the same way, since that oracle's
+    ///      interface carries no staleness metadata for the Minter to check - all the Minter adds is a backstop
+    ///      rejecting a zero reading. So a zero here means the junior claim is worth nothing, never that a
+    ///      source could not answer.
     function latestAnswer() external view override(IWrappedPriceOracle) returns (uint256, uint256, uint256, uint256) {
         uint256 rate = MINTER.leveragedTokenPrice();
 
