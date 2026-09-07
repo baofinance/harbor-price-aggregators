@@ -1,18 +1,21 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.30;
 
-import {Test, console2} from "forge-std/Test.sol";
+import {console2} from "forge-std/Test.sol";
+
+import {BaoTest} from "@bao-test/BaoTest.sol";
 
 /// @title Base for the fork suites: selects the chain a suite needs, or fails saying what is missing
 /// @notice A fork test is a test like any other. It does not skip itself when the environment is not
 ///         set up, because a suite that quietly does not run looks exactly like a suite that passes.
 ///         An unset RPC variable is a failing test, and the failure names the variable.
-/// @dev Forking at the latest block is this repo's policy — its fork suites compare an aggregator
-///      against the feeds as they stand. bao-base's `BaoTest.forkMainnet()` pins a shared block for
-///      repos whose fork tests must be reproducible; the two policies must not be mixed inside one
-///      suite, or which one is in force becomes unanswerable. The block reached is logged, so a
-///      failure here can be re-run against the same state with `--fork-block-number`.
-abstract contract ForkTest is Test {
+/// @dev Forking at the latest block is this repo's default — its fork suites compare an aggregator
+///      against the feeds as they stand. bao-base's `BaoTest.mainnetForkBlock()` pins a shared block
+///      for repos whose fork tests must be reproducible; the two policies must not be mixed inside one
+///      suite, or which one is in force becomes unanswerable. A suite picks one by overriding
+///      `_forkBlock`, so it is whole-suite either way. The block reached is logged, so a failure at
+///      the latest block can be held still by pinning the block it reported.
+abstract contract ForkTest is BaoTest {
     /// @notice Thrown when the environment holds no endpoint for the chain this suite needs.
     error RpcUrlNotSet(string environmentVariable);
 
@@ -24,6 +27,13 @@ abstract contract ForkTest is Test {
 
     /// @notice The id of the chain this suite's contracts are wired for.
     function _chainId() internal pure virtual returns (uint256);
+
+    /// @inheritdoc BaoTest
+    /// @dev The latest block is this repo's default: its suites read the feeds as they stand. A suite
+    ///      that needs to hold a failure still overrides this again with the block it reported.
+    function forkBlock() internal pure virtual override returns (uint256) {
+        return LATEST_BLOCK;
+    }
 
     function setUp() public virtual {
         _selectFork();
@@ -48,7 +58,7 @@ abstract contract ForkTest is Test {
             revert RpcUrlNotSet(_rpcEnvironmentVariable());
         }
 
-        vm.createSelectFork(url);
+        forkAt(url);
         uint256 forkedChainId = vm.getChainId();
         if (forkedChainId != _chainId()) {
             revert ForkIsOnTheWrongChain(_rpcEnvironmentVariable(), _chainId(), forkedChainId);

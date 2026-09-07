@@ -20,6 +20,15 @@ import {MainnetRateSources} from "@harbor-price/rates/mainnet/MainnetRateSources
 /// @notice Mainnet fork checks that STRC/SPCX aggregators match live Chainlink + rate sources.
 /// @dev forge test --match-path test/mainnet/StrcSpcxOraclesFork.t.sol --fork-url $MAINNET_RPC_URL -vv
 contract StrcSpcxOraclesForkTest is MainnetForkTest {
+    /// @dev Pinned rather than latest, unlike the rest of this repo's fork suites. At this block the
+    ///      SPCX/USD feed had last posted 1788551639, and the block's own timestamp is 1788796007 —
+    ///      2.83 days later, against an 86400s heartbeat — so the two SPCX tests report `StaleFeedData`.
+    ///      Pinning holds that state still: the feed outage is reproduced on any machine, any day,
+    ///      rather than depending on what the feed happened to be doing when the suite last ran.
+    function forkBlock() internal pure override returns (uint256) {
+        return 25926463;
+    }
+
     IHarborPriceAggregatorV3 internal fxUsdStrc;
     IHarborPriceAggregatorV3 internal stEthStrc;
     IHarborPriceAggregatorV3 internal fxUsdSpcx;
