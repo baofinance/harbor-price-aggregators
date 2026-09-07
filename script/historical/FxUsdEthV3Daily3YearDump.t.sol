@@ -6,7 +6,7 @@ import {IWrappedPriceOracle} from "@bao/interfaces/IWrappedPriceOracle.sol";
 import {MainnetRateSources} from "@harbor-price/rates/mainnet/MainnetRateSources.sol";
 import {ETH_USD} from "@harbor-price/feeds/chainlink/mainnet/ETH_USD.sol";
 import {Aggregator_fxUSD_ETH} from "@harbor-price/aggregators/mainnet/Aggregator_fxUSD_ETH.sol";
-import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
+import {BaoERC1967Proxy} from "@bao/openzeppelin-compat/BaoERC1967Proxy.sol";
 import {LatestAnswerErrorClassifier} from "@harbor-price-script/historical/LatestAnswerErrorClassifier.sol";
 import {UtcTimestampFormatter} from "@harbor-price/format/UtcTimestampFormatter.sol";
 
@@ -193,7 +193,7 @@ contract FxUsdEthV3Daily3YearDump is Test {
         );
 
         // BaoFixedOwnable has no initialize - owner is set via constructor immutables
-        ERC1967Proxy proxy = new ERC1967Proxy(address(impl), "");
+        BaoERC1967Proxy proxy = new BaoERC1967Proxy(address(impl), "");
         IWrappedPriceOracle oracle = IWrappedPriceOracle(address(proxy));
 
         string memory filename = "results/FXUSD_ETH_v3_daily_3y.csv";

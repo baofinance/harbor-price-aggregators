@@ -6,7 +6,7 @@ import {
     OracleSource,
     SourceKind
 } from "@harbor-price-test/conformance/OracleSourceConformance.sol";
-import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
+import {BaoERC1967Proxy} from "@bao/openzeppelin-compat/BaoERC1967Proxy.sol";
 import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import {MockAggregatorV3} from "@harbor-price-test/mock/MockAggregatorV3.sol";
 import {MockMinter} from "@harbor-price-test/mock/MockMinter.sol";
@@ -167,7 +167,7 @@ abstract contract LeveragedTokenUSDAggregatorTestBase is OracleSourceConformance
             0,
             _expectedBaseName()
         );
-        ERC1967Proxy proxy = new ERC1967Proxy(address(impl1), "");
+        BaoERC1967Proxy proxy = new BaoERC1967Proxy(address(impl1), "");
         IHarborPriceAggregatorV3 proxied = IHarborPriceAggregatorV3(address(proxy));
 
         // Capture price with impl1

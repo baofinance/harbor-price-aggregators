@@ -20,6 +20,12 @@ remappings = [
   # openzeppelin
   "@openzeppelin/contracts/=lib/openzeppelin-contracts-upgradeable/lib/openzeppelin-contracts/contracts/",
   "@openzeppelin/contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts/",
+  # OZ 5.7.0 reduced UUPSUpgradeable to a re-export of the non-upgradeable core, dropping Initializable
+  # from its bases (and so _disableInitializers from anything reaching it through UUPSUpgradeable) and
+  # the empty __UUPSUpgradeable_init shims. Redirect the import PATH to bao-base's byte-identical shim
+  # so deployed sources keep the exact OZ import they were audited with.
+  # Longest-prefix match wins over the broader contracts-upgradeable/ rule above.
+  "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol=lib/bao-base/src/openzeppelin-compat/UUPSUpgradeable.sol",
   "openzeppelin-foundry-upgrades/=lib/openzeppelin-foundry-upgrades/src/",
   "solidity-stringutils/=lib/openzeppelin-foundry-upgrades/lib/solidity-stringutils/",
   # solady

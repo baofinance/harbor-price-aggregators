@@ -2,7 +2,7 @@
   "lib/bao-base": {
     "branch": {
       "name": "main",
-      "rev": "356fedbdc85818cc3b6949b934a7772f3e6f3af9"
+      "rev": "0adb0edc88d155a02dfd53c24af2cbeaaa57c110"
     }
   },
   "lib/chainlink-brownie-contracts": {
@@ -19,8 +19,8 @@
   },
   "lib/openzeppelin-contracts-upgradeable": {
     "tag": {
-      "name": "v5.4.0",
-      "rev": "e725abddf1e01cf05ace496e950fc8e243cc7cab"
+      "name": "v5.7.0",
+      "rev": "14f52c54d3a1eefbda3d4071efba24d3c1e07e8a"
     }
   },
   "lib/openzeppelin-foundry-upgrades": {
