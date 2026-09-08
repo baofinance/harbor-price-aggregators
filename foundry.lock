@@ -2,7 +2,7 @@
   "lib/bao-base": {
     "branch": {
       "name": "main",
-      "rev": "0adb0edc88d155a02dfd53c24af2cbeaaa57c110"
+      "rev": "86a1c58a16717b223308428a65bc72ac80dde033"
     }
   },
   "lib/chainlink-brownie-contracts": {
@@ -13,8 +13,8 @@
   },
   "lib/forge-std": {
     "tag": {
-      "name": "v1.11.0",
-      "rev": "8e40513d678f392f398620b3ef2b418648b33e89"
+      "name": "v1.16.2",
+      "rev": "bf647bd6046f2f7da30d0c2bf435e5c76a780c1b"
     }
   },
   "lib/openzeppelin-contracts-upgradeable": {
@@ -25,8 +25,8 @@
   },
   "lib/openzeppelin-foundry-upgrades": {
     "tag": {
-      "name": "v0.4.0",
-      "rev": "cbce1e00305e943aa1661d43f41e5ac72c662b07"
+      "name": "v0.4.2",
+      "rev": "8ddceb0c0d94f7f9420fee1ee30fffbdacadf08f"
     }
   },
   "lib/solady": {
