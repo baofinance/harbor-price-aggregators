@@ -14,6 +14,7 @@ import {ChainlinkFeedLib} from "@harbor-price/feeds/chainlink/ChainlinkFeedLib.s
 contract Aggregator_wBTC_USD is HarborAggregator_v3 {
     error InvalidAddress(address value);
     error InvalidDivisor(uint256 divisor);
+    uint256 internal constant FIXED_RATE = 1e18;
 
     AggregatorV3Interface public immutable FIRST_FEED; // wBTC/BTC
     uint8 public immutable FIRST_FEED_DECIMALS;
@@ -70,6 +71,6 @@ contract Aggregator_wBTC_USD is HarborAggregator_v3 {
         // price = (wBTC/BTC) * (BTC/USD) / divisor
         uint256 price = Math.mulDiv(wbtcBtc, btcUsd, PRICE_DIVISOR);
 
-        return (price, price, 0, 0);
+        return (price, price, FIXED_RATE, FIXED_RATE);
     }
 }
