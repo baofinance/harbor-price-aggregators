@@ -6,27 +6,27 @@
   "baoFactory": "0xD696E56b3A054734d4C6DCBD32E11a278b0EC458",
   "implementations": {
     "0x756B95D0bB61c195d1196EB2143D8D88570036AC": {
-      "pair": "USDM/ETH",
-      "contractSource": "src/megaeth/Aggregator_USDM_ETH_megaeth.sol",
-      "contractType": "Aggregator_USDM_ETH_megaeth",
+      "pair": "USDMY/ETH",
+      "contractSource": "src/megaeth/Aggregator_USDMY_ETH_megaeth.sol",
+      "contractType": "Aggregator_USDMY_ETH_megaeth",
       "deploymentTime": "2026-03-10T22:51:29Z"
     },
     "0x830AB2B3A936F727ee2FF67E9C073380B6f166D8": {
       "pair": "USDMY/HYPE",
-      "contractSource": "src/megaeth/Aggregator_USDM_HYPE_megaeth.sol",
-      "contractType": "Aggregator_USDM_HYPE_megaeth",
+      "contractSource": "src/megaeth/Aggregator_USDMY_HYPE_megaeth.sol",
+      "contractType": "Aggregator_USDMY_HYPE_megaeth",
       "deploymentTime": "2026-03-10T22:51:29Z"
     },
     "0xE2962ab29C723415F023451E9F166122d8b4a980": {
       "pair": "USDMY/SOL",
-      "contractSource": "src/megaeth/Aggregator_USDM_SOL_megaeth.sol",
-      "contractType": "Aggregator_USDM_SOL_megaeth",
+      "contractSource": "src/megaeth/Aggregator_USDMY_SOL_megaeth.sol",
+      "contractType": "Aggregator_USDMY_SOL_megaeth",
       "deploymentTime": "2026-03-10T22:51:29Z"
     },
     "0xf9cB23E2E882C67A899C448CBe2542df9eebC615": {
-      "pair": "USDM/BTC",
-      "contractSource": "src/megaeth/Aggregator_USDM_BTC_megaeth.sol",
-      "contractType": "Aggregator_USDM_BTC_megaeth",
+      "pair": "USDMY/BTC",
+      "contractSource": "src/megaeth/Aggregator_USDMY_BTC_megaeth.sol",
+      "contractType": "Aggregator_USDMY_BTC_megaeth",
       "deploymentTime": "2026-03-10T22:51:29Z"
     },
     "0xD3902Ac4c84FE62f831f38385e67E3d1BA27c75F": {
@@ -37,8 +37,8 @@
     },
     "0xF183D68f7D4e47f0546bF67f56677d35CE87617D": {
       "pair": "stETH/USD",
-      "contractSource": "src/megaeth/Aggregator_stETH_USD_megaeth.sol",
-      "contractType": "Aggregator_stETH_USD_megaeth",
+      "contractSource": "src/megaeth/Aggregator_wstETH_USD_megaeth.sol",
+      "contractType": "Aggregator_wstETH_USD_megaeth",
       "deploymentTime": "2026-03-10T22:51:29Z"
     },
     "0x46396230c61776A384c1c00c04A9784c4a2F5d8F": {
