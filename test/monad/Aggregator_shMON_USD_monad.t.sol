@@ -2,7 +2,7 @@
 pragma solidity 0.8.30;
 
 import {SingleRateSinglePriceHarness} from "@harbor-price-test/conformance/shapes/SingleRateSinglePriceHarness.sol";
-import {Aggregator_shMON_USD_monad} from "@harbor-price/aggregators/monad/Aggregator_shMON_USD_monad.sol";
+import {Aggregator_shMON_USD_monad} from "@harbor-price/monad/Aggregator_shMON_USD_monad.sol";
 import {SHMON_MON} from "@harbor-price/feeds/chainlink/monad/SHMON_MON.sol";
 import {MON_USD} from "@harbor-price/feeds/chainlink/monad/MON_USD.sol";
 

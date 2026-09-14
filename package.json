@@ -41,6 +41,7 @@
     "offchain:meta": "uv run python -m offchain_feeds meta",
     "sizes:raw": "forge clean; forge build --sizes",
     "sizes": "./lib/bao-base/run regression-of sizes",
+    "wtf": "python3 script/check-aggregator-naming.py",
     "lint": "./lib/bao-base/run lint-sol",
     "lint:test": "./lib/bao-base/run lint-sol --test",
     "lint:bash": "./lib/bao-base/run lint-bash --lint",

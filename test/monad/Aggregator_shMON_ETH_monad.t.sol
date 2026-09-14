@@ -3,7 +3,7 @@ pragma solidity 0.8.30;
 
 // solhint-disable-next-line max-line-length
 import {SingleRateDoublePriceHarness} from "@harbor-price-test/conformance/shapes/SingleRateDoublePriceHarness.sol";
-import {Aggregator_shMON_ETH_monad} from "@harbor-price/aggregators/monad/Aggregator_shMON_ETH_monad.sol";
+import {Aggregator_shMON_ETH_monad} from "@harbor-price/monad/Aggregator_shMON_ETH_monad.sol";
 import {SHMON_MON} from "@harbor-price/feeds/chainlink/monad/SHMON_MON.sol";
 import {MON_USD} from "@harbor-price/feeds/chainlink/monad/MON_USD.sol";
 import {ETH_USD} from "@harbor-price/feeds/chainlink/monad/ETH_USD.sol";

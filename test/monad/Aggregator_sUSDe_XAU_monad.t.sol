@@ -3,7 +3,7 @@ pragma solidity 0.8.30;
 
 // solhint-disable-next-line max-line-length
 import {DoubleFeedTwoFeedRateHarness} from "@harbor-price-test/conformance/shapes/DoubleFeedTwoFeedRateHarness.sol";
-import {Aggregator_sUSDe_XAU_monad} from "@harbor-price/aggregators/monad/Aggregator_sUSDe_XAU_monad.sol";
+import {Aggregator_sUSDe_XAU_monad} from "@harbor-price/monad/Aggregator_sUSDe_XAU_monad.sol";
 import {SUSDE_USD} from "@harbor-price/feeds/chainlink/monad/SUSDE_USD.sol";
 import {USDE_USD} from "@harbor-price/feeds/chainlink/monad/USDE_USD.sol";
 import {XAU_USD} from "@harbor-price/feeds/chainlink/monad/XAU_USD.sol";

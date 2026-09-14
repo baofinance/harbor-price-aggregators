@@ -3,7 +3,7 @@ pragma solidity 0.8.30;
 
 // solhint-disable-next-line max-line-length
 import {DirectPriceTwoFeedRateHarness} from "@harbor-price-test/conformance/shapes/DirectPriceTwoFeedRateHarness.sol";
-import {Aggregator_wstETH_USD_monad} from "@harbor-price/aggregators/monad/Aggregator_wstETH_USD_monad.sol";
+import {Aggregator_wstETH_USD_monad} from "@harbor-price/monad/Aggregator_wstETH_USD_monad.sol";
 import {WSTETH_USD} from "@harbor-price/feeds/chainlink/monad/WSTETH_USD.sol";
 import {STETH_USD} from "@harbor-price/feeds/chainlink/monad/STETH_USD.sol";
 
