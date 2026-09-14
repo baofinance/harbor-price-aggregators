@@ -7,7 +7,7 @@ import {
     SourceKind
 } from "@harbor-price-test/conformance/OracleSourceConformance.sol";
 import {console} from "forge-std/Test.sol";
-import {BaoERC1967Proxy} from "@bao/openzeppelin-compat/BaoERC1967Proxy.sol";
+import {BaoERC1967Proxy} from "@bao/BaoERC1967Proxy.sol";
 import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import {MockAggregatorV3} from "@harbor-price-test/mock/MockAggregatorV3.sol";
 import {IHarborPriceAggregatorV3} from "@harbor-price/interfaces/IHarborPriceAggregatorV3.sol";

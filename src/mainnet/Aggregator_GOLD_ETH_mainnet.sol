@@ -3,7 +3,7 @@ pragma solidity 0.8.30;
 
 import {XAU_USD} from "@harbor-price/feeds/chainlink/mainnet/XAU_USD.sol";
 import {ETH_USD} from "@harbor-price/feeds/chainlink/mainnet/ETH_USD.sol";
-import {Aggregator_Peg_ETH} from "@harbor-price/aggregators/mainnet/Aggregator_Peg_ETH.sol";
+import {Aggregator_Peg_ETH} from "@harbor-price/aggregators/Aggregator_Peg_ETH.sol";
 
 /// @notice Ethereum mainnet GOLD/ETH oracle.
 /// @dev Hard-coded wiring for mainnet; deploy scripts select this bytecode by chain.

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.30;
 
-import {Aggregator_DoubleFeed_TwoFeedRate} from "@harbor-price/aggregators/base/Aggregator_DoubleFeed_TwoFeedRate.sol";
+import {Aggregator_DoubleFeed_TwoFeedRate} from "@harbor-price/aggregators/Aggregator_DoubleFeed_TwoFeedRate.sol";
 import {WSTETH_USD} from "@harbor-price/feeds/chainlink/monad/WSTETH_USD.sol";
 import {STETH_USD} from "@harbor-price/feeds/chainlink/monad/STETH_USD.sol";
 import {BTC_USD} from "@harbor-price/feeds/chainlink/monad/BTC_USD.sol";

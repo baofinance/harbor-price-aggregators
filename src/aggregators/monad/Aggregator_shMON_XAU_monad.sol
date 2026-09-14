@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.30;
 
-import {Aggregator_SingleRate_DoublePrice} from "@harbor-price/aggregators/base/Aggregator_SingleRate_DoublePrice.sol";
+import {Aggregator_SingleRate_DoublePrice} from "@harbor-price/aggregators/Aggregator_SingleRate_DoublePrice.sol";
 import {SHMON_MON} from "@harbor-price/feeds/chainlink/monad/SHMON_MON.sol";
 import {MON_USD} from "@harbor-price/feeds/chainlink/monad/MON_USD.sol";
 import {XAU_USD} from "@harbor-price/feeds/chainlink/monad/XAU_USD.sol";

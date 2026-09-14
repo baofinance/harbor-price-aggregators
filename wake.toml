@@ -17,7 +17,6 @@ remappings = [
   # Must stay identical to the same block in foundry.toml, in the same ORDER — `yarn doctor` fails
   # when wake and forge resolve an import differently, because then wake analyses a program that is
   # not the one built, and matching here is by order rather than by longest prefix.
-  "@openzeppelin/contracts-upgradeable/proxy/utils/=lib/bao-base/src/openzeppelin-compat/proxy/utils/",
   "@openzeppelin/contracts/=lib/openzeppelin-contracts-upgradeable/lib/openzeppelin-contracts/contracts/",
   "@openzeppelin/contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts/",
   "openzeppelin-foundry-upgrades/=lib/openzeppelin-foundry-upgrades/src/",

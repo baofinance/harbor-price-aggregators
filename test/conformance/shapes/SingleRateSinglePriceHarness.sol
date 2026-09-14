@@ -3,7 +3,7 @@ pragma solidity 0.8.30;
 
 import {AggregatorHarness} from "@harbor-price-test/conformance/AggregatorHarness.sol";
 import {OracleSource, SourceKind} from "@harbor-price-test/conformance/OracleSourceConformance.sol";
-import {Aggregator_SingleRate_SinglePrice} from "@harbor-price/aggregators/base/Aggregator_SingleRate_SinglePrice.sol";
+import {Aggregator_SingleRate_SinglePrice} from "@harbor-price/aggregators/Aggregator_SingleRate_SinglePrice.sol";
 
 /// @title Conformance harness for aggregators shaped as one rate feed and one price feed
 /// @notice A concrete test names the two feeds its aggregator was wired to; this installs a mock at

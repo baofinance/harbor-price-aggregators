@@ -4,7 +4,7 @@ pragma solidity 0.8.30;
 import {AggregatorHarness} from "@harbor-price-test/conformance/AggregatorHarness.sol";
 import {OracleSource, SourceKind} from "@harbor-price-test/conformance/OracleSourceConformance.sol";
 // solhint-disable-next-line max-line-length
-import {Aggregator_DoubleFeed_TwoFeedRate} from "@harbor-price/aggregators/base/Aggregator_DoubleFeed_TwoFeedRate.sol";
+import {Aggregator_DoubleFeed_TwoFeedRate} from "@harbor-price/aggregators/Aggregator_DoubleFeed_TwoFeedRate.sol";
 
 /// @title Conformance harness for aggregators whose rate is the ratio of two feeds and whose price comes from two more
 /// @notice A concrete test names the four feeds its aggregator was wired to; this installs a mock at

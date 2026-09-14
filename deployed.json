@@ -7,6 +7,9 @@
       "address": "0x003056C3a3262b37C59143149D062Ad3a6a45BF7",
       "contractType": "Aggregator_stETH_USD_mainnet",
       "source": "src/mainnet/Aggregator_stETH_USD_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/v3-aggregators.json"
+      ],
       "commit": "a2ac04c401dd1d8ed65bb7db3425219673a28332",
       "commitTimestamp": "2026-05-01T20:59:06Z",
       "deployBlock": 25117752,
@@ -117,6 +120,9 @@
       "address": "0x0D0fDBb10B9EAf18A1034e9942F95af0147CC310",
       "contractType": "Aggregator_sUSDe_BTC_mainnet",
       "source": "src/mainnet/Aggregator_sUSDe_BTC_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/v4-oracles.json"
+      ],
       "commit": "6e10fc9deacd77120546ff4fb768de5bc30499f6",
       "commitTimestamp": "2026-02-07T00:55:08Z",
       "deployBlock": 24401555,
@@ -230,6 +236,9 @@
       "address": "0x0D2056c4C556686337e98783e0Ad10a36B784A3a",
       "contractType": "Aggregator_tBTC_USD_mainnet",
       "source": "src/mainnet/Aggregator_tBTC_USD_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/v3-aggregators.json"
+      ],
       "commit": "1a2599cac933bdad62e2ea4e08ee1d878313e187",
       "commitTimestamp": "2026-05-29T22:06:29Z",
       "deployBlock": 25117829,
@@ -336,6 +345,9 @@
       "address": "0x102daaC2055BcD48026bC180ccC13e779E1a8516",
       "contractType": "Aggregator_fxUSD_GOLD_mainnet",
       "source": "src/mainnet/Aggregator_fxUSD_GOLD_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/v3-aggregators.json"
+      ],
       "commit": "9218c091cc36e2bc5e00d9096b7726555a858a29",
       "commitTimestamp": "2026-01-14T16:25:10Z",
       "deployBlock": 24233202,
@@ -448,6 +460,9 @@
       "address": "0x22708015318eBa553EE596Fb56786a7aD7133217",
       "contractType": "Aggregator_stETH_SPCX_mainnet",
       "source": "src/mainnet/Aggregator_stETH_SPCX_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/v3-oracles.json"
+      ],
       "commit": "8545d09136f5cc67b2aa75a90566ade5bfc24750",
       "commitTimestamp": "2026-08-17T21:54:11Z",
       "deployBlock": 25777478,
@@ -559,6 +574,9 @@
       "address": "0x28bBAaf05dEE8A06d4206089bCd17c1129e6Edca",
       "contractType": "Aggregator_wstETH_USD_mainnet",
       "source": "src/mainnet/Aggregator_wstETH_USD_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/v4-oracles.json"
+      ],
       "commit": "6e10fc9deacd77120546ff4fb768de5bc30499f6",
       "commitTimestamp": "2026-02-07T00:55:08Z",
       "deployBlock": 24401547,
@@ -669,6 +687,9 @@
       "address": "0x2EFe29a59C0E2330F06DCB18F70602C3875855d1",
       "contractType": "Aggregator_fxUSD_SPCX_mainnet",
       "source": "src/mainnet/Aggregator_fxUSD_SPCX_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/v3-oracles.json"
+      ],
       "commit": "8545d09136f5cc67b2aa75a90566ade5bfc24750",
       "commitTimestamp": "2026-08-17T21:54:11Z",
       "deployBlock": 25777476,
@@ -781,6 +802,9 @@
       "address": "0x34dfDF00262E1A3b61c7a0616F0645A928Dd8187",
       "contractType": "Aggregator_hsstETH_GOLD_USD_mainnet",
       "source": "src/mainnet/Aggregator_hsstETH_GOLD_USD_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/leverage-v4-oracles.json"
+      ],
       "commit": "f26fa71dad2eb0ececfd48e81c15654c777d8143",
       "commitTimestamp": "2026-03-01T22:14:58Z",
       "deployBlock": 24551778,
@@ -889,6 +913,9 @@
       "address": "0x3Be5C5A88a9Aac9bf8fA13c74Cab9c7695c416A9",
       "contractType": "Aggregator_wBTC_USD_mainnet",
       "source": "src/mainnet/Aggregator_wBTC_USD_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/v3-aggregators.json"
+      ],
       "commit": "a2ac04c401dd1d8ed65bb7db3425219673a28332",
       "commitTimestamp": "2026-05-01T20:59:06Z",
       "deployBlock": 25117749,
@@ -995,6 +1022,9 @@
       "address": "0x436C33222136554192733C6771669c4B51B7fE3D",
       "contractType": "Aggregator_sUSDe_XAG_mainnet",
       "source": "src/mainnet/Aggregator_sUSDe_XAG_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/v4-oracles.json"
+      ],
       "commit": "6e10fc9deacd77120546ff4fb768de5bc30499f6",
       "commitTimestamp": "2026-02-07T00:55:08Z",
       "deployBlock": 24401562,
@@ -1108,6 +1138,10 @@
       "address": "0x4be4501336130E61e5872cB953e886a3a84D34Cc",
       "contractType": "Aggregator_fxUSD_XAU_mainnet",
       "source": "src/Aggregator_fxUSD_XAU_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/v3-aggregators.json",
+        "deployments/mainnet/v3-oracles.json"
+      ],
       "commit": "3a108494dfa8c9eacac909883874d7235535d777",
       "commitTimestamp": "2025-12-31T09:07:24Z",
       "deployBlock": 24131777,
@@ -1220,6 +1254,9 @@
       "address": "0x50E198a8Fa7e4c95B355E34cba026133F68D1637",
       "contractType": "Aggregator_hsstETH_SILVER_USD_mainnet",
       "source": "src/mainnet/Aggregator_hsstETH_SILVER_USD_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/leverage-v4-oracles.json"
+      ],
       "commit": "f26fa71dad2eb0ececfd48e81c15654c777d8143",
       "commitTimestamp": "2026-03-01T22:14:58Z",
       "deployBlock": 24551779,
@@ -1328,6 +1365,9 @@
       "address": "0x520A61890FEBC1EcC5056cDD3CAa7CFc3C92E8A9",
       "contractType": "Aggregator_tBTC_USD_mainnet",
       "source": "src/mainnet/Aggregator_tBTC_USD_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/v3-aggregators.json"
+      ],
       "commit": "a2ac04c401dd1d8ed65bb7db3425219673a28332",
       "commitTimestamp": "2026-05-01T20:59:06Z",
       "deployBlock": 25117750,
@@ -1434,6 +1474,9 @@
       "address": "0x5C38C744CfF6ec051d955566384BF921CFAaAc26",
       "contractType": "Aggregator_sUSDe_GOLD_mainnet",
       "source": "src/mainnet/Aggregator_sUSDe_GOLD_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/v4-oracles.json"
+      ],
       "commit": "6e10fc9deacd77120546ff4fb768de5bc30499f6",
       "commitTimestamp": "2026-02-07T00:55:08Z",
       "deployBlock": 24401568,
@@ -1547,6 +1590,10 @@
       "address": "0x63d961913cd855f5f8C8cA7cDC22771abA3326FE",
       "contractType": "Aggregator_fxUSD_MCAP_mainnet",
       "source": "src/Aggregator_fxUSD_MCAP_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/v3-aggregators.json",
+        "deployments/mainnet/v3-oracles.json"
+      ],
       "commit": "3a108494dfa8c9eacac909883874d7235535d777",
       "commitTimestamp": "2025-12-31T09:07:24Z",
       "deployBlock": 24131775,
@@ -1659,6 +1706,9 @@
       "address": "0x652E9B0ad84fD2A0c3806129bDbDEF4585bb29e8",
       "contractType": "Aggregator_hsfxUSD_GOLD_USD_mainnet",
       "source": "src/mainnet/Aggregator_hsfxUSD_GOLD_USD_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/leverage-v4-oracles.json"
+      ],
       "commit": "f26fa71dad2eb0ececfd48e81c15654c777d8143",
       "commitTimestamp": "2026-03-01T22:14:58Z",
       "deployBlock": 24551768,
@@ -1767,6 +1817,9 @@
       "address": "0x657bE7a2b91F95222D163Bee3B5F4C27bed598C5",
       "contractType": "Aggregator_hsfxUSD_EUR_USD_mainnet",
       "source": "src/mainnet/Aggregator_hsfxUSD_EUR_USD_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/leverage-v4-oracles.json"
+      ],
       "commit": "6e10fc9deacd77120546ff4fb768de5bc30499f6",
       "commitTimestamp": "2026-02-07T00:55:08Z",
       "deployBlock": 24401487,
@@ -1875,6 +1928,9 @@
       "address": "0x690D6cad065F39abd0E166086CFa1935219B68da",
       "contractType": "Aggregator_stETH_STRC_mainnet",
       "source": "src/mainnet/Aggregator_stETH_STRC_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/v3-oracles.json"
+      ],
       "commit": "8545d09136f5cc67b2aa75a90566ade5bfc24750",
       "commitTimestamp": "2026-08-17T21:54:11Z",
       "deployBlock": 25777473,
@@ -1986,6 +2042,10 @@
       "address": "0x6B5A6950f7f2b380c33aF81dbbD7DA31caaFEA63",
       "contractType": "Aggregator_stETH_MCAP_mainnet",
       "source": "src/Aggregator_stETH_MCAP_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/v3-aggregators.json",
+        "deployments/mainnet/v3-oracles.json"
+      ],
       "commit": "3a108494dfa8c9eacac909883874d7235535d777",
       "commitTimestamp": "2025-12-31T09:07:24Z",
       "deployBlock": 24131780,
@@ -2097,6 +2157,10 @@
       "address": "0x6Daab5e7999D634ae849c30658B17D0e94f0f965",
       "contractType": "Aggregator_stETH_EUR_mainnet",
       "source": "src/Aggregator_stETH_EUR_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/v3-aggregators.json",
+        "deployments/mainnet/v3-oracles.json"
+      ],
       "commit": "3a108494dfa8c9eacac909883874d7235535d777",
       "commitTimestamp": "2025-12-31T09:07:24Z",
       "deployBlock": 24131779,
@@ -2208,6 +2272,9 @@
       "address": "0x70387587a0d3A01a2C75904Dd8CA355a921cd1F3",
       "contractType": "Aggregator_hsfxUSD_SILVER_USD_mainnet",
       "source": "src/mainnet/Aggregator_hsfxUSD_SILVER_USD_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/leverage-v4-oracles.json"
+      ],
       "commit": "f26fa71dad2eb0ececfd48e81c15654c777d8143",
       "commitTimestamp": "2026-03-01T22:14:58Z",
       "deployBlock": 24551775,
@@ -2316,6 +2383,9 @@
       "address": "0x777BD12e1f61B8cac19Cbd30c0233C46B4683C00",
       "contractType": "Aggregator_hsstETH_EUR_USD_mainnet",
       "source": "src/mainnet/Aggregator_hsstETH_EUR_USD_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/leverage-v4-oracles.json"
+      ],
       "commit": "6e10fc9deacd77120546ff4fb768de5bc30499f6",
       "commitTimestamp": "2026-02-07T00:55:08Z",
       "deployBlock": 24401488,
@@ -2424,6 +2494,10 @@
       "address": "0x78D74eA76Fbfd476A06c1678dC89c025595c8536",
       "contractType": "Aggregator_fxUSD_ETH_mainnet",
       "source": "src/Aggregator_fxUSD_ETH_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/v3-aggregators.json",
+        "deployments/mainnet/v3-oracles.json"
+      ],
       "commit": "3a108494dfa8c9eacac909883874d7235535d777",
       "commitTimestamp": "2025-12-31T09:07:24Z",
       "deployBlock": 24131772,
@@ -2536,6 +2610,9 @@
       "address": "0x7A4AC7b91bCbd069Fa0B45bdb5e393915A663cfD",
       "contractType": "Aggregator_sUSDe_SILVER_mainnet",
       "source": "src/mainnet/Aggregator_sUSDe_SILVER_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/v4-oracles.json"
+      ],
       "commit": "6e10fc9deacd77120546ff4fb768de5bc30499f6",
       "commitTimestamp": "2026-02-07T00:55:08Z",
       "deployBlock": 24401569,
@@ -2649,6 +2726,9 @@
       "address": "0x80e63F7b320CB820659CEa1cBdc7C1b35fe1a72C",
       "contractType": "Aggregator_stETH_GOLD_mainnet",
       "source": "src/mainnet/Aggregator_stETH_GOLD_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/v3-aggregators.json"
+      ],
       "commit": "9218c091cc36e2bc5e00d9096b7726555a858a29",
       "commitTimestamp": "2026-01-14T16:25:10Z",
       "deployBlock": 24233205,
@@ -2760,6 +2840,10 @@
       "address": "0x863C1185470b3D2d3E9D5FbB82e7837de081F46c",
       "contractType": "Aggregator_stETH_XAU_mainnet",
       "source": "src/Aggregator_stETH_XAU_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/v3-aggregators.json",
+        "deployments/mainnet/v3-oracles.json"
+      ],
       "commit": "3a108494dfa8c9eacac909883874d7235535d777",
       "commitTimestamp": "2025-12-31T09:07:24Z",
       "deployBlock": 24131783,
@@ -2871,6 +2955,9 @@
       "address": "0x87292E650040B2D284983c0E0814344506948080",
       "contractType": "Aggregator_wBTC_USD_mainnet",
       "source": "src/mainnet/Aggregator_wBTC_USD_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/v4-oracles.json"
+      ],
       "commit": "a3b9a959e23655771cf0084372628ab70ad60102",
       "commitTimestamp": "2026-02-07T01:33:30Z",
       "deployBlock": 24401676,
@@ -2977,6 +3064,10 @@
       "address": "0x8f6F9C8af44f5f15a18d0fa93B5814a623Fa6353",
       "contractType": "Aggregator_fxUSD_EUR_mainnet",
       "source": "src/Aggregator_fxUSD_EUR_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/v3-aggregators.json",
+        "deployments/mainnet/v3-oracles.json"
+      ],
       "commit": "3a108494dfa8c9eacac909883874d7235535d777",
       "commitTimestamp": "2025-12-31T09:07:24Z",
       "deployBlock": 24131773,
@@ -3089,6 +3180,9 @@
       "address": "0x969Fb67331d6Fa3E729292FAa5752BBA759f2b7F",
       "contractType": "Aggregator_sUSDe_ETH_mainnet",
       "source": "src/mainnet/Aggregator_sUSDe_ETH_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/v4-oracles.json"
+      ],
       "commit": "6e10fc9deacd77120546ff4fb768de5bc30499f6",
       "commitTimestamp": "2026-02-07T00:55:08Z",
       "deployBlock": 24401557,
@@ -3202,6 +3296,9 @@
       "address": "0x99fC4A92FaA72DEb2C3329E4ddDc4C783A9ef6F5",
       "contractType": "Aggregator_stETH_SILVER_mainnet",
       "source": "src/mainnet/Aggregator_stETH_SILVER_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/v3-aggregators.json"
+      ],
       "commit": "9218c091cc36e2bc5e00d9096b7726555a858a29",
       "commitTimestamp": "2026-01-14T16:25:10Z",
       "deployBlock": 24233206,
@@ -3313,6 +3410,10 @@
       "address": "0x9f62503D61cdA530216ad46c1d239258bd201034",
       "contractType": "Aggregator_fxUSD_BTC_mainnet",
       "source": "src/Aggregator_fxUSD_BTC_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/v3-aggregators.json",
+        "deployments/mainnet/v3-oracles.json"
+      ],
       "commit": "3a108494dfa8c9eacac909883874d7235535d777",
       "commitTimestamp": "2025-12-31T09:07:24Z",
       "deployBlock": 24131770,
@@ -3425,6 +3526,9 @@
       "address": "0xA8643E35Ef119F983B09C322039e8AA49A3e3372",
       "contractType": "Aggregator_hsfxUSD_ETH_USD_mainnet",
       "source": "src/mainnet/Aggregator_hsfxUSD_ETH_USD_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/leverage-v4-oracles.json"
+      ],
       "commit": "6e10fc9deacd77120546ff4fb768de5bc30499f6",
       "commitTimestamp": "2026-02-07T00:55:08Z",
       "deployBlock": 24401491,
@@ -3533,6 +3637,9 @@
       "address": "0xA8A130Bbf041962B60e81009F09c41bd930D1294",
       "contractType": "Aggregator_sUSDe_XAU_mainnet",
       "source": "src/mainnet/Aggregator_sUSDe_XAU_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/v4-oracles.json"
+      ],
       "commit": "6e10fc9deacd77120546ff4fb768de5bc30499f6",
       "commitTimestamp": "2026-02-07T00:55:08Z",
       "deployBlock": 24401561,
@@ -3646,6 +3753,9 @@
       "address": "0xB54cdaF42af247025F0Ee8689f19aAF903843771",
       "contractType": "Aggregator_wBTC_USD_mainnet",
       "source": "src/mainnet/Aggregator_wBTC_USD_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/v3-aggregators.json"
+      ],
       "commit": "236f52717e174b91e1dfe4e3b13ed07993e25233",
       "commitTimestamp": "2026-09-12T14:01:23Z",
       "deployBlock": 25117826,
@@ -3752,6 +3862,9 @@
       "address": "0xBbA1a473bdFa0fa661C0Df666050a7aad3C58bFB",
       "contractType": "Aggregator_PAXG_USD_mainnet",
       "source": "src/mainnet/Aggregator_PAXG_USD_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/v3-aggregators.json"
+      ],
       "commit": "a2ac04c401dd1d8ed65bb7db3425219673a28332",
       "commitTimestamp": "2026-05-01T20:59:06Z",
       "deployBlock": 25117751,
@@ -3858,6 +3971,9 @@
       "address": "0xbceceC6458fDd5a11c18beDB8b9ebcF16C81B757",
       "contractType": "Aggregator_fxUSD_EUR_mainnet",
       "source": "src/mainnet/Aggregator_fxUSD_EUR_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/v3-aggregators-testEUR.json"
+      ],
       "commit": "81a90baa0c26b82b178fc4f63b09cd427dbdb76a",
       "commitTimestamp": "2026-01-14T16:31:09Z",
       "deployBlock": 24270058,
@@ -3970,6 +4086,9 @@
       "address": "0xbE19765f4711Ba7e88D98Eec096d7f21a3E0eeCf",
       "contractType": "Aggregator_fxUSD_STRC_mainnet",
       "source": "src/mainnet/Aggregator_fxUSD_STRC_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/v3-oracles.json"
+      ],
       "commit": "8545d09136f5cc67b2aa75a90566ade5bfc24750",
       "commitTimestamp": "2026-08-17T21:54:11Z",
       "deployBlock": 25777471,
@@ -4082,6 +4201,10 @@
       "address": "0xC52B9C4eB5139E817e625290874c1CeBD44b2f6A",
       "contractType": "Aggregator_stETH_BTC_mainnet",
       "source": "src/Aggregator_stETH_BTC_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/v3-aggregators.json",
+        "deployments/mainnet/v3-oracles.json"
+      ],
       "commit": "3a108494dfa8c9eacac909883874d7235535d777",
       "commitTimestamp": "2025-12-31T09:07:24Z",
       "deployBlock": 24131778,
@@ -4193,6 +4316,10 @@
       "address": "0xD59a1c8D1fa8f3FAE1E1f835E243A7BFb6173f91",
       "contractType": "Aggregator_fxUSD_XAG_mainnet",
       "source": "src/Aggregator_fxUSD_XAG_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/v3-aggregators.json",
+        "deployments/mainnet/v3-oracles.json"
+      ],
       "commit": "3a108494dfa8c9eacac909883874d7235535d777",
       "commitTimestamp": "2025-12-31T09:07:24Z",
       "deployBlock": 24131776,
@@ -4305,6 +4432,9 @@
       "address": "0xd8DF89f1C15a26F8A6C119161812F199cdFe23Ee",
       "contractType": "Aggregator_tBTC_USD_mainnet",
       "source": "src/mainnet/Aggregator_tBTC_USD_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/v4-oracles.json"
+      ],
       "commit": "a3b9a959e23655771cf0084372628ab70ad60102",
       "commitTimestamp": "2026-02-07T01:33:30Z",
       "deployBlock": 24401677,
@@ -4411,6 +4541,9 @@
       "address": "0xDA6097f2b8805a01FcBE8BA8Fc2c45FCb7D3e206",
       "contractType": "Aggregator_sUSDe_EUR_mainnet",
       "source": "src/mainnet/Aggregator_sUSDe_EUR_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/v4-oracles.json"
+      ],
       "commit": "6e10fc9deacd77120546ff4fb768de5bc30499f6",
       "commitTimestamp": "2026-02-07T00:55:08Z",
       "deployBlock": 24401558,
@@ -4524,6 +4657,9 @@
       "address": "0xDb1D0f6ABb300136399b684213B1078556C47698",
       "contractType": "Aggregator_fxUSD_SILVER_mainnet",
       "source": "src/mainnet/Aggregator_fxUSD_SILVER_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/v3-aggregators.json"
+      ],
       "commit": "9218c091cc36e2bc5e00d9096b7726555a858a29",
       "commitTimestamp": "2026-01-14T16:25:10Z",
       "deployBlock": 24233204,
@@ -4636,6 +4772,10 @@
       "address": "0xE0Ba50991B891df0f0F92d06127B43314a5e427d",
       "contractType": "Aggregator_stETH_XAG_mainnet",
       "source": "src/Aggregator_stETH_XAG_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/v3-aggregators.json",
+        "deployments/mainnet/v3-oracles.json"
+      ],
       "commit": "3a108494dfa8c9eacac909883874d7235535d777",
       "commitTimestamp": "2025-12-31T09:07:24Z",
       "deployBlock": 24131781,
@@ -4747,6 +4887,9 @@
       "address": "0xEac675b5E2304b6B62540880319C5679b3d69437",
       "contractType": "Aggregator_wBTC_USD_mainnet",
       "source": "src/mainnet/Aggregator_wBTC_USD_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/v3-aggregators.json"
+      ],
       "commit": "1a2599cac933bdad62e2ea4e08ee1d878313e187",
       "commitTimestamp": "2026-05-29T22:06:29Z",
       "deployBlock": 25117948,
@@ -4853,6 +4996,9 @@
       "address": "0xeeeE1DA506747A436Ae604425C180193efeCacA7",
       "contractType": "Aggregator_stETH_EUR_mainnet",
       "source": "src/mainnet/Aggregator_stETH_EUR_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/v3-aggregators-testEUR.json"
+      ],
       "commit": "81a90baa0c26b82b178fc4f63b09cd427dbdb76a",
       "commitTimestamp": "2026-01-14T16:31:09Z",
       "deployBlock": 24270059,
@@ -4964,6 +5110,9 @@
       "address": "0xf1867657Ef7F65b745E47B7F70D15DE50b66884D",
       "contractType": "Aggregator_PAXG_USD_mainnet",
       "source": "src/mainnet/Aggregator_PAXG_USD_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/v4-oracles.json"
+      ],
       "commit": "6e10fc9deacd77120546ff4fb768de5bc30499f6",
       "commitTimestamp": "2026-02-07T00:55:08Z",
       "deployBlock": 24401554,
@@ -5070,6 +5219,9 @@
       "address": "0xf2ac2880E1569D2CaB50be41F6bfA92e5e6e03C9",
       "contractType": "Aggregator_sUSDe_MCAP_mainnet",
       "source": "src/mainnet/Aggregator_sUSDe_MCAP_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/v4-oracles.json"
+      ],
       "commit": "6e10fc9deacd77120546ff4fb768de5bc30499f6",
       "commitTimestamp": "2026-02-07T00:55:08Z",
       "deployBlock": 24401563,
@@ -5183,6 +5335,9 @@
       "address": "0xF36648F44763eFE7c528140a2f804b2124CC3FE1",
       "contractType": "Aggregator_hsfxUSD_BTC_USD_mainnet",
       "source": "src/mainnet/Aggregator_hsfxUSD_BTC_USD_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/leverage-v4-oracles.json"
+      ],
       "commit": "6e10fc9deacd77120546ff4fb768de5bc30499f6",
       "commitTimestamp": "2026-02-07T00:55:08Z",
       "deployBlock": 24401490,
@@ -5291,6 +5446,9 @@
       "address": "0xfefC59EE1A3Ff3E0c9b3600b77f9b2aB2AfeeD6A",
       "contractType": "Aggregator_PAXG_USD_mainnet",
       "source": "src/mainnet/Aggregator_PAXG_USD_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/v3-aggregators.json"
+      ],
       "commit": "1a2599cac933bdad62e2ea4e08ee1d878313e187",
       "commitTimestamp": "2026-05-29T22:06:29Z",
       "deployBlock": 25117830,
@@ -5397,6 +5555,9 @@
       "address": "0xFf37Db6dea33228A5D84546250a5D0D0da942fd7",
       "contractType": "Aggregator_hsstETH_BTC_USD_mainnet",
       "source": "src/mainnet/Aggregator_hsstETH_BTC_USD_mainnet.sol",
+      "stateFiles": [
+        "deployments/mainnet/leverage-v4-oracles.json"
+      ],
       "commit": "6e10fc9deacd77120546ff4fb768de5bc30499f6",
       "commitTimestamp": "2026-02-07T00:55:08Z",
       "deployBlock": 24401489,
@@ -5505,6 +5666,10 @@
       "address": "0x0D0fDBb10B9EAf18A1034e9942F95af0147CC310",
       "contractType": "Aggregator_stETH_NVDA_arbitrum",
       "source": "src/arbitrum/Aggregator_stETH_NVDA_arbitrum.sol",
+      "stateFiles": [
+        "deployments/arbitrum/v3-aggregators.json",
+        "deployments/arbitrum/v3-oracles.json"
+      ],
       "commit": "3a108494dfa8c9eacac909883874d7235535d777",
       "commitTimestamp": "2025-12-31T09:07:24Z",
       "deployBlock": 416383717,
@@ -5614,6 +5779,10 @@
       "address": "0x28bBAaf05dEE8A06d4206089bCd17c1129e6Edca",
       "contractType": "Aggregator_stETH_AMZN_arbitrum",
       "source": "src/arbitrum/Aggregator_stETH_AMZN_arbitrum.sol",
+      "stateFiles": [
+        "deployments/arbitrum/v3-aggregators.json",
+        "deployments/arbitrum/v3-oracles.json"
+      ],
       "commit": "3a108494dfa8c9eacac909883874d7235535d777",
       "commitTimestamp": "2025-12-31T09:07:24Z",
       "deployBlock": 416383641,
@@ -5723,6 +5892,10 @@
       "address": "0x2b63607299E7645D883168906bEfb13cb7F59659",
       "contractType": "Aggregator_USDE_MSFT_arbitrum",
       "source": "src/arbitrum/Aggregator_USDE_MSFT_arbitrum.sol",
+      "stateFiles": [
+        "deployments/arbitrum/v3-aggregators.json",
+        "deployments/arbitrum/v3-oracles.json"
+      ],
       "commit": "3a108494dfa8c9eacac909883874d7235535d777",
       "commitTimestamp": "2025-12-31T09:07:24Z",
       "deployBlock": 416383502,
@@ -5832,6 +6005,10 @@
       "address": "0x436C33222136554192733C6771669c4B51B7fE3D",
       "contractType": "Aggregator_stETH_MAG7i26_arbitrum",
       "source": "src/arbitrum/Aggregator_stETH_MAG7i26_arbitrum.sol",
+      "stateFiles": [
+        "deployments/arbitrum/v3-aggregators.json",
+        "deployments/arbitrum/v3-oracles.json"
+      ],
       "commit": "3a108494dfa8c9eacac909883874d7235535d777",
       "commitTimestamp": "2025-12-31T09:07:24Z",
       "deployBlock": 416383789,
@@ -5949,6 +6126,10 @@
       "address": "0x52B66aD600DC6051cF056951153355d457068bD2",
       "contractType": "Aggregator_stETH_GOOGL_arbitrum",
       "source": "src/arbitrum/Aggregator_stETH_GOOGL_arbitrum.sol",
+      "stateFiles": [
+        "deployments/arbitrum/v3-aggregators.json",
+        "deployments/arbitrum/v3-oracles.json"
+      ],
       "commit": "3a108494dfa8c9eacac909883874d7235535d777",
       "commitTimestamp": "2025-12-31T09:07:24Z",
       "deployBlock": 416383665,
@@ -6058,6 +6239,10 @@
       "address": "0x657bE7a2b91F95222D163Bee3B5F4C27bed598C5",
       "contractType": "Aggregator_USDE_SPY_arbitrum",
       "source": "src/arbitrum/Aggregator_USDE_SPY_arbitrum.sol",
+      "stateFiles": [
+        "deployments/arbitrum/v3-aggregators.json",
+        "deployments/arbitrum/v3-oracles.json"
+      ],
       "commit": "3a108494dfa8c9eacac909883874d7235535d777",
       "commitTimestamp": "2025-12-31T09:07:24Z",
       "deployBlock": 416383537,
@@ -6167,6 +6352,10 @@
       "address": "0x677f597D3013dBF76552Ec6c605eeB551d3bBb72",
       "contractType": "Aggregator_stETH_META_arbitrum",
       "source": "src/arbitrum/Aggregator_stETH_META_arbitrum.sol",
+      "stateFiles": [
+        "deployments/arbitrum/v3-aggregators.json",
+        "deployments/arbitrum/v3-oracles.json"
+      ],
       "commit": "3a108494dfa8c9eacac909883874d7235535d777",
       "commitTimestamp": "2025-12-31T09:07:24Z",
       "deployBlock": 416383682,
@@ -6276,6 +6465,10 @@
       "address": "0x777BD12e1f61B8cac19Cbd30c0233C46B4683C00",
       "contractType": "Aggregator_USDE_TSLA_arbitrum",
       "source": "src/arbitrum/Aggregator_USDE_TSLA_arbitrum.sol",
+      "stateFiles": [
+        "deployments/arbitrum/v3-aggregators.json",
+        "deployments/arbitrum/v3-oracles.json"
+      ],
       "commit": "3a108494dfa8c9eacac909883874d7235535d777",
       "commitTimestamp": "2025-12-31T09:07:24Z",
       "deployBlock": 416383555,
@@ -6385,6 +6578,10 @@
       "address": "0x91F5C981C3676af8eE40003c79E96582Fdb12621",
       "contractType": "Aggregator_USDE_AAPL_arbitrum",
       "source": "src/arbitrum/Aggregator_USDE_AAPL_arbitrum.sol",
+      "stateFiles": [
+        "deployments/arbitrum/v3-aggregators.json",
+        "deployments/arbitrum/v3-oracles.json"
+      ],
       "commit": "3a108494dfa8c9eacac909883874d7235535d777",
       "commitTimestamp": "2025-12-31T09:07:24Z",
       "deployBlock": 416383206,
@@ -6494,6 +6691,10 @@
       "address": "0x969Fb67331d6Fa3E729292FAa5752BBA759f2b7F",
       "contractType": "Aggregator_stETH_SPY_arbitrum",
       "source": "src/arbitrum/Aggregator_stETH_SPY_arbitrum.sol",
+      "stateFiles": [
+        "deployments/arbitrum/v3-aggregators.json",
+        "deployments/arbitrum/v3-oracles.json"
+      ],
       "commit": "3a108494dfa8c9eacac909883874d7235535d777",
       "commitTimestamp": "2025-12-31T09:07:24Z",
       "deployBlock": 416383735,
@@ -6603,6 +6804,10 @@
       "address": "0x9DadfFe3Fd7c14BF1c023fd736510464ea3E8234",
       "contractType": "Aggregator_USDE_META_arbitrum",
       "source": "src/arbitrum/Aggregator_USDE_META_arbitrum.sol",
+      "stateFiles": [
+        "deployments/arbitrum/v3-aggregators.json",
+        "deployments/arbitrum/v3-oracles.json"
+      ],
       "commit": "3a108494dfa8c9eacac909883874d7235535d777",
       "commitTimestamp": "2025-12-31T09:07:24Z",
       "deployBlock": 416383484,
@@ -6712,6 +6917,10 @@
       "address": "0xA8643E35Ef119F983B09C322039e8AA49A3e3372",
       "contractType": "Aggregator_stETH_AAPL_arbitrum",
       "source": "src/arbitrum/Aggregator_stETH_AAPL_arbitrum.sol",
+      "stateFiles": [
+        "deployments/arbitrum/v3-aggregators.json",
+        "deployments/arbitrum/v3-oracles.json"
+      ],
       "commit": "3a108494dfa8c9eacac909883874d7235535d777",
       "commitTimestamp": "2025-12-31T09:07:24Z",
       "deployBlock": 416383623,
@@ -6821,6 +7030,10 @@
       "address": "0xA8A130Bbf041962B60e81009F09c41bd930D1294",
       "contractType": "Aggregator_stETH_MAG7_arbitrum",
       "source": "src/arbitrum/Aggregator_stETH_MAG7_arbitrum.sol",
+      "stateFiles": [
+        "deployments/arbitrum/v3-aggregators.json",
+        "deployments/arbitrum/v3-oracles.json"
+      ],
       "commit": "3a108494dfa8c9eacac909883874d7235535d777",
       "commitTimestamp": "2025-12-31T09:07:24Z",
       "deployBlock": 416383771,
@@ -6937,6 +7150,10 @@
       "address": "0xb772b800982127A3e1489DAacBE214b3C8575dd6",
       "contractType": "Aggregator_USDE_NVDA_arbitrum",
       "source": "src/arbitrum/Aggregator_USDE_NVDA_arbitrum.sol",
+      "stateFiles": [
+        "deployments/arbitrum/v3-aggregators.json",
+        "deployments/arbitrum/v3-oracles.json"
+      ],
       "commit": "3a108494dfa8c9eacac909883874d7235535d777",
       "commitTimestamp": "2025-12-31T09:07:24Z",
       "deployBlock": 416383520,
@@ -7046,6 +7263,10 @@
       "address": "0xc351A54B3ED4a930d8B30958A112a1e6Dcd3eFc0",
       "contractType": "Aggregator_USDE_GOOGL_arbitrum",
       "source": "src/arbitrum/Aggregator_USDE_GOOGL_arbitrum.sol",
+      "stateFiles": [
+        "deployments/arbitrum/v3-aggregators.json",
+        "deployments/arbitrum/v3-oracles.json"
+      ],
       "commit": "3a108494dfa8c9eacac909883874d7235535d777",
       "commitTimestamp": "2025-12-31T09:07:24Z",
       "deployBlock": 416383249,
@@ -7155,6 +7376,10 @@
       "address": "0xDA6097f2b8805a01FcBE8BA8Fc2c45FCb7D3e206",
       "contractType": "Aggregator_stETH_TSLA_arbitrum",
       "source": "src/arbitrum/Aggregator_stETH_TSLA_arbitrum.sol",
+      "stateFiles": [
+        "deployments/arbitrum/v3-aggregators.json",
+        "deployments/arbitrum/v3-oracles.json"
+      ],
       "commit": "3a108494dfa8c9eacac909883874d7235535d777",
       "commitTimestamp": "2025-12-31T09:07:24Z",
       "deployBlock": 416383753,
@@ -7264,6 +7489,10 @@
       "address": "0xf1867657Ef7F65b745E47B7F70D15DE50b66884D",
       "contractType": "Aggregator_stETH_MSFT_arbitrum",
       "source": "src/arbitrum/Aggregator_stETH_MSFT_arbitrum.sol",
+      "stateFiles": [
+        "deployments/arbitrum/v3-aggregators.json",
+        "deployments/arbitrum/v3-oracles.json"
+      ],
       "commit": "3a108494dfa8c9eacac909883874d7235535d777",
       "commitTimestamp": "2025-12-31T09:07:24Z",
       "deployBlock": 416383699,
@@ -7373,6 +7602,10 @@
       "address": "0xF36648F44763eFE7c528140a2f804b2124CC3FE1",
       "contractType": "Aggregator_USDE_MAG7i26_arbitrum",
       "source": "src/arbitrum/Aggregator_USDE_MAG7i26_arbitrum.sol",
+      "stateFiles": [
+        "deployments/arbitrum/v3-aggregators.json",
+        "deployments/arbitrum/v3-oracles.json"
+      ],
       "commit": "3a108494dfa8c9eacac909883874d7235535d777",
       "commitTimestamp": "2025-12-31T09:07:24Z",
       "deployBlock": 416383598,
@@ -7490,6 +7723,10 @@
       "address": "0xf5dAfBF1A1abe5eaDC16799e69b7B53C58D193b5",
       "contractType": "Aggregator_USDE_AMZN_arbitrum",
       "source": "src/arbitrum/Aggregator_USDE_AMZN_arbitrum.sol",
+      "stateFiles": [
+        "deployments/arbitrum/v3-aggregators.json",
+        "deployments/arbitrum/v3-oracles.json"
+      ],
       "commit": "3a108494dfa8c9eacac909883874d7235535d777",
       "commitTimestamp": "2025-12-31T09:07:24Z",
       "deployBlock": 416383231,
@@ -7599,6 +7836,10 @@
       "address": "0xFf37Db6dea33228A5D84546250a5D0D0da942fd7",
       "contractType": "Aggregator_USDE_MAG7_arbitrum",
       "source": "src/arbitrum/Aggregator_USDE_MAG7_arbitrum.sol",
+      "stateFiles": [
+        "deployments/arbitrum/v3-aggregators.json",
+        "deployments/arbitrum/v3-oracles.json"
+      ],
       "commit": "3a108494dfa8c9eacac909883874d7235535d777",
       "commitTimestamp": "2025-12-31T09:07:24Z",
       "deployBlock": 416383580,
@@ -7715,6 +7956,10 @@
       "address": "0x3d881b3C7B690f05E672cD0F8fCbC0aE3A7292CF",
       "contractType": "Aggregator_USDM_BTC_megaeth",
       "source": "src/megaeth/Aggregator_USDM_BTC_megaeth.sol",
+      "stateFiles": [
+        "deployments/megaeth/v4-aggregators-harbor_megaeth_v1.json",
+        "deployments/megaeth/v4-aggregators.json"
+      ],
       "commit": "68d8082482fb44b45c978b3e147f5b014567ce6d",
       "commitTimestamp": "2026-04-24T14:08:46Z",
       "deployBlock": 14529434,
@@ -7828,6 +8073,10 @@
       "address": "0x46396230c61776A384c1c00c04A9784c4a2F5d8F",
       "contractType": "Aggregator_BTCb_USD_megaeth",
       "source": "src/megaeth/Aggregator_BTCb_USD_megaeth.sol",
+      "stateFiles": [
+        "deployments/megaeth/v3-aggregators.json",
+        "deployments/megaeth/v4-oracles.json"
+      ],
       "commit": "68d8082482fb44b45c978b3e147f5b014567ce6d",
       "commitTimestamp": "2026-04-24T14:08:46Z",
       "deployBlock": 10386073,
@@ -7934,6 +8183,10 @@
       "address": "0x4cd395CB5edF33b44E73257ee614413f95d1a6cD",
       "contractType": "Aggregator_USDE_ETH_megaeth",
       "source": "src/megaeth/Aggregator_USDE_ETH_megaeth.sol",
+      "stateFiles": [
+        "deployments/megaeth/v4-aggregators-harbor_megaeth_v1.json",
+        "deployments/megaeth/v4-aggregators.json"
+      ],
       "commit": "1a2599cac933bdad62e2ea4e08ee1d878313e187",
       "commitTimestamp": "2026-05-29T22:06:29Z",
       "deployBlock": 14529439,
@@ -8043,6 +8296,9 @@
       "address": "0x756B95D0bB61c195d1196EB2143D8D88570036AC",
       "contractType": "Aggregator_USDMY_ETH_megaeth",
       "source": "src/megaeth/Aggregator_USDMY_ETH_megaeth.sol",
+      "stateFiles": [
+        "deployments/megaeth/v3-aggregators.json"
+      ],
       "commit": "889b933ed283c9d168c1adfda1ef6f385ca5babf",
       "commitTimestamp": "2026-02-23T23:26:01Z",
       "deployBlock": 9091410,
@@ -8156,6 +8412,9 @@
       "address": "0x830AB2B3A936F727ee2FF67E9C073380B6f166D8",
       "contractType": "Aggregator_USDMY_HYPE_megaeth",
       "source": "src/megaeth/Aggregator_USDMY_HYPE_megaeth.sol",
+      "stateFiles": [
+        "deployments/megaeth/v3-aggregators.json"
+      ],
       "commit": "889b933ed283c9d168c1adfda1ef6f385ca5babf",
       "commitTimestamp": "2026-02-23T23:26:01Z",
       "deployBlock": 9091416,
@@ -8269,6 +8528,10 @@
       "address": "0xD011778057AA740BB3703Ad4d78b3c79a1aED1cb",
       "contractType": "Aggregator_USDM_ETH_megaeth",
       "source": "src/megaeth/Aggregator_USDM_ETH_megaeth.sol",
+      "stateFiles": [
+        "deployments/megaeth/v4-aggregators-harbor_megaeth_v1.json",
+        "deployments/megaeth/v4-aggregators.json"
+      ],
       "commit": "68d8082482fb44b45c978b3e147f5b014567ce6d",
       "commitTimestamp": "2026-04-24T14:08:46Z",
       "deployBlock": 14529429,
@@ -8382,6 +8645,10 @@
       "address": "0xD3902Ac4c84FE62f831f38385e67E3d1BA27c75F",
       "contractType": "Aggregator_BTC_USD_megaeth",
       "source": "src/megaeth/Aggregator_BTC_USD_megaeth.sol",
+      "stateFiles": [
+        "deployments/megaeth/v3-aggregators.json",
+        "deployments/megaeth/v4-oracles.json"
+      ],
       "commit": "f26fa71dad2eb0ececfd48e81c15654c777d8143",
       "commitTimestamp": "2026-03-01T22:14:58Z",
       "deployBlock": 9605679,
@@ -8488,6 +8755,10 @@
       "address": "0xDe10BEd5236B786cAA18Ca39FFa5de1b904a8a94",
       "contractType": "Aggregator_stETH_USD_megaeth",
       "source": "src/megaeth/Aggregator_stETH_USD_megaeth.sol",
+      "stateFiles": [
+        "deployments/megaeth/v4-aggregators-harbor_megaeth_v1.json",
+        "deployments/megaeth/v4-aggregators.json"
+      ],
       "commit": "68d8082482fb44b45c978b3e147f5b014567ce6d",
       "commitTimestamp": "2026-04-24T14:08:46Z",
       "deployBlock": 14529448,
@@ -8596,6 +8867,9 @@
       "address": "0xE2962ab29C723415F023451E9F166122d8b4a980",
       "contractType": "Aggregator_USDMY_SOL_megaeth",
       "source": "src/megaeth/Aggregator_USDMY_SOL_megaeth.sol",
+      "stateFiles": [
+        "deployments/megaeth/v3-aggregators.json"
+      ],
       "commit": "889b933ed283c9d168c1adfda1ef6f385ca5babf",
       "commitTimestamp": "2026-02-23T23:26:01Z",
       "deployBlock": 9091422,
@@ -8709,6 +8983,10 @@
       "address": "0xe606AE6d6394a977a8B0926557BF9D291051f989",
       "contractType": "Aggregator_USDE_BTC_megaeth",
       "source": "src/megaeth/Aggregator_USDE_BTC_megaeth.sol",
+      "stateFiles": [
+        "deployments/megaeth/v4-aggregators-harbor_megaeth_v1.json",
+        "deployments/megaeth/v4-aggregators.json"
+      ],
       "commit": "1a2599cac933bdad62e2ea4e08ee1d878313e187",
       "commitTimestamp": "2026-05-29T22:06:29Z",
       "deployBlock": 14529443,
@@ -8818,6 +9096,9 @@
       "address": "0xF183D68f7D4e47f0546bF67f56677d35CE87617D",
       "contractType": "Aggregator_wstETH_USD_megaeth",
       "source": "src/megaeth/Aggregator_wstETH_USD_megaeth.sol",
+      "stateFiles": [
+        "deployments/megaeth/v3-aggregators.json"
+      ],
       "commit": "f26fa71dad2eb0ececfd48e81c15654c777d8143",
       "commitTimestamp": "2026-03-01T22:14:58Z",
       "deployBlock": 9605685,
@@ -8925,6 +9206,9 @@
       "address": "0xf9cB23E2E882C67A899C448CBe2542df9eebC615",
       "contractType": "Aggregator_USDMY_BTC_megaeth",
       "source": "src/megaeth/Aggregator_USDMY_BTC_megaeth.sol",
+      "stateFiles": [
+        "deployments/megaeth/v3-aggregators.json"
+      ],
       "commit": "889b933ed283c9d168c1adfda1ef6f385ca5babf",
       "commitTimestamp": "2026-02-23T23:26:01Z",
       "deployBlock": 9091429,
@@ -9038,6 +9322,10 @@
       "address": "0x2877330d6fbA9BC0299588BcBaf16bA42d12b05a",
       "contractType": "Aggregator_stETH_BOM5_base",
       "source": "src/base/Aggregator_stETH_BOM5_base.sol",
+      "stateFiles": [
+        "deployments/base/v3-aggregators.json",
+        "deployments/base/v3-oracles.json"
+      ],
       "commit": "3a108494dfa8c9eacac909883874d7235535d777",
       "commitTimestamp": "2025-12-31T09:07:24Z",
       "deployBlock": 40192173,

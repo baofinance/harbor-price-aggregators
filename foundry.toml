@@ -18,14 +18,6 @@ remappings = [
   "ds-test/=lib/forge-std/lib/ds-test/src/",
   "forge-std/=lib/forge-std/src/",
   # openzeppelin
-  # OZ 5.7.0 reduced UUPSUpgradeable to a re-export of the non-upgradeable core, dropping Initializable
-  # from its bases (and so _disableInitializers from anything reaching it through UUPSUpgradeable) and
-  # the empty __UUPSUpgradeable_init shims. bao-base restores the 5.1 file; redirecting the PATH is what
-  # lets deployed sources keep the exact OZ import they were audited with.
-  # A whole-directory prefix, and FIRST: forge compiles OZ's copy anyway for an exact-file remapping,
-  # leaving a second UUPSUpgradeable declaration, and matching here is by order rather than by longest
-  # prefix. See the same block in lib/bao-base/foundry.toml for the full reasoning.
-  "@openzeppelin/contracts-upgradeable/proxy/utils/=lib/bao-base/src/openzeppelin-compat/proxy/utils/",
   "@openzeppelin/contracts/=lib/openzeppelin-contracts-upgradeable/lib/openzeppelin-contracts/contracts/",
   "@openzeppelin/contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts/",
   "openzeppelin-foundry-upgrades/=lib/openzeppelin-foundry-upgrades/src/",
