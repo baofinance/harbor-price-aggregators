@@ -25,12 +25,12 @@ abstract contract WiredSingleFeedHarness is WiredAggregatorHarness {
     }
 
     /// @inheritdoc WiredAggregatorHarness
-    function _expectedPrice() internal pure override returns (uint256) {
+    function _expectedPrice() internal view override returns (uint256) {
         if (_priceIsInverted()) {
             // One divided by the feed's answer, both carried at 18 decimals, then counted in the
             // quote asset's units.
-            return (1e18 * _priceDivisor() * 1e18) / FIRST_PRICE;
+            return _scaledByRate((1e18 * _priceDivisor() * 1e18) / _priceAnswer(0));
         }
-        return FIRST_PRICE / _priceDivisor();
+        return _scaledByRate(_priceAnswer(0) / _priceDivisor());
     }
 }

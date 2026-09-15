@@ -57,6 +57,24 @@ abstract contract WiredAggregatorHarness is AggregatorHarness {
     ///      with the reasoning removed.
     function _expectedPrice() internal view virtual returns (uint256);
 
+    /// @notice Whether the rate multiplies the composed price as well as being reported alongside it.
+    /// @dev An independent dimension rather than a shape: it applies to a price from one feed and to
+    ///      one from two alike. It is set where the pair being priced is a *wrapper* whose quote is
+    ///      the underlying's — the feeds price the underlying, and the rate carries that to the
+    ///      wrapper. The rate then appears in the answer twice, meaning different things: reported
+    ///      unchanged so a consumer can convert an amount, and applied to the price so the value is
+    ///      the wrapper's rather than the underlying's.
+    function _rateScalesThePrice() internal pure virtual returns (bool) {
+        return false;
+    }
+
+    /// @dev Applies the rate to a composed price where the aggregator does. A composition harness
+    ///      passes its result through this rather than deciding for itself, so the two dimensions
+    ///      stay independent.
+    function _scaledByRate(uint256 price) internal view returns (uint256) {
+        return _rateScalesThePrice() ? (_expectedRate() * price) / 1e18 : price;
+    }
+
     /// @notice The exact rate it must report.
     /// @dev Derived rather than declared: an aggregator that reads a rate reports what its source
     ///      says, and one whose rate is a constant reports parity. Neither is a per-aggregator

@@ -13,8 +13,8 @@ import {WiredAggregatorHarness} from "@harbor-price-test/conformance/WiredAggreg
 ///      harness drives, so neither can pass for the other.
 abstract contract WiredMultipliedFeedsHarness is WiredAggregatorHarness {
     /// @inheritdoc WiredAggregatorHarness
-    function _expectedPrice() internal pure override returns (uint256) {
+    function _expectedPrice() internal view override returns (uint256) {
         // Both answers carry 18 decimals, so their product carries 36 and is brought back to 18.
-        return (FIRST_PRICE * SECOND_PRICE) / 1e18;
+        return _scaledByRate((_priceAnswer(0) * _priceAnswer(1)) / 1e18);
     }
 }

@@ -1,11 +1,11 @@
 | File                                                      | % Lines            | % Statements       | % Branches       | % Funcs          |
 |-----------------------------------------------------------|--------------------|--------------------|------------------|------------------|
 | script/historical/LatestAnswerErrorClassifier.sol         | X   0% (0/25)      | X   0% (0/34)      | X   0% (0/13)    | X   0% (0/3)     |
-| src/aggregators/Aggregator_DirectPrice_TwoFeedRate.sol    | X  89% (17/19)     | X  77% (17/22)     | X   0% (0/4)     | X  67% (2/3)     |
-| src/aggregators/Aggregator_DoubleFeed_TwoFeedRate.sol     | X  91% (21/23)     | X  78% (21/27)     | X   0% (0/5)     | X  67% (2/3)     |
+| src/aggregators/Aggregator_DirectPrice_TwoFeedRate.sol    | ✓ 100% (19/19)     | X  82% (18/22)     | X   0% (0/4)     | ✓ 100% (3/3)     |
+| src/aggregators/Aggregator_DoubleFeed_TwoFeedRate.sol     | ✓ 100% (23/23)     | X  81% (22/27)     | X   0% (0/5)     | ✓ 100% (3/3)     |
 | src/aggregators/Aggregator_Peg_ETH.sol                    | ✓ 100% (16/16)     | ✓ 100% (15/15)     | ✓ 100% (2/2)     | ✓ 100% (4/4)     |
-| src/aggregators/Aggregator_SingleRate_DoublePrice.sol     | X  90% (19/21)     | X  80% (20/25)     | X   0% (0/4)     | X  67% (2/3)     |
-| src/aggregators/Aggregator_SingleRate_SinglePrice.sol     | X  88% (15/17)     | X  80% (16/20)     | X   0% (0/3)     | X  67% (2/3)     |
+| src/aggregators/Aggregator_SingleRate_DoublePrice.sol     | ✓ 100% (21/21)     | X  84% (21/25)     | X   0% (0/4)     | ✓ 100% (3/3)     |
+| src/aggregators/Aggregator_SingleRate_SinglePrice.sol     | ✓ 100% (17/17)     | X  85% (17/20)     | X   0% (0/3)     | ✓ 100% (3/3)     |
 | src/aggregators/HarborAggregator_v3.sol                   | ✓ 100% (10/10)     | ✓ 100% (7/7)       | -  N/A (0/0)     | ✓ 100% (6/6)     |
 | src/aggregators/arbitrum/Aggregator_USDE_AAPL.sol         | ✓ 100% (24/24)     | ✓ 100% (25/25)     | ✓ 100% (4/4)     | ✓ 100% (5/5)     |
 | src/aggregators/arbitrum/Aggregator_USDE_AMZN.sol         | ✓ 100% (24/24)     | ✓ 100% (25/25)     | ✓ 100% (4/4)     | ✓ 100% (5/5)     |
@@ -143,16 +143,16 @@
 | src/megaeth/Aggregator_USDM_HYPE_megaeth.sol              | ✓ 100% (1/1)       | -  N/A (0/0)       | -  N/A (0/0)     | ✓ 100% (1/1)     |
 | src/megaeth/Aggregator_USDM_SOL_megaeth.sol               | ✓ 100% (1/1)       | -  N/A (0/0)       | -  N/A (0/0)     | ✓ 100% (1/1)     |
 | src/megaeth/Aggregator_stETH_USD_megaeth.sol              | ✓ 100% (1/1)       | -  N/A (0/0)       | -  N/A (0/0)     | ✓ 100% (1/1)     |
-| src/monad/Aggregator_sUSDe_BTC_monad.sol                  | X  20% (1/5)       | X   0% (0/2)       | -  N/A (0/0)     | X  33% (1/3)     |
-| src/monad/Aggregator_sUSDe_ETH_monad.sol                  | X  20% (1/5)       | X   0% (0/2)       | -  N/A (0/0)     | X  33% (1/3)     |
-| src/monad/Aggregator_sUSDe_XAU_monad.sol                  | X  20% (1/5)       | X   0% (0/2)       | -  N/A (0/0)     | X  33% (1/3)     |
-| src/monad/Aggregator_shMON_BTC_monad.sol                  | X  20% (1/5)       | X   0% (0/2)       | -  N/A (0/0)     | X  33% (1/3)     |
-| src/monad/Aggregator_shMON_ETH_monad.sol                  | X  20% (1/5)       | X   0% (0/2)       | -  N/A (0/0)     | X  33% (1/3)     |
-| src/monad/Aggregator_shMON_USD_monad.sol                  | X  20% (1/5)       | X   0% (0/2)       | -  N/A (0/0)     | X  33% (1/3)     |
-| src/monad/Aggregator_shMON_XAU_monad.sol                  | X  20% (1/5)       | X   0% (0/2)       | -  N/A (0/0)     | X  33% (1/3)     |
-| src/monad/Aggregator_wstETH_BTC_monad.sol                 | X  20% (1/5)       | X   0% (0/2)       | -  N/A (0/0)     | X  33% (1/3)     |
-| src/monad/Aggregator_wstETH_USD_monad.sol                 | X  20% (1/5)       | X   0% (0/2)       | -  N/A (0/0)     | X  33% (1/3)     |
-| src/monad/Aggregator_wstETH_XAU_monad.sol                 | X  20% (1/5)       | X   0% (0/2)       | -  N/A (0/0)     | X  33% (1/3)     |
+| src/monad/Aggregator_sUSDe_BTC_monad.sol                  | ✓ 100% (5/5)       | ✓ 100% (2/2)       | -  N/A (0/0)     | ✓ 100% (3/3)     |
+| src/monad/Aggregator_sUSDe_ETH_monad.sol                  | ✓ 100% (5/5)       | ✓ 100% (2/2)       | -  N/A (0/0)     | ✓ 100% (3/3)     |
+| src/monad/Aggregator_sUSDe_XAU_monad.sol                  | ✓ 100% (5/5)       | ✓ 100% (2/2)       | -  N/A (0/0)     | ✓ 100% (3/3)     |
+| src/monad/Aggregator_shMON_BTC_monad.sol                  | ✓ 100% (5/5)       | ✓ 100% (2/2)       | -  N/A (0/0)     | ✓ 100% (3/3)     |
+| src/monad/Aggregator_shMON_ETH_monad.sol                  | ✓ 100% (5/5)       | ✓ 100% (2/2)       | -  N/A (0/0)     | ✓ 100% (3/3)     |
+| src/monad/Aggregator_shMON_USD_monad.sol                  | ✓ 100% (5/5)       | ✓ 100% (2/2)       | -  N/A (0/0)     | ✓ 100% (3/3)     |
+| src/monad/Aggregator_shMON_XAU_monad.sol                  | ✓ 100% (5/5)       | ✓ 100% (2/2)       | -  N/A (0/0)     | ✓ 100% (3/3)     |
+| src/monad/Aggregator_wstETH_BTC_monad.sol                 | ✓ 100% (5/5)       | ✓ 100% (2/2)       | -  N/A (0/0)     | ✓ 100% (3/3)     |
+| src/monad/Aggregator_wstETH_USD_monad.sol                 | ✓ 100% (5/5)       | ✓ 100% (2/2)       | -  N/A (0/0)     | ✓ 100% (3/3)     |
+| src/monad/Aggregator_wstETH_XAU_monad.sol                 | ✓ 100% (5/5)       | ✓ 100% (2/2)       | -  N/A (0/0)     | ✓ 100% (3/3)     |
 | src/prices/DoubleFeedPriceLib.sol                         | ✓ 100% (6/6)       | ✓ 100% (8/8)       | ✓ 100% (1/1)     | ✓ 100% (1/1)     |
 | src/prices/MultiFeedDivPriceLib.sol                       | ✓ 100% (12/12)     | ✓ 100% (20/20)     | ✓ 100% (5/5)     | ✓ 100% (1/1)     |
 | src/prices/MultiFeedSumPriceLib.sol                       | ✓ 100% (11/11)     | ✓ 100% (17/17)     | ✓ 100% (4/4)     | ✓ 100% (1/1)     |
@@ -163,4 +163,4 @@
 | src/rates/TwoFeedRatioRateLib.sol                         | X  69% (9/13)      | X  60% (12/20)     | X   0% (0/3)     | X  50% (1/2)     |
 | src/rates/USDMYRateLib.sol                                | ✓ 100% (8/8)       | ✓ 100% (9/9)       | ✓ 100% (1/1)     | ✓ 100% (3/3)     |
 | src/rates/WstETHRateLib.sol                               | ✓ 100% (8/8)       | ✓ 100% (11/11)     | ✓ 100% (1/1)     | ✓ 100% (3/3)     |
-| Total                                                     | X  94% (1930/2048) | X  93% (1932/2084) | X  85% (245/289) | X  94% (454/483) |
+| Total                                                     | X  97% (1978/2048) | X  94% (1956/2084) | X  85% (245/289) | X  99% (478/483) |

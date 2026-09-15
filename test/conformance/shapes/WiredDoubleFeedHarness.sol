@@ -20,10 +20,10 @@ abstract contract WiredDoubleFeedHarness is WiredAggregatorHarness {
     }
 
     /// @inheritdoc WiredAggregatorHarness
-    function _expectedPrice() internal pure override returns (uint256) {
+    function _expectedPrice() internal view override returns (uint256) {
         // The first feed's answer over the second's, carried at 18 decimals, counted in the quote
         // asset's units. Taking the feeds the other way round gives the reciprocal, which is larger
         // by the square of their ratio and cannot be mistaken for this.
-        return (FIRST_PRICE * _priceDivisor() * 1e18) / SECOND_PRICE;
+        return _scaledByRate((_priceAnswer(0) * _priceDivisor() * 1e18) / _priceAnswer(1));
     }
 }
