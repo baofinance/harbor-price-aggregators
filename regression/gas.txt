@@ -247,6 +247,7 @@ src/aggregators/mainnet/Aggregator_ETH_ETH.sol:Aggregator_ETH_ETH
 | latestAnswer    |   295 | 2.950e+02 |
 | oracleName      |  1055 | 1.055e+03 |
 | quoteName       |   524 | 5.240e+02 |
+| rateProvider    |   350 | 3.500e+02 |
 | version         |   285 | 2.850e+02 |
 
 src/aggregators/mainnet/Aggregator_PAXG_USD.sol:Aggregator_PAXG_USD
@@ -1377,85 +1378,101 @@ src/megaeth/Aggregator_stETH_USD_megaeth.sol:Aggregator_stETH_USD_megaeth
 | version         |   373 | 3.730e+02 |
 
 src/monad/Aggregator_sUSDe_BTC_monad.sol:Aggregator_sUSDe_BTC_monad
-| function name         |   max |   display |
-|-----------------------|-------|-----------|
-| FIRST_FEED            |   237 | 2.370e+02 |
-| RATE_DENOMINATOR_FEED |   193 | 1.930e+02 |
-| RATE_NUMERATOR_FEED   |   325 | 3.250e+02 |
-| SECOND_FEED           |   589 | 5.890e+02 |
-| latestAnswer          | 38961 | 3.896e+04 |
+| function name   |   max |   display |
+|-----------------|-------|-----------|
+| baseName        |   556 | 5.560e+02 |
+| latestAnswer    | 38945 | 3.894e+04 |
+| oracleName      |  1187 | 1.187e+03 |
+| quoteName       |   578 | 5.780e+02 |
+| rateProvider    |   545 | 5.450e+02 |
+| version         |   395 | 3.950e+02 |
 
 src/monad/Aggregator_sUSDe_ETH_monad.sol:Aggregator_sUSDe_ETH_monad
-| function name         |   max |   display |
-|-----------------------|-------|-----------|
-| FIRST_FEED            |   237 | 2.370e+02 |
-| RATE_DENOMINATOR_FEED |   193 | 1.930e+02 |
-| RATE_NUMERATOR_FEED   |   325 | 3.250e+02 |
-| SECOND_FEED           |   589 | 5.890e+02 |
-| latestAnswer          | 38961 | 3.896e+04 |
+| function name   |   max |   display |
+|-----------------|-------|-----------|
+| baseName        |   556 | 5.560e+02 |
+| latestAnswer    | 38945 | 3.894e+04 |
+| oracleName      |  1187 | 1.187e+03 |
+| quoteName       |   578 | 5.780e+02 |
+| rateProvider    |   545 | 5.450e+02 |
+| version         |   395 | 3.950e+02 |
 
 src/monad/Aggregator_sUSDe_XAU_monad.sol:Aggregator_sUSDe_XAU_monad
-| function name         |   max |   display |
-|-----------------------|-------|-----------|
-| FIRST_FEED            |   237 | 2.370e+02 |
-| RATE_DENOMINATOR_FEED |   193 | 1.930e+02 |
-| RATE_NUMERATOR_FEED   |   325 | 3.250e+02 |
-| SECOND_FEED           |   589 | 5.890e+02 |
-| latestAnswer          | 38961 | 3.896e+04 |
+| function name   |   max |   display |
+|-----------------|-------|-----------|
+| baseName        |   556 | 5.560e+02 |
+| latestAnswer    | 38945 | 3.894e+04 |
+| oracleName      |  1187 | 1.187e+03 |
+| quoteName       |   578 | 5.780e+02 |
+| rateProvider    |   545 | 5.450e+02 |
+| version         |   395 | 3.950e+02 |
 
 src/monad/Aggregator_shMON_BTC_monad.sol:Aggregator_shMON_BTC_monad
 | function name   |   max |   display |
 |-----------------|-------|-----------|
-| FIRST_FEED      |   215 | 2.150e+02 |
-| RATE_FEED       |   545 | 5.450e+02 |
-| SECOND_FEED     |   567 | 5.670e+02 |
+| baseName        |   534 | 5.340e+02 |
 | latestAnswer    | 34517 | 3.452e+04 |
+| oracleName      |  1143 | 1.143e+03 |
+| quoteName       |   556 | 5.560e+02 |
+| rateProvider    |   501 | 5.010e+02 |
+| version         |   351 | 3.510e+02 |
 
 src/monad/Aggregator_shMON_ETH_monad.sol:Aggregator_shMON_ETH_monad
 | function name   |   max |   display |
 |-----------------|-------|-----------|
-| FIRST_FEED      |   215 | 2.150e+02 |
-| RATE_FEED       |   545 | 5.450e+02 |
-| SECOND_FEED     |   567 | 5.670e+02 |
+| baseName        |   534 | 5.340e+02 |
 | latestAnswer    | 34517 | 3.452e+04 |
+| oracleName      |  1143 | 1.143e+03 |
+| quoteName       |   556 | 5.560e+02 |
+| rateProvider    |   501 | 5.010e+02 |
+| version         |   351 | 3.510e+02 |
 
 src/monad/Aggregator_shMON_USD_monad.sol:Aggregator_shMON_USD_monad
 | function name   |   max |   display |
 |-----------------|-------|-----------|
-| PRICE_FEED      |   237 | 2.370e+02 |
-| RATE_FEED       |   501 | 5.010e+02 |
+| baseName        |   490 | 4.900e+02 |
 | latestAnswer    | 23768 | 2.377e+04 |
+| oracleName      |  1099 | 1.099e+03 |
+| quoteName       |   512 | 5.120e+02 |
+| rateProvider    |   435 | 4.350e+02 |
+| version         |   329 | 3.290e+02 |
 
 src/monad/Aggregator_shMON_XAU_monad.sol:Aggregator_shMON_XAU_monad
 | function name   |   max |   display |
 |-----------------|-------|-----------|
-| FIRST_FEED      |   215 | 2.150e+02 |
-| RATE_FEED       |   545 | 5.450e+02 |
-| SECOND_FEED     |   567 | 5.670e+02 |
+| baseName        |   534 | 5.340e+02 |
 | latestAnswer    | 34517 | 3.452e+04 |
+| oracleName      |  1143 | 1.143e+03 |
+| quoteName       |   556 | 5.560e+02 |
+| rateProvider    |   501 | 5.010e+02 |
+| version         |   351 | 3.510e+02 |
 
 src/monad/Aggregator_wstETH_BTC_monad.sol:Aggregator_wstETH_BTC_monad
-| function name         |   max |   display |
-|-----------------------|-------|-----------|
-| FIRST_FEED            |   237 | 2.370e+02 |
-| RATE_DENOMINATOR_FEED |   193 | 1.930e+02 |
-| RATE_NUMERATOR_FEED   |   325 | 3.250e+02 |
-| SECOND_FEED           |   589 | 5.890e+02 |
-| latestAnswer          | 38961 | 3.896e+04 |
+| function name   |   max |   display |
+|-----------------|-------|-----------|
+| baseName        |   556 | 5.560e+02 |
+| latestAnswer    | 38945 | 3.894e+04 |
+| oracleName      |  1187 | 1.187e+03 |
+| quoteName       |   578 | 5.780e+02 |
+| rateProvider    |   545 | 5.450e+02 |
+| version         |   395 | 3.950e+02 |
 
 src/monad/Aggregator_wstETH_USD_monad.sol:Aggregator_wstETH_USD_monad
-| function name         |   max |   display |
-|-----------------------|-------|-----------|
-| PRICE_FEED            |   259 | 2.590e+02 |
-| RATE_DENOMINATOR_FEED |   193 | 1.930e+02 |
-| RATE_NUMERATOR_FEED   |   281 | 2.810e+02 |
-| latestAnswer          | 28449 | 2.845e+04 |
+| function name   |   max |   display |
+|-----------------|-------|-----------|
+| baseName        |   512 | 5.120e+02 |
+| latestAnswer    | 28433 | 2.843e+04 |
+| oracleName      |  1143 | 1.143e+03 |
+| quoteName       |   534 | 5.340e+02 |
+| rateProvider    |   479 | 4.790e+02 |
+| version         |   373 | 3.730e+02 |
 
 src/monad/Aggregator_wstETH_XAU_monad.sol:Aggregator_wstETH_XAU_monad
-| function name         |   max |   display |
-|-----------------------|-------|-----------|
-| FIRST_FEED            |   237 | 2.370e+02 |
-| RATE_DENOMINATOR_FEED |   193 | 1.930e+02 |
-| RATE_NUMERATOR_FEED   |   325 | 3.250e+02 |
-| SECOND_FEED           |   589 | 5.890e+02 |
-| latestAnswer          | 38961 | 3.896e+04 |
+| function name   |   max |   display |
+|-----------------|-------|-----------|
+| baseName        |   556 | 5.560e+02 |
+| latestAnswer    | 38945 | 3.894e+04 |
+| oracleName      |  1187 | 1.187e+03 |
+| quoteName       |   578 | 5.780e+02 |
+| rateProvider    |   545 | 5.450e+02 |
+| version         |   395 | 3.950e+02 |

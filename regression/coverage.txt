@@ -160,7 +160,7 @@
 | src/rates/ChainlinkRateLib.sol                            | X  94% (16/17)     | X  92% (23/25)     | X  75% (6/8)     | ✓ 100% (2/2)     |
 | src/rates/FxSaveRateLib.sol                               | ✓ 100% (8/8)       | ✓ 100% (9/9)       | ✓ 100% (1/1)     | ✓ 100% (3/3)     |
 | src/rates/SUSDeRateLib.sol                                | ✓ 100% (8/8)       | ✓ 100% (9/9)       | ✓ 100% (1/1)     | ✓ 100% (3/3)     |
-| src/rates/TwoFeedRatioRateLib.sol                         | X  69% (9/13)      | X  60% (12/20)     | X   0% (0/3)     | X  50% (1/2)     |
+| src/rates/TwoFeedRatioRateLib.sol                         | ✓ 100% (10/10)     | ✓ 100% (16/16)     | ✓ 100% (2/2)     | ✓ 100% (2/2)     |
 | src/rates/USDMYRateLib.sol                                | ✓ 100% (8/8)       | ✓ 100% (9/9)       | ✓ 100% (1/1)     | ✓ 100% (3/3)     |
 | src/rates/WstETHRateLib.sol                               | ✓ 100% (8/8)       | ✓ 100% (11/11)     | ✓ 100% (1/1)     | ✓ 100% (3/3)     |
-| Total                                                     | X  97% (1978/2048) | X  94% (1956/2084) | X  85% (245/289) | X  99% (478/483) |
+| Total                                                     | X  97% (1979/2045) | X  94% (1960/2080) | X  86% (247/288) | X  99% (479/483) |

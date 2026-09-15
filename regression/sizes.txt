@@ -87,9 +87,9 @@
 | Aggregator_hsstETH_GOLD_USD_mainnet   |              3,467 |               21,109 |               4,007 |      733,470 |             73.35 |
 | Aggregator_hsstETH_SILVER_USD         |              3,467 |               21,109 |               4,134 |      734,740 |             73.47 |
 | Aggregator_hsstETH_SILVER_USD_mainnet |              3,467 |               21,109 |               4,007 |      733,470 |             73.35 |
-| Aggregator_sUSDe_BTC_monad            |              4,066 |               20,510 |               4,876 |      861,960 |             86.20 |
-| Aggregator_sUSDe_ETH_monad            |              4,066 |               20,510 |               4,876 |      861,960 |             86.20 |
-| Aggregator_sUSDe_XAU_monad            |              4,066 |               20,510 |               4,876 |      861,960 |             86.20 |
+| Aggregator_sUSDe_BTC_monad            |              4,055 |               20,521 |               4,865 |      859,650 |             85.97 |
+| Aggregator_sUSDe_ETH_monad            |              4,055 |               20,521 |               4,865 |      859,650 |             85.97 |
+| Aggregator_sUSDe_XAU_monad            |              4,055 |               20,521 |               4,865 |      859,650 |             85.97 |
 | Aggregator_shMON_BTC_monad            |              4,243 |               20,333 |               4,986 |      898,460 |             89.85 |
 | Aggregator_shMON_ETH_monad            |              4,243 |               20,333 |               4,986 |      898,460 |             89.85 |
 | Aggregator_shMON_USD_monad            |              3,855 |               20,721 |               4,395 |      814,950 |             81.50 |
@@ -136,6 +136,6 @@
 | Aggregator_tBTC_USD_mainnet           |              3,163 |               21,413 |               3,661 |      669,210 |             66.92 |
 | Aggregator_wBTC_USD                   |              3,387 |               21,189 |               4,177 |      719,170 |             71.92 |
 | Aggregator_wBTC_USD_mainnet           |              3,387 |               21,189 |               4,081 |      718,210 |             71.82 |
-| Aggregator_wstETH_BTC_monad           |              4,067 |               20,509 |               4,877 |      862,170 |             86.22 |
-| Aggregator_wstETH_USD_monad           |              3,684 |               20,892 |               4,292 |      779,720 |             77.97 |
-| Aggregator_wstETH_XAU_monad           |              4,067 |               20,509 |               4,877 |      862,170 |             86.22 |
+| Aggregator_wstETH_BTC_monad           |              4,056 |               20,520 |               4,866 |      859,860 |             85.99 |
+| Aggregator_wstETH_USD_monad           |              3,679 |               20,897 |               4,287 |      778,670 |             77.87 |
+| Aggregator_wstETH_XAU_monad           |              4,056 |               20,520 |               4,866 |      859,860 |             85.99 |

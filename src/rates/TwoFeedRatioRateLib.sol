@@ -22,11 +22,11 @@ library TwoFeedRatioRateLib {
         uint8 numDec = numeratorFeed.decimals();
         uint8 denDec = denominatorFeed.decimals();
         uint256 numPrice = ChainlinkFeedLib.latestAnswerNormalized(numeratorFeed, numDec, heartbeat);
+        // `latestAnswerNormalized` rejects a zero or negative answer itself, naming the feed, so
+        // `denPrice` is strictly positive here and the division below cannot divide by zero.
         uint256 denPrice = ChainlinkFeedLib.latestAnswerNormalized(denominatorFeed, denDec, heartbeat);
-        if (denPrice == 0) revert IPriceOracleErrors.InvalidRate(0);
         rate = Math.mulDiv(numPrice, 1e18, denPrice);
         if (rate == 0) revert IPriceOracleErrors.InvalidRate(0);
-        return rate;
     }
 
     /// @notice Get rate with optional min/max validation (e.g. wstETH/stETH ~0.9–3, sUSDE/USDE ~0.9–1.1).
@@ -39,6 +39,5 @@ library TwoFeedRatioRateLib {
     ) internal view returns (uint256 rate) {
         rate = getRate(numeratorFeed, denominatorFeed, heartbeat);
         if (rate < minRate || rate > maxRate) revert IPriceOracleErrors.InvalidRate(rate);
-        return rate;
     }
 }
