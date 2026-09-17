@@ -250,6 +250,39 @@ contract ChainlinkRateLibTest is Test {
         assertEq(result, 1.5e18, "6 decimal feed should normalize to 18 decimals");
     }
 
+    /// @notice A feed reporting more than 18 decimals is scaled down to 18
+    function test_getRate_20decimals_normalizes() public {
+        MockAggregatorV3 feed20 = new MockAggregatorV3(20);
+        feed20.setAnswer(int256(1.5e20), block.timestamp); // 1.5 in 20 decimals
+
+        uint256 result = this.callGetRateWithParams(
+            AggregatorV3Interface(address(feed20)),
+            20,
+            DEFAULT_MIN_RATE,
+            DEFAULT_MAX_RATE,
+            uint64(DEFAULT_MAX_AGE)
+        );
+        assertEq(result, 1.5e18, "20 decimal feed should normalize to 18 decimals");
+    }
+
+    /// @notice A positive answer smaller than one unit at 18 decimals scales down to zero, and is refused as a
+    ///         zero rate rather than returned
+    /// @dev The bounds here admit zero, so the refusal can only come from the zero check on the scaled rate:
+    ///      with the default bounds, the floor would refuse it too and the check would go untested.
+    function test_getRate_answerTruncatingToZero_reverts() public {
+        MockAggregatorV3 feed20 = new MockAggregatorV3(20);
+        feed20.setAnswer(99, block.timestamp); // below 100, the one unit at 18 decimals a 20-decimal answer carries
+
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidRate.selector, 0));
+        this.callGetRateWithParams(
+            AggregatorV3Interface(address(feed20)),
+            20,
+            0,
+            type(uint256).max,
+            uint64(DEFAULT_MAX_AGE)
+        );
+    }
+
     // =========================================================================
     // Edge cases
     // =========================================================================

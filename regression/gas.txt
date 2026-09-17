@@ -760,122 +760,204 @@ src/aggregators/megaeth/Aggregator_USDM_SOL.sol:Aggregator_USDM_SOL
 src/arbitrum/Aggregator_USDE_AAPL_arbitrum.sol:Aggregator_USDE_AAPL_arbitrum
 | function name   |   max |   display |
 |-----------------|-------|-----------|
+| baseName        |   534 | 5.340e+02 |
 | latestAnswer    | 59912 | 5.991e+04 |
 | oracleName      |  1143 | 1.143e+03 |
 | quoteName       |   556 | 5.560e+02 |
 | rateProvider    |   501 | 5.010e+02 |
+| version         |   351 | 3.510e+02 |
 
 src/arbitrum/Aggregator_USDE_AMZN_arbitrum.sol:Aggregator_USDE_AMZN_arbitrum
 | function name   |   max |   display |
 |-----------------|-------|-----------|
+| baseName        |   534 | 5.340e+02 |
 | latestAnswer    | 59912 | 5.991e+04 |
+| oracleName      |  1143 | 1.143e+03 |
+| quoteName       |   556 | 5.560e+02 |
+| rateProvider    |   501 | 5.010e+02 |
+| version         |   351 | 3.510e+02 |
 
 src/arbitrum/Aggregator_USDE_GOOGL_arbitrum.sol:Aggregator_USDE_GOOGL_arbitrum
 | function name   |   max |   display |
 |-----------------|-------|-----------|
+| baseName        |   534 | 5.340e+02 |
 | latestAnswer    | 59912 | 5.991e+04 |
+| oracleName      |  1143 | 1.143e+03 |
+| quoteName       |   556 | 5.560e+02 |
+| rateProvider    |   501 | 5.010e+02 |
+| version         |   351 | 3.510e+02 |
 
 src/arbitrum/Aggregator_USDE_MAG7_arbitrum.sol:Aggregator_USDE_MAG7_arbitrum
 | function name   |    max |   display |
 |-----------------|--------|-----------|
 | FEED_COUNT      |    733 | 7.330e+02 |
+| baseName        |    627 | 6.270e+02 |
 | latestAnswer    | 181205 | 1.812e+05 |
 | oracleName      |   1356 | 1.356e+03 |
 | quoteName       |    649 | 6.490e+02 |
 | rateProvider    |    685 | 6.850e+02 |
+| version         |    535 | 5.350e+02 |
 
 src/arbitrum/Aggregator_USDE_MAG7i26_arbitrum.sol:Aggregator_USDE_MAG7i26_arbitrum
 | function name   |    max |   display |
 |-----------------|--------|-----------|
+| baseName        |    627 | 6.270e+02 |
 | latestAnswer    | 181338 | 1.813e+05 |
 | oracleName      |   1356 | 1.356e+03 |
 | quoteName       |    649 | 6.490e+02 |
 | rateProvider    |    685 | 6.850e+02 |
+| version         |    535 | 5.350e+02 |
 
 src/arbitrum/Aggregator_USDE_META_arbitrum.sol:Aggregator_USDE_META_arbitrum
 | function name   |   max |   display |
 |-----------------|-------|-----------|
+| baseName        |   534 | 5.340e+02 |
 | latestAnswer    | 60110 | 6.011e+04 |
+| oracleName      |  1143 | 1.143e+03 |
+| quoteName       |   556 | 5.560e+02 |
+| rateProvider    |   501 | 5.010e+02 |
+| version         |   351 | 3.510e+02 |
 
 src/arbitrum/Aggregator_USDE_MSFT_arbitrum.sol:Aggregator_USDE_MSFT_arbitrum
 | function name   |   max |   display |
 |-----------------|-------|-----------|
-| latestAnswer    | 59912 | 5.991e+04 |
-
-src/arbitrum/Aggregator_USDE_NVDA_arbitrum.sol:Aggregator_USDE_NVDA_arbitrum
-| function name   |   max |   display |
-|-----------------|-------|-----------|
-| latestAnswer    | 60110 | 6.011e+04 |
-
-src/arbitrum/Aggregator_USDE_SPY_arbitrum.sol:Aggregator_USDE_SPY_arbitrum
-| function name   |   max |   display |
-|-----------------|-------|-----------|
-| latestAnswer    | 59912 | 5.991e+04 |
-
-src/arbitrum/Aggregator_USDE_TSLA_arbitrum.sol:Aggregator_USDE_TSLA_arbitrum
-| function name   |   max |   display |
-|-----------------|-------|-----------|
-| latestAnswer    | 59912 | 5.991e+04 |
-
-src/arbitrum/Aggregator_stETH_AAPL_arbitrum.sol:Aggregator_stETH_AAPL_arbitrum
-| function name   |   max |   display |
-|-----------------|-------|-----------|
+| baseName        |   534 | 5.340e+02 |
 | latestAnswer    | 59912 | 5.991e+04 |
 | oracleName      |  1143 | 1.143e+03 |
 | quoteName       |   556 | 5.560e+02 |
 | rateProvider    |   501 | 5.010e+02 |
+| version         |   351 | 3.510e+02 |
+
+src/arbitrum/Aggregator_USDE_NVDA_arbitrum.sol:Aggregator_USDE_NVDA_arbitrum
+| function name   |   max |   display |
+|-----------------|-------|-----------|
+| baseName        |   534 | 5.340e+02 |
+| latestAnswer    | 60110 | 6.011e+04 |
+| oracleName      |  1143 | 1.143e+03 |
+| quoteName       |   556 | 5.560e+02 |
+| rateProvider    |   501 | 5.010e+02 |
+| version         |   351 | 3.510e+02 |
+
+src/arbitrum/Aggregator_USDE_SPY_arbitrum.sol:Aggregator_USDE_SPY_arbitrum
+| function name   |   max |   display |
+|-----------------|-------|-----------|
+| baseName        |   534 | 5.340e+02 |
+| latestAnswer    | 59912 | 5.991e+04 |
+| oracleName      |  1143 | 1.143e+03 |
+| quoteName       |   556 | 5.560e+02 |
+| rateProvider    |   501 | 5.010e+02 |
+| version         |   351 | 3.510e+02 |
+
+src/arbitrum/Aggregator_USDE_TSLA_arbitrum.sol:Aggregator_USDE_TSLA_arbitrum
+| function name   |   max |   display |
+|-----------------|-------|-----------|
+| baseName        |   534 | 5.340e+02 |
+| latestAnswer    | 59912 | 5.991e+04 |
+| oracleName      |  1143 | 1.143e+03 |
+| quoteName       |   556 | 5.560e+02 |
+| rateProvider    |   501 | 5.010e+02 |
+| version         |   351 | 3.510e+02 |
+
+src/arbitrum/Aggregator_stETH_AAPL_arbitrum.sol:Aggregator_stETH_AAPL_arbitrum
+| function name   |   max |   display |
+|-----------------|-------|-----------|
+| baseName        |   534 | 5.340e+02 |
+| latestAnswer    | 59912 | 5.991e+04 |
+| oracleName      |  1143 | 1.143e+03 |
+| quoteName       |   556 | 5.560e+02 |
+| rateProvider    |   501 | 5.010e+02 |
+| version         |   351 | 3.510e+02 |
 
 src/arbitrum/Aggregator_stETH_AMZN_arbitrum.sol:Aggregator_stETH_AMZN_arbitrum
 | function name   |   max |   display |
 |-----------------|-------|-----------|
+| baseName        |   534 | 5.340e+02 |
 | latestAnswer    | 59912 | 5.991e+04 |
+| oracleName      |  1143 | 1.143e+03 |
+| quoteName       |   556 | 5.560e+02 |
+| rateProvider    |   501 | 5.010e+02 |
+| version         |   351 | 3.510e+02 |
 
 src/arbitrum/Aggregator_stETH_GOOGL_arbitrum.sol:Aggregator_stETH_GOOGL_arbitrum
 | function name   |   max |   display |
 |-----------------|-------|-----------|
+| baseName        |   534 | 5.340e+02 |
 | latestAnswer    | 59912 | 5.991e+04 |
+| oracleName      |  1143 | 1.143e+03 |
+| quoteName       |   556 | 5.560e+02 |
+| rateProvider    |   501 | 5.010e+02 |
+| version         |   351 | 3.510e+02 |
 
 src/arbitrum/Aggregator_stETH_MAG7_arbitrum.sol:Aggregator_stETH_MAG7_arbitrum
 | function name   |    max |   display |
 |-----------------|--------|-----------|
 | FEED_COUNT      |    733 | 7.330e+02 |
+| baseName        |    627 | 6.270e+02 |
 | latestAnswer    | 181205 | 1.812e+05 |
 | oracleName      |   1356 | 1.356e+03 |
 | quoteName       |    649 | 6.490e+02 |
 | rateProvider    |    685 | 6.850e+02 |
+| version         |    535 | 5.350e+02 |
 
 src/arbitrum/Aggregator_stETH_MAG7i26_arbitrum.sol:Aggregator_stETH_MAG7i26_arbitrum
 | function name   |    max |   display |
 |-----------------|--------|-----------|
+| baseName        |    627 | 6.270e+02 |
 | latestAnswer    | 181347 | 1.813e+05 |
 | oracleName      |   1356 | 1.356e+03 |
 | quoteName       |    649 | 6.490e+02 |
 | rateProvider    |    685 | 6.850e+02 |
+| version         |    535 | 5.350e+02 |
 
 src/arbitrum/Aggregator_stETH_META_arbitrum.sol:Aggregator_stETH_META_arbitrum
 | function name   |   max |   display |
 |-----------------|-------|-----------|
+| baseName        |   534 | 5.340e+02 |
 | latestAnswer    | 60110 | 6.011e+04 |
+| oracleName      |  1143 | 1.143e+03 |
+| quoteName       |   556 | 5.560e+02 |
+| rateProvider    |   501 | 5.010e+02 |
+| version         |   351 | 3.510e+02 |
 
 src/arbitrum/Aggregator_stETH_MSFT_arbitrum.sol:Aggregator_stETH_MSFT_arbitrum
 | function name   |   max |   display |
 |-----------------|-------|-----------|
+| baseName        |   534 | 5.340e+02 |
 | latestAnswer    | 59912 | 5.991e+04 |
+| oracleName      |  1143 | 1.143e+03 |
+| quoteName       |   556 | 5.560e+02 |
+| rateProvider    |   501 | 5.010e+02 |
+| version         |   351 | 3.510e+02 |
 
 src/arbitrum/Aggregator_stETH_NVDA_arbitrum.sol:Aggregator_stETH_NVDA_arbitrum
 | function name   |   max |   display |
 |-----------------|-------|-----------|
+| baseName        |   534 | 5.340e+02 |
 | latestAnswer    | 60110 | 6.011e+04 |
+| oracleName      |  1143 | 1.143e+03 |
+| quoteName       |   556 | 5.560e+02 |
+| rateProvider    |   501 | 5.010e+02 |
+| version         |   351 | 3.510e+02 |
 
 src/arbitrum/Aggregator_stETH_SPY_arbitrum.sol:Aggregator_stETH_SPY_arbitrum
 | function name   |   max |   display |
 |-----------------|-------|-----------|
+| baseName        |   534 | 5.340e+02 |
 | latestAnswer    | 59912 | 5.991e+04 |
+| oracleName      |  1143 | 1.143e+03 |
+| quoteName       |   556 | 5.560e+02 |
+| rateProvider    |   501 | 5.010e+02 |
+| version         |   351 | 3.510e+02 |
 
 src/arbitrum/Aggregator_stETH_TSLA_arbitrum.sol:Aggregator_stETH_TSLA_arbitrum
 | function name   |   max |   display |
 |-----------------|-------|-----------|
+| baseName        |   534 | 5.340e+02 |
 | latestAnswer    | 59912 | 5.991e+04 |
+| oracleName      |  1143 | 1.143e+03 |
+| quoteName       |   556 | 5.560e+02 |
+| rateProvider    |   501 | 5.010e+02 |
+| version         |   351 | 3.510e+02 |
 
 src/mainnet/Aggregator_BTC_ETH_mainnet.sol:Aggregator_BTC_ETH_mainnet
 | function name   |   max |   display |

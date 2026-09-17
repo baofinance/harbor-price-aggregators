@@ -148,9 +148,12 @@ abstract contract WiredAggregatorHarness is AggregatorHarness {
         }
     }
 
-    /// @dev The price feeds are installed at values far apart, so a composed price cannot come out a
-    ///      degenerate 1, which would hide a division performed the wrong way round.
-    function _answerToInstallAt(uint256 index) private pure returns (uint256) {
+    /// @notice The answer the price feed in slot `index` is installed at, in its 8 decimals.
+    /// @dev The first feed and the rest are installed at values far apart, so a composed price cannot come
+    ///      out a degenerate 1, which would hide a division performed the wrong way round. A shape that
+    ///      aggregates many feeds overrides this to tell them apart as well, since an average, a maximum and
+    ///      any single member all agree when the members do.
+    function _answerToInstallAt(uint256 index) internal pure virtual returns (uint256) {
         return index == 0 ? PRICE_ANSWER : SECOND_PRICE_ANSWER;
     }
 
