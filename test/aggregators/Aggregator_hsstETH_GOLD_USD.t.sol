@@ -42,4 +42,14 @@ contract Aggregator_hsstETH_GOLD_USD_Test is LeveragedTokenUSDAggregatorTestBase
     function _createWithZeroUnderlyingUsdFeed() internal override {
         new Aggregator_hsstETH_GOLD_USD(address(mockMinter), address(0), DEFAULT_HEARTBEAT, 1, false);
     }
+
+    function _createWithZeroDivisor() internal override {
+        new Aggregator_hsstETH_GOLD_USD(
+            address(mockMinter),
+            address(mockUnderlyingUsdFeed),
+            DEFAULT_HEARTBEAT,
+            0,
+            false
+        );
+    }
 }

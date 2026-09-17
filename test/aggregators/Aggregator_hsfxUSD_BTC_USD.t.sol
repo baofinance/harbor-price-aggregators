@@ -43,6 +43,16 @@ contract Aggregator_hsfxUSD_BTC_USD_Test is LeveragedTokenUSDAggregatorTestBase 
         new Aggregator_hsfxUSD_BTC_USD(address(mockMinter), address(0), DEFAULT_HEARTBEAT, 1, false);
     }
 
+    function _createWithZeroDivisor() internal override {
+        new Aggregator_hsfxUSD_BTC_USD(
+            address(mockMinter),
+            address(mockUnderlyingUsdFeed),
+            DEFAULT_HEARTBEAT,
+            0,
+            false
+        );
+    }
+
     /// @notice Price = rate × feed price (single-feed pattern)
     function test_latestAnswer_priceIsRateTimesFeedPrice() public view {
         (uint256 p1, uint256 p2, uint256 r1, uint256 r2) = aggregator.latestAnswer();

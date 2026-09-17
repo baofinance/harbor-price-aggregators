@@ -71,6 +71,9 @@ abstract contract LeveragedTokenUSDAggregatorTestBase is OracleSourceConformance
     /// @notice Deploy with zero underlying USD feed for stETH (for revert test)
     function _createWithZeroUnderlyingUsdFeed() internal virtual;
 
+    /// @notice Deploy with a zero price divisor and every other argument valid (for revert test)
+    function _createWithZeroDivisor() internal virtual;
+
     // =========================================================================
     // Setup
     // =========================================================================
@@ -96,14 +99,23 @@ abstract contract LeveragedTokenUSDAggregatorTestBase is OracleSourceConformance
     // Constructor Validation
     // =========================================================================
 
+    /// @notice The rate source is required, so a zero minter address is refused at construction.
     function test_constructor_revertsOnZeroMinter() public {
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidAddress.selector, address(0)));
         _createWithZeroMinter();
     }
 
+    /// @notice The price feed is required, so a zero feed address is refused at construction.
     function test_constructor_revertsOnZeroUnderlying() public {
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidAddress.selector, address(0)));
         _createWithZeroUnderlying();
+    }
+
+    /// @notice The divisor scales every feed reading, so a zero divisor - which would divide by zero on
+    ///         every read - is refused at construction rather than at the first price.
+    function test_constructor_revertsOnZeroDivisor() public {
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidDivisor.selector, 0));
+        _createWithZeroDivisor();
     }
 
     // =========================================================================

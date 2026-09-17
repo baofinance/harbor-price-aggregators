@@ -8,7 +8,7 @@ import {ETH_USD} from "@harbor-price/feeds/chainlink/mainnet/ETH_USD.sol";
 import {Aggregator_fxUSD_ETH} from "@harbor-price/aggregators/mainnet/Aggregator_fxUSD_ETH.sol";
 import {BaoERC1967Proxy} from "@bao/BaoERC1967Proxy.sol";
 import {LatestAnswerErrorClassifier} from "@harbor-price-script/historical/LatestAnswerErrorClassifier.sol";
-import {UtcTimestampFormatter} from "@harbor-price/format/UtcTimestampFormatter.sol";
+import {BaoTestLib} from "@bao-test/BaoTestLib.sol";
 
 /// @title fxUSD/ETH v3 Daily 3-Year Dump
 /// @notice Deploys a fresh v3 fxUSD/ETH oracle and samples daily for ~3 years on a deterministic mainnet fork.
@@ -112,7 +112,7 @@ contract FxUsdEthV3Daily3YearDump is Test {
     }
 
     function _writeSample(address oracle, string memory filename, SampleData memory s, uint256 daysAgo) private {
-        string memory timeStr = UtcTimestampFormatter.format(s.ts);
+        string memory timeStr = BaoTestLib.toUtcString(s.ts);
         string memory prefix = string.concat(vm.toString(s.sampleBlock), ",", vm.toString(s.ts), ",", timeStr, ",");
 
         int256 moveWad = 0;

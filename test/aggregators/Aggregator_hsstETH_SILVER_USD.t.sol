@@ -42,4 +42,14 @@ contract Aggregator_hsstETH_SILVER_USD_Test is LeveragedTokenUSDAggregatorTestBa
     function _createWithZeroUnderlyingUsdFeed() internal override {
         new Aggregator_hsstETH_SILVER_USD(address(mockMinter), address(0), DEFAULT_HEARTBEAT, 1, false);
     }
+
+    function _createWithZeroDivisor() internal override {
+        new Aggregator_hsstETH_SILVER_USD(
+            address(mockMinter),
+            address(mockUnderlyingUsdFeed),
+            DEFAULT_HEARTBEAT,
+            0,
+            false
+        );
+    }
 }
