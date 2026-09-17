@@ -7,67 +7,67 @@
   "implementations": {
     "0x9f62503D61cdA530216ad46c1d239258bd201034": {
       "pair": "fxUSD/BTC",
-      "contractSource": "src/mainnet/Aggregator_fxUSD_BTC_mainnet.sol",
+      "contractSource": "src/Aggregator_fxUSD_BTC_mainnet.sol",
       "contractType": "Aggregator_fxUSD_BTC_mainnet",
       "deploymentTime": "2025-12-31T09:42:41Z"
     },
     "0x78D74eA76Fbfd476A06c1678dC89c025595c8536": {
       "pair": "fxUSD/ETH",
-      "contractSource": "src/mainnet/Aggregator_fxUSD_ETH_mainnet.sol",
+      "contractSource": "src/Aggregator_fxUSD_ETH_mainnet.sol",
       "contractType": "Aggregator_fxUSD_ETH_mainnet",
       "deploymentTime": "2025-12-31T09:42:41Z"
     },
     "0x8f6F9C8af44f5f15a18d0fa93B5814a623Fa6353": {
       "pair": "fxUSD/EUR",
-      "contractSource": "src/mainnet/Aggregator_fxUSD_EUR_mainnet.sol",
+      "contractSource": "src/Aggregator_fxUSD_EUR_mainnet.sol",
       "contractType": "Aggregator_fxUSD_EUR_mainnet",
       "deploymentTime": "2025-12-31T09:42:41Z"
     },
     "0x63d961913cd855f5f8C8cA7cDC22771abA3326FE": {
       "pair": "fxUSD/MCAP",
-      "contractSource": "src/mainnet/Aggregator_fxUSD_MCAP_mainnet.sol",
+      "contractSource": "src/Aggregator_fxUSD_MCAP_mainnet.sol",
       "contractType": "Aggregator_fxUSD_MCAP_mainnet",
       "deploymentTime": "2025-12-31T09:42:41Z"
     },
     "0xD59a1c8D1fa8f3FAE1E1f835E243A7BFb6173f91": {
       "pair": "fxUSD/XAG",
-      "contractSource": "src/mainnet/Aggregator_fxUSD_XAG_mainnet.sol",
+      "contractSource": "src/Aggregator_fxUSD_XAG_mainnet.sol",
       "contractType": "Aggregator_fxUSD_XAG_mainnet",
       "deploymentTime": "2025-12-31T09:42:41Z"
     },
     "0x4be4501336130E61e5872cB953e886a3a84D34Cc": {
       "pair": "fxUSD/XAU",
-      "contractSource": "src/mainnet/Aggregator_fxUSD_XAU_mainnet.sol",
+      "contractSource": "src/Aggregator_fxUSD_XAU_mainnet.sol",
       "contractType": "Aggregator_fxUSD_XAU_mainnet",
       "deploymentTime": "2025-12-31T09:42:41Z"
     },
     "0xC52B9C4eB5139E817e625290874c1CeBD44b2f6A": {
       "pair": "stETH/BTC",
-      "contractSource": "src/mainnet/Aggregator_stETH_BTC_mainnet.sol",
+      "contractSource": "src/Aggregator_stETH_BTC_mainnet.sol",
       "contractType": "Aggregator_stETH_BTC_mainnet",
       "deploymentTime": "2025-12-31T09:42:41Z"
     },
     "0x6Daab5e7999D634ae849c30658B17D0e94f0f965": {
       "pair": "stETH/EUR",
-      "contractSource": "src/mainnet/Aggregator_stETH_EUR_mainnet.sol",
+      "contractSource": "src/Aggregator_stETH_EUR_mainnet.sol",
       "contractType": "Aggregator_stETH_EUR_mainnet",
       "deploymentTime": "2025-12-31T09:42:41Z"
     },
     "0x6B5A6950f7f2b380c33aF81dbbD7DA31caaFEA63": {
       "pair": "stETH/MCAP",
-      "contractSource": "src/mainnet/Aggregator_stETH_MCAP_mainnet.sol",
+      "contractSource": "src/Aggregator_stETH_MCAP_mainnet.sol",
       "contractType": "Aggregator_stETH_MCAP_mainnet",
       "deploymentTime": "2025-12-31T09:42:41Z"
     },
     "0xE0Ba50991B891df0f0F92d06127B43314a5e427d": {
       "pair": "stETH/XAG",
-      "contractSource": "src/mainnet/Aggregator_stETH_XAG_mainnet.sol",
+      "contractSource": "src/Aggregator_stETH_XAG_mainnet.sol",
       "contractType": "Aggregator_stETH_XAG_mainnet",
       "deploymentTime": "2025-12-31T09:42:41Z"
     },
     "0x863C1185470b3D2d3E9D5FbB82e7837de081F46c": {
       "pair": "stETH/XAU",
-      "contractSource": "src/mainnet/Aggregator_stETH_XAU_mainnet.sol",
+      "contractSource": "src/Aggregator_stETH_XAU_mainnet.sol",
       "contractType": "Aggregator_stETH_XAU_mainnet",
       "deploymentTime": "2025-12-31T09:42:41Z"
     },

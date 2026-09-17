@@ -3,9 +3,9 @@ pragma solidity 0.8.30;
 
 import {Test} from "forge-std/Test.sol";
 import {SingleFeedPriceLib} from "@harbor-price/prices/SingleFeedPriceLib.sol";
-import {ChainlinkFeedLib} from "@harbor-price/feeds/chainlink/ChainlinkFeedLib.sol";
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
-import {MockAggregatorV3} from "@harbor-test/mock/MockAggregatorV3.sol";
+import {MockAggregatorV3} from "@harbor-price-test/mock/MockAggregatorV3.sol";
+import {IPriceOracleErrors} from "@bao/interfaces/IPriceOracleErrors.sol";
 
 /// @title SingleFeedPriceLib Unit Tests
 /// @notice Tests for SingleFeedPriceLib price computation logic
@@ -74,7 +74,7 @@ contract SingleFeedPriceLibTest is Test {
     function test_getPrice_zeroAnswer_reverts() public {
         feed.setAnswer(0, block.timestamp);
 
-        vm.expectRevert(abi.encodeWithSelector(ChainlinkFeedLib.ZeroPrice.selector, address(feed), 0));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.ZeroPrice.selector, address(feed), 0));
         this.callGetPrice(AggregatorV3Interface(address(feed)), 18, DEFAULT_HEARTBEAT, 1, false);
     }
 

@@ -15,6 +15,13 @@ contract MockAggregatorV3 is AggregatorV3Interface {
         _decimals = decimals_;
     }
 
+    /// @notice Set the reported decimals after construction.
+    /// @dev Needed when this mock is installed with `vm.etch`, which copies code but not storage, so the
+    ///      constructor's value is not present at the address the code lands on.
+    function setDecimals(uint8 decimals_) external {
+        _decimals = decimals_;
+    }
+
     function setAnswer(int256 answer_, uint256 updatedAt_) external {
         _answer = answer_;
         _updatedAt = updatedAt_;

@@ -4,15 +4,16 @@ pragma solidity 0.8.30;
 import {Test} from "forge-std/Test.sol";
 import {IWstETH} from "@bao/interfaces/IWstETH.sol";
 import {WstETHRateLib} from "@harbor-price/rates/WstETHRateLib.sol";
-import {MockWstETH} from "@harbor-test/mock/MockWstETH.sol";
+import {MockWstETH} from "@harbor-price-test/mock/MockWstETH.sol";
+import {IPriceOracleErrors} from "@bao/interfaces/IPriceOracleErrors.sol";
 
 /// @title WstETHRateLib Unit Tests
 /// @notice Tests for WstETHRateLib rate retrieval and validation
 contract WstETHRateLibTest is Test {
     MockWstETH mock;
 
-    uint256 constant DEFAULT_MIN_RATE = 1e18;
-    uint256 constant DEFAULT_MAX_RATE = 2e18;
+    uint256 constant DEFAULT_MIN_RATE = 9e17; // 0.9 - matches library constant
+    uint256 constant DEFAULT_MAX_RATE = 3e18;
 
     function setUp() public {
         mock = new MockWstETH();
@@ -64,7 +65,7 @@ contract WstETHRateLibTest is Test {
         uint256 lowRate = DEFAULT_MIN_RATE - 1;
         mock.setStEthPerToken(lowRate);
 
-        vm.expectRevert(abi.encodeWithSelector(WstETHRateLib.InvalidRate.selector, lowRate));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidRate.selector, lowRate));
         this.callGetRate(IWstETH(address(mock)));
     }
 
@@ -73,7 +74,7 @@ contract WstETHRateLibTest is Test {
         uint256 highRate = DEFAULT_MAX_RATE + 1;
         mock.setStEthPerToken(highRate);
 
-        vm.expectRevert(abi.encodeWithSelector(WstETHRateLib.InvalidRate.selector, highRate));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidRate.selector, highRate));
         this.callGetRate(IWstETH(address(mock)));
     }
 
@@ -81,15 +82,15 @@ contract WstETHRateLibTest is Test {
     function test_getRate_zero_reverts() public {
         mock.setStEthPerToken(0);
 
-        vm.expectRevert(abi.encodeWithSelector(WstETHRateLib.InvalidRate.selector, 0));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidRate.selector, 0));
         this.callGetRate(IWstETH(address(mock)));
     }
 
     /// @notice Custom bounds are respected - rate within custom range
     function test_getRate_customBounds_succeeds() public {
         uint256 customMin = 0.5e18;
-        uint256 customMax = 3e18;
-        uint256 rate = 2.5e18; // Within custom range, outside default range
+        uint256 customMax = 4e18;
+        uint256 rate = 3.5e18; // Within custom range, outside default 0.9–3
         mock.setStEthPerToken(rate);
 
         uint256 result = this.callGetRateWithBounds(IWstETH(address(mock)), customMin, customMax);
@@ -103,7 +104,7 @@ contract WstETHRateLibTest is Test {
         uint256 rate = 1.4e18; // Below custom min
         mock.setStEthPerToken(rate);
 
-        vm.expectRevert(abi.encodeWithSelector(WstETHRateLib.InvalidRate.selector, rate));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidRate.selector, rate));
         this.callGetRateWithBounds(IWstETH(address(mock)), customMin, customMax);
     }
 
@@ -114,7 +115,7 @@ contract WstETHRateLibTest is Test {
         uint256 rate = 1.6e18; // Above custom max
         mock.setStEthPerToken(rate);
 
-        vm.expectRevert(abi.encodeWithSelector(WstETHRateLib.InvalidRate.selector, rate));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidRate.selector, rate));
         this.callGetRateWithBounds(IWstETH(address(mock)), customMin, customMax);
     }
 
@@ -140,7 +141,7 @@ contract WstETHRateLibTest is Test {
 
     /// @notice Fuzz test for valid rates
     function test_Fuzz_getRate_validRange(uint256 rate) public {
-        // Bound to valid range: [1e18, 2e18]
+        // Bound to valid range: [0.9e18, 3e18]
         rate = bound(rate, DEFAULT_MIN_RATE, DEFAULT_MAX_RATE);
         mock.setStEthPerToken(rate);
 

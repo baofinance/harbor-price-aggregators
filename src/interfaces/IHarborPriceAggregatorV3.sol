@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.30;
 
-import {IWrappedPriceOracle} from "./IWrappedPriceOracle.sol";
+import {IWrappedPriceOracle} from "@bao/interfaces/IWrappedPriceOracle.sol";
 
 /// @notice v3 oracle interface: IWrappedPriceOracle + identity.
 interface IHarborPriceAggregatorV3 is IWrappedPriceOracle {

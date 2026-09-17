@@ -1,0 +1,82 @@
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.30;
+
+import {Test} from "forge-std/Test.sol";
+import {MockAggregatorV3} from "@harbor-price-test/mock/MockAggregatorV3.sol";
+import {IPriceOracleErrors} from "@bao/interfaces/IPriceOracleErrors.sol";
+import {Aggregator_SingleRate_DoublePrice} from "@harbor-price/aggregators/Aggregator_SingleRate_DoublePrice.sol";
+
+/// @notice A concrete single-rate, double-price aggregator, so the formula's constructor can be reached at all.
+/// @dev Every wired subclass passes its feeds as constants and takes no arguments of its own, so none of them
+///      can present the constructor with a rejected value. This subclass exists only to hand those arguments in.
+contract SingleRateDoublePriceProbe is Aggregator_SingleRate_DoublePrice {
+    constructor(
+        address rateFeed_,
+        address firstFeed_,
+        uint256 firstHeartbeat_,
+        address secondFeed_,
+        uint256 secondHeartbeat_,
+        uint256 priceDivisor_,
+        bool invertPrice_
+    )
+        Aggregator_SingleRate_DoublePrice(
+            rateFeed_,
+            firstFeed_,
+            firstHeartbeat_,
+            secondFeed_,
+            secondHeartbeat_,
+            priceDivisor_,
+            invertPrice_
+        )
+    {}
+
+    function _baseName() internal pure override returns (string memory) {
+        return "BASE";
+    }
+
+    function _quoteName() internal pure override returns (string memory) {
+        return "QUOTE";
+    }
+}
+
+/// @title What a single-rate, double-price aggregator refuses to be built with
+/// @notice The rate is one feed and the price is a second feed divided by a third, then by the divisor. An
+///         aggregator missing any of them has nothing it can report, so it must refuse to exist rather than
+///         be deployed and fail on every read.
+contract AggregatorSingleRateDoublePriceConstructionTest is Test {
+    uint256 constant HEARTBEAT = 3600;
+
+    address rateFeed;
+    address firstFeed;
+    address secondFeed;
+
+    function setUp() public {
+        rateFeed = address(new MockAggregatorV3(18));
+        firstFeed = address(new MockAggregatorV3(8));
+        secondFeed = address(new MockAggregatorV3(8));
+    }
+
+    /// @notice Construction without a rate feed is refused.
+    function test_construction_rejectsZeroRateFeed() public {
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidAddress.selector, address(0)));
+        new SingleRateDoublePriceProbe(address(0), firstFeed, HEARTBEAT, secondFeed, HEARTBEAT, 1, false);
+    }
+
+    /// @notice Construction without the price's first feed is refused.
+    function test_construction_rejectsZeroFirstFeed() public {
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidAddress.selector, address(0)));
+        new SingleRateDoublePriceProbe(rateFeed, address(0), HEARTBEAT, secondFeed, HEARTBEAT, 1, false);
+    }
+
+    /// @notice Construction without the price's second feed is refused.
+    function test_construction_rejectsZeroSecondFeed() public {
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidAddress.selector, address(0)));
+        new SingleRateDoublePriceProbe(rateFeed, firstFeed, HEARTBEAT, address(0), HEARTBEAT, 1, false);
+    }
+
+    /// @notice A zero divisor is refused at construction, where every read would otherwise divide by it.
+    function test_construction_rejectsZeroDivisor() public {
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidDivisor.selector, 0));
+        new SingleRateDoublePriceProbe(rateFeed, firstFeed, HEARTBEAT, secondFeed, HEARTBEAT, 0, false);
+    }
+}

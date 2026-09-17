@@ -30,7 +30,7 @@ Legacy v2 wrappers include both:
   - positive answer,
   - non-staleness via `maxRateSourceAge`,
   - 18-decimal normalization,
-  - basic domain bounds (e.g., `rate >= 0.9e18` or `1e18 <= rate <= 2e18`).
+  - basic domain bounds (e.g., `rate >= 0.9e18` or `0.9e18 <= rate <= 3e18`).
 
 That Chainlink rate logic is duplicated across multiple contracts and is a good target to refactor into a library.
 

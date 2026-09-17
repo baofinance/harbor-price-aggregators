@@ -2,14 +2,13 @@
 pragma solidity 0.8.30;
 
 import "forge-std/Test.sol";
-import {IWrappedPriceOracle} from "@harbor-price/interfaces/IWrappedPriceOracle.sol";
-import {HarborAggregator_v3} from "@harbor-price/aggregators/HarborAggregator_v3.sol";
+import {IWrappedPriceOracle} from "@bao/interfaces/IWrappedPriceOracle.sol";
 import {MainnetRateSources} from "@harbor-price/rates/mainnet/MainnetRateSources.sol";
 import {ETH_USD} from "@harbor-price/feeds/chainlink/mainnet/ETH_USD.sol";
 import {Aggregator_fxUSD_ETH} from "@harbor-price/aggregators/mainnet/Aggregator_fxUSD_ETH.sol";
-import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-import {LatestAnswerErrorClassifier} from "./LatestAnswerErrorClassifier.sol";
-import {UtcTimestampFormatter} from "@harbor-price/format/UtcTimestampFormatter.sol";
+import {BaoERC1967Proxy} from "@bao/BaoERC1967Proxy.sol";
+import {LatestAnswerErrorClassifier} from "@harbor-price-script/historical/LatestAnswerErrorClassifier.sol";
+import {BaoTestLib} from "@bao-test/BaoTestLib.sol";
 
 /// @title fxUSD/ETH v3 Daily 3-Year Dump
 /// @notice Deploys a fresh v3 fxUSD/ETH oracle and samples daily for ~3 years on a deterministic mainnet fork.
@@ -113,7 +112,7 @@ contract FxUsdEthV3Daily3YearDump is Test {
     }
 
     function _writeSample(address oracle, string memory filename, SampleData memory s, uint256 daysAgo) private {
-        string memory timeStr = UtcTimestampFormatter.format(s.ts);
+        string memory timeStr = BaoTestLib.toUtcString(s.ts);
         string memory prefix = string.concat(vm.toString(s.sampleBlock), ",", vm.toString(s.ts), ",", timeStr, ",");
 
         int256 moveWad = 0;
@@ -194,7 +193,7 @@ contract FxUsdEthV3Daily3YearDump is Test {
         );
 
         // BaoFixedOwnable has no initialize - owner is set via constructor immutables
-        ERC1967Proxy proxy = new ERC1967Proxy(address(impl), "");
+        BaoERC1967Proxy proxy = new BaoERC1967Proxy(address(impl), "");
         IWrappedPriceOracle oracle = IWrappedPriceOracle(address(proxy));
 
         string memory filename = "results/FXUSD_ETH_v3_daily_3y.csv";

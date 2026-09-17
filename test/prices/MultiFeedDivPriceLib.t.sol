@@ -4,8 +4,8 @@ pragma solidity 0.8.30;
 import {Test} from "forge-std/Test.sol";
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
 import {MultiFeedDivPriceLib} from "@harbor-price/prices/MultiFeedDivPriceLib.sol";
-import {ChainlinkFeedLib} from "@harbor-price/feeds/chainlink/ChainlinkFeedLib.sol";
-import {MockAggregatorV3} from "@harbor-test/mock/MockAggregatorV3.sol";
+import {MockAggregatorV3} from "@harbor-price-test/mock/MockAggregatorV3.sol";
+import {IPriceOracleErrors} from "@bao/interfaces/IPriceOracleErrors.sol";
 
 /// @title MultiFeedDivPriceLib Unit Tests
 /// @notice Tests for MultiFeedDivPriceLib price computation with custom divisor
@@ -251,7 +251,7 @@ contract MultiFeedDivPriceLibTest is Test {
         uint256[] memory heartbeats = new uint256[](0);
         uint256 divisor = 1;
 
-        vm.expectRevert(MultiFeedDivPriceLib.EmptyFeeds.selector);
+        vm.expectRevert(IPriceOracleErrors.EmptyFeeds.selector);
         this.callGetPrice(feedInterfaces, decimals, heartbeats, divisor);
     }
 
@@ -274,7 +274,7 @@ contract MultiFeedDivPriceLibTest is Test {
         heartbeats[0] = DEFAULT_HEARTBEAT;
         heartbeats[1] = DEFAULT_HEARTBEAT;
 
-        vm.expectRevert(abi.encodeWithSelector(MultiFeedDivPriceLib.InvalidFeedCount.selector, 0));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidFeedCount.selector, 0));
         this.callGetPrice(feedInterfaces, decimals, heartbeats, 0);
     }
 
@@ -296,7 +296,7 @@ contract MultiFeedDivPriceLibTest is Test {
         heartbeats[0] = DEFAULT_HEARTBEAT;
         heartbeats[1] = DEFAULT_HEARTBEAT;
 
-        vm.expectRevert(abi.encodeWithSelector(MultiFeedDivPriceLib.InvalidFeedCount.selector, 1));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidFeedCount.selector, 1));
         this.callGetPrice(feedInterfaces, decimals, heartbeats, 2);
     }
 
@@ -318,7 +318,7 @@ contract MultiFeedDivPriceLibTest is Test {
         uint256[] memory heartbeats = new uint256[](1); // Wrong length
         heartbeats[0] = DEFAULT_HEARTBEAT;
 
-        vm.expectRevert(abi.encodeWithSelector(MultiFeedDivPriceLib.InvalidFeedCount.selector, 1));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidFeedCount.selector, 1));
         this.callGetPrice(feedInterfaces, decimals, heartbeats, 2);
     }
 
@@ -337,7 +337,7 @@ contract MultiFeedDivPriceLibTest is Test {
             heartbeats[i] = DEFAULT_HEARTBEAT;
         }
 
-        vm.expectRevert(abi.encodeWithSelector(MultiFeedDivPriceLib.InvalidFeedCount.selector, feedCount));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidFeedCount.selector, feedCount));
         this.callGetPrice(feedInterfaces, decimals, heartbeats, 1);
     }
 
@@ -362,7 +362,7 @@ contract MultiFeedDivPriceLibTest is Test {
             feedInterfaces[i] = AggregatorV3Interface(address(testFeeds[i]));
         }
 
-        vm.expectRevert(abi.encodeWithSelector(ChainlinkFeedLib.ZeroPrice.selector, address(testFeeds[0]), 0));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.ZeroPrice.selector, address(testFeeds[0]), 0));
         this.callGetPrice(feedInterfaces, decimals, heartbeats, 3);
     }
 

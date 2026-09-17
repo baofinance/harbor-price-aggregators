@@ -16,3 +16,4 @@
 [submodule "lib/bao-base"]
 	path = lib/bao-base
 	url = https://github.com/baofinance/bao-base
+	branch = main

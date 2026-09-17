@@ -1,21 +1,23 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.30;
 
-import {Test} from "forge-std/Test.sol";
-import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
+import {
+    OracleSourceConformance,
+    OracleSource,
+    SourceKind
+} from "@harbor-price-test/conformance/OracleSourceConformance.sol";
+import {BaoERC1967Proxy} from "@bao/BaoERC1967Proxy.sol";
 import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import {MockAggregatorV3} from "@harbor-test/mock/MockAggregatorV3.sol";
+import {MockAggregatorV3} from "@harbor-price-test/mock/MockAggregatorV3.sol";
 import {IHarborPriceAggregatorV3} from "@harbor-price/interfaces/IHarborPriceAggregatorV3.sol";
 import {IBaoFixedOwnable} from "@bao/interfaces/IBaoFixedOwnable.sol";
-import {ChainlinkFeedLib} from "@harbor-price/feeds/chainlink/ChainlinkFeedLib.sol";
+import {IPriceOracleErrors} from "@bao/interfaces/IPriceOracleErrors.sol";
 
 /// @title Base test contract for double-feed v3 aggregators without rate (wBTC/USD, tBTC/BTC pattern)
 /// @notice Provides all tests; concrete contracts only implement factory + identity
-abstract contract DoubleFeedNoRateAggregatorTestBase is Test {
+abstract contract DoubleFeedNoRateAggregatorTestBase is OracleSourceConformance {
     MockAggregatorV3 mockFirstFeed;
     MockAggregatorV3 mockSecondFeed;
-
-    IHarborPriceAggregatorV3 aggregator;
 
     uint256 constant DEFAULT_HEARTBEAT = 3600;
     uint256 constant FIXED_RATE = 1e18;
@@ -86,6 +88,13 @@ abstract contract DoubleFeedNoRateAggregatorTestBase is Test {
             }
         }
         revert("Part not found");
+    }
+
+    /// @notice Everything the aggregator under test reads.
+    function _sources() internal view override returns (OracleSource[] memory sources) {
+        sources = new OracleSource[](2);
+        sources[0] = OracleSource({at: address(mockFirstFeed), kind: SourceKind.ChainlinkFeed});
+        sources[1] = OracleSource({at: address(mockSecondFeed), kind: SourceKind.ChainlinkFeed});
     }
 
     // =========================================================================
@@ -174,7 +183,7 @@ abstract contract DoubleFeedNoRateAggregatorTestBase is Test {
 
         vm.expectRevert(
             abi.encodeWithSelector(
-                ChainlinkFeedLib.StaleFeedData.selector,
+                IPriceOracleErrors.StaleFeedData.selector,
                 address(mockFirstFeed),
                 staleTime,
                 block.timestamp,
@@ -190,7 +199,7 @@ abstract contract DoubleFeedNoRateAggregatorTestBase is Test {
 
         vm.expectRevert(
             abi.encodeWithSelector(
-                ChainlinkFeedLib.StaleFeedData.selector,
+                IPriceOracleErrors.StaleFeedData.selector,
                 address(mockSecondFeed),
                 staleTime,
                 block.timestamp,
@@ -203,14 +212,14 @@ abstract contract DoubleFeedNoRateAggregatorTestBase is Test {
     function test_latestAnswer_zeroFirstFeed_reverts() public {
         mockFirstFeed.setAnswer(0, block.timestamp);
 
-        vm.expectRevert(abi.encodeWithSelector(ChainlinkFeedLib.ZeroPrice.selector, address(mockFirstFeed), 0));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.ZeroPrice.selector, address(mockFirstFeed), 0));
         aggregator.latestAnswer();
     }
 
     function test_latestAnswer_zeroSecondFeed_reverts() public {
         mockSecondFeed.setAnswer(0, block.timestamp);
 
-        vm.expectRevert(abi.encodeWithSelector(ChainlinkFeedLib.ZeroPrice.selector, address(mockSecondFeed), 0));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.ZeroPrice.selector, address(mockSecondFeed), 0));
         aggregator.latestAnswer();
     }
 
@@ -229,7 +238,7 @@ abstract contract DoubleFeedNoRateAggregatorTestBase is Test {
             1,
             false
         );
-        ERC1967Proxy proxy = new ERC1967Proxy(address(impl1), "");
+        BaoERC1967Proxy proxy = new BaoERC1967Proxy(address(impl1), "");
         IHarborPriceAggregatorV3 proxied = IHarborPriceAggregatorV3(address(proxy));
 
         // Capture price with impl1

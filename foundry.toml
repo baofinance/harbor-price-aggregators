@@ -34,12 +34,10 @@ remappings = [
   # bao-factory is a transitive dependency via bao-base
   "@bao-factory/=lib/bao-base/lib/bao-factory/src/",
   "@bao-factory-test/=lib/bao-base/lib/bao-factory/test/",
-  # harbor
-  "@harbor/=src/",
-  "@harbor-script/=script/",
-  "@harbor-test/=test/",
   # harbor price aggregators
   "@harbor-price/=src/",
+  "@harbor-price-test/=test/",
+  "@harbor-price-script/=script/",
 ]
 
 fuzz.gas_report_samples = 64 # gas report doesn't need so many test cases

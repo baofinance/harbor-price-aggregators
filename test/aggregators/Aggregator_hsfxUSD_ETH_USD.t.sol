@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.30;
 
-import {LeveragedTokenUSDAggregatorTestBase} from "./LeveragedTokenUSDAggregatorTestBase.sol";
+import {LeveragedTokenUSDAggregatorTestBase} from "@harbor-price-test/aggregators/LeveragedTokenUSDAggregatorTestBase.sol";
 import {IHarborPriceAggregatorV3} from "@harbor-price/interfaces/IHarborPriceAggregatorV3.sol";
 import {Aggregator_hsfxUSD_ETH_USD} from "@harbor-price/aggregators/mainnet/Aggregator_hsfxUSD_ETH_USD.sol";
 
@@ -40,6 +40,16 @@ contract Aggregator_hsfxUSD_ETH_USD_Test is LeveragedTokenUSDAggregatorTestBase 
 
     function _createWithZeroUnderlyingUsdFeed() internal override {
         new Aggregator_hsfxUSD_ETH_USD(address(mockMinter), address(0), DEFAULT_HEARTBEAT, 1, false);
+    }
+
+    function _createWithZeroDivisor() internal override {
+        new Aggregator_hsfxUSD_ETH_USD(
+            address(mockMinter),
+            address(mockUnderlyingUsdFeed),
+            DEFAULT_HEARTBEAT,
+            0,
+            false
+        );
     }
 
     function test_latestAnswer_priceIsRateTimesFeedPrice() public view {

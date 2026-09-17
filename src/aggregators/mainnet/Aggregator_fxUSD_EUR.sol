@@ -3,7 +3,7 @@ pragma solidity 0.8.30;
 
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
 import {IFxSAVE} from "@harbor-price/interfaces/IFxSAVE.sol";
-import {IWrappedPriceOracle} from "@harbor-price/interfaces/IWrappedPriceOracle.sol";
+import {IWrappedPriceOracle} from "@bao/interfaces/IWrappedPriceOracle.sol";
 import {HarborAggregator_v3} from "@harbor-price/aggregators/HarborAggregator_v3.sol";
 import {FxSaveRateLib} from "@harbor-price/rates/FxSaveRateLib.sol";
 import {SingleFeedPriceLib} from "@harbor-price/prices/SingleFeedPriceLib.sol";
@@ -14,9 +14,6 @@ import {SingleFeedPriceLib} from "@harbor-price/prices/SingleFeedPriceLib.sol";
 // solhint-disable-next-line contract-name-capwords
 contract Aggregator_fxUSD_EUR is HarborAggregator_v3 {
     using FxSaveRateLib for IFxSAVE;
-
-    error InvalidAddress(address value);
-    error InvalidDivisor(uint256 divisor);
 
     IFxSAVE public immutable FXSAVE;
 

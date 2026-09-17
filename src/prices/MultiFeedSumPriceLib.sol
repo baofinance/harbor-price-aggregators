@@ -2,12 +2,10 @@
 pragma solidity 0.8.30;
 
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
+import {IPriceOracleErrors} from "@bao/interfaces/IPriceOracleErrors.sol";
 import {ChainlinkFeedLib} from "@harbor-price/feeds/chainlink/ChainlinkFeedLib.sol";
 
 library MultiFeedSumPriceLib {
-    error EmptyFeeds();
-    error InvalidFeedCount(uint256 count);
-
     /// @notice Get the sum of prices from multiple feeds.
     /// @param feeds Array of Chainlink feed interfaces
     /// @param feedDecimals Array of decimals for each feed (must match feeds length)
@@ -19,10 +17,10 @@ library MultiFeedSumPriceLib {
         uint256[] memory feedHeartbeats
     ) internal view returns (uint256) {
         uint256 feedCount = feeds.length;
-        if (feedCount == 0) revert EmptyFeeds();
-        if (feedCount > 50) revert InvalidFeedCount(feedCount); // Reasonable limit
-        if (feedDecimals.length != feedCount) revert InvalidFeedCount(feedDecimals.length);
-        if (feedHeartbeats.length != feedCount) revert InvalidFeedCount(feedHeartbeats.length);
+        if (feedCount == 0) revert IPriceOracleErrors.EmptyFeeds();
+        if (feedCount > 50) revert IPriceOracleErrors.InvalidFeedCount(feedCount); // Reasonable limit
+        if (feedDecimals.length != feedCount) revert IPriceOracleErrors.InvalidFeedCount(feedDecimals.length);
+        if (feedHeartbeats.length != feedCount) revert IPriceOracleErrors.InvalidFeedCount(feedHeartbeats.length);
 
         uint256 sum = 0;
         for (uint256 i = 0; i < feedCount; i++) {

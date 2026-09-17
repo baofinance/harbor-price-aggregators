@@ -43,8 +43,8 @@ Test pure/view library functions in isolation with controlled inputs.
 #### WstETHRateLib.t.sol ✅
 
 - [x] `getRate` returns correct value within bounds
-- [x] `getRate` reverts when rate < DEFAULT_MIN_RATE (1e18)
-- [x] `getRate` reverts when rate > DEFAULT_MAX_RATE (2e18)
+- [x] `getRate` reverts when rate < DEFAULT_MIN_RATE (0.9e18)
+- [x] `getRate` reverts when rate > DEFAULT_MAX_RATE (3e18)
 - [x] `getRate` with custom min/max bounds
 - [x] `getRaw` returns raw getStETHByWstETH result
 
