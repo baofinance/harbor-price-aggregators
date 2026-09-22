@@ -92,9 +92,7 @@ No other code changes are required: same formula contract, same mainnet contract
 
 ## Base v3 Oracles
 
-| Oracle     | Rate Source              | Feeds                                                         |
-| ---------- | ------------------------ | ------------------------------------------------------------- |
-| stETH/BOM5 | wstETH/stETH (Chainlink) | stETH/USD, normalized average of (DOGE+SHIB+PEPE+TRUMP+WIF)/5 |
+stETH/BOM5 is retired. A constituent Chainlink feed is dead, so the aggregator and its tests were discarded.
 
 ## Installation
 

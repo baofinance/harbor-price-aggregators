@@ -94,7 +94,7 @@ forge test --match-path "test/arbitrum/ArbitrumMAG7i26OraclesFork_USDE.t.sol" --
 Get MAG7 index price (sum of 7 stock feeds):
 
 ```bash
-forge script script/GetMAG7IndexPrice.s.sol:GetMAG7IndexPrice --rpc-url $arbitrum -vvv
+forge script script/arbitrum/GetMAG7IndexPrice.s.sol:GetMAG7IndexPrice --rpc-url $arbitrum -vvv
 ```
 
 ## Test Output
