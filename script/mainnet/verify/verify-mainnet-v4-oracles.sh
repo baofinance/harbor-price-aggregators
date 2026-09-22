@@ -30,7 +30,7 @@ DEPLOYMENT_FILE="deployments/mainnet/v4-oracles.json"
 
 if [[ ! -f "$DEPLOYMENT_FILE" ]]; then
   echo "❌ ERROR: Deployment file not found: $DEPLOYMENT_FILE"
-  echo "   Run deploy-mainnet-v4-oracles.sh first"
+  echo "   Deploy with script/deploy-aggregators, then re-run this verify script."
   exit 1
 fi
 

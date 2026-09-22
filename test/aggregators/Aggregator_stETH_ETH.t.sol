@@ -5,7 +5,7 @@ import {SingleFeedStETHAggregatorTestBase} from "@harbor-price-test/aggregators/
 import {IHarborPriceAggregatorV3} from "@harbor-price/interfaces/IHarborPriceAggregatorV3.sol";
 import {Aggregator_stETH_ETH} from "@harbor-price/aggregators/mainnet/Aggregator_stETH_ETH.sol";
 
-// Tests: Aggregator_stETH_ETH — stETH/ETH price with wstETH->stETH rate; full suite via SingleFeedWstETHAggregatorTestBase
+// Tests: Aggregator_stETH_ETH — stETH/ETH price with wstETH->stETH rate; full suite via SingleFeedStETHAggregatorTestBase
 contract Aggregator_stETH_ETH_Test is SingleFeedStETHAggregatorTestBase {
     function _contractName() internal pure override returns (string memory) {
         return type(Aggregator_stETH_ETH).name;

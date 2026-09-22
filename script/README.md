@@ -62,14 +62,7 @@ deployments/local/<network>/v3-aggregators.json
 
 ## Script layout
 
-Chain-specific deploy and verify scripts live under **script/\<chain\>/deploy/** and **script/\<chain\>/verify/**:
-
-| Chain        | Deploy                    | Verify                    |
-| ------------ | ------------------------- | ------------------------- |
-| **megaeth**  | `script/megaeth/deploy/`  | `script/megaeth/verify/`  |
-| **mainnet**  | `script/mainnet/deploy/`  | `script/mainnet/verify/`  |
-| **arbitrum** | `script/arbitrum/deploy/` | `script/arbitrum/verify/` |
-| **base**     | `script/base/deploy/`     | `script/base/verify/`     |
+New deploys use `script/deploy-aggregators` (BaoFactory CREATE3). Historical verify scripts live under **script/\<chain\>/verify/**. The only remaining chain deploy wrapper is `script/mainnet/deploy/deploy-mainnet-eth-oracles.sh`.
 
 Shared tools (`deploy-impl`, `deploy-proxy`, `verify-impl`, `verify-proxy`, `lib/common.sh`) remain in **script/**.
 
@@ -589,12 +582,8 @@ Common causes:
 - [v3 Aggregator Authoring Guide](../doc/v3-aggregator-authoring-guide.md) - How to create new aggregator contracts
 - [Main README](../README.md) - Project overview and testing
 
-## Legacy Scripts
+## Convenience wrappers
 
-The following network-specific scripts are retained for arbitrum and base deployments, as the unified scripts above have only been tested on mainnet:
+`script/mainnet/deploy/deploy-mainnet-eth-oracles.sh` is a thin wrapper around `deploy-one-aggregator` for the ETH/ETH and stETH/ETH CREATE3 pair.
 
-- `deploy-arbitrum-v3-oracles.sh`, `deploy-base-v3-oracles.sh`, `deploy-mainnet-v3-oracles.sh`
-- `verify-arbitrum-v3-oracles.sh`, `verify-base-v3-oracles.sh`, `verify-mainnet-v3-oracles.sh`
-- `check-aggregators`, `deploy-aggregators`, `deploy-many-aggregators`, `deploy-one-aggregator`
-
-Once the unified scripts (`deploy-impl`, `deploy-proxy`, etc.) have been validated on arbitrum and base, these legacy scripts can be removed.
+Chain-specific `forge create` deploy scripts (no BaoFactory) have been removed. Use `deploy-aggregators` / `deploy-one-aggregator`. Historical verify scripts under `script/<chain>/verify/` still exist for already-deployed addresses.

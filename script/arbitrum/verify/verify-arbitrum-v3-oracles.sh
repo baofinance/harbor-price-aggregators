@@ -37,7 +37,7 @@ DEPLOYMENT_FILE="deployments/arbitrum/v3-oracles.json"
 
 if [[ ! -f "$DEPLOYMENT_FILE" ]]; then
   echo "❌ ERROR: Deployment file not found: $DEPLOYMENT_FILE"
-  echo "   Run the deployment script first: ./script/arbitrum/deploy/deploy-arbitrum-v3-oracles.sh"
+  echo "   Deploy with script/deploy-aggregators, then re-run this verify script."
   exit 1
 fi
 

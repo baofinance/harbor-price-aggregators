@@ -37,7 +37,7 @@ DEPLOYMENT_FILE="deployments/base/v3-oracles.json"
 
 if [[ ! -f "$DEPLOYMENT_FILE" ]]; then
   echo "❌ ERROR: Deployment file not found: $DEPLOYMENT_FILE"
-  echo "   Run the deployment script first: ./script/base/deploy/deploy-base-v3-oracles.sh"
+  echo "   Deploy with script/deploy-aggregators, then re-run this verify script."
   exit 1
 fi
 

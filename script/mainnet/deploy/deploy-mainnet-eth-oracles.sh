@@ -24,7 +24,7 @@ set -euo pipefail
 #     script/mainnet/deploy/deploy-mainnet-eth-oracles.sh
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 cd "$REPO_ROOT"
 
 NETWORK="${NETWORK:-mainnet}"
