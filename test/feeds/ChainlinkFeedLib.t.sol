@@ -4,7 +4,8 @@ pragma solidity 0.8.30;
 import {Test} from "forge-std/Test.sol";
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
 import {ChainlinkFeedLib} from "@harbor-price/feeds/chainlink/ChainlinkFeedLib.sol";
-import {MockAggregatorV3} from "@harbor-test/mock/MockAggregatorV3.sol";
+import {MockAggregatorV3} from "@harbor-price-test/mock/MockAggregatorV3.sol";
+import {IPriceOracleErrors} from "@bao/interfaces/IPriceOracleErrors.sol";
 
 /// @title ChainlinkFeedLib General Tests
 /// @notice Tests for basic ChainlinkFeedLib functionality (normalization, validation)
@@ -51,7 +52,7 @@ contract ChainlinkFeedLibTest is Test {
     function test_latestAnswerNormalized_zeroPrice_reverts() public {
         feed.setAnswer(0, block.timestamp);
 
-        vm.expectRevert(abi.encodeWithSelector(ChainlinkFeedLib.ZeroPrice.selector, address(feed), 0));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.ZeroPrice.selector, address(feed), 0));
         this.callLatestAnswerNormalized(address(feed), DECIMALS);
     }
 

@@ -1,26 +1,35 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.30;
 
-import {Test} from "forge-std/Test.sol";
-import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
+import {
+    OracleSourceConformance,
+    OracleSource,
+    SourceKind
+} from "@harbor-price-test/conformance/OracleSourceConformance.sol";
+import {BaoERC1967Proxy} from "@bao/BaoERC1967Proxy.sol";
 import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import {MockAggregatorV3} from "@harbor-test/mock/MockAggregatorV3.sol";
-import {MockMinter} from "@harbor-test/mock/MockMinter.sol";
-import {MockFxSAVE} from "@harbor-test/mock/MockFxSAVE.sol";
-import {MockWstETH} from "@harbor-test/mock/MockWstETH.sol";
+import {MockAggregatorV3} from "@harbor-price-test/mock/MockAggregatorV3.sol";
+import {MockMinter} from "@harbor-price-test/mock/MockMinter.sol";
+import {MockFxSAVE} from "@harbor-price-test/mock/MockFxSAVE.sol";
+import {MockWstETH} from "@harbor-price-test/mock/MockWstETH.sol";
 import {IHarborPriceAggregatorV3} from "@harbor-price/interfaces/IHarborPriceAggregatorV3.sol";
 import {IBaoFixedOwnable} from "@bao/interfaces/IBaoFixedOwnable.sol";
-import {ChainlinkFeedLib} from "@harbor-price/feeds/chainlink/ChainlinkFeedLib.sol";
+import {IPriceOracleErrors} from "@bao/interfaces/IPriceOracleErrors.sol";
 
 /// @title Base test contract for leveraged token/USD v3 aggregators
 /// @notice Provides all tests; concrete contracts only implement factory + identity
-abstract contract LeveragedTokenUSDAggregatorTestBase is Test {
+abstract contract LeveragedTokenUSDAggregatorTestBase is OracleSourceConformance {
     MockMinter mockMinter;
     MockFxSAVE mockFxSAVE;
     MockWstETH mockWstETH;
     MockAggregatorV3 mockUnderlyingUsdFeed;
 
-    IHarborPriceAggregatorV3 aggregator;
+    /// @dev The Minter is the one source in the repo whose zero is a value rather than a fault.
+    function _sources() internal view override returns (OracleSource[] memory sources) {
+        sources = new OracleSource[](2);
+        sources[0] = OracleSource({at: address(mockMinter), kind: SourceKind.MinterLeveragedPrice});
+        sources[1] = OracleSource({at: address(mockUnderlyingUsdFeed), kind: SourceKind.ChainlinkFeed});
+    }
 
     uint256 constant DEFAULT_HEARTBEAT = 3600;
     uint256 constant VALID_LEVERAGED_TOKEN_PRICE = 1.2e18; // leveragedToken / underlying
@@ -62,6 +71,9 @@ abstract contract LeveragedTokenUSDAggregatorTestBase is Test {
     /// @notice Deploy with zero underlying USD feed for stETH (for revert test)
     function _createWithZeroUnderlyingUsdFeed() internal virtual;
 
+    /// @notice Deploy with a zero price divisor and every other argument valid (for revert test)
+    function _createWithZeroDivisor() internal virtual;
+
     // =========================================================================
     // Setup
     // =========================================================================
@@ -87,14 +99,23 @@ abstract contract LeveragedTokenUSDAggregatorTestBase is Test {
     // Constructor Validation
     // =========================================================================
 
+    /// @notice The rate source is required, so a zero minter address is refused at construction.
     function test_constructor_revertsOnZeroMinter() public {
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidAddress.selector, address(0)));
         _createWithZeroMinter();
     }
 
+    /// @notice The price feed is required, so a zero feed address is refused at construction.
     function test_constructor_revertsOnZeroUnderlying() public {
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidAddress.selector, address(0)));
         _createWithZeroUnderlying();
+    }
+
+    /// @notice The divisor scales every feed reading, so a zero divisor - which would divide by zero on
+    ///         every read - is refused at construction rather than at the first price.
+    function test_constructor_revertsOnZeroDivisor() public {
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidDivisor.selector, 0));
+        _createWithZeroDivisor();
     }
 
     // =========================================================================
@@ -138,7 +159,9 @@ abstract contract LeveragedTokenUSDAggregatorTestBase is Test {
     function test_latestAnswer_zeroFeedPrice_reverts() public {
         mockUnderlyingUsdFeed.setAnswer(0, block.timestamp);
 
-        vm.expectRevert(abi.encodeWithSelector(ChainlinkFeedLib.ZeroPrice.selector, address(mockUnderlyingUsdFeed), 0));
+        vm.expectRevert(
+            abi.encodeWithSelector(IPriceOracleErrors.ZeroPrice.selector, address(mockUnderlyingUsdFeed), 0)
+        );
         aggregator.latestAnswer();
     }
 
@@ -156,7 +179,7 @@ abstract contract LeveragedTokenUSDAggregatorTestBase is Test {
             0,
             _expectedBaseName()
         );
-        ERC1967Proxy proxy = new ERC1967Proxy(address(impl1), "");
+        BaoERC1967Proxy proxy = new BaoERC1967Proxy(address(impl1), "");
         IHarborPriceAggregatorV3 proxied = IHarborPriceAggregatorV3(address(proxy));
 
         // Capture price with impl1

@@ -1,23 +1,25 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.30;
 
-import {Test, console} from "forge-std/Test.sol";
-import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
+import {
+    OracleSourceConformance,
+    OracleSource,
+    SourceKind
+} from "@harbor-price-test/conformance/OracleSourceConformance.sol";
+import {console} from "forge-std/Test.sol";
+import {BaoERC1967Proxy} from "@bao/BaoERC1967Proxy.sol";
 import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import {MockAggregatorV3} from "@harbor-test/mock/MockAggregatorV3.sol";
+import {MockAggregatorV3} from "@harbor-price-test/mock/MockAggregatorV3.sol";
 import {IHarborPriceAggregatorV3} from "@harbor-price/interfaces/IHarborPriceAggregatorV3.sol";
 import {IBaoFixedOwnable} from "@bao/interfaces/IBaoFixedOwnable.sol";
-import {ChainlinkFeedLib} from "@harbor-price/feeds/chainlink/ChainlinkFeedLib.sol";
-import {ChainlinkRateLib} from "@harbor-price/rates/ChainlinkRateLib.sol";
+import {IPriceOracleErrors} from "@bao/interfaces/IPriceOracleErrors.sol";
 
 /// @title Base test contract for Arbitrum multi-feed indexed v3 aggregators (MAG7i26 pattern: 7 feeds, rate feed, base USD feed, index price)
 /// @notice Provides all tests; concrete contracts only implement factory + identity
-abstract contract ArbitrumMultiFeedIndexAggregatorTestBase is Test {
+abstract contract ArbitrumMultiFeedIndexAggregatorTestBase is OracleSourceConformance {
     MockAggregatorV3 mockRateFeed;
     MockAggregatorV3 mockBaseUsdFeed;
     MockAggregatorV3[7] mockFeeds;
-
-    IHarborPriceAggregatorV3 aggregator;
 
     uint256 constant DEFAULT_HEARTBEAT = 86400; // 24 hours
     uint256 constant VALID_RATE = 1.15e18; // 1.15 wstETH/stETH or sUSDE/USDE
@@ -98,6 +100,16 @@ abstract contract ArbitrumMultiFeedIndexAggregatorTestBase is Test {
     // =========================================================================
     // Setup
     // =========================================================================
+
+    /// @notice Everything the aggregator under test reads.
+    function _sources() internal view override returns (OracleSource[] memory sources) {
+        sources = new OracleSource[](2 + FEED_COUNT);
+        sources[0] = OracleSource({at: address(mockRateFeed), kind: SourceKind.ChainlinkFeed});
+        sources[1] = OracleSource({at: address(mockBaseUsdFeed), kind: SourceKind.ChainlinkFeed});
+        for (uint256 i = 0; i < FEED_COUNT; i++) {
+            sources[2 + i] = OracleSource({at: address(mockFeeds[i]), kind: SourceKind.ChainlinkFeed});
+        }
+    }
 
     function setUp() public virtual {
         vm.warp(100_000);
@@ -241,7 +253,7 @@ abstract contract ArbitrumMultiFeedIndexAggregatorTestBase is Test {
         mockRateFeed.setAnswer(int256(VALID_RATE), staleTime);
 
         vm.expectRevert(
-            abi.encodeWithSelector(ChainlinkRateLib.StaleRateSource.selector, address(mockRateFeed), staleTime)
+            abi.encodeWithSelector(IPriceOracleErrors.StaleRateSource.selector, address(mockRateFeed), staleTime)
         );
         aggregator.latestAnswer();
     }
@@ -252,7 +264,7 @@ abstract contract ArbitrumMultiFeedIndexAggregatorTestBase is Test {
 
         vm.expectRevert(
             abi.encodeWithSelector(
-                ChainlinkFeedLib.StaleFeedData.selector,
+                IPriceOracleErrors.StaleFeedData.selector,
                 address(mockBaseUsdFeed),
                 staleTime,
                 block.timestamp,
@@ -268,7 +280,7 @@ abstract contract ArbitrumMultiFeedIndexAggregatorTestBase is Test {
 
         vm.expectRevert(
             abi.encodeWithSelector(
-                ChainlinkFeedLib.StaleFeedData.selector,
+                IPriceOracleErrors.StaleFeedData.selector,
                 address(mockFeeds[0]),
                 staleTime,
                 block.timestamp,
@@ -279,18 +291,18 @@ abstract contract ArbitrumMultiFeedIndexAggregatorTestBase is Test {
     }
 
     function test_latestAnswer_rateBelowMin_reverts() public {
-        uint256 lowRate = 0.9e18;
+        uint256 lowRate = 0.9e18 - 1;
         mockRateFeed.setAnswer(int256(lowRate), block.timestamp);
 
-        vm.expectRevert(abi.encodeWithSelector(ChainlinkRateLib.InvalidRate.selector, lowRate));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidRate.selector, lowRate));
         aggregator.latestAnswer();
     }
 
     function test_latestAnswer_rateAboveMax_reverts() public {
-        uint256 highRate = 2.1e18;
+        uint256 highRate = 3e18 + 1;
         mockRateFeed.setAnswer(int256(highRate), block.timestamp);
 
-        vm.expectRevert(abi.encodeWithSelector(ChainlinkRateLib.InvalidRate.selector, highRate));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidRate.selector, highRate));
         aggregator.latestAnswer();
     }
 
@@ -316,7 +328,7 @@ abstract contract ArbitrumMultiFeedIndexAggregatorTestBase is Test {
             feedAddrs,
             feedHeartbeats_
         );
-        ERC1967Proxy proxy = new ERC1967Proxy(address(impl1), "");
+        BaoERC1967Proxy proxy = new BaoERC1967Proxy(address(impl1), "");
         IHarborPriceAggregatorV3 proxied = IHarborPriceAggregatorV3(address(proxy));
 
         // Capture price with impl1

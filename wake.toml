@@ -14,6 +14,9 @@ remappings = [
   "ds-test/=lib/forge-std/lib/ds-test/src/",
   "forge-std/=lib/forge-std/src/",
   # openzeppelin
+  # Must stay identical to the same block in foundry.toml, in the same ORDER — `yarn doctor` fails
+  # when wake and forge resolve an import differently, because then wake analyses a program that is
+  # not the one built, and matching here is by order rather than by longest prefix.
   "@openzeppelin/contracts/=lib/openzeppelin-contracts-upgradeable/lib/openzeppelin-contracts/contracts/",
   "@openzeppelin/contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts/",
   "openzeppelin-foundry-upgrades/=lib/openzeppelin-foundry-upgrades/src/",
@@ -30,12 +33,10 @@ remappings = [
   # bao-factory is a transitive dependency via bao-base
   "@bao-factory/=lib/bao-base/lib/bao-factory/src/",
   "@bao-factory-test/=lib/bao-base/lib/bao-factory/test/",
-  # harbor
-  "@harbor/=src/",
-  "@harbor-script/=script/",
-  "@harbor-test/=test/",
   # harbor price aggregators
   "@harbor-price/=src/",
+  "@harbor-price-test/=test/",
+  "@harbor-price-script/=script/",
 ]
 
 include_paths = []

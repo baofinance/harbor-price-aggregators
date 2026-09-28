@@ -3,7 +3,7 @@ pragma solidity 0.8.30;
 
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
 import {HarborAggregator_v3} from "@harbor-price/aggregators/HarborAggregator_v3.sol";
-import {IWrappedPriceOracle} from "@harbor-price/interfaces/IWrappedPriceOracle.sol";
+import {IWrappedPriceOracle} from "@bao/interfaces/IWrappedPriceOracle.sol";
 import {SingleFeedPriceLib} from "@harbor-price/prices/SingleFeedPriceLib.sol";
 
 /// @notice tBTC/USD oracle (price: tBTC/USD feed).
@@ -11,8 +11,6 @@ import {SingleFeedPriceLib} from "@harbor-price/prices/SingleFeedPriceLib.sol";
 /// @custom:oz-upgrades-unsafe-allow state-variable-immutable constructor
 // solhint-disable-next-line contract-name-capwords
 contract Aggregator_tBTC_USD is HarborAggregator_v3 {
-    error InvalidAddress(address value);
-    error InvalidDivisor(uint256 divisor);
     uint256 public constant FIXED_RATE = 1e18;
 
     AggregatorV3Interface public immutable PRICE_FEED;

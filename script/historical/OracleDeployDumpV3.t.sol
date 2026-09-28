@@ -2,18 +2,18 @@
 pragma solidity 0.8.30;
 
 import "forge-std/Test.sol";
-import {LatestAnswerErrorClassifier} from "./LatestAnswerErrorClassifier.sol";
+import {LatestAnswerErrorClassifier} from "@harbor-price-script/historical/LatestAnswerErrorClassifier.sol";
 
 // v3 mainnet wrappers (parameterless constructors)
-import {Aggregator_fxUSD_ETH_mainnet} from "../../src/mainnet/Aggregator_fxUSD_ETH_mainnet.sol";
-import {Aggregator_fxUSD_BTC_mainnet} from "../../src/mainnet/Aggregator_fxUSD_BTC_mainnet.sol";
-import {Aggregator_fxUSD_EUR_mainnet} from "../../src/mainnet/Aggregator_fxUSD_EUR_mainnet.sol";
-import {Aggregator_fxUSD_GOLD_mainnet} from "../../src/mainnet/Aggregator_fxUSD_GOLD_mainnet.sol";
-import {Aggregator_fxUSD_MCAP_mainnet} from "../../src/mainnet/Aggregator_fxUSD_MCAP_mainnet.sol";
-import {Aggregator_stETH_BTC_mainnet} from "../../src/mainnet/Aggregator_stETH_BTC_mainnet.sol";
-import {Aggregator_stETH_EUR_mainnet} from "../../src/mainnet/Aggregator_stETH_EUR_mainnet.sol";
-import {Aggregator_stETH_GOLD_mainnet} from "../../src/mainnet/Aggregator_stETH_GOLD_mainnet.sol";
-import {Aggregator_stETH_MCAP_mainnet} from "../../src/mainnet/Aggregator_stETH_MCAP_mainnet.sol";
+import {Aggregator_fxUSD_ETH_mainnet} from "@harbor-price/mainnet/Aggregator_fxUSD_ETH_mainnet.sol";
+import {Aggregator_fxUSD_BTC_mainnet} from "@harbor-price/mainnet/Aggregator_fxUSD_BTC_mainnet.sol";
+import {Aggregator_fxUSD_EUR_mainnet} from "@harbor-price/mainnet/Aggregator_fxUSD_EUR_mainnet.sol";
+import {Aggregator_fxUSD_GOLD_mainnet} from "@harbor-price/mainnet/Aggregator_fxUSD_GOLD_mainnet.sol";
+import {Aggregator_fxUSD_MCAP_mainnet} from "@harbor-price/mainnet/Aggregator_fxUSD_MCAP_mainnet.sol";
+import {Aggregator_stETH_BTC_mainnet} from "@harbor-price/mainnet/Aggregator_stETH_BTC_mainnet.sol";
+import {Aggregator_stETH_EUR_mainnet} from "@harbor-price/mainnet/Aggregator_stETH_EUR_mainnet.sol";
+import {Aggregator_stETH_GOLD_mainnet} from "@harbor-price/mainnet/Aggregator_stETH_GOLD_mainnet.sol";
+import {Aggregator_stETH_MCAP_mainnet} from "@harbor-price/mainnet/Aggregator_stETH_MCAP_mainnet.sol";
 
 /// @title Oracle Deploy Dump V3
 /// @notice Extracts historical oracle data by deploying v3 oracles at each block and sampling.

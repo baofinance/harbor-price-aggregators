@@ -37,7 +37,7 @@ Options:
 
 Contract resolution:
   Deploys: src/<network>/Aggregator_<base>_<quote>_<network>.sol:Aggregator_<base>_<quote>_<network>
-  Salt:    <salt-prefix>::<base>::<quote>::wrappedAggregator
+  Salt:    <salt-prefix>::<base>::<quote>::wrappedPriceAggregator
 
 State file:
   Deployments are recorded in deployment-state-v3-<network>.json

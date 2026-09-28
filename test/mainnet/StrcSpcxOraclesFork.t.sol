@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.30;
 
-import {Test, console} from "forge-std/Test.sol";
+import {MainnetForkTest} from "@harbor-price-test/fork/MainnetForkTest.sol";
+import {console} from "forge-std/Test.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
 import {IWstETH} from "@bao/interfaces/IWstETH.sol";
@@ -18,7 +19,19 @@ import {MainnetRateSources} from "@harbor-price/rates/mainnet/MainnetRateSources
 
 /// @notice Mainnet fork checks that STRC/SPCX aggregators match live Chainlink + rate sources.
 /// @dev forge test --match-path test/mainnet/StrcSpcxOraclesFork.t.sol --fork-url $MAINNET_RPC_URL -vv
-contract StrcSpcxOraclesForkTest is Test {
+contract StrcSpcxOraclesForkTest is MainnetForkTest {
+    /// @dev Pinned rather than latest, unlike the rest of this repo's fork suites, because SPCX/USD
+    ///      only publishes during the US equity session: it goes silent from Friday's close until
+    ///      Monday's open, which is 65.7 hours against an 86400s heartbeat, so a `latest` run fails
+    ///      every weekend for a reason that has nothing to do with the code under test. This block is
+    ///      Fri 11 Sep 2026 15:59 UTC, mid-session, with the SPCX round 42 minutes old — the widest
+    ///      freshness margin available, so the suite's verdict depends only on the aggregators.
+    ///      The outage itself is reproduced in `SpcxWeekendOutageFork.t.sol`; the write-up is
+    ///      `doc/spcx-weekend-staleness.md`.
+    function forkBlock() internal pure override returns (uint256) {
+        return 25955214;
+    }
+
     IHarborPriceAggregatorV3 internal fxUsdStrc;
     IHarborPriceAggregatorV3 internal stEthStrc;
     IHarborPriceAggregatorV3 internal fxUsdSpcx;
@@ -30,14 +43,8 @@ contract StrcSpcxOraclesForkTest is Test {
     uint256 internal fxSaveRate;
     uint256 internal wstethRate;
 
-    function setUp() public {
-        // Prefer an already-selected `--fork-url`. Only then fall back to the `mainnet` RPC alias.
-        if (block.chainid != 1) {
-            try vm.createSelectFork("mainnet") {} catch {
-                vm.skip(true);
-            }
-        }
-        if (block.chainid != 1) vm.skip(true);
+    function setUp() public override {
+        super.setUp();
 
         fxUsdStrc = IHarborPriceAggregatorV3(address(new Aggregator_fxUSD_STRC_mainnet()));
         stEthStrc = IHarborPriceAggregatorV3(address(new Aggregator_stETH_STRC_mainnet()));

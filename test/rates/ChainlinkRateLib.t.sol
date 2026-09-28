@@ -4,15 +4,16 @@ pragma solidity 0.8.30;
 import {Test} from "forge-std/Test.sol";
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
 import {ChainlinkRateLib} from "@harbor-price/rates/ChainlinkRateLib.sol";
-import {MockAggregatorV3} from "@harbor-test/mock/MockAggregatorV3.sol";
+import {MockAggregatorV3} from "@harbor-price-test/mock/MockAggregatorV3.sol";
+import {IPriceOracleErrors} from "@bao/interfaces/IPriceOracleErrors.sol";
 
 /// @title ChainlinkRateLib Unit Tests
 /// @notice Tests for ChainlinkRateLib rate retrieval and validation
 contract ChainlinkRateLibTest is Test {
     MockAggregatorV3 feed;
 
-    uint256 constant DEFAULT_MIN_RATE = 1e18;
-    uint256 constant DEFAULT_MAX_RATE = 2e18;
+    uint256 constant DEFAULT_MIN_RATE = 9e17; // 0.9 - matches library constant
+    uint256 constant DEFAULT_MAX_RATE = 3e18;
     uint256 constant DEFAULT_MAX_AGE = 86400; // 24 hours
 
     function setUp() public {
@@ -42,7 +43,7 @@ contract ChainlinkRateLibTest is Test {
 
     /// @notice Valid rate within default bounds is returned correctly
     function test_getRate_validRate_succeeds() public {
-        uint256 rate = 1.5e18; // Within [1e18, 2e18]
+        uint256 rate = 1.5e18; // Within [0.9e18, 3e18]
         feed.setAnswer(int256(rate), block.timestamp);
 
         uint256 result = this.callGetRate(AggregatorV3Interface(address(feed)));
@@ -70,7 +71,7 @@ contract ChainlinkRateLibTest is Test {
         uint256 lowRate = DEFAULT_MIN_RATE - 1;
         feed.setAnswer(int256(lowRate), block.timestamp);
 
-        vm.expectRevert(abi.encodeWithSelector(ChainlinkRateLib.InvalidRate.selector, lowRate));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidRate.selector, lowRate));
         this.callGetRate(AggregatorV3Interface(address(feed)));
     }
 
@@ -79,7 +80,7 @@ contract ChainlinkRateLibTest is Test {
         uint256 highRate = DEFAULT_MAX_RATE + 1;
         feed.setAnswer(int256(highRate), block.timestamp);
 
-        vm.expectRevert(abi.encodeWithSelector(ChainlinkRateLib.InvalidRate.selector, highRate));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidRate.selector, highRate));
         this.callGetRate(AggregatorV3Interface(address(feed)));
     }
 
@@ -87,7 +88,7 @@ contract ChainlinkRateLibTest is Test {
     function test_getRate_zero_reverts() public {
         feed.setAnswer(0, block.timestamp);
 
-        vm.expectRevert(abi.encodeWithSelector(ChainlinkRateLib.InvalidRate.selector, 0));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidRate.selector, 0));
         this.callGetRate(AggregatorV3Interface(address(feed)));
     }
 
@@ -107,7 +108,7 @@ contract ChainlinkRateLibTest is Test {
         uint256 staleTime = block.timestamp - DEFAULT_MAX_AGE - 1;
         feed.setAnswer(int256(DEFAULT_MIN_RATE), staleTime);
 
-        vm.expectRevert(abi.encodeWithSelector(ChainlinkRateLib.StaleRateSource.selector, address(feed), staleTime));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.StaleRateSource.selector, address(feed), staleTime));
         this.callGetRate(AggregatorV3Interface(address(feed)));
     }
 
@@ -118,8 +119,8 @@ contract ChainlinkRateLibTest is Test {
     /// @notice Custom bounds are respected - rate within custom range
     function test_getRate_customBounds_succeeds() public {
         uint256 customMin = 0.5e18;
-        uint256 customMax = 3e18;
-        uint256 rate = 2.5e18; // Within custom range, outside default range
+        uint256 customMax = 4e18;
+        uint256 rate = 3.5e18; // Within custom range, outside default 0.9–3
         feed.setAnswer(int256(rate), block.timestamp);
 
         uint256 result = this.callGetRateWithParams(
@@ -139,7 +140,7 @@ contract ChainlinkRateLibTest is Test {
         uint256 rate = 1.4e18; // Below custom min
         feed.setAnswer(int256(rate), block.timestamp);
 
-        vm.expectRevert(abi.encodeWithSelector(ChainlinkRateLib.InvalidRate.selector, rate));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidRate.selector, rate));
         this.callGetRateWithParams(
             AggregatorV3Interface(address(feed)),
             18,
@@ -156,7 +157,7 @@ contract ChainlinkRateLibTest is Test {
         uint256 rate = 1.6e18; // Above custom max
         feed.setAnswer(int256(rate), block.timestamp);
 
-        vm.expectRevert(abi.encodeWithSelector(ChainlinkRateLib.InvalidRate.selector, rate));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidRate.selector, rate));
         this.callGetRateWithParams(
             AggregatorV3Interface(address(feed)),
             18,
@@ -188,7 +189,7 @@ contract ChainlinkRateLibTest is Test {
         uint256 staleTime = block.timestamp - customMaxAge - 1;
         feed.setAnswer(int256(DEFAULT_MIN_RATE), staleTime);
 
-        vm.expectRevert(abi.encodeWithSelector(ChainlinkRateLib.StaleRateSource.selector, address(feed), staleTime));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.StaleRateSource.selector, address(feed), staleTime));
         this.callGetRateWithParams(
             AggregatorV3Interface(address(feed)),
             18,
@@ -249,6 +250,39 @@ contract ChainlinkRateLibTest is Test {
         assertEq(result, 1.5e18, "6 decimal feed should normalize to 18 decimals");
     }
 
+    /// @notice A feed reporting more than 18 decimals is scaled down to 18
+    function test_getRate_20decimals_normalizes() public {
+        MockAggregatorV3 feed20 = new MockAggregatorV3(20);
+        feed20.setAnswer(int256(1.5e20), block.timestamp); // 1.5 in 20 decimals
+
+        uint256 result = this.callGetRateWithParams(
+            AggregatorV3Interface(address(feed20)),
+            20,
+            DEFAULT_MIN_RATE,
+            DEFAULT_MAX_RATE,
+            uint64(DEFAULT_MAX_AGE)
+        );
+        assertEq(result, 1.5e18, "20 decimal feed should normalize to 18 decimals");
+    }
+
+    /// @notice A positive answer smaller than one unit at 18 decimals scales down to zero, and is refused as a
+    ///         zero rate rather than returned
+    /// @dev The bounds here admit zero, so the refusal can only come from the zero check on the scaled rate:
+    ///      with the default bounds, the floor would refuse it too and the check would go untested.
+    function test_getRate_answerTruncatingToZero_reverts() public {
+        MockAggregatorV3 feed20 = new MockAggregatorV3(20);
+        feed20.setAnswer(99, block.timestamp); // below 100, the one unit at 18 decimals a 20-decimal answer carries
+
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidRate.selector, 0));
+        this.callGetRateWithParams(
+            AggregatorV3Interface(address(feed20)),
+            20,
+            0,
+            type(uint256).max,
+            uint64(DEFAULT_MAX_AGE)
+        );
+    }
+
     // =========================================================================
     // Edge cases
     // =========================================================================
@@ -276,7 +310,7 @@ contract ChainlinkRateLibTest is Test {
 
     /// @notice Fuzz test for valid rates with default bounds
     function test_Fuzz_getRate_validRange(uint256 rate) public {
-        // Bound to valid range: [1e18, 2e18]
+        // Bound to valid range: [0.9e18, 3e18]
         rate = bound(rate, DEFAULT_MIN_RATE, DEFAULT_MAX_RATE);
         feed.setAnswer(int256(rate), block.timestamp);
 

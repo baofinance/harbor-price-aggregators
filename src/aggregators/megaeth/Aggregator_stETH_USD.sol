@@ -4,7 +4,7 @@ pragma solidity 0.8.30;
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 import {HarborAggregator_v3} from "@harbor-price/aggregators/HarborAggregator_v3.sol";
-import {IWrappedPriceOracle} from "@harbor-price/interfaces/IWrappedPriceOracle.sol";
+import {IWrappedPriceOracle} from "@bao/interfaces/IWrappedPriceOracle.sol";
 import {ChainlinkRateLib} from "@harbor-price/rates/ChainlinkRateLib.sol";
 import {ChainlinkFeedLib} from "@harbor-price/feeds/chainlink/ChainlinkFeedLib.sol";
 
@@ -13,8 +13,6 @@ import {ChainlinkFeedLib} from "@harbor-price/feeds/chainlink/ChainlinkFeedLib.s
 /// @custom:oz-upgrades-unsafe-allow state-variable-immutable constructor
 // solhint-disable-next-line contract-name-capwords
 contract Aggregator_stETH_USD is HarborAggregator_v3 {
-    error InvalidAddress(address value);
-
     AggregatorV3Interface public immutable RATE_FEED;
     AggregatorV3Interface public immutable STETH_ETH_FEED;
     uint8 public immutable STETH_ETH_DECIMALS;

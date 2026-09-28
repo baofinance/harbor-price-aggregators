@@ -3,7 +3,7 @@ pragma solidity 0.8.30;
 
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
 import {IWstETH} from "@bao/interfaces/IWstETH.sol";
-import {IWrappedPriceOracle} from "@harbor-price/interfaces/IWrappedPriceOracle.sol";
+import {IWrappedPriceOracle} from "@bao/interfaces/IWrappedPriceOracle.sol";
 import {HarborAggregator_v3} from "@harbor-price/aggregators/HarborAggregator_v3.sol";
 import {WstETHRateLib} from "@harbor-price/rates/WstETHRateLib.sol";
 import {SingleFeedPriceLib} from "@harbor-price/prices/SingleFeedPriceLib.sol";
@@ -14,9 +14,6 @@ import {SingleFeedPriceLib} from "@harbor-price/prices/SingleFeedPriceLib.sol";
 // solhint-disable-next-line contract-name-capwords
 contract Aggregator_stETH_USD is HarborAggregator_v3 {
     using WstETHRateLib for IWstETH;
-
-    error InvalidAddress(address value);
-    error InvalidDivisor(uint256 divisor);
 
     IWstETH public immutable WSTETH;
 

@@ -4,7 +4,7 @@ pragma solidity 0.8.30;
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 import {HarborAggregator_v3} from "@harbor-price/aggregators/HarborAggregator_v3.sol";
-import {IWrappedPriceOracle} from "@harbor-price/interfaces/IWrappedPriceOracle.sol";
+import {IWrappedPriceOracle} from "@bao/interfaces/IWrappedPriceOracle.sol";
 import {ChainlinkFeedLib} from "@harbor-price/feeds/chainlink/ChainlinkFeedLib.sol";
 
 /// @notice wBTC/USD oracle (price: (wBTC/BTC) * (BTC/USD)).
@@ -12,8 +12,6 @@ import {ChainlinkFeedLib} from "@harbor-price/feeds/chainlink/ChainlinkFeedLib.s
 /// @custom:oz-upgrades-unsafe-allow state-variable-immutable constructor
 // solhint-disable-next-line contract-name-capwords
 contract Aggregator_wBTC_USD is HarborAggregator_v3 {
-    error InvalidAddress(address value);
-    error InvalidDivisor(uint256 divisor);
     uint256 public constant FIXED_RATE = 1e18;
 
     AggregatorV3Interface public immutable FIRST_FEED; // wBTC/BTC

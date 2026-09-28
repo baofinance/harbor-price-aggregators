@@ -5,3 +5,8 @@ src/price/
 src/interfaces/IHarborSingleFeedAndRateAggregator.sol
 src/interfaces/IHarborDoubleFeedAndRateAggregator.sol
 src/interfaces/IHarborCustomFeedAndRateAggregator.sol
+
+# Deployed interfaces — empty-block body is intentional (interface with no functions,
+# used only for type identity). Cannot be modified without breaking the audit trail.
+src/interfaces/ISUSDe.sol
+src/interfaces/IUSDMY.sol

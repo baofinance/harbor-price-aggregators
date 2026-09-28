@@ -92,9 +92,7 @@ No other code changes are required: same formula contract, same mainnet contract
 
 ## Base v3 Oracles
 
-| Oracle     | Rate Source              | Feeds                                                         |
-| ---------- | ------------------------ | ------------------------------------------------------------- |
-| stETH/BOM5 | wstETH/stETH (Chainlink) | stETH/USD, normalized average of (DOGE+SHIB+PEPE+TRUMP+WIF)/5 |
+stETH/BOM5 is retired. A constituent Chainlink feed is dead, so the aggregator and its tests were discarded.
 
 ## Installation
 
@@ -124,23 +122,17 @@ yarn test
 Run tests for specific chains:
 
 ```bash
-# Mainnet tests (unit tests only, no fork required)
+# Mainnet unit tests
 forge test --match-path "test/oracles/*.t.sol"
 
-# Arbitrum tests (unit tests, no RPC required)
+# Arbitrum unit tests
 forge test --match-path "test/arbitrum/Aggregator_*.t.sol"
 
-# Arbitrum fork tests (requires ARBITRUM_RPC_URL)
-forge test --match-path "test/arbitrum/*Fork.t.sol" --fork-url $arbitrum -vvv
-
-# Base tests (unit tests, no RPC required)
+# Base unit tests
 forge test --match-path "test/base/Aggregator_*.t.sol"
-
-# Base fork tests (requires BASE_RPC_URL)
-forge test --match-path "test/base/*Fork.t.sol" --fork-url $base -vvv
 ```
 
-**Note:** Make sure to set `ARBITRUM_RPC_URL`, `BASE_RPC_URL`, and `MAINNET_RPC_URL` in your `.env` file for fork tests. See `test/arbitrum/README.md` and `test/base/README.md` for detailed testing information.
+See `test/arbitrum/README.md` and `test/base/README.md` for detailed testing information. Live `latestAnswer` checks on deployed proxies are in `script/*/verify/`.
 
 ## Deployment
 
@@ -303,28 +295,7 @@ yarn offchain:stats --market MCAP-USD  --measure close_return --top 20
 
 ## Deployment
 
-### Deploy mainnet v4 oracles (sUSDe, wstETH, wBTC, tBTC, PAXG)
-
-To deploy **sUSDe** and other v4 oracles (wstETH/USD, wBTC/USD, tBTC/USD, PAXG/USD, and sUSDe: BTC, ETH, EUR, MCAP, GOLD, SILVER):
-
-```bash
-# Requires: MAINNET_RPC_URL, PRIVATE_KEY (and ETHERSCAN_API_KEY for verify)
-./script/deploy-mainnet-v4-oracles.sh
-```
-
-State: `deployments/mainnet/v4-oracles.json`. Verify: `./script/verify-mainnet-v4-oracles.sh`
-
-### Deploy mainnet leveraged token (haUSD) oracles
-
-To deploy **leveraged token USD** oracles (hsfxUSD-_, hsstETH-_):
-
-```bash
-./script/deploy-mainnet-leverage-v4-oracles.sh
-```
-
-State: `deployments/mainnet/leverage-v4-oracles.json`. Verify: `./script/verify-mainnet-leverage-v4-oracles.sh`
-
-Deploy and verify v4 and leverage separately; they are independent.
+All new oracles go through BaoFactory CREATE3 (`script/deploy-aggregators` / `script/deploy-one-aggregator`). Direct `forge create` chain scripts are removed.
 
 ### Prerequisites
 
@@ -359,102 +330,36 @@ Deploy and verify v4 and leverage separately; they are independent.
    anvil -f mainnet --auto-impersonate
    ```
 
-### Deploy v3 Mainnet Oracles
-
-Deploy individual oracles using `script/harbor-aggregators-v3`:
+### Deploy oracles (CREATE3 via BaoFactory)
 
 ```bash
-# Deploy fxUSD/ETH to mainnet
-./script/harbor-aggregators-v3 --network mainnet --base fxUSD --quote ETH --account deployer --deploy
+# Deploy one or more pairs
+./script/deploy-aggregators --network mainnet --account deployer --deploy fxUSD/ETH fxUSD/BTC
 
-# Deploy with local anvil fork (for testing)
-./script/harbor-aggregators-v3 --network mainnet --local --base fxUSD --quote ETH --deploy
+# Local anvil fork
+./script/deploy-aggregators --network mainnet --local --deploy fxUSD/ETH
 
-# Check deployment status
-./script/harbor-aggregators-v3 --network mainnet --base fxUSD --quote ETH --check
+# Check a live proxy
+./script/deploy-aggregators --network mainnet --check fxUSD/ETH
 
 # Verify on Etherscan
-./script/harbor-aggregators-v3 --network mainnet --base fxUSD --quote ETH --etherscan-api-key YOUR_KEY --verify
+./script/deploy-aggregators --network mainnet --etherscan-api-key "$ETHERSCAN_API_KEY" --verify fxUSD/ETH
+```
+
+Same command, different `--network` (`arbitrum`, `base`, `megaeth`). ETH peg convenience wrapper:
+
+```bash
+SALT_PREFIX=harbor_v1 ACCOUNT=deployer script/mainnet/deploy/deploy-mainnet-eth-oracles.sh
 ```
 
 **Modes:**
 
-- `--deploy`: Deploy implementation + proxy via BaoFactory
-- `--deploy-impl`: Deploy new implementation only (for upgrades; outputs Safe tx)
-- `--check`: Verify deployment exists and returns valid data
-- `--verify`: Verify both implementation and proxy on Etherscan
-- `--validate-args`: Dry-run validation
+- `--deploy`: implementation + CREATE3 proxy via BaoFactory
+- `--deploy-impl`: new implementation only (upgrades; outputs Safe tx)
+- `--check`: code exists and `latestAnswer` works
+- `--verify`: implementation and proxy on the explorer
 
-Deployments are recorded in `deployment-state-v3-<network>.json`.
-
-### Deploy to Arbitrum
-
-Deploy all Arbitrum v3 oracle contracts (direct deployments, no proxies):
-
-```bash
-./script/deploy-arbitrum-v3-oracles.sh
-```
-
-This will deploy 20 v3 oracle contracts (immutable contracts with hardcoded wiring):
-
-**USDE oracles (10):**
-
-- USDE/AAPL, USDE/AMZN, USDE/GOOGL, USDE/META, USDE/MSFT, USDE/NVDA, USDE/SPY, USDE/TSLA, USDE/MAG7, USDE/MAG7.i26
-
-**stETH oracles (10):**
-
-- stETH/AAPL, stETH/AMZN, stETH/GOOGL, stETH/META, stETH/MSFT, stETH/NVDA, stETH/SPY, stETH/TSLA, stETH/MAG7, stETH/MAG7.i26
-
-**Requirements:**
-
-Set these environment variables (or add them to `.env`):
-
-```bash
-export ARBITRUM_RPC_URL="https://arb-mainnet.g.alchemy.com/v2/YOUR_KEY"
-export PRIVATE_KEY="your_private_key"
-export ETHERSCAN_API_KEY="your_etherscan_api_key"  # Optional, for verification
-```
-
-**Verification:**
-
-After deployment, verify all contracts on Arbiscan:
-
-```bash
-./script/verify-arbitrum-v3-oracles.sh
-```
-
-Or run verification during deployment (automatic if `ETHERSCAN_API_KEY` is set).
-
-**Deployment State:**
-
-Deployments are recorded in `deployments/arbitrum/v3-oracles.json`. The script will skip contracts that are already deployed unless `FORCE_REDEPLOY=true` is set.
-
-**Note:** These are direct deployments (immutable contracts), not proxy deployments. Each contract is deployed independently with its configuration baked into the bytecode.
-
-### Deploy to Base
-
-Deploy Base v3 oracle contracts (direct deployments, no proxies):
-
-```bash
-# Deployment script to be added
-# ./script/deploy-base-v3-oracles.sh
-```
-
-**Base oracles:**
-
-- stETH/BOM5 (Bag of Memes 5: DOGE, SHIB, PEPE, TRUMP, WIF with supply normalization)
-
-**Requirements:**
-
-Set these environment variables (or add them to `.env`):
-
-```bash
-export BASE_RPC_URL="https://base-mainnet.g.alchemy.com/v2/YOUR_KEY"
-export PRIVATE_KEY="your_private_key"
-export ETHERSCAN_API_KEY="your_etherscan_api_key"  # Optional, for verification
-```
-
-**Note:** Base deployment scripts will follow the same pattern as Arbitrum deployments (direct immutable contracts with hardcoded wiring).
+State: `deployments/<network>/v3-oracles.json` (or the salted filename). See `script/README.md`.
 
 ## License
 

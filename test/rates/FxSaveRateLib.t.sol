@@ -4,7 +4,8 @@ pragma solidity 0.8.30;
 import {Test} from "forge-std/Test.sol";
 import {IFxSAVE} from "@harbor-price/interfaces/IFxSAVE.sol";
 import {FxSaveRateLib} from "@harbor-price/rates/FxSaveRateLib.sol";
-import {MockFxSAVE} from "@harbor-test/mock/MockFxSAVE.sol";
+import {MockFxSAVE} from "@harbor-price-test/mock/MockFxSAVE.sol";
+import {IPriceOracleErrors} from "@bao/interfaces/IPriceOracleErrors.sol";
 
 /// @title FxSaveRateLib Unit Tests
 /// @notice Tests for FxSaveRateLib rate retrieval and validation
@@ -55,7 +56,7 @@ contract FxSaveRateLibTest is Test {
         uint256 lowRate = DEFAULT_MIN_RATE - 1;
         mock.setAssetsPerShare(lowRate);
 
-        vm.expectRevert(abi.encodeWithSelector(FxSaveRateLib.InvalidRate.selector, lowRate));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidRate.selector, lowRate));
         this.callGetRate(IFxSAVE(address(mock)));
     }
 
@@ -63,7 +64,7 @@ contract FxSaveRateLibTest is Test {
     function test_getRate_zero_reverts() public {
         mock.setAssetsPerShare(0);
 
-        vm.expectRevert(abi.encodeWithSelector(FxSaveRateLib.InvalidRate.selector, 0));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidRate.selector, 0));
         this.callGetRate(IFxSAVE(address(mock)));
     }
 
@@ -84,7 +85,7 @@ contract FxSaveRateLibTest is Test {
         uint256 rate = 1.0e18; // Below custom min
         mock.setAssetsPerShare(rate);
 
-        vm.expectRevert(abi.encodeWithSelector(FxSaveRateLib.InvalidRate.selector, rate));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidRate.selector, rate));
         this.callGetRateWithMin(IFxSAVE(address(mock)), customMin);
     }
 

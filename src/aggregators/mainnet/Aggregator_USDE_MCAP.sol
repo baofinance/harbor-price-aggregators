@@ -3,7 +3,7 @@ pragma solidity 0.8.30;
 
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
 import {HarborAggregator_v3} from "@harbor-price/aggregators/HarborAggregator_v3.sol";
-import {IWrappedPriceOracle} from "@harbor-price/interfaces/IWrappedPriceOracle.sol";
+import {IWrappedPriceOracle} from "@bao/interfaces/IWrappedPriceOracle.sol";
 import {ISUSDe} from "@harbor-price/interfaces/ISUSDe.sol";
 import {SUSDeRateLib} from "@harbor-price/rates/SUSDeRateLib.sol";
 import {DoubleFeedPriceLib} from "@harbor-price/prices/DoubleFeedPriceLib.sol";
@@ -14,9 +14,6 @@ import {DoubleFeedPriceLib} from "@harbor-price/prices/DoubleFeedPriceLib.sol";
 // solhint-disable-next-line contract-name-capwords
 contract Aggregator_USDE_MCAP is HarborAggregator_v3 {
     using SUSDeRateLib for ISUSDe;
-
-    error InvalidAddress(address value);
-    error InvalidDivisor(uint256 divisor);
 
     ISUSDe public immutable SUSDE;
 

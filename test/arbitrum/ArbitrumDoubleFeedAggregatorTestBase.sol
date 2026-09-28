@@ -1,23 +1,25 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.30;
 
-import {Test, console} from "forge-std/Test.sol";
-import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
+import {
+    OracleSourceConformance,
+    OracleSource,
+    SourceKind
+} from "@harbor-price-test/conformance/OracleSourceConformance.sol";
+import {console} from "forge-std/Test.sol";
+import {BaoERC1967Proxy} from "@bao/BaoERC1967Proxy.sol";
 import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import {MockAggregatorV3} from "@harbor-test/mock/MockAggregatorV3.sol";
+import {MockAggregatorV3} from "@harbor-price-test/mock/MockAggregatorV3.sol";
 import {IHarborPriceAggregatorV3} from "@harbor-price/interfaces/IHarborPriceAggregatorV3.sol";
 import {IBaoFixedOwnable} from "@bao/interfaces/IBaoFixedOwnable.sol";
-import {ChainlinkFeedLib} from "@harbor-price/feeds/chainlink/ChainlinkFeedLib.sol";
-import {ChainlinkRateLib} from "@harbor-price/rates/ChainlinkRateLib.sol";
+import {IPriceOracleErrors} from "@bao/interfaces/IPriceOracleErrors.sol";
 
 /// @title Base test contract for Arbitrum double-feed v3 aggregators (stETH/USDE pattern with Chainlink rate feeds)
 /// @notice Provides all tests; concrete contracts only implement factory + identity
-abstract contract ArbitrumDoubleFeedAggregatorTestBase is Test {
+abstract contract ArbitrumDoubleFeedAggregatorTestBase is OracleSourceConformance {
     MockAggregatorV3 mockRateFeed;
     MockAggregatorV3 mockFirstFeed;
     MockAggregatorV3 mockSecondFeed;
-
-    IHarborPriceAggregatorV3 aggregator;
 
     uint256 constant DEFAULT_HEARTBEAT = 3600;
     uint256 constant VALID_RATE = 1.15e18; // 1.15 wstETH/stETH or sUSDE/USDE
@@ -97,6 +99,14 @@ abstract contract ArbitrumDoubleFeedAggregatorTestBase is Test {
     // =========================================================================
     // Setup
     // =========================================================================
+
+    /// @notice Everything the aggregator under test reads.
+    function _sources() internal view override returns (OracleSource[] memory sources) {
+        sources = new OracleSource[](3);
+        sources[0] = OracleSource({at: address(mockRateFeed), kind: SourceKind.ChainlinkFeed});
+        sources[1] = OracleSource({at: address(mockFirstFeed), kind: SourceKind.ChainlinkFeed});
+        sources[2] = OracleSource({at: address(mockSecondFeed), kind: SourceKind.ChainlinkFeed});
+    }
 
     function setUp() public virtual {
         vm.warp(100_000);
@@ -196,7 +206,7 @@ abstract contract ArbitrumDoubleFeedAggregatorTestBase is Test {
 
         vm.expectRevert(
             abi.encodeWithSelector(
-                ChainlinkFeedLib.StaleFeedData.selector,
+                IPriceOracleErrors.StaleFeedData.selector,
                 address(mockFirstFeed),
                 staleTime,
                 block.timestamp,
@@ -212,7 +222,7 @@ abstract contract ArbitrumDoubleFeedAggregatorTestBase is Test {
 
         vm.expectRevert(
             abi.encodeWithSelector(
-                ChainlinkFeedLib.StaleFeedData.selector,
+                IPriceOracleErrors.StaleFeedData.selector,
                 address(mockSecondFeed),
                 staleTime,
                 block.timestamp,
@@ -227,24 +237,24 @@ abstract contract ArbitrumDoubleFeedAggregatorTestBase is Test {
         mockRateFeed.setAnswer(int256(VALID_RATE), staleTime);
 
         vm.expectRevert(
-            abi.encodeWithSelector(ChainlinkRateLib.StaleRateSource.selector, address(mockRateFeed), staleTime)
+            abi.encodeWithSelector(IPriceOracleErrors.StaleRateSource.selector, address(mockRateFeed), staleTime)
         );
         aggregator.latestAnswer();
     }
 
     function test_latestAnswer_rateBelowMin_reverts() public {
-        uint256 lowRate = 0.9e18;
+        uint256 lowRate = 0.9e18 - 1;
         mockRateFeed.setAnswer(int256(lowRate), block.timestamp);
 
-        vm.expectRevert(abi.encodeWithSelector(ChainlinkRateLib.InvalidRate.selector, lowRate));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidRate.selector, lowRate));
         aggregator.latestAnswer();
     }
 
     function test_latestAnswer_rateAboveMax_reverts() public {
-        uint256 highRate = 2.1e18;
+        uint256 highRate = 3e18 + 1;
         mockRateFeed.setAnswer(int256(highRate), block.timestamp);
 
-        vm.expectRevert(abi.encodeWithSelector(ChainlinkRateLib.InvalidRate.selector, highRate));
+        vm.expectRevert(abi.encodeWithSelector(IPriceOracleErrors.InvalidRate.selector, highRate));
         aggregator.latestAnswer();
     }
 
@@ -265,7 +275,7 @@ abstract contract ArbitrumDoubleFeedAggregatorTestBase is Test {
             1,
             false
         );
-        ERC1967Proxy proxy = new ERC1967Proxy(address(impl1), "");
+        BaoERC1967Proxy proxy = new BaoERC1967Proxy(address(impl1), "");
         IHarborPriceAggregatorV3 proxied = IHarborPriceAggregatorV3(address(proxy));
 
         // Capture price with impl1

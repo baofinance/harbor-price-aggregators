@@ -2,6 +2,7 @@
 pragma solidity 0.8.30;
 
 import {AggregatorV3Interface} from "@chainlink/contracts/shared/interfaces/AggregatorV3Interface.sol";
+import {IPriceOracleErrors} from "@bao/interfaces/IPriceOracleErrors.sol";
 
 /// @title ChainlinkFeedLib
 /// @notice Library for reading and normalizing Chainlink feed data to 18 decimals.
@@ -19,27 +20,6 @@ library ChainlinkFeedLib {
     ///      the heartbeat expires due to transaction inclusion timing.
     uint256 internal constant HEARTBEAT_TOLERANCE = 42;
 
-    /// @notice Thrown when feed data is older than the heartbeat allows
-    /// @param feed The feed address
-    /// @param updatedAt When the feed was last updated
-    /// @param currentTime Current block timestamp
-    /// @param heartbeat Maximum allowed age in seconds (before tolerance)
-    error StaleFeedData(address feed, uint256 updatedAt, uint256 currentTime, uint256 heartbeat);
-
-    /// @notice Thrown when feed has never been updated (updatedAt == 0)
-    /// @param feed The feed address
-    error FeedNeverUpdated(address feed);
-
-    /// @notice Thrown when normalized price is negative
-    /// @param feed The feed address
-    /// @param rawAnswer The raw answer from the feed
-    error NegativePrice(address feed, int256 rawAnswer);
-
-    /// @notice Thrown when normalized price is zero
-    /// @param feed The feed address
-    /// @param rawAnswer The raw answer from the feed
-    error ZeroPrice(address feed, int256 rawAnswer);
-
     /// @notice Read the latest answer from a Chainlink feed, normalized to 18 decimals.
     /// @param feed The Chainlink aggregator interface
     /// @param decimals The number of decimals the feed reports
@@ -55,22 +35,22 @@ library ChainlinkFeedLib {
 
         // Validate feed has been updated at least once
         if (updatedAt == 0) {
-            revert FeedNeverUpdated(address(feed));
+            revert IPriceOracleErrors.FeedNeverUpdated(address(feed));
         }
 
         // Validate freshness against heartbeat + tolerance for block timing variance
         // slither-disable-next-line timestamp
         if (block.timestamp - updatedAt > heartbeat + HEARTBEAT_TOLERANCE) {
-            revert StaleFeedData(address(feed), updatedAt, block.timestamp, heartbeat);
+            revert IPriceOracleErrors.StaleFeedData(address(feed), updatedAt, block.timestamp, heartbeat);
         }
 
         int256 normalized = normaliseTo18(answer, decimals);
         // Chainlink price feeds should never return negative or zero values
         if (normalized < 0) {
-            revert NegativePrice(address(feed), answer);
+            revert IPriceOracleErrors.NegativePrice(address(feed), answer);
         }
         if (normalized == 0) {
-            revert ZeroPrice(address(feed), answer);
+            revert IPriceOracleErrors.ZeroPrice(address(feed), answer);
         }
         return uint256(normalized);
     }
