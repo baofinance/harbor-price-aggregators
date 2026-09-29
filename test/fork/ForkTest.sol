@@ -10,10 +10,10 @@ import {BaoTest} from "@bao-test/BaoTest.sol";
 ///         set up, because a suite that quietly does not run looks exactly like a suite that passes.
 ///         An unset RPC variable is a failing test, and the failure names the variable.
 /// @dev Forking at the latest block is this repo's default — its fork suites compare an aggregator
-///      against the feeds as they stand. bao-base's `BaoTest.mainnetForkBlock()` pins a shared block
+///      against the feeds as they stand. bao-base's `BaoTest.forkBlock()` pins a shared block
 ///      for repos whose fork tests must be reproducible; the two policies must not be mixed inside one
 ///      suite, or which one is in force becomes unanswerable. A suite picks one by overriding
-///      `_forkBlock`, so it is whole-suite either way. The block reached is logged, so a failure at
+///      `forkBlock`, so it is whole-suite either way. The block reached is logged, so a failure at
 ///      the latest block can be held still by pinning the block it reported.
 abstract contract ForkTest is BaoTest {
     /// @notice Thrown when the environment holds no endpoint for the chain this suite needs.
@@ -28,19 +28,10 @@ abstract contract ForkTest is BaoTest {
     /// @notice The id of the chain this suite's contracts are wired for.
     function _chainId() internal pure virtual returns (uint256);
 
-    /// @dev Latest-block sentinel. Declared here so fork suites compile against bao-base revisions
-    ///      that do not yet expose `BaoTest.LATEST_BLOCK` / `forkAt`.
-    uint256 internal constant LATEST_BLOCK = 0;
-
     /// @dev The latest block is this repo's default: its suites read the feeds as they stand. A suite
     ///      that needs to hold a failure still overrides this again with the block it reported.
-    function forkBlock() internal pure virtual returns (uint256) {
+    function forkBlock() internal pure virtual override returns (uint256) {
         return LATEST_BLOCK;
-    }
-
-    function forkAt(string memory url) internal returns (uint256 forkId) {
-        uint256 pinned = forkBlock();
-        return pinned == LATEST_BLOCK ? vm.createSelectFork(url) : vm.createSelectFork(url, pinned);
     }
 
     function setUp() public virtual {

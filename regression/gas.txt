@@ -757,6 +757,16 @@ src/aggregators/megaeth/Aggregator_USDM_SOL.sol:Aggregator_USDM_SOL
 | upgradeToAndCall |  8500 | 8.500e+03 |
 | version          |   351 | 3.510e+02 |
 
+src/aggregators/robinhood/Aggregator_syrupUSDG_USD.sol:Aggregator_syrupUSDG_USD
+| function name   |   max |   display |
+|-----------------|-------|-----------|
+| baseName        |   484 | 4.840e+02 |
+| latestAnswer    | 23616 | 2.362e+04 |
+| oracleName      |  1093 | 1.093e+03 |
+| quoteName       |   512 | 5.120e+02 |
+| rateProvider    |   435 | 4.350e+02 |
+| version         |   329 | 3.290e+02 |
+
 src/arbitrum/Aggregator_USDE_AAPL_arbitrum.sol:Aggregator_USDE_AAPL_arbitrum
 | function name   |   max |   display |
 |-----------------|-------|-----------|
@@ -1558,3 +1568,13 @@ src/monad/Aggregator_wstETH_XAU_monad.sol:Aggregator_wstETH_XAU_monad
 | quoteName       |   578 | 5.780e+02 |
 | rateProvider    |   545 | 5.450e+02 |
 | version         |   395 | 3.950e+02 |
+
+src/robinhood/Aggregator_syrupUSDG_USD_robinhood.sol:Aggregator_syrupUSDG_USD_robinhood
+| function name   |   max |   display |
+|-----------------|-------|-----------|
+| baseName        |   484 | 4.840e+02 |
+| latestAnswer    | 35636 | 3.564e+04 |
+| oracleName      |  1093 | 1.093e+03 |
+| quoteName       |   512 | 5.120e+02 |
+| rateProvider    |   435 | 4.350e+02 |
+| version         |   329 | 3.290e+02 |

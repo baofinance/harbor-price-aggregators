@@ -132,6 +132,8 @@
 | Aggregator_stETH_USD_megaeth          |              3,742 |               20,834 |               4,439 |      792,790 |             79.28 |
 | Aggregator_stETH_XAG                  |              3,761 |               20,815 |               4,626 |      798,460 |             79.85 |
 | Aggregator_stETH_XAU                  |              3,761 |               20,815 |               4,626 |      798,460 |             79.85 |
+| Aggregator_syrupUSDG_USD              |              3,720 |               20,856 |               4,387 |      787,870 |             78.79 |
+| Aggregator_syrupUSDG_USD_robinhood    |              3,720 |               20,856 |               4,260 |      786,600 |             78.66 |
 | Aggregator_tBTC_USD                   |              3,163 |               21,413 |               3,758 |      670,180 |             67.02 |
 | Aggregator_tBTC_USD_mainnet           |              3,163 |               21,413 |               3,661 |      669,210 |             66.92 |
 | Aggregator_wBTC_USD                   |              3,387 |               21,189 |               4,177 |      719,170 |             71.92 |

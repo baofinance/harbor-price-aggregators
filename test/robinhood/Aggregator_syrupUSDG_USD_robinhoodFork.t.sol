@@ -36,7 +36,7 @@ contract Aggregator_syrupUSDG_USD_robinhoodForkTest is RobinhoodForkTest {
 
     function test_fork_latestAnswer() public view {
         (uint256 p1, uint256 p2, uint256 r1, uint256 r2) = oracle.latestAnswer();
-        uint256 yieldUsd = p1 * r1 / 1e18;
+        uint256 yieldUsd = (p1 * r1) / 1e18;
 
         console.log("=== syrupUSDG/USD (live) ===");
         console.log("rate feed:", SYRUPUSDG_USDG.FEED);

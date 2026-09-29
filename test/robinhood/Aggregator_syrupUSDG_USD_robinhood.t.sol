@@ -33,7 +33,7 @@ contract Aggregator_syrupUSDG_USD_robinhood_Test is WiredSingleFeedHarness {
 
     function test_latestAnswer_logsPrice() public view {
         (uint256 p1, uint256 p2, uint256 r1, uint256 r2) = aggregator.latestAnswer();
-        uint256 yieldUsd = p1 * r1 / 1e18;
+        uint256 yieldUsd = (p1 * r1) / 1e18;
 
         console.log("=== syrupUSDG/USD robinhood (unit test, mocked sources) ===");
         console.log("USDG/USD price (18 decimals):", p1);

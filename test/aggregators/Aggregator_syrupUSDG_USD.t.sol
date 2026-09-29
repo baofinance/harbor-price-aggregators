@@ -79,7 +79,7 @@ contract Aggregator_syrupUSDG_USD_Test is OracleSourceConformance {
 
     function test_latestAnswer_returnsValidTuple() public view {
         (uint256 p1, uint256 p2, uint256 r1, uint256 r2) = aggregator.latestAnswer();
-        uint256 yieldUsd = p1 * r1 / 1e18;
+        uint256 yieldUsd = (p1 * r1) / 1e18;
 
         console.log("=== syrupUSDG/USD formula ===");
         console.log("USDG/USD price (18 decimals):", p1);

@@ -57,7 +57,11 @@ contract Aggregator_syrupUSDG_USD is HarborAggregator_v3 {
         uint256 rate = ChainlinkRateLib.getRate(RATE_FEED);
 
         uint256 price = SingleFeedPriceLib.getPrice(
-            PRICE_FEED, PRICE_FEED_DECIMALS, PRICE_FEED_HEARTBEAT, PRICE_DIVISOR, INVERT_PRICE
+            PRICE_FEED,
+            PRICE_FEED_DECIMALS,
+            PRICE_FEED_HEARTBEAT,
+            PRICE_DIVISOR,
+            INVERT_PRICE
         );
 
         return (price, price, rate, rate);

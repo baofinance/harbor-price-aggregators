@@ -72,6 +72,7 @@
 | src/aggregators/megaeth/Aggregator_USDM_HYPE.sol          | ✓ 100% (24/24)     | ✓ 100% (25/25)     | ✓ 100% (4/4)     | ✓ 100% (5/5)     |
 | src/aggregators/megaeth/Aggregator_USDM_SOL.sol           | ✓ 100% (24/24)     | ✓ 100% (25/25)     | ✓ 100% (4/4)     | ✓ 100% (5/5)     |
 | src/aggregators/megaeth/Aggregator_stETH_USD.sol          | ✓ 100% (23/23)     | ✓ 100% (25/25)     | ✓ 100% (3/3)     | ✓ 100% (5/5)     |
+| src/aggregators/robinhood/Aggregator_syrupUSDG_USD.sol    | ✓ 100% (20/20)     | ✓ 100% (20/20)     | ✓ 100% (3/3)     | ✓ 100% (5/5)     |
 | src/arbitrum/Aggregator_USDE_AAPL_arbitrum.sol            | ✓ 100% (1/1)       | -  N/A (0/0)       | -  N/A (0/0)     | ✓ 100% (1/1)     |
 | src/arbitrum/Aggregator_USDE_AMZN_arbitrum.sol            | ✓ 100% (1/1)       | -  N/A (0/0)       | -  N/A (0/0)     | ✓ 100% (1/1)     |
 | src/arbitrum/Aggregator_USDE_GOOGL_arbitrum.sol           | ✓ 100% (1/1)       | -  N/A (0/0)       | -  N/A (0/0)     | ✓ 100% (1/1)     |
@@ -162,4 +163,5 @@
 | src/rates/TwoFeedRatioRateLib.sol                         | ✓ 100% (10/10)     | ✓ 100% (16/16)     | ✓ 100% (2/2)     | ✓ 100% (2/2)     |
 | src/rates/USDMYRateLib.sol                                | ✓ 100% (8/8)       | ✓ 100% (9/9)       | ✓ 100% (1/1)     | ✓ 100% (3/3)     |
 | src/rates/WstETHRateLib.sol                               | ✓ 100% (8/8)       | ✓ 100% (11/11)     | ✓ 100% (1/1)     | ✓ 100% (3/3)     |
-| Total                                                     | X  99% (1980/2005) | X  98% (1987/2021) | X  95% (274/287) | X  99% (479/482) |
+| src/robinhood/Aggregator_syrupUSDG_USD_robinhood.sol      | ✓ 100% (1/1)       | -  N/A (0/0)       | -  N/A (0/0)     | ✓ 100% (1/1)     |
+| Total                                                     | X  99% (2001/2026) | X  98% (2007/2041) | X  96% (277/290) | X  99% (485/488) |
