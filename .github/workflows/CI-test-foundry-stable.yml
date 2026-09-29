@@ -27,6 +27,7 @@ env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   ARBITRUM_RPC_URL: https://arb-mainnet.g.alchemy.com/v2/${{ secrets.ARBITRUM_ALCHEMY_SECRET }}
   BASE_RPC_URL: https://base-mainnet.g.alchemy.com/v2/${{ secrets.BASE_ALCHEMY_SECRET }}
+  ROBINHOOD_RPC_URL: ${{ secrets.ROBINHOOD_RPC_URL }}
   ALCHEMY_API_URL: ${{ secrets.ALCHEMY_API_URL }}
 
 jobs:

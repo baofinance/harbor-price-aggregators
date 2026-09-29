@@ -28,11 +28,19 @@ abstract contract ForkTest is BaoTest {
     /// @notice The id of the chain this suite's contracts are wired for.
     function _chainId() internal pure virtual returns (uint256);
 
-    /// @inheritdoc BaoTest
+    /// @dev Latest-block sentinel. Declared here so fork suites compile against bao-base revisions
+    ///      that do not yet expose `BaoTest.LATEST_BLOCK` / `forkAt`.
+    uint256 internal constant LATEST_BLOCK = 0;
+
     /// @dev The latest block is this repo's default: its suites read the feeds as they stand. A suite
     ///      that needs to hold a failure still overrides this again with the block it reported.
-    function forkBlock() internal pure virtual override returns (uint256) {
+    function forkBlock() internal pure virtual returns (uint256) {
         return LATEST_BLOCK;
+    }
+
+    function forkAt(string memory url) internal returns (uint256 forkId) {
+        uint256 pinned = forkBlock();
+        return pinned == LATEST_BLOCK ? vm.createSelectFork(url) : vm.createSelectFork(url, pinned);
     }
 
     function setUp() public virtual {

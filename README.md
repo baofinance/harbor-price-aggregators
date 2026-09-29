@@ -94,6 +94,12 @@ No other code changes are required: same formula contract, same mainnet contract
 
 stETH/BOM5 is retired. A constituent Chainlink feed is dead, so the aggregator and its tests were discarded.
 
+## Robinhood v3 Oracles
+
+| Pair | Rate Source | Feeds |
+| ---- | ----------- | ----- |
+| syrupUSDG/USD | syrupUSDG/USDG (Chainlink) | USDG/USD |
+
 ## Installation
 
 ```bash

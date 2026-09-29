@@ -11,8 +11,8 @@ set -euo pipefail
 #
 # Diagnosing this early matters because the symptom is otherwise something failing many minutes
 # later for a reason that looks like a broken test rather than a missing secret. The step this
-# replaced checked only MAINNET_RPC_URL and ALCHEMY_API_URL, so a missing arbitrum, base or
-# GITHUB_TOKEN secret was visible only as whatever went wrong downstream of it.
+# replaced checked only MAINNET_RPC_URL and ALCHEMY_API_URL, so a missing arbitrum, base,
+# robinhood or GITHUB_TOKEN secret was visible only as whatever went wrong downstream of it.
 
 report_url() {
   local name="$1" value="$2"
@@ -44,5 +44,6 @@ report_presence() {
 report_url MAINNET_RPC_URL "${MAINNET_RPC_URL:-}"
 report_url ARBITRUM_RPC_URL "${ARBITRUM_RPC_URL:-}"
 report_url BASE_RPC_URL "${BASE_RPC_URL:-}"
+report_url ROBINHOOD_RPC_URL "${ROBINHOOD_RPC_URL:-}"
 report_url ALCHEMY_API_URL "${ALCHEMY_API_URL:-}"
 report_presence GITHUB_TOKEN "${GITHUB_TOKEN:-}"
