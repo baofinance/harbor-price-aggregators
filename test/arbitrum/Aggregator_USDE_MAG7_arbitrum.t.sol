@@ -44,4 +44,9 @@ contract Aggregator_USDE_MAG7_arbitrum_Test is WiredFeedOverAverageHarness {
     function _createAggregator() internal override returns (address) {
         return address(new Aggregator_USDE_MAG7_arbitrum());
     }
+
+    /// @notice MAG7 is the average of seven equity feeds.
+    function test_wiring_feedCountIsSeven() public view {
+        assertEq(Aggregator_USDE_MAG7_arbitrum(address(aggregator)).FEED_COUNT(), 7);
+    }
 }
