@@ -141,5 +141,3 @@
 | Aggregator_wstETH_BTC_monad           |              4,056 |               20,520 |               4,866 |      859,860 |             85.99 |
 | Aggregator_wstETH_USD_monad           |              3,679 |               20,897 |               4,287 |      778,670 |             77.87 |
 | Aggregator_wstETH_XAU_monad           |              4,056 |               20,520 |               4,866 |      859,860 |             85.99 |
-| BaoERC1967Proxy                       |                141 |               24,435 |                 663 |       34,830 |              3.48 |
-| ERC1967Proxy                          |                141 |               24,435 |                 685 |       35,050 |              3.51 |
