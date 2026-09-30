@@ -70,9 +70,10 @@ skip = ["**/*.vy"]
 
 # Live fork suites (`*Fork.t.sol` under test/arbitrum, test/robinhood, and
 # test/mainnet) read public RPCs. GitHub runners share those endpoints and get
-# HTTP 429. Local `yarn test` / `yarn CI` keep the suites. The yarn scripts
-# select this profile when GITHUB_ACTIONS is set. test/fork/ForkTest.t.sol does
-# not match this pattern and still runs on GitHub — it never talks to an RPC.
+# HTTP 429. Local `yarn test` keeps the suites; `yarn gas` and `yarn coverage`
+# always use this profile so the committed regression files match GitHub.
+# test/fork/ForkTest.t.sol does not match this pattern and still runs — it never
+# talks to an RPC.
 [profile.github]
 no_match_contract = "OraclesFork|UsdFeedsFork|robinhoodFork|OutageFork"
 

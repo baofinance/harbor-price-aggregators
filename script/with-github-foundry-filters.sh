@@ -1,12 +1,23 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# GitHub Actions is the only place that selects foundry.toml's `github` profile,
-# which omits the live fork suites. A local `yarn test` or `yarn CI` leaves
-# FOUNDRY_PROFILE alone, so those suites still run. Direct `forge test` is the
-# same as local yarn: forks included.
-if [[ -n "${GITHUB_ACTIONS:-}" ]]; then
-  export FOUNDRY_PROFILE=github
-fi
+# Live fork suites inflate `latestAnswer` gas (live RPC vs mocks) and 429 on GitHub.
+# `yarn test` still runs them locally. `yarn gas` and `yarn coverage` always omit
+# them so the committed regression files match GitHub. Direct `forge test` is
+# unchanged: forks included.
+target=""
+for target in "$@"; do
+  :
+done
+case "$target" in
+  gas | coverage)
+    export FOUNDRY_PROFILE=github
+    ;;
+  test)
+    if [[ -n "${GITHUB_ACTIONS:-}" ]]; then
+      export FOUNDRY_PROFILE=github
+    fi
+    ;;
+esac
 
 exec ./lib/bao-base/run "$@"

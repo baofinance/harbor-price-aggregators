@@ -125,7 +125,7 @@ yarn test
 
 ```
 
-GitHub Actions omits the live fork suites (`*Fork.t.sol` under `test/arbitrum`, `test/robinhood`, and `test/mainnet`) because shared RPCs 429 there. Local `yarn test` and `yarn CI` still run them. The `ForkTest` unit suite always runs.
+GitHub Actions omits the live fork suites (`*Fork.t.sol` under `test/arbitrum`, `test/robinhood`, and `test/mainnet`) because shared RPCs 429 there. Local `yarn test` still runs them. `yarn gas` and `yarn coverage` omit them everywhere so `regression/gas.txt` and `regression/coverage.txt` match GitHub. The `ForkTest` unit suite always runs.
 
 Run tests for specific chains:
 
