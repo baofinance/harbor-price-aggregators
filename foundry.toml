@@ -68,6 +68,15 @@ severity = ["gas"]
 [profile.novyper]
 skip = ["**/*.vy"]
 
+# Live fork suites (`*Fork.t.sol` under test/arbitrum, test/robinhood, and
+# test/mainnet) read public RPCs. GitHub runners share those endpoints and get
+# HTTP 429. Local `yarn test` keeps the suites; `yarn gas` and `yarn coverage`
+# always use this profile so the committed regression files match GitHub.
+# test/fork/ForkTest.t.sol does not match this pattern and still runs — it never
+# talks to an RPC.
+[profile.github]
+no_match_contract = "OraclesFork|UsdFeedsFork|robinhoodFork|OutageFork"
+
 
 [etherscan]
 mainnet = { key = "${ETHERSCAN_KEY}" }
@@ -82,6 +91,7 @@ mainnet = "${MAINNET_RPC_URL}"
 arbitrum = "${ARBITRUM_RPC_URL}"
 base = "${BASE_RPC_URL}"
 megaeth = "${MEGAETH_RPC_URL}"
+robinhood = "${ROBINHOOD_RPC_URL}"
 local = "${LOCAL_URL}"
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options

@@ -94,6 +94,12 @@ No other code changes are required: same formula contract, same mainnet contract
 
 stETH/BOM5 is retired. A constituent Chainlink feed is dead, so the aggregator and its tests were discarded.
 
+## Robinhood v3 Oracles
+
+| Pair | Rate Source | Feeds |
+| ---- | ----------- | ----- |
+| syrupUSDG/USD | syrupUSDG/USDG (Chainlink) | USDG/USD |
+
 ## Installation
 
 ```bash
@@ -118,6 +124,8 @@ Run all tests:
 yarn test
 
 ```
+
+GitHub Actions omits the live fork suites (`*Fork.t.sol` under `test/arbitrum`, `test/robinhood`, and `test/mainnet`) because shared RPCs 429 there. Local `yarn test` still runs them. `yarn gas` and `yarn coverage` omit them everywhere so `regression/gas.txt` and `regression/coverage.txt` match GitHub. The `ForkTest` unit suite always runs.
 
 Run tests for specific chains:
 
